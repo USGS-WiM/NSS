@@ -1,0 +1,46 @@
+﻿<div class="scrollable sidebar sidebar-left" [ngClass]="!doShow?'hidden-sm hidden-xs':''">
+    <div class="sidebar-group">
+        <div class="sidebar-item">
+            <label>Choose Region:</label>
+            <div class="col-md-12">
+                <span class="select-wim">                    
+                    <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
+                        <option [ngValue]="i" *ngFor="let i of regions">{{i.Name}}</option>
+                    </select>
+                </span>
+            </div>
+            <br clear="all"/>
+        </div>        
+        
+        <div class="sidebar-item" *ngIf="regressionRegions">
+            <label>Limit by Regression Region(s):</label>
+            <div class="col-md-12">
+                <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myRRTexts" [settings]="myRRSettings" 
+                                         [(ngModel)]="selectedRegRegion" (ngModelChange)="onRegressionRegSelect($event)">
+                </ss-multiselect-dropdown>
+            </div>
+            <br clear="all"/>
+        </div>           
+
+        <div class="sidebar-item" *ngIf="statisticGroups">
+            <label>Limit by Statistic Group(s):</label>
+            <div class="col-md-12">
+                <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myRTTexts" [settings]="myRTSettings" 
+                                         [(ngModel)]="selectedStatGrp" (ngModelChange)="onStatGrpSelect($event)">
+                </ss-multiselect-dropdown>
+            </div>
+        <br clear="all" />
+        </div>           
+
+        <div class="sidebar-item" *ngIf="regressionTypes">
+            <label>Limit by Regression Type(s):</label>
+            <div class="col-md-12">
+                <ss-multiselect-dropdown [options]="regressionTypes" [texts]="mySGTexts" [settings]="mySGSettings" 
+                                         [(ngModel)]="selectedRegType" (ngModelChange)="onRegTypeSelect($event)">
+                </ss-multiselect-dropdown>
+            </div>
+            <br clear="all" />
+        </div>           
+    </div>
+</div>
+

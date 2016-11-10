@@ -1,0 +1,66 @@
+﻿<div class="mainPage scrollable">
+    <div><h3>{{title}}</h3></div>
+    
+    <div>       
+       <label>Selected Region:</label>
+       <div>{{selectedRegion}}</div>        
+    </div>   
+    
+    <br/>
+
+    <div>
+        <label>Selected Regression Region(s):</label>
+        <div>
+            <span *ngFor="let rr of regressionRegions;let isLast=last">{{rr.Name}}{{isLast ? "" : ", "}}</span>
+        </div>
+    </div>
+
+    <br />
+
+    <div>
+        <label>Selected Statistic Group(s):</label>
+        <div>
+            <span *ngFor="let st of statisticGroups;let isLast=last">{{st.Name}}{{isLast ? "" : ", "}}</span>
+        </div>
+    </div>
+
+    <br />
+
+    <div>
+        <label>Equation Variables</label>
+        <br/>
+        <form #scenarioForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="col-md-10" *ngFor="let sc of scenarios">
+                <h3>--- {{sc.StatisticGroupName}} ---</h3>
+                <div *ngFor="let rr of sc.RegressionRegions" class="col-md-12">
+                    <label>{{rr.Name}}</label>
+                    <table style="border:solid 1px gray" class="table table-condensed">
+                        <thead>
+                            <tr><th class="col-md-8">Parameter</th><th class="col-md-1">Code</th><th class="col-md-2">Value</th><th class="col-md-1">Min Limit</th><th class="col-md-1">Max Limit</th></tr>
+                        </thead>
+                        <tbody> 
+                            <tr *ngFor="let p of rr.Parameters">
+                                <td>{{p.Name}}
+                                    <!--<a (click)="showDescription(p.Description)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>-->
+                                </td>
+                                <td>{{p.Code}}</td>
+                                <td>
+                                    <input type="text" id="Value" class="form-control" name="Value" [(ngModel)]="p.Value" #name="ngModel">
+                                </td>
+                                <td>{{p.Limits != undefined ? (p.Limits.Min | number:'2.1-2'): "--"}}</td>
+                                <td>{{p.Limits != undefined ? (p.Limits.Max | number:'2.1-2') : "--"}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><!--end foreach RegressionRegion-->
+                <label>{{sc.StatisticGroupName}} Citations</label>
+                <div *ngFor="let l of sc.Citations">
+                    <div>{{l.Author}}</div>
+                    <div>{{l.Title}}</div><br />
+                </div>
+            <button type="submit" class="btn btn-default btn-save-all-inline col-md-1">Search</button>
+            </div><!--end foreach scenario-->
+            
+        </form>
+    </div>
+</div>

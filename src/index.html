@@ -1,0 +1,36 @@
+﻿<html>
+<head>
+    <!--<base href="/">-->
+    <title>NSS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--[if IE]><link rel="shortcut icon" href="path/to/favicon.ico"><![endif]-->
+    <link rel="icon" href="path/to/favicon.png"> <!-- Everything else -->
+    <!-- css -->
+    <link href="../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="../node_modules/lato-font/css/lato-font.css" rel="stylesheet" />
+    <link href="./app/css/styles.css" rel="stylesheet" />
+    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../node_modules/wim-styles/template/css/base.css">
+
+    <!-- Load libraries -->
+    <!-- Polyfill(s) for older browsers -->
+    <script src="../node_modules/core-js/client/shim.min.js"></script>
+    <script src="../node_modules/zone.js/dist/zone.js"></script>
+    <script src="../node_modules/reflect-metadata/Reflect.js"></script>
+    <script src="../node_modules/systemjs/dist/system.src.js"></script>   
+
+    <!-- Required for http -->
+    <script src="../node_modules/rxjs/bundles/Rx.js"></script>
+    <!--<script src="https://code.angularjs.org/2.0.0-alpha.46/http.dev.js"></script>-->
+
+    <!-- Configure SystemJS -->
+    <script src="systemjs.config.js"></script>
+    <script>
+      System.import('app').catch(function(err){ console.error(err); });
+    </script>
+</head>
+<body>
+    <my-app>Loading...</my-app>
+</body>
+</html>

@@ -1,4 +1,5 @@
 ﻿<div class="scrollable sidebar sidebar-left" [ngClass]="!doShow?'hidden-sm hidden-xs':''">
+    
     <div class="sidebar-group">
         <div class="sidebar-item">
             <label>Choose Region:</label>
@@ -41,6 +42,10 @@
             </div>
             <br clear="all" />
         </div>           
+        <div class="sidebar-item" *ngIf="regressionRegions">
+            <label>Calculate Statistic:</label>
+            <button type="button" class="btn-wim-primary" (click)="CalculateScenario()">Compute</button>
+        </div>
     </div>
 </div>
 

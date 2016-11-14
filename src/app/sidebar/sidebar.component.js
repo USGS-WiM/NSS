@@ -13,16 +13,19 @@ var http_1 = require('@angular/http');
 var regions_service_1 = require('../services/regions.service');
 var citations_service_1 = require('../services/citations.service');
 var eventSharing_service_1 = require('../services/eventSharing.service');
+var scenario_service_1 = require('../services/scenario.service');
 var SidebarComponent = (function () {
-    function SidebarComponent(_regionService, _sharedService, _citationService) {
+    function SidebarComponent(_regionService, _sharedService, _citationService, _scenarioService) {
         this._regionService = _regionService;
         this._sharedService = _sharedService;
         this._citationService = _citationService;
+        this._scenarioService = _scenarioService;
     }
     SidebarComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.doShow = true;
         this._regionService.getRegions().subscribe(function (reg) { return _this.regions = reg; }, function (error) { return _this.errorMessage = error; });
+        this._sharedService.getScenarios().subscribe(function (s) { _this.scenarios = s; });
         this.myRRSettings = {
             pullRight: false,
             enableSearch: false,
@@ -108,6 +111,11 @@ var SidebarComponent = (function () {
                 _this._citationService.getCitations(new http_1.URLSearchParams(param)).subscribe(function (c) {
                     s.Citations = c;
                 });
+                s.RegressionRegions.forEach(function (rr) {
+                    rr.Parameters.forEach(function (p) {
+                        p.Value = '';
+                    });
+                });
             });
             _this._sharedService.setScenarios(sc);
         });
@@ -180,6 +188,11 @@ var SidebarComponent = (function () {
                 var param = s.Links[0].Href.substring(i + 1);
                 _this._citationService.getCitations(new http_1.URLSearchParams(param)).subscribe(function (c) {
                     s.Citations = c;
+                });
+                s.RegressionRegions.forEach(function (rr) {
+                    rr.Parameters.forEach(function (p) {
+                        p.Value = '';
+                    });
                 });
             });
             _this._sharedService.setScenarios(sc);
@@ -254,6 +267,11 @@ var SidebarComponent = (function () {
                 _this._citationService.getCitations(new http_1.URLSearchParams(param)).subscribe(function (c) {
                     s.Citations = c;
                 });
+                s.RegressionRegions.forEach(function (rr) {
+                    rr.Parameters.forEach(function (p) {
+                        p.Value = '';
+                    });
+                });
             });
             _this._sharedService.setScenarios(sc);
         });
@@ -327,9 +345,61 @@ var SidebarComponent = (function () {
                 _this._citationService.getCitations(new http_1.URLSearchParams(param)).subscribe(function (c) {
                     s.Citations = c;
                 });
+                s.RegressionRegions.forEach(function (rr) {
+                    rr.Parameters.forEach(function (p) {
+                        p.Value = '';
+                    });
+                });
             });
             _this._sharedService.setScenarios(sc);
         });
+    };
+    SidebarComponent.prototype.CalculateScenario = function () {
+        var _this = this;
+        var ValueRequired = false;
+        this.scenarios.forEach(function (s) {
+            s.RegressionRegions.forEach(function (rr) {
+                rr.Parameters.forEach(function (p) {
+                    if (!p.Value) {
+                        ValueRequired = true;
+                        p.missingVal = true;
+                    }
+                    else
+                        p.missingVal = false;
+                });
+            });
+        });
+        if (ValueRequired) {
+            var toast = {
+                type: 'warning',
+                title: 'Error',
+                body: 'All values are required'
+            };
+            this._sharedService.showToast(toast);
+            this._sharedService.setScenarios(this.scenarios);
+        }
+        else {
+            this.scenarios.forEach(function (s) {
+                delete s.Citations;
+                s.RegressionRegions.forEach(function (rr) {
+                    rr.Parameters.forEach(function (p) {
+                        delete p.OutOfRange;
+                        delete p.missingVal;
+                    });
+                });
+            });
+            var regTypesIDstring = this.selectedRegType !== undefined ? this.selectedRegType.join(",") : '';
+            var statGrpIDstring = this.selectedStatGrp !== undefined ? this.selectedStatGrp.join(",") : '';
+            var regRegionsIDstring = this.selectedRegRegion !== undefined ? this.selectedRegRegion.join(",") : '';
+            var sParams = new http_1.URLSearchParams();
+            sParams.set('regressionregions', regRegionsIDstring);
+            sParams.set('regressiontypes', regTypesIDstring);
+            sParams.set('statisticgroups', statGrpIDstring);
+            this._scenarioService.postScenarios(this.selectedRegion.ID, this.scenarios, sParams).subscribe(function (result) {
+                _this.scenarios = result;
+                _this._sharedService.setScenarios(_this.scenarios);
+            });
+        }
     };
     SidebarComponent = __decorate([
         core_1.Component({
@@ -340,7 +410,8 @@ var SidebarComponent = (function () {
         }),
         __param(0, core_1.Inject(regions_service_1.RegionService)),
         __param(1, core_1.Inject(eventSharing_service_1.SharedService)),
-        __param(2, core_1.Inject(citations_service_1.CitationService))
+        __param(2, core_1.Inject(citations_service_1.CitationService)),
+        __param(3, core_1.Inject(scenario_service_1.ScenarioService))
     ], SidebarComponent);
     return SidebarComponent;
 }());

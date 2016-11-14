@@ -17,16 +17,18 @@ export class ScenarioService {
     //"/scenarios?region={region}&regressionregions={regressionRegionIDs}&statisticgroups={statisticgroups}&regressiontypes={regressiontypeIDs}&unitsystems={systemtypeID}&extensions={extensionmethods}"
     getScenario(id: number) {
         return this._http.get(CONFIG.REGION_URL + '/' + id + '/scenarios', OPTIONS)
-            .map(cit => <IScenario[]>cit.json())
+            .map(s => <IScenario[]>s.json())
             .catch(this.handleError);
     }
 
-    //getCitation(id: number) {
-        
-    //    return this._http.get(CONFIG.CITATION_URL + '/' + id, OPTIONS)
-    //        .map(cit => <ICitation>cit.json())
-    //        .catch(this.handleError);     
-    //}
+    postScenarios(id: number, s:IScenario[], searchArgs ?: URLSearchParams):Observable<IScenario[]> {
+        //let body = JSON.stringify(s);
+        let options = new RequestOptions({ headers: CONFIG.MIN_JSON_HEADERS, search: searchArgs });
+                
+        return this._http.post(CONFIG.REGION_URL + '/' + id + '/scenarios/estimate',s, options)
+            .map(sResult => <IScenario[]>sResult.json())
+            .catch(this.handleError);     
+    }
 
     //getRegressionRegionCitations(id: number) {
     //    return this._http.get(CONFIG.CITATION_URL + '?regressionregions=' + id, OPTIONS)

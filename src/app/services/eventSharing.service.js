@@ -15,6 +15,7 @@ var SharedService = (function () {
         this.statGrpBind = new Subject_1.Subject();
         this.regTypeBind = new Subject_1.Subject();
         this.scenarioBind = new Subject_1.Subject();
+        this.toastBind = new Subject_1.Subject();
     }
     SharedService.prototype.setRegion = function (reg) {
         this.regionName = reg;
@@ -59,6 +60,13 @@ var SharedService = (function () {
     };
     SharedService.prototype.getScenarios = function () {
         return this.scenarioBind.asObservable();
+    };
+    SharedService.prototype.showToast = function (t) {
+        this.toast = t;
+        this.toastBind.next(t);
+    };
+    SharedService.prototype.getToast = function () {
+        return this.toastBind.asObservable();
     };
     SharedService = __decorate([
         core_1.Injectable()

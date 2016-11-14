@@ -25,7 +25,8 @@
             // other libraries
             'rxjs': 'npm:rxjs',
             'angular-in-memory-web-api': 'npm:angular-in-memory-web-api',
-            'angular-2-dropdown-multiselect/src/multiselect-dropdown': '../node_modules/angular-2-dropdown-multiselect/src/multiselect-dropdown.js'            
+            'angular-2-dropdown-multiselect/src/multiselect-dropdown': '../node_modules/angular-2-dropdown-multiselect/src/multiselect-dropdown.js',
+            'angular2-toaster': 'npm:angular2-toaster'
         },//end map
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
@@ -38,6 +39,9 @@
             },
             'angular-in-memory-web-api': {
                 main: './index.js',
+                defaultExtension: 'js'
+            },
+            'angular2-toaster': {                
                 defaultExtension: 'js'
             }
 

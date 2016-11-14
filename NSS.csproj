@@ -57,9 +57,13 @@
     <TypeScriptCompile Include="src\app\services\eventSharing.service.ts" />
     <TypeScriptCompile Include="src\app\services\regions.service.ts" />
     <TypeScriptCompile Include="src\app\services\nss_services.ts" />
+    <TypeScriptCompile Include="src\app\shared\intervalBound.ts" />
+    <TypeScriptCompile Include="src\app\shared\error.ts" />
+    <TypeScriptCompile Include="src\app\shared\result.ts" />
     <TypeScriptCompile Include="src\app\shared\limit.ts" />
     <TypeScriptCompile Include="src\app\shared\link.ts" />
     <TypeScriptCompile Include="src\app\shared\citation.ts" />
+    <TypeScriptCompile Include="src\app\shared\scenarioRegressionRegion.ts" />
     <TypeScriptCompile Include="src\app\shared\regressionType.ts" />
     <TypeScriptCompile Include="src\app\shared\unitType.ts" />
     <TypeScriptCompile Include="src\app\shared\parameter.ts" />

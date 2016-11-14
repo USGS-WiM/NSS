@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 
+import {Toast} from 'angular2-toaster/lib/toast';
 import { IRegressionRegion } from '../shared/regressionRegion';
 import {IStatisticGroup} from '../shared/statisticgroup';
 import {IRegressionType} from '../shared/regressionType';
@@ -16,22 +17,25 @@ export class SharedService {
     //regRegionBinding/emitter
     private regressionRegions: IRegressionRegion[];
     private regRegBind: Subject<IRegressionRegion[]> = new Subject<IRegressionRegion[]>();
-
+    //StatGrpBinding/emitter
     private statisticGroups: IStatisticGroup[];
     private statGrpBind: Subject<IStatisticGroup[]> = new Subject<IStatisticGroup[]>();
-
+    //regTypeBinding/emitter
     private regressionTypes: IRegressionType[];
     private regTypeBind: Subject<IRegressionType[]> = new Subject<IRegressionType[]>();
-    
+    //scenarioBinding/emitter
     private scenarios: IScenario[];
     private scenarioBind: Subject<IScenario[]> = new Subject<IScenario[]>();
+
+    private toast: Toast;
+    private toastBind: Subject<Toast> = new Subject<Toast>();
 
     // -+-+-+-+-+-+-+-+-+ region getter/setter -+-+-+-+-+-+-+-+-+
     setRegion(reg: string) {
         this.regionName = reg;
         this.regBind.next(reg);
     }
-    getRegionName(): Observable<string> {        
+    getRegionName(): Observable<string> {
         return this.regBind.asObservable();
     }
 
@@ -78,5 +82,14 @@ export class SharedService {
     }
     getScenarios(): Observable<IScenario[]> {
         return this.scenarioBind.asObservable();
+    }
+
+    // -+-+-+-+-+-+-+-+-+ toaster  getter/setter  -+-+-+-+-+-+-+-+-+
+    showToast(t: Toast) {
+        this.toast = t;
+        this.toastBind.next(t);
+    }
+    getToast(): Observable<Toast> {
+        return this.toastBind.asObservable();
     }
 }

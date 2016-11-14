@@ -16,7 +16,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {URLSearchParams}    from '@angular/http';
 //import { CommonModule } from '@angular/common';
-
+import {ToasterContainerComponent, ToasterService} from 'angular2-toaster/angular2-toaster';
+import {Toast} from 'angular2-toaster/lib/toast';
 //interfaces 
 import { IRegion } from '../shared/region';
 import { IRegressionRegion } from '../shared/regressionRegion';
@@ -27,15 +28,17 @@ import { IRegressionType } from '../shared/regressionType';
 
 //services
 import { RegionService } from '../services/regions.service';
-import {CitationService } from '../services/citations.service';
+import { CitationService } from '../services/citations.service';
 import { SharedService } from '../services/eventSharing.service';
+import { ScenarioService} from '../services/scenario.service';
+
 import {IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts} from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
 
 @Component({
     //moduleId is used to keep templateurl relative path  
     moduleId: module.id,
     styleUrls: ['./sidebar.css'],
-    selector: 'wim-sidebar',    
+    selector: 'wim-sidebar',        
     templateUrl: './sidebar.html'
 
 })
@@ -49,6 +52,7 @@ export class SidebarComponent implements OnInit {
     public statisticGroups: IStatisticGroup[];
     public regressionRegions: IRegressionRegion[];    
     public citations: ICitation[];
+    public scenarios: IScenario[];
 
     //multiSelects
     //    regression regions
@@ -67,12 +71,14 @@ export class SidebarComponent implements OnInit {
     constructor(
        @Inject(RegionService) private _regionService: RegionService,
        @Inject(SharedService) private _sharedService: SharedService,
-       @Inject(CitationService) private _citationService: CitationService
+       @Inject(CitationService) private _citationService: CitationService,
+       @Inject(ScenarioService) private _scenarioService: ScenarioService
     ) { }
     ngOnInit(): void {
         //populate this.regions with the regions from the service               
         this.doShow = true; 
         this._regionService.getRegions().subscribe(reg => this.regions = reg, error => this.errorMessage = <any>error);       
+        this._sharedService.getScenarios().subscribe((s: IScenario[]) => { this.scenarios = s; }); //bind to scenarios to get them on CalculateScenario submit button from sidebar
         //settings for multiselect.. added max-width and font-size to the library's ts file directly
         this.myRRSettings = {
             pullRight: false,
@@ -154,10 +160,17 @@ export class SidebarComponent implements OnInit {
         //get scenarios and tell mainView
         this._regionService.getRegionScenario(r.ID).subscribe(sc => {            
             sc.forEach((s) => {
+                //get citations
                 let i = s.Links[0].Href.indexOf('?');
                 let param = s.Links[0].Href.substring(i+1);
                 this._citationService.getCitations(new URLSearchParams(param)).subscribe(c => {
                     s.Citations = c;
+                });
+                //clear Parameter.'Value'
+                s.RegressionRegions.forEach((rr) => {
+                    rr.Parameters.forEach((p) => {
+                        p.Value = '';
+                    });
                 });
             });
             this._sharedService.setScenarios(sc);
@@ -242,6 +255,12 @@ export class SidebarComponent implements OnInit {
                 let param = s.Links[0].Href.substring(i + 1);
                 this._citationService.getCitations(new URLSearchParams(param)).subscribe(c => {
                     s.Citations = c;
+                });
+                //clear Parameter.'Value'
+                s.RegressionRegions.forEach((rr) => {
+                    rr.Parameters.forEach((p) => {
+                        p.Value = '';
+                    });
                 });
             });
             this._sharedService.setScenarios(sc);
@@ -328,6 +347,12 @@ export class SidebarComponent implements OnInit {
                 this._citationService.getCitations(new URLSearchParams(param)).subscribe(c => {
                     s.Citations = c;
                 });
+                //clear Parameter.'Value'
+                s.RegressionRegions.forEach((rr) => {
+                    rr.Parameters.forEach((p) => {
+                        p.Value = '';
+                    });
+                });
             });
             this._sharedService.setScenarios(sc);
         });       
@@ -412,8 +437,68 @@ export class SidebarComponent implements OnInit {
                 this._citationService.getCitations(new URLSearchParams(param)).subscribe(c => {
                     s.Citations = c;
                 });
+                //clear Parameter.'Value'
+                s.RegressionRegions.forEach((rr) => {
+                    rr.Parameters.forEach((p) => {
+                        p.Value = '';
+                    });
+                });
             });
             this._sharedService.setScenarios(sc);
         });    
     }
+
+    //submit / Compute button click
+    public CalculateScenario(): void {       
+        let ValueRequired: boolean = false;
+        //make sure all values are populated
+        this.scenarios.forEach((s) => {
+            s.RegressionRegions.forEach((rr) => {
+                rr.Parameters.forEach((p) => {
+                    if (!p.Value) {
+                        ValueRequired = true;
+                        p.missingVal = true;                        
+                    }
+                    else p.missingVal = false;
+                });
+            });
+        });
+        if (ValueRequired) {
+            let toast: Toast = {
+                type: 'warning',
+                title: 'Error',
+                body: 'All values are required'
+            };
+            this._sharedService.showToast(toast);
+            this._sharedService.setScenarios(this.scenarios);
+        }//end invalid
+        else {
+            //remove Citations, RegressionRegions.Parameters.OutOfRange and .missingVal props
+            this.scenarios.forEach((s) => {
+                delete s.Citations;
+                s.RegressionRegions.forEach((rr) => {
+                    rr.Parameters.forEach((p) => {
+                        delete p.OutOfRange;
+                        delete p.missingVal;
+                    });
+                });
+            });
+
+            //now post the scenario to get the results to pass to mainview
+            let regTypesIDstring = this.selectedRegType !== undefined ? this.selectedRegType.join(",") : '';
+            let statGrpIDstring = this.selectedStatGrp !== undefined ? this.selectedStatGrp.join(",") : '';
+            let regRegionsIDstring = this.selectedRegRegion !== undefined ? this.selectedRegRegion.join(",") : '';       
+            let sParams: URLSearchParams = new URLSearchParams();
+            sParams.set('regressionregions', regRegionsIDstring);
+            sParams.set('regressiontypes', regTypesIDstring);
+            sParams.set('statisticgroups', statGrpIDstring);
+            this._scenarioService.postScenarios(this.selectedRegion.ID, this.scenarios, sParams).subscribe(result => {
+                this.scenarios = result;
+                this._sharedService.setScenarios(this.scenarios);
+            });
+
+        }
+//        let test = this.scenarios;
+    }
+
 }

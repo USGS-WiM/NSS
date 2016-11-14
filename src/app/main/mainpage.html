@@ -1,14 +1,18 @@
 ﻿<div class="mainPage scrollable">
+    <!-- toaster directive -->
+    <toaster-container></toaster-container>
+    <!-- / toaster directive -->
+
     <div><h3>{{title}}</h3></div>
     
-    <div>       
+    <div *ngIf="selectedRegion">       
        <label>Selected Region:</label>
        <div>{{selectedRegion}}</div>        
     </div>   
     
     <br/>
 
-    <div>
+    <div *ngIf="regressionRegions">
         <label>Selected Regression Region(s):</label>
         <div>
             <span *ngFor="let rr of regressionRegions;let isLast=last">{{rr.Name}}{{isLast ? "" : ", "}}</span>
@@ -17,7 +21,7 @@
 
     <br />
 
-    <div>
+    <div *ngIf="statisticGroups">
         <label>Selected Statistic Group(s):</label>
         <div>
             <span *ngFor="let st of statisticGroups;let isLast=last">{{st.Name}}{{isLast ? "" : ", "}}</span>
@@ -26,41 +30,75 @@
 
     <br />
 
-    <div>
+    <div *ngIf="scenarios && !resultsBack">
         <label>Equation Variables</label>
         <br/>
-        <form #scenarioForm="ngForm" (ngSubmit)="onSubmit()">
+        <form #scenarioForm="ngForm"><!-- (ngSubmit)="onSubmit()">-->
             <div class="col-md-10" *ngFor="let sc of scenarios">
                 <h3>--- {{sc.StatisticGroupName}} ---</h3>
-                <div *ngFor="let rr of sc.RegressionRegions" class="col-md-12">
-                    <label>{{rr.Name}}</label>
+                <div *ngIf="sc.RegressionRegions.length > 0">
+                    <div *ngFor="let rr of sc.RegressionRegions" class="col-md-12">
+                        <label>{{rr.Name}}</label>
+                        <table style="border:solid 1px gray" class="table table-condensed">
+                            <thead>
+                                <tr><th class="col-md-8">Parameter</th><th class="col-md-1">Code</th><th class="col-md-2">Value ({{rr.Parameters[0].UnitType.Abbr}})</th><th class="col-md-1">Min Limit ({{rr.Parameters[0].UnitType.Abbr}})</th><th class="col-md-1">Max Limit ({{rr.Parameters[0].UnitType.Abbr}})</th></tr>
+                            </thead>
+                            <tbody> 
+                                <tr *ngFor="let p of rr.Parameters">
+                                    <td>{{p.Name}}
+                                    <br *ngIf="p.OutOfRange"/>
+                                    <span *ngIf="p.OutOfRange" class="warning-text">Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors</span>
+                                        <!--<a (click)="showDescription(p.Description)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>-->
+                                    </td>
+                                    <td>{{p.Code}}</td>
+                                    <td>
+                                        <input [ngClass]="{'reqError':p.missingVal}" type="text" id="Value" class="form-control" (keypress)="_keyPress($event)" (blur)="compareValue(p)" name="Value" [(ngModel)]="p.Value" required>
+                                    </td>
+                                    <td>{{p.Limits != undefined ? (p.Limits.Min | number:'2.1-2'): "--"}}</td>
+                                    <td>{{p.Limits != undefined ? (p.Limits.Max | number:'2.1-2') : "--"}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div><!--end foreach RegressionRegion-->
+                </div>
+                <div *ngIf="sc.RegressionRegions.length == 0"><h3>There are no Results for your selection. Please try another .... </h3></div>
+    
+                <label *ngIf="sc.Citations">{{sc.StatisticGroupName}} Citations</label>
+                <div *ngFor="let l of sc.Citations">
+                    <a [href]="l.CitationURL" [target]="_blank">
+                        <div>{{l.Author}}</div>
+                        <div>{{l.Title}}</div>
+                    </a>
+                    <br />                    
+                </div>
+            </div><!--end foreach scenario-->            
+        </form>
+    </div> <!--end if scenarios-->
+
+    <div *ngIf="resultsBack">
+        <div *ngFor="let s of scenarios">
+            {{s.StatisticGroupName}}<br/>
+            <div *ngFor="let rr of s.RegressionRegions">
+                Region: {{rr.Name}}<br/>
+                <div *ngFor="let p of rr.Parameters">
+                    {{p.Name}} = {{p.Value}} {{p.UnitType.Abbr}}
+                </div> <br/>
+                <div class="col-md-12">
                     <table style="border:solid 1px gray" class="table table-condensed">
-                        <thead>
-                            <tr><th class="col-md-8">Parameter</th><th class="col-md-1">Code</th><th class="col-md-2">Value</th><th class="col-md-1">Min Limit</th><th class="col-md-1">Max Limit</th></tr>
-                        </thead>
-                        <tbody> 
-                            <tr *ngFor="let p of rr.Parameters">
-                                <td>{{p.Name}}
-                                    <!--<a (click)="showDescription(p.Description)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>-->
-                                </td>
-                                <td>{{p.Code}}</td>
-                                <td>
-                                    <input type="text" id="Value" class="form-control" name="Value" [(ngModel)]="p.Value" #name="ngModel">
-                                </td>
-                                <td>{{p.Limits != undefined ? (p.Limits.Min | number:'2.1-2'): "--"}}</td>
-                                <td>{{p.Limits != undefined ? (p.Limits.Max | number:'2.1-2') : "--"}}</td>
+                        <thead><tr><th></th><th>Value</th><th>Pred.<br />Low</th><th>Intervals<br />High</th><th>Prediction<br />Error, %</th><th>Equivalent<br />Years</th></tr></thead>
+                        <tbody>
+                            <tr *ngFor="let result of rr.Results">
+                                <td>{{result.code}}</td>
+                                <td>{{result.Value}}</td>
+                                <td>{{result.IntervalBounds != undefined ? (result.IntervalBounds.Lower) : '---'}}</td>
+                                <td>{{result.IntervalBounds != undefined ? (result.IntervalBounds.Upper) : '---'}}</td>
+                                <td>{{result.Errors[0].Value}}</td>
+                                <td>{{result.EquivalentYears}}</td>
                             </tr>
                         </tbody>
                     </table>
-                </div><!--end foreach RegressionRegion-->
-                <label>{{sc.StatisticGroupName}} Citations</label>
-                <div *ngFor="let l of sc.Citations">
-                    <div>{{l.Author}}</div>
-                    <div>{{l.Title}}</div><br />
                 </div>
-            <button type="submit" class="btn btn-default btn-save-all-inline col-md-1">Search</button>
-            </div><!--end foreach scenario-->
-            
-        </form>
+            </div>
+        </div> <!-- end for each Scenario-->           
     </div>
 </div>

@@ -22,7 +22,13 @@ var ScenarioService = (function () {
     }
     ScenarioService.prototype.getScenario = function (id) {
         return this._http.get(config_1.CONFIG.REGION_URL + '/' + id + '/scenarios', OPTIONS)
-            .map(function (cit) { return cit.json(); })
+            .map(function (s) { return s.json(); })
+            .catch(this.handleError);
+    };
+    ScenarioService.prototype.postScenarios = function (id, s, searchArgs) {
+        var options = new http_1.RequestOptions({ headers: config_1.CONFIG.MIN_JSON_HEADERS, search: searchArgs });
+        return this._http.post(config_1.CONFIG.REGION_URL + '/' + id + '/scenarios/estimate', s, options)
+            .map(function (sResult) { return sResult.json(); })
             .catch(this.handleError);
     };
     ScenarioService.prototype.handleError = function (error) {

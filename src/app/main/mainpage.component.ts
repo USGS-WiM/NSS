@@ -25,6 +25,7 @@ export class MainPageComponent  {
     scenarios: IScenario[];
     toast: Toast;
     resultsBack: boolean;
+    showWeights: boolean;
 
     constructor( @Inject(SharedService) private _sharedService: SharedService, @Inject(ToasterService) private _toasterService: ToasterService) { }
     ngOnInit(): any {
@@ -36,6 +37,10 @@ export class MainPageComponent  {
         });
         this._sharedService.getRegRegions().subscribe((regReg: IRegressionRegion[]) => {
             this.regressionRegions = regReg;
+            //more than 1 chosen- show weighted percent input
+            if (this.regressionRegions.length > 1) this.showWeights = true;
+            else this.showWeights = false;
+
             this.resultsBack = false;
         });
         this._sharedService.getStatisticGroups().subscribe((statGrp: IStatisticGroup[]) => {

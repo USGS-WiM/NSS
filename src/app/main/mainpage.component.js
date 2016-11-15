@@ -27,6 +27,10 @@ var MainPageComponent = (function () {
         });
         this._sharedService.getRegRegions().subscribe(function (regReg) {
             _this.regressionRegions = regReg;
+            if (_this.regressionRegions.length > 1)
+                _this.showWeights = true;
+            else
+                _this.showWeights = false;
             _this.resultsBack = false;
         });
         this._sharedService.getStatisticGroups().subscribe(function (statGrp) {

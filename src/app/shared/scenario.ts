@@ -8,6 +8,6 @@ export interface IScenario {
     StatisticGroupName: string;
     RegressionRegions: IScenarioRegressionRegion[];
     Links: ILink[];
-    Citations?: ICitation[];     
+    Citations?: ICitation[];         
 }
 

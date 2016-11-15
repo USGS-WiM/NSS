@@ -53,6 +53,7 @@ export class SidebarComponent implements OnInit {
     public regressionRegions: IRegressionRegion[];    
     public citations: ICitation[];
     public scenarios: IScenario[];
+    public showWeights: boolean;
 
     //multiSelects
     //    regression regions
@@ -178,7 +179,7 @@ export class SidebarComponent implements OnInit {
     }
 
     //select of regression region. update statisticgrps and regressiontypes and scenario for mainView
-    public onRegressionRegSelect(): void {
+    public onRegressionRegSelect(): void {        
         let regRegionsIDstring = this.selectedRegRegion !== undefined? this.selectedRegRegion.join(","): ''; 
         let regTypesIDstring = this.selectedRegType !== undefined ? this.selectedRegType.join(","): '';
         let statGrpIDstring = this.selectedStatGrp !== undefined ? this.selectedStatGrp.join(",") : '';
@@ -494,11 +495,17 @@ export class SidebarComponent implements OnInit {
             sParams.set('statisticgroups', statGrpIDstring);
             this._scenarioService.postScenarios(this.selectedRegion.ID, this.scenarios, sParams).subscribe(result => {
                 this.scenarios = result;
+                this.scenarios.forEach((s) => {
+                    let i = s.Links[0].Href.indexOf('?');
+                    let param = s.Links[0].Href.substring(i + 1);
+                    this._citationService.getCitations(new URLSearchParams(param)).subscribe(c => {
+                        s.Citations = c;
+                    });
+                });
                 this._sharedService.setScenarios(this.scenarios);
             });
 
         }
-//        let test = this.scenarios;
     }
 
 }

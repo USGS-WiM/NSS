@@ -8,4 +8,5 @@ export interface IScenarioRegressionRegion {
     Name: string;
     Parameters: IParameter[];
     Results?: IResult[];
+    PercentWeight?: number;
 }

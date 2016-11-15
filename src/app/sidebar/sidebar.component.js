@@ -397,6 +397,13 @@ var SidebarComponent = (function () {
             sParams.set('statisticgroups', statGrpIDstring);
             this._scenarioService.postScenarios(this.selectedRegion.ID, this.scenarios, sParams).subscribe(function (result) {
                 _this.scenarios = result;
+                _this.scenarios.forEach(function (s) {
+                    var i = s.Links[0].Href.indexOf('?');
+                    var param = s.Links[0].Href.substring(i + 1);
+                    _this._citationService.getCitations(new http_1.URLSearchParams(param)).subscribe(function (c) {
+                        s.Citations = c;
+                    });
+                });
                 _this._sharedService.setScenarios(_this.scenarios);
             });
         }

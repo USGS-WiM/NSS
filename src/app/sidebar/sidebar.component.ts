@@ -502,6 +502,7 @@ export class SidebarComponent implements OnInit {
                         s.Citations = c;
                     });
                 });
+
                 this._sharedService.setScenarios(this.scenarios);
             });
 

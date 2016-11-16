@@ -6,6 +6,7 @@ import {FormsModule }               from '@angular/forms'; //needed for 2-way bi
 import {RouterModule}               from '@angular/router';
 import {MultiselectDropdownModule}  from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
 import { ToasterModule }            from 'angular2-toaster/angular2-toaster';
+import { ChartModule }              from 'angular2-highcharts';
 
 //components ( need to import all of them here )
 import { AppComponent }             from './app.component';
@@ -19,7 +20,7 @@ import {ScenarioService}            from './services/scenario.service';
 import {SharedService }             from './services/eventSharing.service';
 
 @NgModule({
-    imports: [BrowserModule, HttpModule, FormsModule, RouterModule, MultiselectDropdownModule, ToasterModule],    
+    imports: [BrowserModule, HttpModule, FormsModule, RouterModule, MultiselectDropdownModule, ToasterModule, ChartModule],    
     declarations: [AppComponent, NavbarComponent, MainPageComponent, SidebarComponent],
     bootstrap: [AppComponent],
     providers: [RegionService, CitationService, ScenarioService, SharedService]

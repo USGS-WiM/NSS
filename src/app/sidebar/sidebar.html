@@ -42,9 +42,9 @@
             </div>
             <br clear="all" />
         </div>           
-        <div class="sidebar-item" *ngIf="regressionRegions">
+        <div class="sidebar-item" *ngIf="scenarios">
             <label>Calculate Statistic:</label>
-            <button type="button" class="btn-wim-primary" (click)="CalculateScenario()">Compute</button>
+            <button [disabled]="scenarios[0].RegressionRegions[0].Results != undefined" type="button" class="btn-wim-primary" (click)="CalculateScenario()">Compute</button>
         </div>
     </div>
 </div>

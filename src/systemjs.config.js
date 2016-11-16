@@ -26,7 +26,10 @@
             'rxjs': 'npm:rxjs',
             'angular-in-memory-web-api': 'npm:angular-in-memory-web-api',
             'angular-2-dropdown-multiselect/src/multiselect-dropdown': '../node_modules/angular-2-dropdown-multiselect/src/multiselect-dropdown.js',
-            'angular2-toaster': 'npm:angular2-toaster'
+            'angular2-toaster': 'npm:angular2-toaster',
+            'angular2-highcharts': 'npm:angular2-highcharts',
+            // This mapping is for loading Highcharts static API and Highcharts modules
+            'highcharts': 'npm:highcharts',
         },//end map
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
@@ -43,7 +46,17 @@
             },
             'angular2-toaster': {                
                 defaultExtension: 'js'
-            }
+            },
+            'angular2-highcharts': {
+                main: './index.js',
+                defaultExtension: 'js'
+            },
+           'highcharts': {
+            // NOTE: You should set './highcharts.src.js' here
+            // if you are not going to use <chart type="StockChart"
+                main: './highstock.src.js',
+                defaultExtension: 'js'
+           }   
 
         }//end package
     });

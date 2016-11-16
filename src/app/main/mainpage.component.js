@@ -44,9 +44,33 @@ var MainPageComponent = (function () {
                 s.RegressionRegions.forEach(function (rr) {
                     if (rr.Results) {
                         _this.resultsBack = true;
+                        _this.chartValues = [];
+                        _this.chartXAxisValues = [];
+                        rr.Results.forEach(function (R) {
+                            _this.chartXAxisValues.push(R.code);
+                            _this.chartValues.push(R.Value);
+                            _this.chartYAxisText = R.Unit.Abbr;
+                        });
                     }
                 });
             });
+            if (_this.resultsBack) {
+                _this.chartOptions = {
+                    title: { text: 'simple chart' },
+                    series: [{
+                            data: _this.chartValues
+                        }],
+                    xAxis: {
+                        title: { text: 'Maximum instantaneous flow' },
+                        categories: _this.chartXAxisValues
+                    },
+                    yAxis: {
+                        title: {
+                            text: _this.chartYAxisText
+                        }
+                    }
+                };
+            }
         });
         this._sharedService.getToast().subscribe(function (t) {
             _this.toast = t;

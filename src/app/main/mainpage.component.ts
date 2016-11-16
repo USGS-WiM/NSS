@@ -26,9 +26,15 @@ export class MainPageComponent  {
     toast: Toast;
     resultsBack: boolean;
     showWeights: boolean;
+    chartOptions: Object; //chart
+    chartValues: number[];
+    chartXAxisValues: string[];
+    chartYAxisText: string;
 
     constructor( @Inject(SharedService) private _sharedService: SharedService, @Inject(ToasterService) private _toasterService: ToasterService) { }
     ngOnInit(): any {
+        //playing with charts
+        
         this.resultsBack = false;
         // Will fire everytime other component use the setter this.ls.setLogged()
         this._sharedService.getRegionName().subscribe((reg: string) => {
@@ -50,9 +56,36 @@ export class MainPageComponent  {
             this.scenarios = s; this.resultsBack = false;
             this.scenarios.forEach((s) => {
                 s.RegressionRegions.forEach((rr) => {
-                    if (rr.Results) { this.resultsBack = true; }
+                    if (rr.Results) {
+                        this.resultsBack = true; 
+                        this.chartValues = []; this.chartXAxisValues = [];
+                        rr.Results.forEach((R) => {
+                            this.chartXAxisValues.push(R.code);
+                            this.chartValues.push(R.Value);
+                            this.chartYAxisText = R.Unit.Abbr;
+                        });
+                        
+                    } //end there's results
                 });
             });
+            if (this.resultsBack) {
+                // http://api.highcharts.com/highcharts/chart.type/xAxis.title //
+                this.chartOptions = {
+                    title: { text: 'simple chart' },
+                    series: [{
+                        data: this.chartValues
+                    }],
+                    xAxis: {
+                        title: { text: 'Maximum instantaneous flow' },
+                        categories: this.chartXAxisValues
+                    },
+                    yAxis: {
+                        title: {
+                            text: this.chartYAxisText
+                        }
+                    }
+                };
+            }
         });
         this._sharedService.getToast().subscribe((t: Toast) => {
             this.toast = t;

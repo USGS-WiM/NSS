@@ -30,6 +30,7 @@
             'angular2-highcharts': 'npm:angular2-highcharts',
             // This mapping is for loading Highcharts static API and Highcharts modules
             'highcharts': 'npm:highcharts',
+            'ng2-page-scroll': 'npm:ng2-page-scroll/bundles/ng2-page-scroll.umd.js',
         },//end map
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {

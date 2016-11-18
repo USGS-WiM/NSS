@@ -42,10 +42,46 @@
             </div>
             <br clear="all" />
         </div>           
+        
         <div class="sidebar-item" *ngIf="scenarios">
             <label>Calculate Statistic:</label>
             <button [disabled]="scenarios[0].RegressionRegions[0].Results != undefined" type="button" class="btn-wim-primary" (click)="CalculateScenario()">Compute</button>
         </div>
+
+        <div class="sidebar-item" *ngIf="showChart">
+            <label class="pull-left">Chart:</label>
+            <div class="col-md-9">
+                <span class="select-wim">
+                    <select [ngModel]="selectedPlot" (ngModelChange)="onPlotChange($event)" name="plot">
+                        <option [ngValue]="pt" *ngFor="let pt of plotTypes">{{pt}}</option>
+                    </select>
+                </span>
+            </div>
+            <br clear="all"/> <br/>
+            <div *ngIf="selectedPlot=='Hydrograph'">
+                <form #plotForm="ngForm" (ngSubmit)="getHyrograph()">
+                    <div class="form-group">
+                        <label class="col-md-8">Recurrence Interval:</label>
+                        <div class="col-md-4">
+                            <select name="recurrence" class="form-control" [(ngModel)]="Hydro.recurrence">
+                                <option *ngFor="let r of recurrences" [value]="r">{{r}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding-top:5px;">
+                        <label class="col-md-8">Lag Time (hrs):</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="lagTime" (keypress)="_keyPress($event)" [(ngModel)]="Hydro.lagTime">
+                        </div>
+                    </div>
+                    <br clear="all" />
+                    <div class="col-md-12">
+                        <button type="submit" class="btn-wim-primary" (click)="getHyrograph(plotForm.value)">Plot</button>
+                    </div>
+                    <br clear="all" />
+                </form>
+            </div>
+        </div>        
     </div>
 </div>
 

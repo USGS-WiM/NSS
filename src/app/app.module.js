@@ -13,6 +13,8 @@ var router_1 = require('@angular/router');
 var multiselect_dropdown_1 = require('angular-2-dropdown-multiselect/src/multiselect-dropdown');
 var angular2_toaster_1 = require('angular2-toaster/angular2-toaster');
 var angular2_highcharts_1 = require('angular2-highcharts');
+var mathjax_directive_1 = require('./shared/mathjax.directive');
+var ng2_page_scroll_1 = require('ng2-page-scroll');
 var app_component_1 = require('./app.component');
 var navbar_component_1 = require('./navbar/navbar.component');
 var mainpage_component_1 = require('./main/mainpage.component');
@@ -26,8 +28,8 @@ var AppModule = (function () {
     }
     AppModule = __decorate([
         core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule, http_1.HttpModule, forms_1.FormsModule, router_1.RouterModule, multiselect_dropdown_1.MultiselectDropdownModule, angular2_toaster_1.ToasterModule, angular2_highcharts_1.ChartModule],
-            declarations: [app_component_1.AppComponent, navbar_component_1.NavbarComponent, mainpage_component_1.MainPageComponent, sidebar_component_1.SidebarComponent],
+            imports: [platform_browser_1.BrowserModule, http_1.HttpModule, forms_1.FormsModule, router_1.RouterModule, multiselect_dropdown_1.MultiselectDropdownModule, angular2_toaster_1.ToasterModule, angular2_highcharts_1.ChartModule, ng2_page_scroll_1.Ng2PageScrollModule.forRoot()],
+            declarations: [app_component_1.AppComponent, navbar_component_1.NavbarComponent, mainpage_component_1.MainPageComponent, sidebar_component_1.SidebarComponent, mathjax_directive_1.MathJaxDirective],
             bootstrap: [app_component_1.AppComponent],
             providers: [regions_service_1.RegionService, citations_service_1.CitationService, scenario_service_1.ScenarioService, eventSharing_service_1.SharedService]
         })

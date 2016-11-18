@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
+import { Injectable }           from '@angular/core';
+import { Subject }              from 'rxjs/Subject';
+import { Observable }           from 'rxjs/Observable';
 
-import {Toast} from 'angular2-toaster/lib/toast';
-import { IRegressionRegion } from '../shared/regressionRegion';
-import {IStatisticGroup} from '../shared/statisticgroup';
-import {IRegressionType} from '../shared/regressionType';
-import { IScenario } from '../shared/scenario';
+import {Toast}                  from 'angular2-toaster/lib/toast';
+import { IRegressionRegion }    from '../shared/regressionRegion';
+import {IStatisticGroup}        from '../shared/statisticgroup';
+import {IRegressionType}        from '../shared/regressionType';
+import { IScenario }            from '../shared/scenario';
+import {IHydro}                 from '../shared/hydroChart';
+
 
 @Injectable()
 export class SharedService {
@@ -29,6 +31,15 @@ export class SharedService {
 
     private toast: Toast;
     private toastBind: Subject<Toast> = new Subject<Toast>();
+
+    private hydrograph: IHydro;
+    private hydroBind: Subject<IHydro> = new Subject<IHydro>();
+
+    private frequency: string;
+    private freqBind: Subject<string> = new Subject<string>();
+
+    //private freqPlot: IHydro;
+    //private hydroBind: Subject<IHydro> = new Subject<IHydro>();
 
     // -+-+-+-+-+-+-+-+-+ region getter/setter -+-+-+-+-+-+-+-+-+
     setRegion(reg: string) {
@@ -91,5 +102,23 @@ export class SharedService {
     }
     getToast(): Observable<Toast> {
         return this.toastBind.asObservable();
+    }
+
+    // -+-+-+-+-+-+-+-+-+ hydrograph  getter/setter  -+-+-+-+-+-+-+-+-+
+    setHydrograph(h: IHydro) {
+        this.hydrograph = h;
+        this.hydroBind.next(h);
+    }
+    getHydrograph(): Observable<IHydro> {
+        return this.hydroBind.asObservable();
+    }
+
+    // -+-+-+-+-+-+-+-+-+ hydrograph  getter/setter  -+-+-+-+-+-+-+-+-+
+    setFrequency() {
+        this.frequency = "newOne";
+        this.freqBind.next("newOne");
+    }
+    getFrequency(): Observable<string> {
+        return this.freqBind.asObservable();
     }
 }

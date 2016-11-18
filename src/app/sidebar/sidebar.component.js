@@ -20,6 +20,8 @@ var SidebarComponent = (function () {
         this._sharedService = _sharedService;
         this._citationService = _citationService;
         this._scenarioService = _scenarioService;
+        this.plotTypes = ["Frequency Plot", "Hydrograph"];
+        this.recurrences = [2, 5, 10, 25, 50, 100, 200, 500];
     }
     SidebarComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -404,8 +406,33 @@ var SidebarComponent = (function () {
                         s.Citations = c;
                     });
                 });
+                _this.showChart = true;
                 _this._sharedService.setScenarios(_this.scenarios);
             });
+        }
+    };
+    SidebarComponent.prototype.onPlotChange = function (p) {
+        if (p == "Hydrograph") {
+            this.selectedPlot = "Hydrograph";
+            this.Hydro = { recurrence: null, lagTime: null };
+        }
+        else {
+            this.selectedPlot = "Frequency Plot";
+            this._sharedService.setFrequency();
+            this.selectedPlot = "";
+        }
+    };
+    SidebarComponent.prototype.getHyrograph = function (h) {
+        if (h != undefined) {
+            this._sharedService.setHydrograph(h);
+            this.Hydro = { recurrence: null, lagTime: null };
+        }
+    };
+    SidebarComponent.prototype._keyPress = function (event) {
+        var pattern = /[0-9\+\-\.\ ]/;
+        var inputChar = String.fromCharCode(event.charCode);
+        if (!pattern.test(inputChar)) {
+            event.preventDefault();
         }
     };
     SidebarComponent = __decorate([

@@ -16,6 +16,8 @@ var SharedService = (function () {
         this.regTypeBind = new Subject_1.Subject();
         this.scenarioBind = new Subject_1.Subject();
         this.toastBind = new Subject_1.Subject();
+        this.hydroBind = new Subject_1.Subject();
+        this.freqBind = new Subject_1.Subject();
     }
     SharedService.prototype.setRegion = function (reg) {
         this.regionName = reg;
@@ -67,6 +69,20 @@ var SharedService = (function () {
     };
     SharedService.prototype.getToast = function () {
         return this.toastBind.asObservable();
+    };
+    SharedService.prototype.setHydrograph = function (h) {
+        this.hydrograph = h;
+        this.hydroBind.next(h);
+    };
+    SharedService.prototype.getHydrograph = function () {
+        return this.hydroBind.asObservable();
+    };
+    SharedService.prototype.setFrequency = function () {
+        this.frequency = "newOne";
+        this.freqBind.next("newOne");
+    };
+    SharedService.prototype.getFrequency = function () {
+        return this.freqBind.asObservable();
     };
     SharedService = __decorate([
         core_1.Injectable()

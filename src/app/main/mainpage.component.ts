@@ -43,7 +43,8 @@ export class MainPageComponent  {
     fChartOptions: Object;                  //frequency chart
     fChartValues: Array<number>[];          //frequency data
     equationResults: IEquationResult[];     //used in Appendix
-
+    showCharts_btn: boolean;                //toggle button boolean
+    showChartBtn_txt: string;               //string "show" / "hide"
     constructor( @Inject(SharedService) private _sharedService: SharedService, @Inject(ToasterService) private _toasterService: ToasterService) { }
 
     //add backticks around parameter code to escape in equation
@@ -109,6 +110,7 @@ export class MainPageComponent  {
         });
         this._sharedService.getHydrograph().subscribe((h: IHydro) => {
             this.hydrograph = h;
+            this.showChartBtn_txt = "Hide"; this.showCharts_btn = true;
             this.scenarios.forEach((s) => {
                 s.RegressionRegions.forEach((rr) => {
                     if (rr.Results) {
@@ -200,5 +202,14 @@ export class MainPageComponent  {
             // invalid character, prevent input
             event.preventDefault();
         }
+    }
+
+    //toggle charts
+    showHideCharts() {
+        //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
+        //if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show"
+        this.showCharts_btn = !this.showCharts_btn;
+        if (this.showCharts_btn) this.showChartBtn_txt = "Hide";
+        else this.showChartBtn_txt = "Show";
     }
 }

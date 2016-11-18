@@ -1,4 +1,5 @@
-﻿<div class="mainPage scrollable">
+﻿
+<div class="mainPage scrollable">
     <!-- toaster directive -->
     <toaster-container></toaster-container>
     <!-- / toaster directive -->
@@ -45,7 +46,7 @@
                         </div>
                         <table style="border:solid 1px gray" class="table table-condensed">
                             <thead>
-                                <tr><th class="col-md-5">Parameter</th><th class="col-md-1">Code</th><th class="col-md-2">Value</th><th class="col-md-2">Min Limit</th><th class="col-md-2">Max Limit</th></tr>
+                                <tr><th class="col-md-5">Parameter</th><th>Code</th><th class="col-md-3">Value</th><th class="col-md-2">Min Limit</th><th class="col-md-2">Max Limit</th></tr>
                             </thead>
                             <tbody> 
                                 <tr *ngFor="let p of rr.Parameters">
@@ -160,20 +161,33 @@
         </div> <!-- end for each Scenario-->   
         <div>See <a pageScroll href="#appendix">appendix</a> for equations.</div>
 
-        <!-- ngfor each chart being added show here -->
-        <div *ngIf="hydroChartsArray.length >0"><h3>Charts</h3></div>
-        <div *ngFor="let c of hydroChartsArray;let i = index">
-            <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
-                <button type="button" class="pull-right" (click)="removeHydroChart(i)">x</button><br clear="all"/>
-                <chart [options]="c"></chart>     
+        <!-- ngfor each chart being added show here
+            //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
+            //if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show"
+             -->
+        
+        <div class="col-md-12" *ngIf="hydroChartsArray.length >0">
+            <h2 style="display:inline-block;margin-right:42px;">Charts</h2>
+            <button style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
+        </div>
+        <div *ngIf="showCharts_btn">
+            <div *ngFor="let c of hydroChartsArray;let i = index">
+                <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
+                    <button type="button" class="pull-right" (click)="removeHydroChart(i)">x</button><br clear="all"/>
+                    <chart [options]="c"></chart>     
+                </div>
             </div>
         </div>
-
         <div *ngIf="fChartOptions">
-            <div *ngIf="hydroChartsArray.length == 0"><h3>Charts</h3></div>
-            <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
-                <button type="button" class="pull-right" (click)="removeFreqChart()">x</button><br clear="all" />
-                <chart [options]="fChartOptions"></chart>
+            <div *ngIf="hydroChartsArray.length == 0">
+                <h2 style="display:inline-block;margin-right:42px;">Charts</h2>
+                <button style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
+            </div>
+            <div *ngIf="showCharts_btn">
+                <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
+                    <button type="button" class="pull-right" (click)="removeFreqChart()">x</button><br clear="all" />
+                    <chart [options]="fChartOptions"></chart>
+                </div>
             </div>
         </div>
         

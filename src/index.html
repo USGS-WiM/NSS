@@ -24,12 +24,28 @@
     <!-- Required for http -->
     <script src="../node_modules/rxjs/bundles/Rx.js"></script>
     <!--<script src="https://code.angularjs.org/2.0.0-alpha.46/http.dev.js"></script>-->
-
-    <!-- Configure SystemJS -->
-    <script src="systemjs.config.js"></script>
-    <script>
-      System.import('app').catch(function(err){ console.error(err); });
+    <!-- for showing equations 
+    <script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+		tex2jax: {
+		    inlineMath: [['$','$'], ['\\(','\\)']],
+		    processEscapes: true
+		    }
+	});
+</script>-->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            asciimath2jax: {
+                delimiters: [['`','`'], ['$','$']]
+            }
+        })
     </script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
+        <!-- Configure SystemJS -->
+        <script src="systemjs.config.js"></script>
+        <script>
+            System.import('app').catch(function (err) { console.error(err); });
+        </script>
 </head>
 <body>
     <my-app>Loading...</my-app>

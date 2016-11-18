@@ -25,6 +25,7 @@ import { ICitation } from '../shared/citation';
 import { IStatisticGroup } from '../shared/statisticGroup';
 import {IScenario} from '../shared/scenario';
 import { IRegressionType } from '../shared/regressionType';
+import { IHydro } from '../shared/hydroChart';
 
 //services
 import { RegionService } from '../services/regions.service';
@@ -54,6 +55,11 @@ export class SidebarComponent implements OnInit {
     public citations: ICitation[];
     public scenarios: IScenario[];
     public showWeights: boolean;
+    public plotTypes: string[] = ["Frequency Plot", "Hydrograph"]; //Hydrograph, Frequency Plot
+    public recurrences: number[] = [2, 5, 10, 25, 50, 100, 200, 500]; // PKs
+    public selectedPlot: string;
+    public Hydro: IHydro;
+    public showChart: boolean;
 
     //multiSelects
     //    regression regions
@@ -78,6 +84,8 @@ export class SidebarComponent implements OnInit {
     ngOnInit(): void {
         //populate this.regions with the regions from the service               
         this.doShow = true; 
+       // this.plotTypes = ["Frequency Plot", "Hydrograph"];
+       // this.recurrences = [2, 5, 10, 25, 50, 100, 200, 500];
         this._regionService.getRegions().subscribe(reg => this.regions = reg, error => this.errorMessage = <any>error);       
         this._sharedService.getScenarios().subscribe((s: IScenario[]) => { this.scenarios = s; }); //bind to scenarios to get them on CalculateScenario submit button from sidebar
         //settings for multiselect.. added max-width and font-size to the library's ts file directly
@@ -502,11 +510,40 @@ export class SidebarComponent implements OnInit {
                         s.Citations = c;
                     });
                 });
-
+                this.showChart = true;                
                 this._sharedService.setScenarios(this.scenarios);
             });
 
         }
     }
 
+    //want to see a chart (which one?)
+    public onPlotChange(p:any): void {
+        if (p == "Hydrograph") {
+            this.selectedPlot = "Hydrograph";
+            this.Hydro = { recurrence: null, lagTime: null };
+        }
+        else {
+            this.selectedPlot = "Frequency Plot";
+            this._sharedService.setFrequency();
+            this.selectedPlot = "";
+        }
+    }
+
+    public getHyrograph(h: IHydro): void {
+        if (h != undefined) {
+            this._sharedService.setHydrograph(h);
+            this.Hydro = { recurrence: null, lagTime: null };
+        }
+    }
+
+    //number only allowed in Value
+    _keyPress(event: any) {
+        const pattern = /[0-9\+\-\.\ ]/;
+        let inputChar = String.fromCharCode(event.charCode);
+        if (!pattern.test(inputChar)) {
+            // invalid character, prevent input
+            event.preventDefault();
+        }
+    }
 }

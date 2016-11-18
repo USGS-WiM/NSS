@@ -57,6 +57,9 @@
     <TypeScriptCompile Include="src\app\services\eventSharing.service.ts" />
     <TypeScriptCompile Include="src\app\services\regions.service.ts" />
     <TypeScriptCompile Include="src\app\services\nss_services.ts" />
+    <TypeScriptCompile Include="src\app\shared\hydroChart.ts" />
+    <TypeScriptCompile Include="src\app\shared\equationResult.ts" />
+    <TypeScriptCompile Include="src\app\shared\mathjax.directive.ts" />
     <TypeScriptCompile Include="src\app\shared\intervalBound.ts" />
     <TypeScriptCompile Include="src\app\shared\error.ts" />
     <TypeScriptCompile Include="src\app\shared\result.ts" />

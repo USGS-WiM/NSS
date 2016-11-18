@@ -86,6 +86,8 @@ var MainPageComponent = (function () {
         });
         this._sharedService.getHydrograph().subscribe(function (h) {
             _this.hydrograph = h;
+            _this.showChartBtn_txt = "Hide";
+            _this.showCharts_btn = true;
             _this.scenarios.forEach(function (s) {
                 s.RegressionRegions.forEach(function (rr) {
                     if (rr.Results) {
@@ -164,6 +166,13 @@ var MainPageComponent = (function () {
         if (!pattern.test(inputChar)) {
             event.preventDefault();
         }
+    };
+    MainPageComponent.prototype.showHideCharts = function () {
+        this.showCharts_btn = !this.showCharts_btn;
+        if (this.showCharts_btn)
+            this.showChartBtn_txt = "Hide";
+        else
+            this.showChartBtn_txt = "Show";
     };
     MainPageComponent = __decorate([
         core_1.Component({

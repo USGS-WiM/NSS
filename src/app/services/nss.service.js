@@ -377,4 +377,4 @@ var NSSService = (function () {
     return NSSService;
 }());
 exports.NSSService = NSSService;
-//# sourceMappingURL=regions.service.js.map
+//# sourceMappingURL=nss.service.js.map

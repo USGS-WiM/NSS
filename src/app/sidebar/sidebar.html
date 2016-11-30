@@ -17,7 +17,7 @@
             <label>Limit by Regression Region(s):</label>
             <div class="col-md-12">
                 <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myRRTexts" [settings]="myRRSettings" 
-                                         [(ngModel)]="selectedRegRegion" (ngModelChange)="onRegressionRegSelect($event)">
+                                         [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)">
                 </ss-multiselect-dropdown>
             </div>
             <br clear="all"/>
@@ -27,23 +27,23 @@
             <label>Limit by Statistic Group(s):</label>
             <div class="col-md-12">
                 <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myRTTexts" [settings]="myRTSettings" 
-                                         [(ngModel)]="selectedStatGrp" (ngModelChange)="onStatGrpSelect($event)">
+                                         [(ngModel)]="selectedStatGrpIDs" (ngModelChange)="onStatGrpSelect($event)">
                 </ss-multiselect-dropdown>
             </div>
         <br clear="all" />
         </div>           
 
-        <div class="sidebar-item" *ngIf="regressionTypes">
+       <div class="sidebar-item" *ngIf="regressionTypes">
             <label>Limit by Regression Type(s):</label>
             <div class="col-md-12">
                 <ss-multiselect-dropdown [options]="regressionTypes" [texts]="mySGTexts" [settings]="mySGSettings" 
-                                         [(ngModel)]="selectedRegType" (ngModelChange)="onRegTypeSelect($event)">
+                                         [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
                 </ss-multiselect-dropdown>
             </div>
             <br clear="all" />
         </div>           
         
-        <div class="sidebar-item" *ngIf="scenarios">
+        <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0">
             <label>Calculate Statistic:</label>
             <button [disabled]="scenarios[0].RegressionRegions[0].Results != undefined" type="button" class="btn-wim-primary" (click)="CalculateScenario()">Compute</button>
         </div>

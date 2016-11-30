@@ -10,24 +10,96 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
-var regions_service_1 = require('../services/regions.service');
-var citations_service_1 = require('../services/citations.service');
-var eventSharing_service_1 = require('../services/eventSharing.service');
-var scenario_service_1 = require('../services/scenario.service');
+var nss_service_1 = require('../services/nss.service');
+var chart_service_1 = require('../services/chart.service');
 var SidebarComponent = (function () {
-    function SidebarComponent(_regionService, _sharedService, _citationService, _scenarioService) {
-        this._regionService = _regionService;
-        this._sharedService = _sharedService;
-        this._citationService = _citationService;
-        this._scenarioService = _scenarioService;
+    function SidebarComponent(_nssService, _chartService) {
+        this._nssService = _nssService;
+        this._chartService = _chartService;
         this.plotTypes = ["Frequency Plot", "Hydrograph"];
         this.recurrences = [2, 5, 10, 25, 50, 100, 200, 500];
     }
+    Object.defineProperty(SidebarComponent.prototype, "selectedRegion", {
+        get: function () { return this._nssService.selectedRegion; },
+        enumerable: true,
+        configurable: true
+    });
+    ;
+    Object.defineProperty(SidebarComponent.prototype, "selectedRegRegion", {
+        get: function () { return this._nssService.selectedRegRegions; },
+        enumerable: true,
+        configurable: true
+    });
+    ;
+    Object.defineProperty(SidebarComponent.prototype, "selectedRegType", {
+        get: function () { return this._nssService.selectedRegressionTypes; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SidebarComponent.prototype, "selectedStatGrp", {
+        get: function () { return this._nssService.selectedStatGroups; },
+        enumerable: true,
+        configurable: true
+    });
+    ;
     SidebarComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.doShow = true;
-        this._regionService.getRegions().subscribe(function (reg) { return _this.regions = reg; }, function (error) { return _this.errorMessage = error; });
-        this._sharedService.getScenarios().subscribe(function (s) { _this.scenarios = s; });
+        this._nssService.regions.subscribe(function (regions) { _this.regions = regions; });
+        this._nssService.regressionRegions.subscribe(function (rr) {
+            _this.regressionRegions = rr;
+            if (_this.selectedRegRegionIDs != undefined) {
+                if (rr.length > 0) {
+                    for (var rri = _this.selectedRegRegionIDs.length; rri--;) {
+                        var RRind = rr.map(function (eachrr) { return eachrr.ID; }).indexOf(_this.selectedRegRegionIDs[rri]);
+                        if (RRind < 0)
+                            _this.selectedRegRegionIDs.splice(rri, 1);
+                    }
+                    ;
+                }
+                else
+                    _this.selectedRegRegionIDs = [];
+            }
+        });
+        this._nssService.statisticGroups.subscribe(function (sg) {
+            _this.statisticGroups = sg;
+            if (_this.selectedStatGrpIDs != undefined) {
+                if (sg.length > 0) {
+                    for (var si = _this.selectedStatGrpIDs.length; si--;) {
+                        var SSind = sg.map(function (eachsg) { return eachsg.ID; }).indexOf(_this.selectedStatGrpIDs[si]);
+                        if (SSind < 0)
+                            _this.selectedStatGrpIDs.splice(si, 1);
+                    }
+                    ;
+                }
+                else
+                    _this.selectedStatGrpIDs = [];
+            }
+        });
+        this._nssService.regressionTypes.subscribe(function (rt) {
+            _this.regressionTypes = rt;
+            if (_this.selectedRegTypeIDs != undefined) {
+                if (rt.length > 0) {
+                    for (var rti = _this.selectedRegTypeIDs.length; rti--;) {
+                        var RTind = rt.map(function (eachrt) { return eachrt.ID; }).indexOf(_this.selectedRegTypeIDs[rti]);
+                        if (RTind < 0)
+                            _this.selectedRegTypeIDs.splice(rti, 1);
+                    }
+                    ;
+                }
+                else
+                    _this.selectedRegTypeIDs = [];
+            }
+        });
+        this._nssService.scenarios.subscribe(function (s) {
+            _this.scenarios = s;
+            _this.scenarios.forEach(function (s) {
+                if (s.RegressionRegions[0].Results)
+                    _this.showChart = true;
+                else
+                    _this.showChart = false;
+            });
+        });
         this.myRRSettings = {
             pullRight: false,
             enableSearch: false,
@@ -73,291 +145,36 @@ var SidebarComponent = (function () {
         };
     };
     SidebarComponent.prototype.onRegSelect = function (r) {
-        var _this = this;
-        this.selectedRegion = r;
-        this._sharedService.setRegion(r.Name);
-        this._sharedService.clearRegressionRegions();
-        this._sharedService.clearStatisticGroups();
-        this._sharedService.clearRegressionTypes();
-        this.regressionRegions = [];
-        this.regressionTypes = [];
-        this.statisticGroups = [];
-        this.selectedRegRegion = [];
-        this.selectedRegType = [];
-        this.selectedStatGrp = [];
-        this._regionService.getRegionRegressionRegions(r.ID).subscribe(function (rr) {
-            _this.regressionRegions = rr;
-            _this.regressionRegions.forEach(function (r) {
-                r.id = r.ID;
-                r.name = r.Name;
-            });
-        }, function (error) { return _this.errorMessage = error; });
-        this._regionService.getRegionRegressionTypes(r.ID).subscribe(function (rt) {
-            _this.regressionTypes = rt;
-            _this.regressionTypes.forEach(function (rt) {
-                rt.id = rt.ID;
-                rt.name = rt.Name;
-            });
-        }, function (error) { return _this.errorMessage = error; });
-        this._regionService.getRegionStatisticGrps(r.ID).subscribe(function (sg) {
-            _this.statisticGroups = sg;
-            _this.statisticGroups.forEach(function (st) {
-                st.id = st.ID;
-                st.name = st.Name;
-            });
-        }, function (error) { return _this.errorMessage = error; });
-        this._regionService.getRegionScenario(r.ID).subscribe(function (sc) {
-            sc.forEach(function (s) {
-                var i = s.Links[0].Href.indexOf('?');
-                var param = s.Links[0].Href.substring(i + 1);
-                _this._citationService.getCitations(new http_1.URLSearchParams(param)).subscribe(function (c) {
-                    s.Citations = c;
-                });
-                s.RegressionRegions.forEach(function (rr) {
-                    rr.Parameters.forEach(function (p) {
-                        p.Value = '';
-                    });
-                });
-            });
-            _this._sharedService.setScenarios(sc);
-        });
+        this.selectedRegRegionIDs = [];
+        this.selectedStatGrpIDs = [];
+        this.selectedRegTypeIDs = [];
+        this._nssService.selectedRegion = r;
     };
     SidebarComponent.prototype.onRegressionRegSelect = function () {
         var _this = this;
-        var regRegionsIDstring = this.selectedRegRegion !== undefined ? this.selectedRegRegion.join(",") : '';
-        var regTypesIDstring = this.selectedRegType !== undefined ? this.selectedRegType.join(",") : '';
-        var statGrpIDstring = this.selectedStatGrp !== undefined ? this.selectedStatGrp.join(",") : '';
-        var selectedRegressionRegionObjects = [];
-        this.regressionRegions.forEach(function (rr) {
-            if (_this.selectedRegRegion.map(function (selRR) { return selRR; }).indexOf(rr.ID) > -1) {
-                selectedRegressionRegionObjects.push(rr);
-            }
+        var selectedRegRegions = new Array();
+        this.selectedRegRegionIDs.forEach(function (srr) {
+            selectedRegRegions.push(_this.regressionRegions.filter(function (rr) { return rr.ID == srr; })[0]);
         });
-        this._sharedService.setRegRegions(selectedRegressionRegionObjects);
-        var regTypeParams = new http_1.URLSearchParams();
-        regTypeParams.set('regressionregions', regRegionsIDstring);
-        regTypeParams.set('statisticgroups', statGrpIDstring);
-        this._regionService.getRegionRegressionTypes(this.selectedRegion.ID, regTypeParams).subscribe(function (rt) {
-            _this.regressionTypes = rt;
-            for (var rti = _this.selectedRegType.length; rti--;) {
-                var RTind = rt.map(function (eachrt) { return eachrt.ID; }).indexOf(_this.selectedRegType[rti]);
-                if (RTind < 0)
-                    _this.selectedRegType.splice(rti, 1);
-            }
-            ;
-            var selectedRegressionTypeObjects = [];
-            _this.regressionTypes.forEach(function (rt) {
-                if (_this.selectedRegType.map(function (selRT) { return selRT; }).indexOf(rt.ID) > -1) {
-                    selectedRegressionTypeObjects.push(rt);
-                }
-            });
-            _this._sharedService.setRegTypes(selectedRegressionTypeObjects);
-            _this.regressionTypes.forEach(function (rt) {
-                rt.id = rt.ID;
-                rt.name = rt.Name;
-            });
-        }, function (error) { return _this.errorMessage = error; });
-        var statGrpParams = new http_1.URLSearchParams();
-        statGrpParams.set('regressionregions', regRegionsIDstring);
-        statGrpParams.set('regressiontypes', regTypesIDstring);
-        this._regionService.getRegionStatisticGrps(this.selectedRegion.ID, statGrpParams).subscribe(function (sg) {
-            _this.statisticGroups = sg;
-            for (var si = _this.selectedStatGrp.length; si--;) {
-                var SSind = sg.map(function (eachsg) { return eachsg.ID; }).indexOf(_this.selectedStatGrp[si]);
-                if (SSind < 0)
-                    _this.selectedStatGrp.splice(si, 1);
-            }
-            ;
-            var selectedStatGrpObjects = [];
-            _this.statisticGroups.forEach(function (st) {
-                if (_this.selectedStatGrp.map(function (selSG) { return selSG; }).indexOf(st.ID) > -1) {
-                    selectedStatGrpObjects.push(st);
-                }
-            });
-            _this._sharedService.setStatisticGroups(selectedStatGrpObjects);
-            _this.statisticGroups.forEach(function (st) {
-                st.id = st.ID;
-                st.name = st.Name;
-            });
-        }, function (error) { return _this.errorMessage = error; });
-        var scenarioParams = new http_1.URLSearchParams();
-        scenarioParams.set('regressionregions', regRegionsIDstring);
-        scenarioParams.set('regressiontypes', regTypesIDstring);
-        scenarioParams.set('statisticgroups', statGrpIDstring);
-        this._regionService.getRegionScenario(this.selectedRegion.ID, scenarioParams).subscribe(function (sc) {
-            sc.forEach(function (s) {
-                var i = s.Links[0].Href.indexOf('?');
-                var param = s.Links[0].Href.substring(i + 1);
-                _this._citationService.getCitations(new http_1.URLSearchParams(param)).subscribe(function (c) {
-                    s.Citations = c;
-                });
-                s.RegressionRegions.forEach(function (rr) {
-                    rr.Parameters.forEach(function (p) {
-                        p.Value = '';
-                    });
-                });
-            });
-            _this._sharedService.setScenarios(sc);
-        });
+        this._nssService.selectedRegRegions = selectedRegRegions;
     };
     SidebarComponent.prototype.onStatGrpSelect = function () {
         var _this = this;
-        var statGrpIDstring = this.selectedStatGrp !== undefined ? this.selectedStatGrp.join(",") : '';
-        var regRegionsIDstring = this.selectedRegRegion !== undefined ? this.selectedRegRegion.join(",") : '';
-        var regTypesIDstring = this.selectedRegType !== undefined ? this.selectedRegType.join(",") : '';
-        var selectedStatisticGrpObjects = [];
-        this.statisticGroups.forEach(function (sg) {
-            if (_this.selectedStatGrp.map(function (selSG) { return selSG; }).indexOf(sg.ID) > -1) {
-                selectedStatisticGrpObjects.push(sg);
-            }
+        var selectedStatGroups = new Array();
+        this.selectedStatGrpIDs.forEach(function (ssg) {
+            selectedStatGroups.push(_this.statisticGroups.filter(function (rr) { return rr.ID == ssg; })[0]);
         });
-        this._sharedService.setStatisticGroups(selectedStatisticGrpObjects);
-        var regTypeParams = new http_1.URLSearchParams();
-        regTypeParams.set('regressionregions', regRegionsIDstring);
-        regTypeParams.set('statisticgroups', statGrpIDstring);
-        this._regionService.getRegionRegressionTypes(this.selectedRegion.ID, regTypeParams).subscribe(function (rt) {
-            _this.regressionTypes = rt;
-            for (var rti = _this.selectedRegType.length; rti--;) {
-                var RTind = rt.map(function (eachrt) { return eachrt.ID; }).indexOf(_this.selectedRegType[rti]);
-                if (RTind < 0)
-                    _this.selectedRegType.splice(rti, 1);
-            }
-            ;
-            var selectedRegressionTypeObjects = [];
-            _this.regressionTypes.forEach(function (rt) {
-                if (_this.selectedRegType.map(function (selRT) { return selRT; }).indexOf(rt.ID) > -1) {
-                    selectedRegressionTypeObjects.push(rt);
-                }
-            });
-            _this._sharedService.setRegTypes(selectedRegressionTypeObjects);
-            _this.regressionTypes.forEach(function (rt) {
-                rt.id = rt.ID;
-                rt.name = rt.Name;
-            });
-        }, function (error) { return _this.errorMessage = error; });
-        var regRegionParams = new http_1.URLSearchParams();
-        regRegionParams.set('statisticgroups', statGrpIDstring);
-        regRegionParams.set('regressiontypes', regTypesIDstring);
-        this._regionService.getRegionRegressionRegions(this.selectedRegion.ID, regRegionParams).subscribe(function (rr) {
-            _this.regressionRegions = rr;
-            for (var rri = _this.selectedRegRegion.length; rri--;) {
-                var RRind = rr.map(function (eachrr) { return eachrr.ID; }).indexOf(_this.selectedRegRegion[rri]);
-                if (RRind < 0)
-                    _this.selectedRegRegion.splice(rri, 1);
-            }
-            ;
-            var selectedRegressionRegObjects = [];
-            _this.regressionRegions.forEach(function (rr) {
-                if (_this.selectedRegRegion.map(function (selRR) { return selRR; }).indexOf(rr.ID) > -1) {
-                    selectedRegressionRegObjects.push(rr);
-                }
-            });
-            _this._sharedService.setRegRegions(selectedRegressionRegObjects);
-            _this.regressionRegions.forEach(function (r) {
-                r.id = r.ID;
-                r.name = r.Name;
-            });
-        }, function (error) { return _this.errorMessage = error; });
-        var scenarioParams = new http_1.URLSearchParams();
-        scenarioParams.set('regressionregions', regRegionsIDstring);
-        scenarioParams.set('regressiontypes', regTypesIDstring);
-        scenarioParams.set('statisticgroups', statGrpIDstring);
-        this._regionService.getRegionScenario(this.selectedRegion.ID, scenarioParams).subscribe(function (sc) {
-            sc.forEach(function (s) {
-                var i = s.Links[0].Href.indexOf('?');
-                var param = s.Links[0].Href.substring(i + 1);
-                _this._citationService.getCitations(new http_1.URLSearchParams(param)).subscribe(function (c) {
-                    s.Citations = c;
-                });
-                s.RegressionRegions.forEach(function (rr) {
-                    rr.Parameters.forEach(function (p) {
-                        p.Value = '';
-                    });
-                });
-            });
-            _this._sharedService.setScenarios(sc);
-        });
+        this._nssService.selectedStatGroups = selectedStatGroups;
     };
     SidebarComponent.prototype.onRegTypeSelect = function () {
         var _this = this;
-        var regTypesIDstring = this.selectedRegType !== undefined ? this.selectedRegType.join(",") : '';
-        var statGrpIDstring = this.selectedStatGrp !== undefined ? this.selectedStatGrp.join(",") : '';
-        var regRegionsIDstring = this.selectedRegRegion !== undefined ? this.selectedRegRegion.join(",") : '';
-        var selectedRegressionTypeObjects = [];
-        this.regressionRegions.forEach(function (rt) {
-            if (_this.selectedRegType.map(function (selRT) { return selRT; }).indexOf(rt.ID) > -1) {
-                selectedRegressionTypeObjects.push(rt);
-            }
+        var selectedRegTypes = new Array();
+        this.selectedRegTypeIDs.forEach(function (srt) {
+            selectedRegTypes.push(_this.regressionTypes.filter(function (rr) { return rr.ID == srt; })[0]);
         });
-        this._sharedService.setRegTypes(selectedRegressionTypeObjects);
-        var statGrpParams = new http_1.URLSearchParams();
-        statGrpParams.set('regressionregions', regRegionsIDstring);
-        statGrpParams.set('regressiontypes', regTypesIDstring);
-        this._regionService.getRegionStatisticGrps(this.selectedRegion.ID, statGrpParams).subscribe(function (sg) {
-            _this.statisticGroups = sg;
-            for (var si = _this.selectedStatGrp.length; si--;) {
-                var SSind = sg.map(function (eachsg) { return eachsg.ID; }).indexOf(_this.selectedStatGrp[si]);
-                if (SSind < 0)
-                    _this.selectedStatGrp.splice(si, 1);
-            }
-            ;
-            var selectedStatGrpObjects = [];
-            _this.statisticGroups.forEach(function (sg) {
-                if (_this.selectedStatGrp.map(function (selSG) { return selSG; }).indexOf(sg.ID) > -1) {
-                    selectedStatGrpObjects.push(sg);
-                }
-            });
-            _this._sharedService.setStatisticGroups(selectedStatGrpObjects);
-            _this.statisticGroups.forEach(function (st) {
-                st.id = st.ID;
-                st.name = st.Name;
-            });
-        }, function (error) { return _this.errorMessage = error; });
-        var regRegionParams = new http_1.URLSearchParams();
-        regRegionParams.set('statisticgroups', statGrpIDstring);
-        regRegionParams.set('regressiontypes', regTypesIDstring);
-        this._regionService.getRegionRegressionRegions(this.selectedRegion.ID, regRegionParams).subscribe(function (rr) {
-            _this.regressionRegions = rr;
-            for (var rri = _this.selectedRegRegion.length; rri--;) {
-                var RRind = rr.map(function (eachrr) { return eachrr.ID; }).indexOf(_this.selectedRegRegion[rri]);
-                if (RRind < 0)
-                    _this.selectedRegRegion.splice(rri, 1);
-            }
-            ;
-            var selectedRegRegObjects = [];
-            _this.regressionRegions.forEach(function (rr) {
-                if (_this.selectedRegRegion.map(function (selRR) { return selRR; }).indexOf(rr.ID) > -1) {
-                    selectedRegRegObjects.push(rr);
-                }
-            });
-            _this._sharedService.setRegRegions(selectedRegRegObjects);
-            _this.regressionRegions.forEach(function (r) {
-                r.id = r.ID;
-                r.name = r.Name;
-            });
-        }, function (error) { return _this.errorMessage = error; });
-        var scenarioParams = new http_1.URLSearchParams();
-        scenarioParams.set('regressionregions', regRegionsIDstring);
-        scenarioParams.set('regressiontypes', regTypesIDstring);
-        scenarioParams.set('statisticgroups', statGrpIDstring);
-        this._regionService.getRegionScenario(this.selectedRegion.ID, scenarioParams).subscribe(function (sc) {
-            sc.forEach(function (s) {
-                var i = s.Links[0].Href.indexOf('?');
-                var param = s.Links[0].Href.substring(i + 1);
-                _this._citationService.getCitations(new http_1.URLSearchParams(param)).subscribe(function (c) {
-                    s.Citations = c;
-                });
-                s.RegressionRegions.forEach(function (rr) {
-                    rr.Parameters.forEach(function (p) {
-                        p.Value = '';
-                    });
-                });
-            });
-            _this._sharedService.setScenarios(sc);
-        });
+        this._nssService.selectedRegressionTypes = selectedRegTypes;
     };
     SidebarComponent.prototype.CalculateScenario = function () {
-        var _this = this;
         var ValueRequired = false;
         this.scenarios.forEach(function (s) {
             s.RegressionRegions.forEach(function (rr) {
@@ -377,8 +194,7 @@ var SidebarComponent = (function () {
                 title: 'Error',
                 body: 'All values are required'
             };
-            this._sharedService.showToast(toast);
-            this._sharedService.setScenarios(this.scenarios);
+            this._nssService.showToast(toast);
         }
         else {
             this.scenarios.forEach(function (s) {
@@ -390,25 +206,14 @@ var SidebarComponent = (function () {
                     });
                 });
             });
-            var regTypesIDstring = this.selectedRegType !== undefined ? this.selectedRegType.join(",") : '';
-            var statGrpIDstring = this.selectedStatGrp !== undefined ? this.selectedStatGrp.join(",") : '';
-            var regRegionsIDstring = this.selectedRegRegion !== undefined ? this.selectedRegRegion.join(",") : '';
+            var regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(",") : '';
+            var statGrpIDstring = this.selectedStatGrpIDs !== undefined ? this.selectedStatGrpIDs.join(",") : '';
+            var regRegionsIDstring = this.selectedRegRegionIDs !== undefined ? this.selectedRegRegionIDs.join(",") : '';
             var sParams = new http_1.URLSearchParams();
             sParams.set('regressionregions', regRegionsIDstring);
             sParams.set('regressiontypes', regTypesIDstring);
             sParams.set('statisticgroups', statGrpIDstring);
-            this._scenarioService.postScenarios(this.selectedRegion.ID, this.scenarios, sParams).subscribe(function (result) {
-                _this.scenarios = result;
-                _this.scenarios.forEach(function (s) {
-                    var i = s.Links[0].Href.indexOf('?');
-                    var param = s.Links[0].Href.substring(i + 1);
-                    _this._citationService.getCitations(new http_1.URLSearchParams(param)).subscribe(function (c) {
-                        s.Citations = c;
-                    });
-                });
-                _this.showChart = true;
-                _this._sharedService.setScenarios(_this.scenarios);
-            });
+            this._nssService.postScenarios(this.selectedRegion.ID, this.scenarios, sParams);
         }
     };
     SidebarComponent.prototype.onPlotChange = function (p) {
@@ -418,13 +223,13 @@ var SidebarComponent = (function () {
         }
         else {
             this.selectedPlot = "Frequency Plot";
-            this._sharedService.setFrequency();
+            this._chartService.setFrequency();
             this.selectedPlot = "";
         }
     };
     SidebarComponent.prototype.getHyrograph = function (h) {
         if (h != undefined) {
-            this._sharedService.setHydrograph(h);
+            this._chartService.setHydrograph(h);
             this.Hydro = { recurrence: null, lagTime: null };
         }
     };
@@ -442,10 +247,8 @@ var SidebarComponent = (function () {
             selector: 'wim-sidebar',
             templateUrl: './sidebar.html'
         }),
-        __param(0, core_1.Inject(regions_service_1.RegionService)),
-        __param(1, core_1.Inject(eventSharing_service_1.SharedService)),
-        __param(2, core_1.Inject(citations_service_1.CitationService)),
-        __param(3, core_1.Inject(scenario_service_1.ScenarioService))
+        __param(0, core_1.Inject(nss_service_1.NSSService)),
+        __param(1, core_1.Inject(chart_service_1.ChartService))
     ], SidebarComponent);
     return SidebarComponent;
 }());

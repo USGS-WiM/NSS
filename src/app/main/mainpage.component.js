@@ -10,21 +10,44 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 var core_1 = require('@angular/core');
 var angular2_toaster_1 = require('angular2-toaster/angular2-toaster');
-var eventSharing_service_1 = require('../services/eventSharing.service');
+var chart_service_1 = require('../services/chart.service');
+var nss_service_1 = require('../services/nss.service');
 var MainPageComponent = (function () {
-    function MainPageComponent(_sharedService, _toasterService) {
-        this._sharedService = _sharedService;
+    function MainPageComponent(_chartService, _toasterService, _nssService) {
+        this._chartService = _chartService;
         this._toasterService = _toasterService;
+        this._nssService = _nssService;
         this.title = "NSS Report";
-        this.selectedRegion = '';
     }
+    Object.defineProperty(MainPageComponent.prototype, "selectedRegion", {
+        get: function () { return this._nssService.selectedRegion; },
+        enumerable: true,
+        configurable: true
+    });
+    ;
+    Object.defineProperty(MainPageComponent.prototype, "selectedRegRegion", {
+        get: function () { return this._nssService.selectedRegRegions; },
+        enumerable: true,
+        configurable: true
+    });
+    ;
+    Object.defineProperty(MainPageComponent.prototype, "selectedStatisticGrp", {
+        get: function () { return this._nssService.selectedStatGroups; },
+        enumerable: true,
+        configurable: true
+    });
+    ;
+    Object.defineProperty(MainPageComponent.prototype, "selectedRegType", {
+        get: function () { return this._nssService.selectedRegressionTypes; },
+        enumerable: true,
+        configurable: true
+    });
+    ;
     MainPageComponent.prototype.buildEquation = function (p, equation) {
         var fullEquation = "";
         var arrayOfparameterValues = [];
         p.forEach(function (P) {
-            var c = '/' + P.Code + '/gi';
-            var v = P.Value;
-            equation = equation.replace(P.Code, "`" + P.Code + "`");
+            equation = equation != "0" ? equation.replace(P.Code, "`" + P.Code + "`") : "";
         });
         fullEquation = "`" + equation + "`";
         return fullEquation;
@@ -42,23 +65,7 @@ var MainPageComponent = (function () {
         var _this = this;
         this.hydroChartsArray = [];
         this.resultsBack = false;
-        this._sharedService.getRegionName().subscribe(function (reg) {
-            _this.selectedRegion = reg;
-            _this.resultsBack = false;
-        });
-        this._sharedService.getRegRegions().subscribe(function (regReg) {
-            _this.regressionRegions = regReg;
-            if (_this.regressionRegions.length > 1)
-                _this.showWeights = true;
-            else
-                _this.showWeights = false;
-            _this.resultsBack = false;
-        });
-        this._sharedService.getStatisticGroups().subscribe(function (statGrp) {
-            _this.statisticGroups = statGrp;
-            _this.resultsBack = false;
-        });
-        this._sharedService.getScenarios().subscribe(function (s) {
+        this._nssService.scenarios.subscribe(function (s) {
             _this.scenarios = s;
             _this.resultsBack = false;
             _this.equationResults = [];
@@ -80,11 +87,11 @@ var MainPageComponent = (function () {
                 });
             });
         });
-        this._sharedService.getToast().subscribe(function (t) {
+        this._nssService.getToast().subscribe(function (t) {
             _this.toast = t;
             _this._toasterService.pop(_this.toast);
         });
-        this._sharedService.getHydrograph().subscribe(function (h) {
+        this._chartService.getHydrograph().subscribe(function (h) {
             _this.hydrograph = h;
             _this.showChartBtn_txt = "Hide";
             _this.showCharts_btn = true;
@@ -113,8 +120,10 @@ var MainPageComponent = (function () {
             });
             _this.hydroChartsArray.push(_this.hChartOptions);
         });
-        this._sharedService.getFrequency().subscribe(function (f) {
+        this._chartService.getFrequency().subscribe(function (f) {
             _this.fChartValues = _this.getFreqData();
+            _this.showChartBtn_txt = "Hide";
+            _this.showCharts_btn = true;
             _this.fChartOptions = {
                 title: { text: 'Frequency Plot' },
                 series: [{
@@ -130,17 +139,16 @@ var MainPageComponent = (function () {
         });
     };
     MainPageComponent.prototype.compareValue = function (value) {
+        var ev = { missingVal: false, OutOfRange: false };
         if (value.Value) {
             if (value.Limits !== undefined) {
                 if (value.Value > value.Limits.Max || value.Value < value.Limits.Min) {
                     value.OutOfRange = true;
                     value.missingVal = false;
-                    this._sharedService.setScenarios(this.scenarios);
                 }
                 else {
                     value.OutOfRange = false;
                     value.missingVal = false;
-                    this._sharedService.setScenarios(this.scenarios);
                 }
             }
             else {
@@ -151,7 +159,6 @@ var MainPageComponent = (function () {
         else {
             value.OutOfRange = false;
             value.missingVal = false;
-            this._sharedService.setScenarios(this.scenarios);
         }
     };
     MainPageComponent.prototype.removeHydroChart = function (ind) {
@@ -181,8 +188,9 @@ var MainPageComponent = (function () {
             styleUrls: ['./mainpage.css'],
             templateUrl: './mainpage.html'
         }),
-        __param(0, core_1.Inject(eventSharing_service_1.SharedService)),
-        __param(1, core_1.Inject(angular2_toaster_1.ToasterService))
+        __param(0, core_1.Inject(chart_service_1.ChartService)),
+        __param(1, core_1.Inject(angular2_toaster_1.ToasterService)),
+        __param(2, core_1.Inject(nss_service_1.NSSService))
     ], MainPageComponent);
     return MainPageComponent;
 }());

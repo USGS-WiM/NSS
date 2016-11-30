@@ -51,12 +51,9 @@
     <TypeScriptCompile Include="src\app\app.component.ts" />
     <TypeScriptCompile Include="src\app\main\mainpage.component.ts" />
     <TypeScriptCompile Include="src\app\navbar\navbar.component.ts" />
-    <TypeScriptCompile Include="src\app\services\scenario.service.ts" />
-    <TypeScriptCompile Include="src\app\services\statisticgrp.service.ts" />
-    <TypeScriptCompile Include="src\app\services\citations.service.ts" />
-    <TypeScriptCompile Include="src\app\services\eventSharing.service.ts" />
-    <TypeScriptCompile Include="src\app\services\regions.service.ts" />
-    <TypeScriptCompile Include="src\app\services\nss_services.ts" />
+    <TypeScriptCompile Include="src\app\services\chart.service.ts" />
+    <TypeScriptCompile Include="src\app\services\nss.service.ts" />
+    <TypeScriptCompile Include="src\app\shared\errorValues.ts" />
     <TypeScriptCompile Include="src\app\shared\hydroChart.ts" />
     <TypeScriptCompile Include="src\app\shared\equationResult.ts" />
     <TypeScriptCompile Include="src\app\shared\mathjax.directive.ts" />

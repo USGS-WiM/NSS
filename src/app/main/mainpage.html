@@ -8,24 +8,24 @@
    
     <div *ngIf="selectedRegion">       
        <label>Region:</label>
-       <div>{{selectedRegion}}</div>        
+       <div>{{selectedRegion.Name}}</div>        
     </div>   
     
     <br/>
 
-    <div *ngIf="regressionRegions">
+    <div *ngIf="selectedRegRegion">
         <label>Regression Region(s):</label>
         <div>
-            <span *ngFor="let rr of regressionRegions;let isLast=last">{{rr.Name}}{{isLast ? "" : ", "}}</span>
+            <span *ngFor="let rr of selectedRegRegion;let isLast=last">{{rr.Name}}{{isLast ? "" : ", "}}</span>
         </div>
     </div>
 
     <br />
 
-    <div *ngIf="statisticGroups">
+    <div *ngIf="selectedStatisticGrp">
         <label>Statistic Group(s):</label>
         <div>
-            <span *ngFor="let st of statisticGroups;let isLast=last">{{st.Name}}{{isLast ? "" : ", "}}</span>
+            <span *ngFor="let st of selectedStatisticGrp;let isLast=last">{{st.Name}}{{isLast ? "" : ", "}}</span>
         </div>
     </div>
 
@@ -34,6 +34,7 @@
     <div *ngIf="scenarios && !resultsBack">
         <label>Equation Variables</label>
         <br/>
+        <div *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</div>
         <form #scenarioForm="ngForm"><!-- (ngSubmit)="onSubmit()">-->
             <div class="col-md-11" *ngFor="let sc of scenarios">
                 <h3>--- {{sc.StatisticGroupName}} ---</h3>
@@ -100,7 +101,7 @@
                                     <th class="col-md-6"></th>
                                     <th>Value</th>                                    
                                     <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Predicted Interval</th>
-                                    <th>Prediction</th>
+                                    <th *ngIf="rr.Results[0].Errors">Prediction</th>
                                     <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent</th>
                                 </tr>
                                 <tr>
@@ -108,7 +109,7 @@
                                     <th>{{rr.Results[0].Unit.Abbr}}</th>                                    
                                     <th *ngIf="rr.Results[0].IntervalBounds">Low</th>
                                     <th *ngIf="rr.Results[0].IntervalBounds">High</th>
-                                    <th>Error, %</th>
+                                    <th *ngIf="rr.Results[0].Errors">Error, %</th>
                                     <th *ngIf="rr.Results[0].EquivalentYears>0">Years</th>
                                 </tr>
                             </thead>
@@ -119,8 +120,8 @@
                                     
                                     <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined ? (result.IntervalBounds.Lower | number:'2.1-3') : '---'}}</td>
                                     <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined ? (result.IntervalBounds.Upper | number:'2.1-3') : '---'}}</td>
-                                    <td *ngIf="result.Errors">{{result.Errors[0].Value}}</td>
-                                    <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears}}</td>
+                                    <td *ngIf="result.Errors">{{result.Errors.length > 0 ? result.Errors[0].Value : '---'}}</td>
+                                    <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears > 0 ? result.EquivalentYears : '---'}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -178,8 +179,9 @@
                 </div>
             </div>
         </div>
+
         <div *ngIf="fChartOptions">
-            <div *ngIf="hydroChartsArray.length == 0">
+            <div *ngIf="hydroChartsArray.length == 0"><!-- show show/hide button only if there are no hydrographs above it (because that has the button also)-->
                 <h2 style="display:inline-block;margin-right:42px;">Charts</h2>
                 <button style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
             </div>

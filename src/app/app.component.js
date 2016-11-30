@@ -9,7 +9,7 @@ var core_1 = require('@angular/core');
 var mainpage_component_1 = require('./main/mainpage.component');
 var sidebar_component_1 = require('./sidebar/sidebar.component');
 var navbar_component_1 = require('./navbar/navbar.component');
-var eventSharing_service_1 = require('./services/eventSharing.service');
+var chart_service_1 = require('./services/chart.service');
 var AppComponent = (function () {
     function AppComponent() {
         this.title = 'NSS';
@@ -28,7 +28,7 @@ var AppComponent = (function () {
             moduleId: module.id,
             selector: 'my-app',
             templateUrl: './app.html',
-            providers: [eventSharing_service_1.SharedService]
+            providers: [chart_service_1.ChartService]
         })
     ], AppComponent);
     return AppComponent;

@@ -16,15 +16,15 @@ import { NavbarComponent }          from './navbar/navbar.component';
 import { MainPageComponent }        from './main/mainpage.component';
 import { SidebarComponent }         from './sidebar/sidebar.component';
 //services
-import {RegionService }             from './services/regions.service';
-import {CitationService }           from './services/citations.service';
-import {ScenarioService}            from './services/scenario.service';
-import {SharedService }             from './services/eventSharing.service';
+import { NSSService }             from './services/nss.service';
+//import {CitationService }           from './services/citations.service';
+//import {ScenarioService}            from './services/scenario.service';
+import {ChartService }             from './services/chart.service';
 
 @NgModule({
     imports: [BrowserModule, HttpModule, FormsModule, RouterModule, MultiselectDropdownModule, ToasterModule, ChartModule, Ng2PageScrollModule.forRoot()],    
     declarations: [AppComponent, NavbarComponent, MainPageComponent, SidebarComponent, MathJaxDirective],
     bootstrap: [AppComponent],
-    providers: [RegionService, CitationService, ScenarioService, SharedService]
+    providers: [NSSService, ChartService]
 })
 export class AppModule { }

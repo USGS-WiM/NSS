@@ -5,14 +5,18 @@ import {ToasterContainerComponent,
     ToasterService }                    from 'angular2-toaster/angular2-toaster';
 import {Toast }                         from 'angular2-toaster/lib/toast';
 
-import { SharedService }                from '../services/eventSharing.service';
+import { ChartService }                 from '../services/chart.service';
+import { NSSService }                   from '../services/nss.service';
 import { IRegressionRegion }            from '../shared/regressionRegion';
+import { IRegressionType }              from '../shared/regressionType';
+import { IRegion }                      from '../shared/region';
 import { IScenarioRegressionRegion }    from '../shared/scenarioRegressionRegion';
 import { IStatisticGroup }              from '../shared/statisticGroup';
 import { IScenario }                    from '../shared/scenario';
 import { IParameter }                   from '../shared/parameter';
 import { IEquationResult }              from '../shared/equationResult';
 import { IHydro }                       from '../shared/hydroChart';
+import { IErrorValue }                  from '../shared/errorValues';
 
 declare var MathJax: {
     Hub: { Queue: (param: Object[]) => void; }
@@ -27,10 +31,13 @@ declare var MathJax: {
 
 export class MainPageComponent  {
     title: string = "NSS Report";
-    selectedRegion: string = '';
-    regressionRegions: IRegressionRegion[]; //for multiselect
-    statisticGroups: IStatisticGroup[];     //for multiselect
+    public get selectedRegion(): IRegion { return this._nssService.selectedRegion; };
+    public get selectedRegRegion(): Array<IRegressionRegion> { return this._nssService.selectedRegRegions; };
+    public get selectedStatisticGrp(): Array<IStatisticGroup> { return this._nssService.selectedStatGroups; };
+    public get selectedRegType(): Array<IRegressionType> { return this._nssService.selectedRegressionTypes; };
+    
     scenarios: IScenario[];                 //after each region/regRegion/statGrp/regType is chosen, get scenario
+   // ErrorValues: IErrorValue;               //are there missing values or out of range
     toast: Toast;                           //notification when values are required
     resultsBack: boolean;                   //flag that swaps content on mainpage from scenarios w/o results to those with results
     showWeights: boolean;                   //if more than 1 regRegion, then show input for weighted
@@ -45,15 +52,17 @@ export class MainPageComponent  {
     equationResults: IEquationResult[];     //used in Appendix
     showCharts_btn: boolean;                //toggle button boolean
     showChartBtn_txt: string;               //string "show" / "hide"
-    constructor( @Inject(SharedService) private _sharedService: SharedService, @Inject(ToasterService) private _toasterService: ToasterService) { }
+    constructor( @Inject(ChartService) private _chartService: ChartService,
+        @Inject(ToasterService) private _toasterService: ToasterService,
+        @Inject(NSSService) private _nssService: NSSService) { }
+    
 
     //add backticks around parameter code to escape in equation
     buildEquation(p: IParameter[], equation: string): string {
         let fullEquation: string = "";
         let arrayOfparameterValues = [];
         p.forEach((P) => {
-            var c = '/' + P.Code + '/gi'; var v = P.Value
-            equation = equation.replace(P.Code, "`"+ P.Code+"`");
+            equation = equation != "0" ? equation.replace(P.Code, "`" + P.Code + "`") : "";
         });
         fullEquation = "`" + equation + "`";
         return fullEquation;
@@ -70,23 +79,8 @@ export class MainPageComponent  {
     ngOnInit(): any {
         this.hydroChartsArray = []; //instantiate
         this.resultsBack = false;
-        // Will fire everytime other component use the setter
-        this._sharedService.getRegionName().subscribe((reg: string) => {
-            this.selectedRegion = reg;
-            this.resultsBack = false;
-        });
-        this._sharedService.getRegRegions().subscribe((regReg: IRegressionRegion[]) => {
-            this.regressionRegions = regReg;
-            //more than 1 chosen- show weighted percent input
-            if (this.regressionRegions.length > 1) this.showWeights = true;
-            else this.showWeights = false;
-
-            this.resultsBack = false;
-        });
-        this._sharedService.getStatisticGroups().subscribe((statGrp: IStatisticGroup[]) => {
-            this.statisticGroups = statGrp; this.resultsBack = false;
-        });
-        this._sharedService.getScenarios().subscribe((s: IScenario[]) => {
+       
+        this._nssService.scenarios.subscribe((s: Array<IScenario>) => {
             this.scenarios = s; this.resultsBack = false; this.equationResults = [];
             this.scenarios.forEach((s) => {
                 s.RegressionRegions.forEach((rr) => {
@@ -104,11 +98,11 @@ export class MainPageComponent  {
                 });
             });            
         });
-        this._sharedService.getToast().subscribe((t: Toast) => {
+        this._nssService.getToast().subscribe((t: Toast) => {
             this.toast = t;
             this._toasterService.pop(this.toast);
         });
-        this._sharedService.getHydrograph().subscribe((h: IHydro) => {
+        this._chartService.getHydrograph().subscribe((h: IHydro) => {
             this.hydrograph = h;
             this.showChartBtn_txt = "Hide"; this.showCharts_btn = true;
             this.scenarios.forEach((s) => {
@@ -139,8 +133,9 @@ export class MainPageComponent  {
             });
             this.hydroChartsArray.push(this.hChartOptions);
         });
-        this._sharedService.getFrequency().subscribe((f: string) => {
+        this._chartService.getFrequency().subscribe((f: string) => {
             this.fChartValues = this.getFreqData();
+            this.showChartBtn_txt = "Hide"; this.showCharts_btn = true;
             this.fChartOptions = {
                 title: { text: 'Frequency Plot' },
                 series: [{
@@ -157,32 +152,31 @@ export class MainPageComponent  {
         });
     }
    
-
     //onBlur of Value, compare to min/max and show warning
     compareValue(value: IParameter) {
         //is there a value or just click in and then out (would be "")
-        if (value.Value) {
+        let ev: IErrorValue = { missingVal: false, OutOfRange: false }; 
+        if (value.Value) {                       
             //is value outside of range (if ther is limit range)
             if (value.Limits !== undefined) {
                 if (value.Value > value.Limits.Max || value.Value < value.Limits.Min) {
                     value.OutOfRange = true; //flag it so
                     value.missingVal = false;//remove the missingVal flag (since there is something in here)
-                    this._sharedService.setScenarios(this.scenarios); //update service so sidebar knows
                 } else {
                     //value is within proper range (no warning, has a value)
                     value.OutOfRange = false; //within range
                     value.missingVal = false;//field is not empty
-                    this._sharedService.setScenarios(this.scenarios);//update service so sidebar knows
                 }
             } //end limits are not undefined
             else {
                 value.OutOfRange = false; //within range
                 value.missingVal = false;//field is not empty
             }
+           // this._regionService.errorValues = ev;
         } else {
             value.OutOfRange = false; //no need to check range
-            value.missingVal = false; //field is empty, but we don't care until they hit submit on sidebar
-            this._sharedService.setScenarios(this.scenarios);//update service so sidebar knows
+            value.missingVal = false;//field is empty, but we don't care until they hit submit on sidebar
+          //  this._regionService.errorValues = ev;
         }
     }
 

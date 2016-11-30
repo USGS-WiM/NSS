@@ -19,10 +19,8 @@ var app_component_1 = require('./app.component');
 var navbar_component_1 = require('./navbar/navbar.component');
 var mainpage_component_1 = require('./main/mainpage.component');
 var sidebar_component_1 = require('./sidebar/sidebar.component');
-var regions_service_1 = require('./services/regions.service');
-var citations_service_1 = require('./services/citations.service');
-var scenario_service_1 = require('./services/scenario.service');
-var eventSharing_service_1 = require('./services/eventSharing.service');
+var nss_service_1 = require('./services/nss.service');
+var chart_service_1 = require('./services/chart.service');
 var AppModule = (function () {
     function AppModule() {
     }
@@ -31,7 +29,7 @@ var AppModule = (function () {
             imports: [platform_browser_1.BrowserModule, http_1.HttpModule, forms_1.FormsModule, router_1.RouterModule, multiselect_dropdown_1.MultiselectDropdownModule, angular2_toaster_1.ToasterModule, angular2_highcharts_1.ChartModule, ng2_page_scroll_1.Ng2PageScrollModule.forRoot()],
             declarations: [app_component_1.AppComponent, navbar_component_1.NavbarComponent, mainpage_component_1.MainPageComponent, sidebar_component_1.SidebarComponent, mathjax_directive_1.MathJaxDirective],
             bootstrap: [app_component_1.AppComponent],
-            providers: [regions_service_1.RegionService, citations_service_1.CitationService, scenario_service_1.ScenarioService, eventSharing_service_1.SharedService]
+            providers: [nss_service_1.NSSService, chart_service_1.ChartService]
         })
     ], AppModule);
     return AppModule;

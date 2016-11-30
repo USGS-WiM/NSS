@@ -32,4 +32,4 @@ var ChartService = (function () {
     return ChartService;
 }());
 exports.ChartService = ChartService;
-//# sourceMappingURL=eventSharing.service.js.map
+//# sourceMappingURL=chart.service.js.map

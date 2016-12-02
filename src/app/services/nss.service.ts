@@ -3,6 +3,7 @@ import { Injectable, Inject } from '@angular/core';
 import {Http, Response, Headers, RequestOptions, URLSearchParams} from '@angular/http';
 import { Observable }           from 'rxjs/Observable';
 import { Subject }              from 'rxjs/Subject';
+import { BehaviorSubject }      from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
@@ -23,9 +24,10 @@ export class NSSService {
     private _regTypeIdParams: string;
     private _statGrpIdParams: string;
 
-    private toast: Toast;
-    private toastBind: Subject<Toast> = new Subject<Toast>();
+
     // -+-+-+-+-+-+-+-+-+ toaster  getter/setter  -+-+-+-+-+-+-+-+-+
+    private toast: Toast;
+    private toastBind: Subject<Toast> = new Subject<Toast>();    
     showToast(t: Toast) {
         this.toast = t;
         this.toastBind.next(t);
@@ -34,6 +36,15 @@ export class NSSService {
         return this.toastBind.asObservable();
     }
 
+    // -+-+-+-+-+-+-+-+-+ Chart  -+-+-+-+-+-+-+-+-+
+    private chartBind: Subject<string> = new Subject<string>();
+    addChart(c: string) {
+        this.chartBind.next(c);
+    }
+    getChart():Observable<string> {
+        return this.chartBind.asObservable();
+    }
+    
     private _regionSubject: Subject<Array<IRegion>> = new Subject<Array<IRegion>>(); //array of regions that sidebar and mainview use
     private _selectedRegion: IRegion; //selectedregion 
 
@@ -49,6 +60,7 @@ export class NSSService {
         this._selectedRegRegions = [];
         this._selectedStatGroups = [];
         this._selectedRegressionTypes = [];
+        this.chartBind.next("");
         //go get all the other stuff (regressionregions, regressiontypes,statisticgroups and scenarios
         this.initializeRegion();
     };
@@ -66,6 +78,7 @@ export class NSSService {
     private _selectedRegRegions: Array<IRegressionRegion>;   
     //setter (selectedRegion)
     public set selectedRegRegions(v: Array<IRegressionRegion>) {
+        this.chartBind.next("");
         if (v.length > 0) {
             this._selectedRegRegions = v;
             let srr: Array<number> = [];
@@ -124,6 +137,7 @@ export class NSSService {
     private _selectedStatGroups: Array<IStatisticGroup>;
     //setter (selectedStatisticgroup)
     public set selectedStatGroups(v: Array<IStatisticGroup>) {
+        this.chartBind.next("");
         if (v.length > 0) {
             this._selectedStatGroups = v;
             let ssg: Array<number> = [];
@@ -182,6 +196,7 @@ export class NSSService {
     }
     //setter (selectedRegressionType)
     public set selectedRegressionTypes(v: Array<IRegressionType>) {
+        this.chartBind.next("");
         if (v.length > 0) {
             this._selectedRegressionTypes = v;
             let srt: Array<number> = [];

@@ -216,22 +216,9 @@ var SidebarComponent = (function () {
             this._nssService.postScenarios(this.selectedRegion.ID, this.scenarios, sParams);
         }
     };
-    SidebarComponent.prototype.onPlotChange = function (p) {
-        if (p == "Hydrograph") {
-            this.selectedPlot = "Hydrograph";
-            this.Hydro = { recurrence: null, lagTime: null };
-        }
-        else {
-            this.selectedPlot = "Frequency Plot";
-            this._chartService.setFrequency();
-            this.selectedPlot = "";
-        }
-    };
-    SidebarComponent.prototype.getHyrograph = function (h) {
-        if (h != undefined) {
-            this._chartService.setHydrograph(h);
-            this.Hydro = { recurrence: null, lagTime: null };
-        }
+    SidebarComponent.prototype.selectChart = function (p) {
+        this._nssService.addChart(p);
+        this.selectedPlot = "";
     };
     SidebarComponent.prototype._keyPress = function (event) {
         var pattern = /[0-9\+\-\.\ ]/;

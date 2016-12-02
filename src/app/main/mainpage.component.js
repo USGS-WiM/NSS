@@ -9,14 +9,18 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var core_1 = require('@angular/core');
+var platform_browser_1 = require('@angular/platform-browser');
 var angular2_toaster_1 = require('angular2-toaster/angular2-toaster');
+var ng2_page_scroll_1 = require('ng2-page-scroll');
 var chart_service_1 = require('../services/chart.service');
 var nss_service_1 = require('../services/nss.service');
 var MainPageComponent = (function () {
-    function MainPageComponent(_chartService, _toasterService, _nssService) {
+    function MainPageComponent(_chartService, _toasterService, _nssService, pageScrollService, document) {
         this._chartService = _chartService;
         this._toasterService = _toasterService;
         this._nssService = _nssService;
+        this.pageScrollService = pageScrollService;
+        this.document = document;
         this.title = "NSS Report";
     }
     Object.defineProperty(MainPageComponent.prototype, "selectedRegion", {
@@ -63,7 +67,9 @@ var MainPageComponent = (function () {
     };
     MainPageComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this.charts = [];
         this.hydroChartsArray = [];
+        this.hydrographs = [];
         this.resultsBack = false;
         this._nssService.scenarios.subscribe(function (s) {
             _this.scenarios = s;
@@ -91,55 +97,87 @@ var MainPageComponent = (function () {
             _this.toast = t;
             _this._toasterService.pop(_this.toast);
         });
-        this._chartService.getHydrograph().subscribe(function (h) {
-            _this.hydrograph = h;
-            _this.showChartBtn_txt = "Hide";
-            _this.showCharts_btn = true;
-            _this.scenarios.forEach(function (s) {
-                s.RegressionRegions.forEach(function (rr) {
-                    if (rr.Results) {
-                        _this.hChartValues = _this.getHydroData();
-                        _this.hChartXAxisValues = [];
-                        rr.Results.forEach(function (R) {
-                            _this.hChartXAxisValues.push(R.code);
-                        });
-                        _this.hChartOptions = {
-                            title: { text: 'Hydrograph (Recurrence Interval: ' + _this.hydrograph.recurrence + ')' },
-                            series: [{
-                                    data: _this.hChartValues
-                                }],
-                            xAxis: {
-                                title: { text: 'Time (hours)<br/>Hydrograph for ' + _this.hydrograph.lagTime + '-yr interval<br/>NOTE: May not represent actual hydrograph' },
-                            },
-                            yAxis: {
-                                title: { text: 'Discharge (cubic meters per second)' }
-                            }
-                        };
-                    }
+        this._nssService.getChart().subscribe(function (c) {
+            var pageScrollInstance = ng2_page_scroll_1.PageScrollInstance.simpleInstance(_this.document, '#chart');
+            _this.pageScrollService.start(pageScrollInstance);
+            if (c == "Hydrograph") {
+                _this.selectedPlot = "Hydrograph";
+                _this.hydrograph = { recurrence: null, lagTime: null };
+                _this.showChartBtn_txt = "Hide";
+                _this.showCharts_btn = true;
+                _this.scenarios.forEach(function (s) {
+                    s.RegressionRegions.forEach(function (rr) {
+                        if (rr.Results) {
+                            _this.hChartValues = _this.getHydroData();
+                            _this.hChartXAxisValues = [];
+                            rr.Results.forEach(function (R) {
+                                _this.hChartXAxisValues.push(R.code);
+                            });
+                        }
+                    });
                 });
-            });
-            _this.hydroChartsArray.push(_this.hChartOptions);
-        });
-        this._chartService.getFrequency().subscribe(function (f) {
-            _this.fChartValues = _this.getFreqData();
-            _this.showChartBtn_txt = "Hide";
-            _this.showCharts_btn = true;
-            _this.fChartOptions = {
-                title: { text: 'Frequency Plot' },
-                series: [{
-                        data: _this.fChartValues
-                    }],
-                xAxis: {
-                    title: { text: 'Recurrence Interval, in years<br/>Flood Frequency Plot' },
-                },
-                yAxis: {
-                    title: { text: 'Peak Discharge, In cubic meters per second' }
-                }
-            };
+                _this.hydrograph.recurrence = _this.hChartXAxisValues[0];
+                _this.hydrograph.lagTime = 1;
+                _this.hChartOptions = {
+                    title: { text: 'Hydrograph (Recurrence Interval: ' + _this.hydrograph.recurrence + ')' },
+                    series: [{
+                            data: _this.hChartValues
+                        }],
+                    xAxis: {
+                        title: { text: 'Time (hours)<br/>Hydrograph for ' + _this.hydrograph.lagTime + '-yr interval<br/>NOTE: May not represent actual hydrograph' },
+                    },
+                    yAxis: {
+                        title: { text: 'Discharge (cubic meters per second)' }
+                    }
+                };
+                _this.hydroChartsArray.push(_this.hChartOptions);
+                _this.hydrographs.push(_this.hydrograph);
+            }
+            else if (c == "Frequency Plot") {
+                var freq = "yep";
+                _this.fChartValues = _this.getFreqData();
+                _this.showChartBtn_txt = "Hide";
+                _this.showCharts_btn = true;
+                _this.fChartOptions = {
+                    title: { text: 'Frequency Plot' },
+                    series: [{
+                            data: _this.fChartValues
+                        }],
+                    xAxis: {
+                        title: { text: 'Recurrence Interval, in years<br/>Flood Frequency Plot' },
+                    },
+                    yAxis: {
+                        title: { text: 'Peak Discharge, In cubic meters per second' }
+                    }
+                };
+            }
+            else {
+                _this.selectedPlot = undefined;
+                _this.hChartValues = undefined;
+                _this.showCharts_btn = false;
+                _this.hydrograph = undefined;
+                _this.hChartOptions = undefined;
+                _this.hydroChartsArray = [];
+                _this.hydrographs = [];
+            }
         });
     };
+    MainPageComponent.prototype.saveInstance = function (chartInst) {
+        this.charts.push(chartInst);
+    };
+    ;
+    MainPageComponent.prototype.refreshHydrograph = function (i) {
+        var hchartOpt = this.hydroChartsArray[i];
+        var h = this.hydrographs[i];
+        hchartOpt.title.text = 'Hydrograph (Recurrence Interval: ' + h.recurrence + ')';
+        hchartOpt.xAxis.title.text = 'Time (hours)<br/>Hydrograph for ' + h.lagTime + '-yr interval<br/>NOTE: May not represent actual hydrograph';
+        this.hydroChartsArray[i] = hchartOpt;
+        this.charts[i].setTitle({ text: hchartOpt.title.text });
+        this.charts[i].xAxis[0].setTitle({ text: hchartOpt.xAxis.title.text });
+        this.charts[i].series[0].setData(this.getFreqData());
+        this.hydrographs[i] = { recurrence: null, lagTime: null };
+    };
     MainPageComponent.prototype.compareValue = function (value) {
-        var ev = { missingVal: false, OutOfRange: false };
         if (value.Value) {
             if (value.Limits !== undefined) {
                 if (value.Value > value.Limits.Max || value.Value < value.Limits.Min) {
@@ -163,6 +201,8 @@ var MainPageComponent = (function () {
     };
     MainPageComponent.prototype.removeHydroChart = function (ind) {
         this.hydroChartsArray.splice(ind, 1);
+        this.charts.splice(ind, 1);
+        this.hydrographs.splice(ind, 1);
     };
     MainPageComponent.prototype.removeFreqChart = function () {
         this.fChartOptions = null;
@@ -190,7 +230,9 @@ var MainPageComponent = (function () {
         }),
         __param(0, core_1.Inject(chart_service_1.ChartService)),
         __param(1, core_1.Inject(angular2_toaster_1.ToasterService)),
-        __param(2, core_1.Inject(nss_service_1.NSSService))
+        __param(2, core_1.Inject(nss_service_1.NSSService)),
+        __param(3, core_1.Inject(ng2_page_scroll_1.PageScrollService)),
+        __param(4, core_1.Inject(platform_browser_1.DOCUMENT))
     ], MainPageComponent);
     return MainPageComponent;
 }());

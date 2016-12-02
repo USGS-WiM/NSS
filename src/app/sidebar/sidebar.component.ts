@@ -61,8 +61,8 @@ export class SidebarComponent implements OnInit {
     public plotTypes: Array<string> = ["Frequency Plot", "Hydrograph"]; //Hydrograph, Frequency Plot
     public recurrences: Array<number> = [2, 5, 10, 25, 50, 100, 200, 500]; // PKs
     public selectedPlot: string;
-    public Hydro: IHydro;
-    public showChart: boolean;
+    //public Hydro: IHydro;
+    public showChart: boolean; //show the Chart: Sidebar option
 
     //multiSelects
     //    regression regions
@@ -272,32 +272,17 @@ export class SidebarComponent implements OnInit {
             sParams.set('regressionregions', regRegionsIDstring);
             sParams.set('regressiontypes', regTypesIDstring);
             sParams.set('statisticgroups', statGrpIDstring);
-            this._nssService.postScenarios(this.selectedRegion.ID, this.scenarios, sParams);
-            //this._regionService.postScenarios(this.selectedRegion.ID, this.scenarios, sParams).subscribe(result => {
-            //    this.scenarios = result;                            
-            //});
+            this._nssService.postScenarios(this.selectedRegion.ID, this.scenarios, sParams);           
         }
     }
 
-    //want to see a chart (which one?)
-    public onPlotChange(p:any): void {
-        if (p == "Hydrograph") {
-            this.selectedPlot = "Hydrograph";
-            this.Hydro = { recurrence: null, lagTime: null };
-        }
-        else {
-            this.selectedPlot = "Frequency Plot";
-            this._chartService.setFrequency();
-            this.selectedPlot = "";
-        }
+    //want to see a chart (which one?) ---- may delete, trying it on (ngModelChange)=" of select
+    public selectChart(p: any): void {
+        this._nssService.addChart(p);
+        this.selectedPlot = "";
     }
 
-    public getHyrograph(h: IHydro): void {
-        if (h != undefined) {
-            this._chartService.setHydrograph(h);
-            this.Hydro = { recurrence: null, lagTime: null };
-        }
-    }
+    
 
     //number only allowed in Value
     _keyPress(event: any) {

@@ -17,8 +17,6 @@ import { MainPageComponent }        from './main/mainpage.component';
 import { SidebarComponent }         from './sidebar/sidebar.component';
 //services
 import { NSSService }             from './services/nss.service';
-//import {CitationService }           from './services/citations.service';
-//import {ScenarioService}            from './services/scenario.service';
 import {ChartService }             from './services/chart.service';
 
 @NgModule({

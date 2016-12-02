@@ -1,4 +1,4 @@
 ﻿export interface IHydro {
-    recurrence: number;
+    recurrence: string;
     lagTime: number;
 }

@@ -53,6 +53,7 @@
     <TypeScriptCompile Include="src\app\navbar\navbar.component.ts" />
     <TypeScriptCompile Include="src\app\services\chart.service.ts" />
     <TypeScriptCompile Include="src\app\services\nss.service.ts" />
+    <TypeScriptCompile Include="src\app\shared\chart.ts" />
     <TypeScriptCompile Include="src\app\shared\errorValues.ts" />
     <TypeScriptCompile Include="src\app\shared\hydroChart.ts" />
     <TypeScriptCompile Include="src\app\shared\equationResult.ts" />

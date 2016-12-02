@@ -20,6 +20,7 @@ var NSSService = (function () {
     function NSSService(_http) {
         this._http = _http;
         this.toastBind = new Subject_1.Subject();
+        this.chartBind = new Subject_1.Subject();
         this._regionSubject = new Subject_1.Subject();
         this._regressionRegionSubject = new Subject_1.Subject();
         this._statisticGroupSubject = new Subject_1.Subject();
@@ -33,6 +34,12 @@ var NSSService = (function () {
     };
     NSSService.prototype.getToast = function () {
         return this.toastBind.asObservable();
+    };
+    NSSService.prototype.addChart = function (c) {
+        this.chartBind.next(c);
+    };
+    NSSService.prototype.getChart = function () {
+        return this.chartBind.asObservable();
     };
     Object.defineProperty(NSSService.prototype, "regions", {
         get: function () {
@@ -52,6 +59,7 @@ var NSSService = (function () {
             this._selectedRegRegions = [];
             this._selectedStatGroups = [];
             this._selectedRegressionTypes = [];
+            this.chartBind.next("");
             this.initializeRegion();
         },
         enumerable: true,
@@ -71,6 +79,7 @@ var NSSService = (function () {
             return this._selectedRegRegions;
         },
         set: function (v) {
+            this.chartBind.next("");
             if (v.length > 0) {
                 this._selectedRegRegions = v;
                 var srr_1 = [];
@@ -123,6 +132,7 @@ var NSSService = (function () {
             return this._selectedStatGroups;
         },
         set: function (v) {
+            this.chartBind.next("");
             if (v.length > 0) {
                 this._selectedStatGroups = v;
                 var ssg_1 = [];
@@ -175,6 +185,7 @@ var NSSService = (function () {
             return this._selectedRegressionTypes;
         },
         set: function (v) {
+            this.chartBind.next("");
             if (v.length > 0) {
                 this._selectedRegressionTypes = v;
                 var srt_1 = [];

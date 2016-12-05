@@ -11,5 +11,6 @@ export interface IParameter {
     Limits: ILimit;
     OutOfRange?: boolean;
     missingVal?: boolean;
+    seeDescription?: boolean;
 }
 

@@ -76,6 +76,7 @@ var MainPageComponent = (function () {
             _this.resultsBack = false;
             _this.equationResults = [];
             _this.scenarios.forEach(function (s) {
+                _this.showWeights = s.RegressionRegions.length > 1 ? true : false;
                 s.RegressionRegions.forEach(function (rr) {
                     if (rr.Results) {
                         var eqResult_1 = { Name: "", Formulas: [] };
@@ -98,8 +99,10 @@ var MainPageComponent = (function () {
             _this._toasterService.pop(_this.toast);
         });
         this._nssService.getChart().subscribe(function (c) {
-            var pageScrollInstance = ng2_page_scroll_1.PageScrollInstance.simpleInstance(_this.document, '#chart');
-            _this.pageScrollService.start(pageScrollInstance);
+            if (c !== "") {
+                var pageScrollInstance = ng2_page_scroll_1.PageScrollInstance.simpleInstance(_this.document, '#chart');
+                _this.pageScrollService.start(pageScrollInstance);
+            }
             if (c == "Hydrograph") {
                 _this.selectedPlot = "Hydrograph";
                 _this.hydrograph = { recurrence: null, lagTime: null };
@@ -213,6 +216,9 @@ var MainPageComponent = (function () {
         if (!pattern.test(inputChar)) {
             event.preventDefault();
         }
+    };
+    MainPageComponent.prototype.showDescription = function (p, scenIndex, regIndex, paramIndex) {
+        this.scenarios[scenIndex].RegressionRegions[regIndex].Parameters[paramIndex].seeDescription = !this.scenarios[scenIndex].RegressionRegions[regIndex].Parameters[paramIndex].seeDescription;
     };
     MainPageComponent.prototype.showHideCharts = function () {
         this.showCharts_btn = !this.showCharts_btn;

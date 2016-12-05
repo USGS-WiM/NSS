@@ -58,7 +58,7 @@ export class SidebarComponent implements OnInit {
     public citations: Array<ICitation>;
     public scenarios: Array<IScenario>;
     public showWeights: boolean;
-    public plotTypes: Array<string> = ["Frequency Plot", "Hydrograph"]; //Hydrograph, Frequency Plot
+    public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; //Hydrograph, Frequency Plot
     public recurrences: Array<number> = [2, 5, 10, 25, 50, 100, 200, 500]; // PKs
     public selectedPlot: string;
     //public Hydro: IHydro;
@@ -90,9 +90,8 @@ export class SidebarComponent implements OnInit {
     ) { }
     ngOnInit(): void {
         //populate this.regions with the regions from the service               
-        this.doShow = true; 
-       // this.plotTypes = ["Frequency Plot", "Hydrograph"];
-       // this.recurrences = [2, 5, 10, 25, 50, 100, 200, 500];
+        this.doShow = true;
+        this.selectedPlot = "";   
         this._nssService.regions.subscribe((regions: Array<IRegion>) => { this.regions = regions; });
 
         this._nssService.regressionRegions.subscribe((rr: Array<IRegressionRegion>) => {
@@ -260,6 +259,7 @@ export class SidebarComponent implements OnInit {
                     rr.Parameters.forEach((p) => {
                         delete p.OutOfRange;
                         delete p.missingVal;
+                        delete p.seeDescription;
                     });
                 });
             });
@@ -277,12 +277,13 @@ export class SidebarComponent implements OnInit {
     }
 
     //want to see a chart (which one?) ---- may delete, trying it on (ngModelChange)=" of select
-    public selectChart(p: any): void {
-        this._nssService.addChart(p);
-        this.selectedPlot = "";
-    }
-
-    
+    public selectChart(p: string): void {
+        if (p !== "") {
+            this.selectedPlot = p;
+            this.selectedPlot = undefined;
+            this._nssService.addChart(p);
+        }
+    }   
 
     //number only allowed in Value
     _keyPress(event: any) {

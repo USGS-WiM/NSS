@@ -31,15 +31,16 @@
 
     <br />
 
+    <!-- scenarios && !resultsBack-->
     <div *ngIf="scenarios && !resultsBack">
         <label>Equation Variables</label>
         <br/>
         <div *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</div>
         <form #scenarioForm="ngForm"><!-- (ngSubmit)="onSubmit()">-->
-            <div class="col-md-11" *ngFor="let sc of scenarios">
+            <div class="col-md-11" *ngFor="let sc of scenarios;let sInd = index">
                 <h3>--- {{sc.StatisticGroupName}} ---</h3>
                 <div *ngIf="sc.RegressionRegions.length > 0">
-                    <div *ngFor="let rr of sc.RegressionRegions" class="col-md-12">
+                    <div *ngFor="let rr of sc.RegressionRegions;let rInd = index" class="col-md-12">
                         <label class="pull-left">{{rr.Name}}</label>
                         <div class="col-md-7 form-group" *ngIf="showWeights">
                             <span class="col-md-2" style="display:inline;text-align:right">% Area:</span>
@@ -50,11 +51,16 @@
                                 <tr><th class="col-md-5">Parameter</th><th>Code</th><th class="col-md-3">Value</th><th class="col-md-2">Min Limit</th><th class="col-md-2">Max Limit</th></tr>
                             </thead>
                             <tbody> 
-                                <tr *ngFor="let p of rr.Parameters">
-                                    <td>{{p.Name}}
+                                <tr *ngFor="let p of rr.Parameters;let pInd = index ">
+                                    <td>{{p.Name}} <a (click)="showDescription(p,sInd, rInd, pInd)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>
+                                    <!-- description span -->
+                                    <br *ngIf="p.seeDescription"/>
+                                    <span style="font-size:small;" *ngIf="p.seeDescription">{{p.Description}}</span>
+
+                                    <!-- outOfRange span -->
                                     <br *ngIf="p.OutOfRange"/>
                                     <span *ngIf="p.OutOfRange" class="warning-text">Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors</span>
-                                        <!--<a (click)="showDescription(p.Description)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>-->
+                                        
                                     </td>
                                     <td>{{p.Code}}</td>
                                     <td>
@@ -84,6 +90,7 @@
         </form>
     </div> <!--end if scenarios-->
 
+    <!-- resultsBack-->
     <div *ngIf="resultsBack">
         <div *ngFor="let s of scenarios">
             {{s.StatisticGroupName}}<br/>
@@ -95,13 +102,14 @@
                         {{p.Name}} = {{p.Value}} {{p.UnitType.Abbr}}
                     </div> <br />
                     <div class="col-md-12">
+                        <span>[Errors SE, Average Standard Error (of either estimate or prediction); Errors SEe, Average Standard Error of Estimate; Errors SEp, Average Standard Error of Prediction;]</span>
                         <table style="border:solid 1px gray" class="table table-condensed">
                             <thead>
                                 <tr>
                                     <th class="col-md-6"></th>
                                     <th>Value</th>                                    
                                     <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Predicted Interval</th>
-                                    <th *ngIf="rr.Results[0].Errors">Prediction</th>
+                                    <th colspan="3" *ngIf="rr.Results[0].Errors">Errors (%)</th>
                                     <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent</th>
                                 </tr>
                                 <tr>
@@ -109,18 +117,17 @@
                                     <th>{{rr.Results[0].Unit.Abbr}}</th>                                    
                                     <th *ngIf="rr.Results[0].IntervalBounds">Low</th>
                                     <th *ngIf="rr.Results[0].IntervalBounds">High</th>
-                                    <th *ngIf="rr.Results[0].Errors">Error, %</th>
+                                    <th *ngFor="let e of rr.Results[0].Errors">{{e.Code}}</th>
                                     <th *ngIf="rr.Results[0].EquivalentYears>0">Years</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let result of rr.Results">
                                     <td>{{result.Description}} ({{result.code}})</td>
-                                    <td>{{result.Value | number:'2.1-3'}}</td>
-                                    
+                                    <td>{{result.Value | number:'2.1-3'}}</td>                                    
                                     <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined ? (result.IntervalBounds.Lower | number:'2.1-3') : '---'}}</td>
                                     <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined ? (result.IntervalBounds.Upper | number:'2.1-3') : '---'}}</td>
-                                    <td *ngIf="result.Errors">{{result.Errors.length > 0 ? result.Errors[0].Value : '---'}}</td>
+                                    <td *ngFor="let e of result.Errors">{{e.Value}}</td>
                                     <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears > 0 ? result.EquivalentYears : '---'}}</td>
                                 </tr>
                             </tbody>
@@ -128,7 +135,7 @@
                     </div>
                 </div>
                 <div *ngIf="rr.ID == 0">
-                    {{rr.Name}} Region<br />
+                    {{rr.Name}}<br />
                     <br />
                     <div class="col-md-12">
                         <table style="border:solid 1px gray" class="table table-condensed">
@@ -136,13 +143,12 @@
                                 <tr>
                                     <th class="col-md-6">Description</th>                                    
                                     <th>Value</th>
-                                    <th *ngIf="rr.Results[0].EquivalentYears>0">Years</th>
+                                    <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent<br/>Years</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let result of rr.Results">
-                                    <td>{{result.Description}} ({{result.code}})</td>
-                                    <td>{{result.Equation}}</td>
+                                    <td>{{result.Description}} ({{result.code}})</td>                                    
                                     <td>{{result.Value | number:'2.1-3'}}</td>                                    
                                     <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears}}</td>
                                 </tr>
@@ -160,12 +166,12 @@
                 <br />
             </div>
         </div> <!-- end for each Scenario-->   
-        <!--<div>See <a pageScroll href="#appendix">appendix</a> for equations.</div>-->
-
+        
         <!-- ngfor each chart being added show here
             //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
-            //if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show"
-             -->
+            //if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show" -->
+
+        <!-- charts-->
         <div id="chart">
             <div class="col-md-12" *ngIf="hydroChartsArray.length >0">
                 <h2 style="display:inline-block;margin-right:42px;">Charts</h2>
@@ -217,7 +223,8 @@
             </div>
         </div>
         <br clear="all"/>
-        <!-- appendix section for equations <td><span [MathJax]="result.Equation">{{result.Equation}}</span></td>   -->
+
+        <!-- appendix section for equation -->
         <h2 id="appendix">Appendix</h2>
         <div *ngFor="let e of equationResults" class="col-md-8">
             <div>{{e.Name}}</div>

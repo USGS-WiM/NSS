@@ -16,7 +16,7 @@ var SidebarComponent = (function () {
     function SidebarComponent(_nssService, _chartService) {
         this._nssService = _nssService;
         this._chartService = _chartService;
-        this.plotTypes = ["Frequency Plot", "Hydrograph"];
+        this.plotTypes = ['Frequency Plot', 'Hydrograph'];
         this.recurrences = [2, 5, 10, 25, 50, 100, 200, 500];
     }
     Object.defineProperty(SidebarComponent.prototype, "selectedRegion", {
@@ -45,6 +45,7 @@ var SidebarComponent = (function () {
     SidebarComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.doShow = true;
+        this.selectedPlot = "";
         this._nssService.regions.subscribe(function (regions) { _this.regions = regions; });
         this._nssService.regressionRegions.subscribe(function (rr) {
             _this.regressionRegions = rr;
@@ -203,6 +204,7 @@ var SidebarComponent = (function () {
                     rr.Parameters.forEach(function (p) {
                         delete p.OutOfRange;
                         delete p.missingVal;
+                        delete p.seeDescription;
                     });
                 });
             });
@@ -217,8 +219,11 @@ var SidebarComponent = (function () {
         }
     };
     SidebarComponent.prototype.selectChart = function (p) {
-        this._nssService.addChart(p);
-        this.selectedPlot = "";
+        if (p !== "") {
+            this.selectedPlot = p;
+            this.selectedPlot = undefined;
+            this._nssService.addChart(p);
+        }
     };
     SidebarComponent.prototype._keyPress = function (event) {
         var pattern = /[0-9\+\-\.\ ]/;

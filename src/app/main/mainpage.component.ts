@@ -37,25 +37,24 @@ export class MainPageComponent {
     public get selectedStatisticGrp(): Array<IStatisticGroup> { return this._nssService.selectedStatGroups; };
     public get selectedRegType(): Array<IRegressionType> { return this._nssService.selectedRegressionTypes; };
 
-    public scenarios: IScenario[];                 //after each region/regRegion/statGrp/regType is chosen, get scenario
-    public toast: Toast;                           //notification when values are required
-    public resultsBack: boolean;                   //flag that swaps content on mainpage from scenarios w/o results to those with results
-    public showWeights: boolean;                   //if more than 1 regRegion, then show input for weighted
-    public hydrograph: IHydro;                     //holder for a hydrograph
+    public scenarios: IScenario[];                  //after each region/regRegion/statGrp/regType is chosen, get scenario
+    public toast: Toast;                            //notification when values are required
+    public resultsBack: boolean;                    //flag that swaps content on mainpage from scenarios w/o results to those with results
+    public showWeights: boolean;                    //if more than 1 regRegion, then show input for weighted
+    public hydrograph: IHydro;                      //holder for a hydrograph
     public hydrographs: Array<IHydro>;              //holds all the IHydros so each chart has their own
-    public hydroChartsArray: IChart[];             //holds all hydro charts that are desired.
-    public hChartOptions: IChart;                  //hydro chart
+    public hydroChartsArray: IChart[];              //holds all hydro charts that are desired.
+    public hChartOptions: IChart;                   //hydro chart
     public hChartValues: Array<number>[];           //array of what to linechart
     public hChartXAxisValues: string[];             //chart x axis
     public hChartYAxisText: string;                 //chart y axis
-    public fChartOptions: Object;                  //frequency chart
-    public fChartValues: Array<number>[];          //frequency data
-    public equationResults: IEquationResult[];     //used in Appendix
-    public showCharts_btn: boolean;                //toggle button boolean
-    public showChartBtn_txt: string;               //string "show" / "hide"
-    public selectedPlot: string;                   //which plot are they asking for ("Hydrograph" or "Frequency Plot")
-    //public Hydro: IHydro;                           //holder of the recurrence and lagtime
-    public charts: Array<any>;//{ type: 'spline' }>;
+    public fChartOptions: Object;                   //frequency chart
+    public fChartValues: Array<number>[];           //frequency data
+    public equationResults: IEquationResult[];      //used in Appendix
+    public showCharts_btn: boolean;                 //toggle button boolean
+    public showChartBtn_txt: string;                //string "show" / "hide"
+    public selectedPlot: string;                    //which plot are they asking for ("Hydrograph" or "Frequency Plot")
+    public charts: Array<any>;                      //chart instance 
 
     constructor( @Inject(ChartService) private _chartService: ChartService,
         @Inject(ToasterService) private _toasterService: ToasterService,
@@ -88,10 +87,10 @@ export class MainPageComponent {
         this.hydroChartsArray = []; //instantiate
         this.hydrographs = [];
         this.resultsBack = false;
-
         this._nssService.scenarios.subscribe((s: Array<IScenario>) => {
-            this.scenarios = s; this.resultsBack = false; this.equationResults = [];
+            this.scenarios = s; this.resultsBack = false; this.equationResults = [];            
             this.scenarios.forEach((s) => {
+                this.showWeights = s.RegressionRegions.length > 1 ? true : false;
                 s.RegressionRegions.forEach((rr) => {
                     if (rr.Results) {
                         let eqResult: IEquationResult = { Name: "", Formulas: [] };
@@ -113,10 +112,11 @@ export class MainPageComponent {
         });
 
         this._nssService.getChart().subscribe((c) => {
-            //scroll down to the chart section
-            let pageScrollInstance: PageScrollInstance = PageScrollInstance.simpleInstance(this.document, '#chart');
-            this.pageScrollService.start(pageScrollInstance);
-
+            if (c !== "") {
+                //scroll down to the chart section
+                let pageScrollInstance: PageScrollInstance = PageScrollInstance.simpleInstance(this.document, '#chart');
+                this.pageScrollService.start(pageScrollInstance);
+            }
             if (c == "Hydrograph") {
                 this.selectedPlot = "Hydrograph";
                 this.hydrograph = { recurrence: null, lagTime: null };
@@ -243,6 +243,11 @@ export class MainPageComponent {
         }
     }
 
+    //toggle parameter description
+    public showDescription(p:IParameter,scenIndex:number, regIndex:number, paramIndex:number) {
+        //set this parameters seeDescription property to true/false
+        this.scenarios[scenIndex].RegressionRegions[regIndex].Parameters[paramIndex].seeDescription = !this.scenarios[scenIndex].RegressionRegions[regIndex].Parameters[paramIndex].seeDescription; 
+    }
     //toggle charts
     showHideCharts() {
         //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"

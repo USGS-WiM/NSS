@@ -1,4 +1,4 @@
-﻿import { IRegressionRegion } from './regressionRegion';
+import { IRegressionRegion } from './regressionRegion';
 import {ILink} from './link';
 import {ICitation} from './citation';
 import { IScenarioRegressionRegion} from './scenarioRegressionRegion';

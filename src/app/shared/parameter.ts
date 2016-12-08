@@ -1,4 +1,4 @@
-﻿import {IUnitType} from './unitType';
+import {IUnitType} from './unitType';
 import {ILimit } from './limit';
 
 export interface IParameter {
@@ -13,4 +13,3 @@ export interface IParameter {
     missingVal?: boolean;
     seeDescription?: boolean;
 }
-

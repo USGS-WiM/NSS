@@ -1,53 +1,52 @@
-﻿<html>
+<!DOCTYPE html>
+<html>
 <head>
-    <!--<base href="/">-->
-    <title>NSS</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--[if IE]><link rel="shortcut icon" href="path/to/favicon.ico"><![endif]-->
-    <link rel="icon" href="path/to/favicon.png"> <!-- Everything else -->
-    <!-- css -->
-    <link href="../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="../node_modules/lato-font/css/lato-font.css" rel="stylesheet" />
-    <link href="./app/css/styles.css" rel="stylesheet" />
-    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../node_modules/wim-styles/template/css/base.css">
-    <link rel="stylesheet" type="text/css" href="../node_modules/angular2-toaster/lib/toaster.css" />
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Load libraries -->
-    <!-- Polyfill(s) for older browsers -->
-    <script src="../node_modules/core-js/client/shim.min.js"></script>
-    <script src="../node_modules/zone.js/dist/zone.js"></script>
-    <script src="../node_modules/reflect-metadata/Reflect.js"></script>
-    <script src="../node_modules/systemjs/dist/system.src.js"></script>   
+  <title><%= htmlWebpackPlugin.options.title %></title>
 
-    <!-- Required for http -->
-    <script src="../node_modules/rxjs/bundles/Rx.js"></script>
-    <!--<script src="https://code.angularjs.org/2.0.0-alpha.46/http.dev.js"></script>-->
-    <!-- for showing equations 
-    <script type="text/x-mathjax-config">
-	MathJax.Hub.Config({
-		tex2jax: {
-		    inlineMath: [['$','$'], ['\\(','\\)']],
-		    processEscapes: true
-		    }
-	});
-</script>-->
-    <script type="text/x-mathjax-config">
+  <meta name="description" content="<%= htmlWebpackPlugin.options.title %>">
+  
+  <% if (webpackConfig.htmlElements.headTags) { %>
+  <!-- Configured Head Tags  -->
+  <%= webpackConfig.htmlElements.headTags %>
+  <% } %>
+  <!-- base url -->
+  <base href="<%= htmlWebpackPlugin.options.metadata.baseUrl %>">
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
+  <script type="text/x-mathjax-config">
         MathJax.Hub.Config({
             asciimath2jax: {
                 delimiters: [['`','`'], ['$','$']]
             }
         })
-    </script>
-        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
-        <!-- Configure SystemJS -->
-        <script src="systemjs.config.js"></script>
-        <script>
-            System.import('app').catch(function (err) { console.error(err); });
-        </script>
+  </script>
 </head>
+
 <body>
-    <my-app>Loading...</my-app>
+
+  <app>
+    Loading...
+  </app>
+
+  <!-- Google Analytics: change UA-71073175-1 to be your site's ID -->
+  <script>
+    (function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=r;A[l]=A[l]||function(){
+    (A[l].q=A[l].q||[]).push(arguments)},A[l].l=1*new Date();a=n.createElement(g),
+    r=n.getElementsByTagName(g)[0];a.async=1;a.src=u;r.parentNode.insertBefore(a,r)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-71073175-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+
+  <% if (htmlWebpackPlugin.options.metadata.isDevServer && htmlWebpackPlugin.options.metadata.HMR !== true) { %>
+  <!-- Webpack Dev Server reload -->
+  <script src="/webpack-dev-server.js"></script>
+  <% } %>
+
+
 </body>
 </html>

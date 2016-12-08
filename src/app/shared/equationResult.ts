@@ -1,4 +1,4 @@
-﻿import {IResult} from './result';
+import {IResult} from './result';
 
 export interface IEquationResult {
     Name: string;

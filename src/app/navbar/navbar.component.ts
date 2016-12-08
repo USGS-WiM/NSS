@@ -1,61 +1,28 @@
-﻿//------------------------------------------------------------------------------
-//----- Component ---------------------------------------------------------------
-//------------------------------------------------------------------------------
-
-//-------1---------2---------3---------4---------5---------6---------7---------8
-//       01234567890123456789012345678901234567890123456789012345678901234567890
-//-------+---------+---------+---------+---------+---------+---------+---------+
-
-// copyright:   2016 WiM - USGS
-
-//    authors:  Jeremy K. Newson USGS WiM
-//              Tonia Roddick USGS-WiM
+//   copyright:   2016 WiM - USGS
+//   authors:  Tonia Roddick USGS-WiM
 // 
-//   purpose:  
+//   purpose:  Navbar of the application
 //          
-//discussion:
+//   Comments
+//12.06.2016 tr - Created
+//
 
-
-//Comments
-//09.27.2016 jkn - Created
-
-//Import
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { CommonModule, NgFor } from '@angular/common';
-//import { CONFIG } from '../shared/config';
-
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-    //moduleId is used to keep templateurl relative path
-    moduleId: module.id,
-    styleUrls:['./navbar.css'],
-    selector: 'wim-navbar',
-    templateUrl: './navbar.html'
+  selector: 'wim-navbar',
+  styleUrls: [
+    './navbar.component.css'
+  ],
+  templateUrl: './navbar.component.html'
 })
-export class NavbarComponent implements OnInit {
-    //Events
-    //-+-+-+-+-+-+-+-+-+-+-+-
-    @Output() onToggleSidebar = new EventEmitter<boolean>();
-    //Properties
-    //-+-+-+-+-+-+-+-+-+-+-+-
-    public title: string;
+export class NavbarComponent {
+  public title:string;
+  constructor() {}
 
-    //Constructor
-    //-+-+-+-+-+-+-+-+-+-+-+-
-    public constructor() {        
-    }
-    //Methods
-    //-+-+-+-+-+-+-+-+-+-+-+-
-    public toggleSidebar(): void {
-        console.log("Child: Togglesidebar emit");
-        this.onToggleSidebar.emit();
-    }
-
-    //Implemented Methods
-    //-+-+-+-+-+-+-+-+-+-+-+-
-    public ngOnInit() {
-        this.title = "National Stream Flow Statistics";
-    }
-    //Helper Methods
-    //-+-+-+-+-+-+-+-+-+-+-+-
-}//end class
+  ngOnInit() {
+    this.title = "National Stream Flow Statistics";  
+  }
+  
+}

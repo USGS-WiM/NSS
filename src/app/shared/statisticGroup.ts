@@ -1,4 +1,4 @@
-﻿import {ILink} from './link';
+import {ILink} from './link';
 
 export interface IStatisticGroup {
     Links: ILink[];

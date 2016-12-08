@@ -54,7 +54,7 @@ export class NavbarComponent implements OnInit {
     //Implemented Methods
     //-+-+-+-+-+-+-+-+-+-+-+-
     public ngOnInit() {
-        this.title = "NSS";
+        this.title = "National Stream Flow Statistics";
     }
     //Helper Methods
     //-+-+-+-+-+-+-+-+-+-+-+-

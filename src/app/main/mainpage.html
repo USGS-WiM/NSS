@@ -53,15 +53,15 @@
                             <tbody> 
                                 <tr *ngFor="let p of rr.Parameters;let pInd = index ">
                                     <td>{{p.Name}} <a (click)="showDescription(p,sInd, rInd, pInd)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>
-                                    <!-- description span -->
-                                    <br *ngIf="p.seeDescription"/>
-                                    <span style="font-size:small;" *ngIf="p.seeDescription">{{p.Description}}</span>
+                                        <!-- description span -->
+                                        <br *ngIf="p.seeDescription"/>
+                                        <span style="font-size:small;" *ngIf="p.seeDescription">{{p.Description}}</span>
 
-                                    <!-- outOfRange span -->
-                                    <br *ngIf="p.OutOfRange"/>
-                                    <span *ngIf="p.OutOfRange" class="warning-text">Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors</span>
-                                        
+                                        <!-- outOfRange span -->
+                                        <br *ngIf="p.OutOfRange"/>
+                                        <span *ngIf="p.OutOfRange" class="warning-text">Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors</span>                                        
                                     </td>
+
                                     <td>{{p.Code}}</td>
                                     <td>
                                         <div class="col-md-12" style="margin-left:0;padding-left:0;">                         

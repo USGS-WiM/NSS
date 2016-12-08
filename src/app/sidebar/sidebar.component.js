@@ -16,8 +16,6 @@ var SidebarComponent = (function () {
     function SidebarComponent(_nssService, _chartService) {
         this._nssService = _nssService;
         this._chartService = _chartService;
-        this.plotTypes = ['Frequency Plot', 'Hydrograph'];
-        this.recurrences = [2, 5, 10, 25, 50, 100, 200, 500];
     }
     Object.defineProperty(SidebarComponent.prototype, "selectedRegion", {
         get: function () { return this._nssService.selectedRegion; },

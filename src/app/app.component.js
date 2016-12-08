@@ -12,7 +12,7 @@ var navbar_component_1 = require('./navbar/navbar.component');
 var chart_service_1 = require('./services/chart.service');
 var AppComponent = (function () {
     function AppComponent() {
-        this.title = 'NSS';
+        this.title = 'National Stream Flow Statistics';
     }
     __decorate([
         core_1.ViewChild(navbar_component_1.NavbarComponent)

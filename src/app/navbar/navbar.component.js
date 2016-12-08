@@ -15,7 +15,7 @@ var NavbarComponent = (function () {
         this.onToggleSidebar.emit();
     };
     NavbarComponent.prototype.ngOnInit = function () {
-        this.title = "NSS";
+        this.title = "National Stream Flow Statistics";
     };
     __decorate([
         core_1.Output()

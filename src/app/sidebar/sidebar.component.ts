@@ -22,18 +22,18 @@ import {Toast}                          from 'angular2-toaster/lib/toast';
 //interfaces 
 import { IRegion }                      from '../shared/region';
 import { IRegressionRegion }            from '../shared/regressionRegion';
-import { ICitation }                    from '../shared/citation';
+//import { ICitation }                    from '../shared/citation';
 import { IStatisticGroup }              from '../shared/statisticGroup';
-import {IScenario}                      from '../shared/scenario';
+import { IScenario}                      from '../shared/scenario';
 import { IRegressionType }              from '../shared/regressionType';
-import { IHydro }                       from '../shared/hydroChart';
-import { IErrorValue }                  from '../shared/errorValues';
+//import { IHydro }                       from '../shared/hydroChart';
+//import { IErrorValue }                  from '../shared/errorValues';
 
 //services
 import { NSSService }                   from '../services/nss.service';
-import { CitationService }              from '../services/citations.service';
+//import { CitationService }              from '../services/citations.service';
 import { ChartService }                 from '../services/chart.service';
-import { ScenarioService}               from '../services/scenario.service';
+//import { ScenarioService}               from '../services/scenario.service';
 
 import {IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts} from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
 
@@ -50,16 +50,16 @@ export class SidebarComponent implements OnInit {
     public doShow: boolean;
     //public selectedRegion: IRegion;
     public get selectedRegion(): IRegion { return this._nssService.selectedRegion; }; 
-    public errorMessage: string;
+   // public errorMessage: string;
     public regions: Array<IRegion>;
     public regressionTypes: Array<IRegressionType>;
     public statisticGroups: Array<IStatisticGroup>;
     public regressionRegions: Array<IRegressionRegion>; 
-    public citations: Array<ICitation>;
+  //  public citations: Array<ICitation>;
     public scenarios: Array<IScenario>;
-    public showWeights: boolean;
-    public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; //Hydrograph, Frequency Plot
-    public recurrences: Array<number> = [2, 5, 10, 25, 50, 100, 200, 500]; // PKs
+ //   public showWeights: boolean;
+  //  public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; //Hydrograph, Frequency Plot
+ //   public recurrences: Array<number> = [2, 5, 10, 25, 50, 100, 200, 500]; // PKs
     public selectedPlot: string;
     //public Hydro: IHydro;
     public showChart: boolean; //show the Chart: Sidebar option

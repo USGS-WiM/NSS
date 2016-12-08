@@ -3,7 +3,7 @@
 import { MainPageComponent }from './main/mainpage.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import {ChartService } from './services/chart.service';
+import { ChartService } from './services/chart.service';
 
 @Component({
     //moduleId is used to keep templateurl relative path
@@ -13,7 +13,7 @@ import {ChartService } from './services/chart.service';
     providers: [ChartService]
 })
 export class AppComponent {
-    title = 'NSS';    
+    title = 'National Stream Flow Statistics';    
     @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
     @ViewChild(MainPageComponent) mainpageCommponent: MainPageComponent;
     @ViewChild(SidebarComponent) sidebarComponent: SidebarComponent;   

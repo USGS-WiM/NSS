@@ -1,21 +1,27 @@
-﻿import { Component, ViewChild} from '@angular/core';
-
-import { MainPageComponent }from './main/mainpage.component';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { ChartService } from './services/chart.service';
+import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import {NavbarComponent} from './navbar/navbar.component';
+import {MainviewComponent} from './mainview/mainview.component';
+import {SidebarComponent} from './sidebar/sidebar.component';
 
 @Component({
-    //moduleId is used to keep templateurl relative path
-    moduleId: module.id,
-    selector: 'my-app',    
-    templateUrl: './app.html',
-    providers: [ChartService]
+  selector: 'app',
+  //encapsulation: ViewEncapsulation.None,
+  styleUrls: [
+    './app.component.css'
+  ],
+  template: `
+    <wim-navbar></wim-navbar>
+    <wim-sidebar></wim-sidebar>
+    <wim-mainview></wim-mainview>    
+  `
 })
 export class AppComponent {
-    title = 'National Stream Flow Statistics';    
-    @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
-    @ViewChild(MainPageComponent) mainpageCommponent: MainPageComponent;
-    @ViewChild(SidebarComponent) sidebarComponent: SidebarComponent;   
-} 
- 
+ @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
+ @ViewChild(SidebarComponent) sidebarComponent: SidebarComponent;
+ @ViewChild(MainviewComponent) mainviewCommponent: MainviewComponent;
+   
+  //constructor() {}
+
+  //ngOnInit() {}
+
+}

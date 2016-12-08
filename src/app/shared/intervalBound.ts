@@ -1,4 +1,4 @@
-﻿export interface IIntervalBound {
+export interface IIntervalBound {
     Lower: number;
     Upper: number;
 }

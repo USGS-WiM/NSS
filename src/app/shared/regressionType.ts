@@ -1,4 +1,4 @@
-﻿export interface IRegressionType {
+export interface IRegressionType {
     ID: number;
     id: number; //for multiselect
     Name: string;

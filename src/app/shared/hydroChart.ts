@@ -1,4 +1,4 @@
-﻿export interface IHydro {
+export interface IHydro {
     recurrence: string;
     lagTime: number;
 }

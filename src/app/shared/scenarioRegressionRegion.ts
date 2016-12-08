@@ -1,4 +1,4 @@
-﻿import {ILink} from './link';
+import {ILink} from './link';
 import {IParameter} from './parameter';
 import {IResult} from './result';
 

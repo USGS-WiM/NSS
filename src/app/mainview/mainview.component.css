@@ -1,0 +1,16 @@
+.mainPage {
+    width:auto;
+    margin-top: 102px;
+    margin-left: 425px;
+    position:relative;
+}
+
+.scrollable{
+    max-height:calc(100% - 70px);
+
+}
+.warning-text{
+    color:red;
+    font-style: italic;
+    font-size: small;
+}

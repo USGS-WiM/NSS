@@ -1,4 +1,4 @@
-﻿import { IUnitType} from '../shared/unitType';
+import { IUnitType} from '../shared/unitType';
 import { IError } from '../shared/error';
 import { IIntervalBound} from '../shared/intervalBound';
 

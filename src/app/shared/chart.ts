@@ -1,4 +1,4 @@
-﻿export interface IChart {
+export interface IChart {
     title: ItitleParts;
     series: Array<IseriesParts>;
     xAxis: subTitlePart;

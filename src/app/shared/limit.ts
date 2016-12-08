@@ -1,4 +1,4 @@
-﻿export interface ILimit {
+export interface ILimit {
     Max: number;
     Min: number;
 }

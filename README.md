@@ -1,4 +1,5 @@
 <p>NSS is a client application that was created using <a href="https://github.com/AngularClass/angular2-webpack-starter" target="_blank">Angular2 Webpack Starter application</a>
+</p>
 
 ### Quick start
 **Make sure you have Node version >= 5.0 and NPM >= 3**

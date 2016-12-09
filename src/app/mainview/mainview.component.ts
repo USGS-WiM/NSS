@@ -44,6 +44,7 @@ export class MainviewComponent {
   public resultsBack: boolean;                //flag that swaps content on mainpage from scenarios w/o results to those with results
   public equationResults: IEquationResult[];  //used in Appendix
   public showWeights: boolean;                //if more than 1 regRegion, then show input for weighted
+  public timestamp: Date;                     //display a time stamp when they first get here.
   public toast: Toast;                        //notification when values are required
   public get selectedRegion(): IRegion { return this._nssService.selectedRegion; };
   public get selectedRegRegion(): Array<IRegressionRegion> { return this._nssService.selectedRegRegions; };
@@ -64,6 +65,7 @@ export class MainviewComponent {
   public showChartBtn_txt: string;                //string "show" / "hide"
   public selectedPlot: string;                    //which plot are they asking for ("Hydrograph" or "Frequency Plot")
   public charts: Array<any>;                      //chart instance 
+  public uniqueParameters:Array<IParameter>       //holds unique list of parameters
 
   constructor(private _nssService:NSSService, 
               private _toasterService: ToasterService,
@@ -72,6 +74,7 @@ export class MainviewComponent {
 
   ngOnInit() {
       this.title = "NSS Report";
+      this.timestamp = new Date();
       this.charts = []; //instantiate
       this.hydroChartsArray = []; //instantiate
       this.hydrographs = []; //instantiate
@@ -79,7 +82,7 @@ export class MainviewComponent {
 
       //subscribe to scenarios
       this._nssService.scenarios.subscribe((s: Array<IScenario>) => {
-          this.scenarios = s; this.resultsBack = false; this.equationResults = [];            
+          this.scenarios = s; this.resultsBack = false; this.equationResults = []; this.uniqueParameters = [];     
           this.scenarios.forEach((s) => {
               this.showWeights = s.RegressionRegions.length > 1 ? true : false;
               s.RegressionRegions.forEach((rr) => {
@@ -93,6 +96,12 @@ export class MainviewComponent {
                       });
                       if (rr.ID > 0) this.equationResults.push(eqResult);
                       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "MathJax"]); //for the appendix of equations
+                      //populate uniqueParameters
+                      rr.Parameters.forEach((p) =>{
+                          let pIndex = this.uniqueParameters.map(function (parame) { return parame.Code; }).indexOf(p.Code);
+                          if (pIndex < 0)
+                            this.uniqueParameters.push(p);
+                      });
                   } //end there's results
               });
           });
@@ -166,7 +175,8 @@ export class MainviewComponent {
               this.showCharts_btn = false;
               this.hydrograph = undefined;
               this.hChartOptions = undefined;
-              this.hydroChartsArray = [];
+              this.hydroChartsArray = []; 
+              this.fChartOptions = undefined;
               this.hydrographs = [];
           }
       });

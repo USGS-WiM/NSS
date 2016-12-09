@@ -36,9 +36,9 @@ module.exports = {
 
     /** <link> tags for a Web App Manifest **/
     { rel: 'manifest', href: '/assets/manifest.json' },
-    { rel: 'stylesheet', href: '/assets/font-awesome/css/font-awesome.min.css'},
-    { rel: 'stylesheet', href: '/assets/angular2-toaster/css/toaster.css'},
-    { rel: 'stylesheet', href: '/assets/wim-styles/css/wim.css'}
+    { rel: 'stylesheet', href: './assets/font-awesome/css/font-awesome.min.css'},
+    { rel: 'stylesheet', href: './assets/angular2-toaster/css/toaster.css'},
+    { rel: 'stylesheet', href: './assets/wim-styles/css/wim.css'}
 
   ],
   meta: [

@@ -5,7 +5,8 @@
     <!-- / toaster directive -->
 
     <div><h3>{{title}}</h3></div>
-
+    <div>{{timestamp | date:"MMMM d, y hh:mma"}}</div>
+    
     <div *ngIf="selectedRegion">       
        <label>Region:</label>
        <div>{{selectedRegion.Name}}</div>        
@@ -125,7 +126,7 @@
                                     <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined ? (result.IntervalBounds.Lower | number:'2.1-3') : '---'}}</td>
                                     <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined ? (result.IntervalBounds.Upper | number:'2.1-3') : '---'}}</td>
                                     <td *ngFor="let e of result.Errors">{{e.Value}}</td>
-                                    <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears > 0 ? result.EquivalentYears : '---'}}</td>
+                                    <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears > 0 && result.EquivalentYears !== 999 ? result.EquivalentYears : 'N/A'}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -223,6 +224,7 @@
 
         <!-- appendix section for equation -->
         <h2 id="appendix">Appendix</h2>
+        <h4>Equations</h4>
         <div *ngFor="let e of equationResults" class="col-md-8">
             <div>{{e.Name}}</div>
             <table style="border:solid 1px gray" class="table table-condensed">
@@ -236,6 +238,26 @@
                     <tr *ngFor="let c of e.Formulas">
                         <td>{{c.Code}}</td>
                         <td><span [MathJax]="c.Equation">{{c.Equation}}</span></td>
+                    </tr>
+                </tbody>
+           </table>
+        </div><!--End equations-->
+        <br clear="all"/>
+        <h4>Parameter Definitions</h4>
+        <div class="col-md-8">
+            <table style="border:solid 1px gray" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-md-3">Name</th>
+                        <th class="col-md-1">Abbrev</th>
+                        <th class="col-md-8">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let p of uniqueParameters">
+                        <td>{{p.Name}}</td>
+                        <td>{{p.Code}}</td>
+                        <td>{{p.Description}}</td>
                     </tr>
                 </tbody>
            </table>

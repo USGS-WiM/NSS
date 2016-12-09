@@ -251,8 +251,8 @@ export class SidebarComponent {
   //want to see a chart (which one?) ---- may delete, trying it on (ngModelChange)=" of select
   public selectChart(p: string): void {
       if (p !== "") {
-          this.selectedPlot = p;
-          this.selectedPlot = undefined;
+          //this.selectedPlot = p;
+          //this.selectedPlot = undefined;
           this._nssService.addChart(p);
       }
   }   

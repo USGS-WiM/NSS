@@ -36,46 +36,47 @@
         <div *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</div>
         <form #scenarioForm="ngForm">
             <div class="col-md-11" *ngFor="let sc of scenarios;let sInd = index">
-                <h3>--- {{sc.StatisticGroupName}} ---</h3>
-                <div *ngIf="sc.RegressionRegions.length > 0">
-                    <div *ngFor="let rr of sc.RegressionRegions;let rInd = index" class="col-md-12">
-                        <label class="pull-left">{{rr.Name}}</label>
-                        <div class="col-md-7 form-group" *ngIf="showWeights">
-                            <span class="col-md-2" style="display:inline;text-align:right">% Area:</span>
-                            <div class="col-md-3"><input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight" [(ngModel)]="rr.PercentWeight"></div>
-                        </div>
-                        <table style="border:solid 1px gray" class="table table-condensed">
-                            <thead>
-                                <tr><th class="col-md-5">Parameter</th><th>Code</th><th class="col-md-3">Value</th><th class="col-md-2">Min Limit</th><th class="col-md-2">Max Limit</th></tr>
-                            </thead>
-                            <tbody> 
-                                <tr *ngFor="let p of rr.Parameters;let pInd = index ">
-                                    <td>{{p.Name}} <a (click)="showDescription(p,sInd, rInd, pInd)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>
-                                        <!-- description span -->
-                                        <br *ngIf="p.seeDescription"/>
-                                        <span style="font-size:small;" *ngIf="p.seeDescription">{{p.Description}}</span>
-
-                                        <!-- outOfRange span -->
-                                        <br *ngIf="p.OutOfRange"/>
-                                        <span *ngIf="p.OutOfRange" class="warning-text">Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors</span>                                        
-                                    </td>
-
-                                    <td>{{p.Code}}</td>
-                                    <td>
-                                        <div class="col-md-12" style="margin-left:0;padding-left:0;">                         
-                                            <input style="width:70%;display:inline;" [ngClass]="{'reqError':p.missingVal}" type="text" id="Value" class="form-control" (keypress)="_keyPress($event)" (blur)="compareValue(p)" name="Value" [(ngModel)]="p.Value" required>
-                                            <span style="display:inline;" class="pull-right">({{p.UnitType.Abbr}})</span>
-                                        </div>
-                                    </td>
-                                    <td>{{p.Limits != undefined ? (p.Limits.Min | number:'2.1-2'): "--"}} ({{p.UnitType.Abbr}})</td>
-                                    <td>{{p.Limits != undefined ? (p.Limits.Max | number:'2.1-2') : "--"}} ({{p.UnitType.Abbr}})</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div><!--end foreach RegressionRegion-->
-                </div>
+                <h3>{{sc.StatisticGroupName}}</h3>
+                <div class="col-md-7" *ngIf="sc.RegressionRegions?.length > 0">
+                    <table class="table table-condensed">
+                        <tr *ngFor="let rr of sc.RegressionRegions;let rInd = index">
+                            <td>{{rr.Name}}</td>
+                            <td *ngIf="showWeights" class="col-md-2" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
+                            <td *ngIf="showWeights" class="col-md-1"><input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight" [(ngModel)]="rr.PercentWeight"></td>
+                        </tr>
+                    </table>                   
+                </div><!-- end length > 0-->
                 <div *ngIf="sc.RegressionRegions.length == 0"><h3>There are no Results for your selection. Please try another .... </h3></div>
-    
+            </div>  <!-- end ngFor scenarios -->
+
+            <table style="border:solid 1px gray" class="table table-condensed">
+                <thead>
+                    <tr><th class="col-md-5">Parameter</th><th>Code</th><th class="col-md-3">Value</th><th class="col-md-2">Min Limit</th><th class="col-md-2">Max Limit</th></tr>
+                </thead>
+                <tbody> 
+                    <tr *ngFor="let p of uniqueParameters;let pInd = index ">
+                        <td>{{p.Name}} <a (click)="showDescription(p,sInd, rInd, pInd)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>
+                            <!-- description span -->
+                            <br *ngIf="p.seeDescription"/>
+                            <span style="font-size:small;" *ngIf="p.seeDescription">{{p.Description}}</span>
+                            <!-- outOfRange span -->
+                            <br *ngIf="p.OutOfRange"/>
+                            <span *ngIf="p.OutOfRange" class="warning-text">Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors</span>                                        
+                        </td>
+                        <td>{{p.Code}}</td>
+                        <td>
+                            <div class="col-md-12" style="margin-left:0;padding-left:0;">                         
+                                <input style="width:70%;display:inline;" [ngClass]="{'reqError':p.missingVal}" type="text" id="Value" class="form-control" (keypress)="_keyPress($event)" (blur)="compareValue(p)" name="Value" [(ngModel)]="p.Value" required>
+                                <span style="display:inline;">({{p.UnitType.Abbr}})</span>
+                            </div>
+                        </td>
+                        <td><span *ngFor="let l of p.LimitArray"><span *ngIf="l!=undefined" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? (l.Min | number:'2.1-2'): "--"}} ({{p.UnitType.Abbr}})<br/></span></span></td>
+                        <td><span *ngFor="let l of p.LimitArray"><span *ngIf="l!=undefined" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? (l.Max | number:'2.1-2') : "--"}} ({{p.UnitType.Abbr}})<br/></span></span></td>
+                    </tr>
+                </tbody>
+            </table>       
+        
+            <div *ngFor="let sc of scenarios">
                 <label *ngIf="sc.Citations">{{sc.StatisticGroupName}} Citations</label>
                 <div *ngFor="let l of sc.Citations">
                     <a [href]="l.CitationURL" [target]="_blank">
@@ -84,7 +85,7 @@
                     </a>
                     <br />                    
                 </div>
-            </div><!--end foreach scenario-->            
+            </div><!--end foreach scenario (for citations) -->            
         </form>
     </div> <!--end if scenarios-->
 
@@ -168,7 +169,6 @@
         <!-- ngfor each chart being added show here
             //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
             //if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show" -->
-
         <!-- charts-->
         <div id="chart">
             <div class="col-md-12" *ngIf="hydroChartsArray.length >0">
@@ -224,6 +224,7 @@
 
         <!-- appendix section for equation -->
         <h2 id="appendix">Appendix</h2>
+        
         <h4>Equations</h4>
         <div *ngFor="let e of equationResults" class="col-md-8">
             <div>{{e.Name}}</div>
@@ -243,6 +244,7 @@
            </table>
         </div><!--End equations-->
         <br clear="all"/>
+       
         <h4>Parameter Definitions</h4>
         <div class="col-md-8">
             <table style="border:solid 1px gray" class="table table-condensed">

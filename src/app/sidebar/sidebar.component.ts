@@ -204,9 +204,13 @@ export class SidebarComponent {
   //submit / Compute button click
   public CalculateScenario(): void {       
       let ValueRequired: boolean = false;
+      let totalWeight: number = Number(0);
+      let numOfRegRegions:number = Number(0); //don't care about weights if only 1 regRegion
       //make sure all values are populated
       this.scenarios.forEach((s) => {
+          numOfRegRegions = s.RegressionRegions.length;
           s.RegressionRegions.forEach((rr) => {
+              if (numOfRegRegions > 1) totalWeight += Number(rr.PercentWeight);
               rr.Parameters.forEach((p) => {
                   if (!p.Value) {
                       ValueRequired = true;
@@ -216,6 +220,7 @@ export class SidebarComponent {
               });
           });
       });
+      
       if (ValueRequired) {
           let toast: Toast = {
               type: 'warning',
@@ -223,6 +228,13 @@ export class SidebarComponent {
               body: 'All values are required'
           };
           this._nssService.showToast(toast);          
+      } else if (numOfRegRegions > 1 && (totalWeight < 100 || isNaN(totalWeight))) {
+          let weightToast:Toast = { 
+              type: 'warning',
+              title: 'Error',
+              body: '% Weights must equal 100%'
+          };
+          this._nssService.showToast(weightToast);
       }//end invalid
       else {
           //remove Citations, RegressionRegions.Parameters.OutOfRange and .missingVal props

@@ -95,17 +95,23 @@ export class MainviewComponent {
                           if (eqResult.Name != "") eqResult.Formulas.push({ "Code": R.code, "Equation": this.buildEquation(rr.Parameters, R.Equation) });
                       });
                       if (rr.ID > 0) this.equationResults.push(eqResult);
-                      MathJax.Hub.Queue(["Typeset", MathJax.Hub, "MathJax"]); //for the appendix of equations
-                      //populate uniqueParameters
-                      rr.Parameters.forEach((p) =>{
-                          let pIndex = this.uniqueParameters.map(function (parame) { return parame.Code; }).indexOf(p.Code);
-                          if (pIndex < 0)
-                            this.uniqueParameters.push(p);
-                      });
+                      MathJax.Hub.Queue(["Typeset", MathJax.Hub, "MathJax"]); //for the appendix of equations                      
                   } //end there's results
-              });
-          });
-      });
+                  //populate uniqueParameters
+                  rr.Parameters.forEach((p) =>{
+                      let pIndex = this.uniqueParameters.map(function (parame) { return parame.Code; }).indexOf(p.Code);
+                      if (pIndex < 0) {
+                          p.LimitArray = []; 
+                          p.LimitArray.push(p.Limits);
+                          this.uniqueParameters.push(p);
+                        } else {
+                            //already in here. find the matching one and add it's limits to the LimitArray
+                            this.uniqueParameters[pIndex].LimitArray.push(p.Limits);
+                        }
+                    });
+                });
+            });
+        });
       //subscribe to getToast
       this._nssService.getToast().subscribe((t:Toast) =>{
           this.toast = t;
@@ -195,23 +201,43 @@ export class MainviewComponent {
   //onBlur of Value, compare to min/max and show warning
   public compareValue(value: IParameter) {
       //is there a value or just click in and then out (would be "")
-      if (value.Value) {                       
+      if (value.Value) {       
+          //make sure all parameters of this CODE has this VALUE assigned to it in the real scenario Object
+           this.scenarios.forEach((s) => {
+              s.RegressionRegions.forEach((rr) => {
+                  rr.Parameters.forEach((p) =>{
+                      if (p.Code == value.Code) 
+                        p.Value = value.Value;
+                  })
+              })
+           }) //end foreach scenario
           //is value outside of range (if ther is limit range)
           if (value.Limits !== undefined) {
-              if (value.Value > value.Limits.Max || value.Value < value.Limits.Min) {
-                  value.OutOfRange = true; //flag it so
-                  value.missingVal = false;//remove the missingVal flag (since there is something in here)
-              } else {
-                  //value is within proper range (no warning, has a value)
-                  value.OutOfRange = false; //within range
-                  value.missingVal = false;//field is not empty
-              }
+              let limitFlag:boolean = false;
+              value.LimitArray.forEach((x)=>{
+                  if (value.Value > x.Max || value.Value < x.Min){ 
+                      limitFlag = true;                       
+                      x.OutOfRange = true;
+                      value.missingVal = false;//remove the missingVal flag (since there is something in here)
+                  }
+                  else {
+                    //value is within proper range (no warning, has a value)                    
+                    x.OutOfRange = false;
+                    value.missingVal = false;//field is not empty
+                }
+              });
+              //need to flag the outter limit OutOfRange outside of the LimitArray loop
+              if (limitFlag) value.OutOfRange = true; //flag it so
+              else value.OutOfRange = false; 
           } //end limits are not undefined
           else {
               value.OutOfRange = false; //within range
+              value.LimitArray.forEach((l)=>{l.OutOfRange=false;})
               value.missingVal = false;//field is not empty
           }          
-      } else {
+      } //end value.Value (has value)
+       else {
+          value.LimitArray.forEach((l)=>{l.OutOfRange=false;})
           value.OutOfRange = false; //no need to check range
           value.missingVal = false;//field is empty, but we don't care until they hit submit on sidebar        
       }
@@ -219,7 +245,8 @@ export class MainviewComponent {
   //toggle parameter description
   public showDescription(p:IParameter,scenIndex:number, regIndex:number, paramIndex:number) {
       //set this parameters seeDescription property to true/false
-      this.scenarios[scenIndex].RegressionRegions[regIndex].Parameters[paramIndex].seeDescription = !this.scenarios[scenIndex].RegressionRegions[regIndex].Parameters[paramIndex].seeDescription; 
+      this.uniqueParameters[paramIndex].seeDescription = !this.uniqueParameters[paramIndex].seeDescription;
+//      this.scenarios[scenIndex].RegressionRegions[regIndex].Parameters[paramIndex].seeDescription = !this.scenarios[scenIndex].RegressionRegions[regIndex].Parameters[paramIndex].seeDescription; 
   }
   //fake hydrograph chart array
   private getHydroData(): Array<number>[] {

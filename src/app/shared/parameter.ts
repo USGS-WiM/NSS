@@ -9,6 +9,7 @@ export interface IParameter {
     UnitType: IUnitType;
     Value: number;
     Limits: ILimit;
+    LimitArray?:Array<ILimit>;
     OutOfRange?: boolean;
     missingVal?: boolean;
     seeDescription?: boolean;

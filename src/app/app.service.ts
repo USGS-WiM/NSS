@@ -393,7 +393,10 @@ export class NSSService {
     private _scenarioSubject: Subject<Array<IScenario>> = new Subject<Array<IScenario>>();    
     public get scenarios(): Observable<Array<IScenario>> {
         return this._scenarioSubject.asObservable();
-    }   
+    } 
+    public setScenarios(s:Array<IScenario>){
+        this._scenarioSubject.next(s);
+    }  
     // -+-+-+-+-+-+ end Scenarios section -+-+-+-+-+-+-+-+-+-+
 
     //region has been selected, populate all other multiselects and get scenarios
@@ -521,12 +524,14 @@ export class NSSService {
             .map(sResult => <IScenario[]>sResult.json())
             .subscribe(sResult => {
                 sResult.forEach(scen => {
-                    //get citations
-                    let i = scen.Links[0].Href.indexOf('?');
-                    let param = scen.Links[0].Href.substring(i + 1);
-                    this.getCitations(new URLSearchParams(param)).subscribe(c => {
-                        scen.Citations = c;
-                    });                    
+                    if (scen.RegressionRegions.length > 0){
+                        //get citations
+                        let i = scen.Links[0].Href.indexOf('?');
+                        let param = scen.Links[0].Href.substring(i + 1);
+                        this.getCitations(new URLSearchParams(param)).subscribe(c => {
+                            scen.Citations = c;
+                        }, error => this.handleError);                    
+                    }      
                 });
                 this._scenarioSubject.next(sResult);
             }, error => this.handleError);

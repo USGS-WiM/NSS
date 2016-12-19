@@ -114,7 +114,7 @@ export class SidebarComponent {
         this.scenarios = s;  
         this.scenarios.forEach((s) => {
             //if there are results, show the chart buttons
-            if (s.RegressionRegions[0].Results) this.showChart = true;
+            if (s.RegressionRegions.length > 0 && s.RegressionRegions[0].Results) this.showChart = true;
             else this.showChart = false;             
         });
     });

@@ -38,24 +38,26 @@
             <div class="col-md-11" *ngFor="let sc of scenarios;let sInd = index">
                 <h3>{{sc.StatisticGroupName}}</h3>
                 <div class="col-md-7" *ngIf="sc.RegressionRegions?.length > 0">
-                    <table class="table table-condensed">
+                    <table class="table-condensed">
                         <tr *ngFor="let rr of sc.RegressionRegions;let rInd = index">
-                            <td>{{rr.Name}}</td>
-                            <td *ngIf="showWeights" class="col-md-2" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
-                            <td *ngIf="showWeights" class="col-md-1"><input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight" [(ngModel)]="rr.PercentWeight"></td>
+                            <td style="vertical-align:middle;">{{rr.Name}}</td>
+                            <td *ngIf="showWeights" class="col-md-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
+                            <td *ngIf="showWeights" class="col-md-2">
+                                <input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.PercentWeight">
+                            </td>
                         </tr>
                     </table>                   
                 </div><!-- end length > 0-->
                 <div *ngIf="sc.RegressionRegions.length == 0"><h3>There are no Results for your selection. Please try another .... </h3></div>
             </div>  <!-- end ngFor scenarios -->
 
-            <table style="border:solid 1px gray" class="table table-condensed">
+            <table *ngIf="scenarios[0].RegressionRegions.length > 0" style="border:solid 1px gray" class="table table-condensed">
                 <thead>
                     <tr><th class="col-md-5">Parameter</th><th>Code</th><th class="col-md-3">Value</th><th class="col-md-2">Min Limit</th><th class="col-md-2">Max Limit</th></tr>
                 </thead>
                 <tbody> 
-                    <tr *ngFor="let p of uniqueParameters;let pInd = index ">
-                        <td>{{p.Name}} <a (click)="showDescription(p,sInd, rInd, pInd)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>
+                    <tr *ngFor="let p of uniqueParameters;let pInd=index ">
+                        <td>{{p.Name}} <a (click)="showDescription(p, pInd)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>
                             <!-- description span -->
                             <br *ngIf="p.seeDescription"/>
                             <span style="font-size:small;" *ngIf="p.seeDescription">{{p.Description}}</span>
@@ -65,8 +67,9 @@
                         </td>
                         <td>{{p.Code}}</td>
                         <td>
-                            <div class="col-md-12" style="margin-left:0;padding-left:0;">                         
-                                <input style="width:70%;display:inline;" [ngClass]="{'reqError':p.missingVal}" type="text" id="Value" class="form-control" (keypress)="_keyPress($event)" (blur)="compareValue(p)" name="Value" [(ngModel)]="p.Value" required>
+                            <div class="col-md-10" style="margin-left:0;padding-left:0;">                         
+                                <input class="form-control" style="display:inline;width: 70%" [ngClass]="{'reqError':p.missingVal}" type="text" 
+                                        (keypress)="_keyPress($event)" (blur)="compareValue(p)" [(ngModel)]="p.Value" name="Value-{{pInd}}" required>
                                 <span style="display:inline;">({{p.UnitType.Abbr}})</span>
                             </div>
                         </td>
@@ -90,7 +93,8 @@
     </div> <!--end if scenarios-->
 
      <!-- resultsBack-->
-    <div *ngIf="resultsBack">
+    <div *ngIf="resultsBack">        
+        <button type="button" class="btn-wim-primary" (click)="editScenario()">Edit Scenario Parameters</button>
         <div *ngFor="let s of scenarios">
             {{s.StatisticGroupName}}<br/>
             <div *ngFor="let rr of s.RegressionRegions">
@@ -100,6 +104,8 @@
                     <div *ngFor="let p of rr.Parameters">
                         {{p.Name}} = {{p.Value}} {{p.UnitType.Abbr}}
                     </div> <br />
+                    
+                    <br />
                     <div class="col-md-12">
                         <span>[Errors SE, Average Standard Error (of either estimate or prediction); Errors SEe, Average Standard Error of Estimate; Errors SEp, Average Standard Error of Prediction;]</span>
                         <table style="border:solid 1px gray" class="table table-condensed">
@@ -165,7 +171,6 @@
                 <br />
             </div>
         </div> <!-- end for each Scenario-->   
-        
         <!-- ngfor each chart being added show here
             //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
             //if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show" -->

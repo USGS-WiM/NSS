@@ -88,28 +88,30 @@ export class MainviewComponent {
               s.RegressionRegions.forEach((rr) => {
                   if (rr.Results) {
                       let eqResult: IEquationResult = { Name: "", Formulas: [] };
-                      //only care if not weighted average result     
+                      //only care if not weighted average result
                       if (rr.ID > 0) eqResult.Name = rr.Name;
                       this.resultsBack = true;
                       rr.Results.forEach((R) => {
                           if (eqResult.Name != "") eqResult.Formulas.push({ "Code": R.code, "Equation": this.buildEquation(rr.Parameters, R.Equation) });
                       });
                       if (rr.ID > 0) this.equationResults.push(eqResult);
-                      MathJax.Hub.Queue(["Typeset", MathJax.Hub, "MathJax"]); //for the appendix of equations                      
+                      MathJax.Hub.Queue(["Typeset", MathJax.Hub, "MathJax"]); //for the appendix of equations
                   } //end there's results
                   //populate uniqueParameters
-                  rr.Parameters.forEach((p) =>{
-                      let pIndex = this.uniqueParameters.map(function (parame) { return parame.Code; }).indexOf(p.Code);
-                      if (pIndex < 0) {
-                          p.LimitArray = []; 
-                          p.LimitArray.push(p.Limits);
-                          this.uniqueParameters.push(p);
-                        } else {
-                            //already in here. find the matching one and add it's limits to the LimitArray
-                            this.uniqueParameters[pIndex].LimitArray.push(p.Limits);
-                        }
+                  if(rr.ID > 0) {
+                    rr.Parameters.forEach((p) =>{
+                        let pIndex = this.uniqueParameters.map(function (parame) { return parame.Code; }).indexOf(p.Code);
+                        if (pIndex < 0) {
+                            p.LimitArray = []; 
+                            if (p.Limits != undefined)  p.LimitArray.push(p.Limits);
+                            this.uniqueParameters.push(p);
+                            } else {
+                                //already in here. find the matching one and add it's limits to the LimitArray
+                                this.uniqueParameters[pIndex].LimitArray.push(p.Limits);
+                            }
                     });
-                });
+                  }
+                }); // end s.regressionRegion.forEach
             });
         });
       //subscribe to getToast
@@ -243,10 +245,9 @@ export class MainviewComponent {
       }
   }  
   //toggle parameter description
-  public showDescription(p:IParameter,scenIndex:number, regIndex:number, paramIndex:number) {
+  public showDescription(p:IParameter, paramIndex:number) {
       //set this parameters seeDescription property to true/false
       this.uniqueParameters[paramIndex].seeDescription = !this.uniqueParameters[paramIndex].seeDescription;
-//      this.scenarios[scenIndex].RegressionRegions[regIndex].Parameters[paramIndex].seeDescription = !this.scenarios[scenIndex].RegressionRegions[regIndex].Parameters[paramIndex].seeDescription; 
   }
   //fake hydrograph chart array
   private getHydroData(): Array<number>[] {
@@ -285,12 +286,24 @@ export class MainviewComponent {
       this.fChartOptions = null;
   }
   //toggle charts
-  showHideCharts() {
+  public showHideCharts() {
       //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
       //if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show"
       this.showCharts_btn = !this.showCharts_btn;
       if (this.showCharts_btn) this.showChartBtn_txt = "Hide";
       else this.showChartBtn_txt = "Show";
+  }
+  //want to edit the scenario. remove Result
+  public editScenario(){
+      this.scenarios.forEach((s) => {
+          let areaWeighed = s.RegressionRegions.map(function (r) { return r.ID; }).indexOf(0);
+          if (areaWeighed > -1) s.RegressionRegions.splice(areaWeighed,1); //remove the area weighted regRegion
+          s.RegressionRegions.forEach((r)=>{
+              this.resultsBack = false;
+              delete r.Results;
+          });
+      });
+      this._nssService.setScenarios(this.scenarios);
   }
   //number only allowed in Value
   public _keyPress(event: any) {

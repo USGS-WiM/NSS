@@ -13,14 +13,6 @@
     </div>   
     
     <br/>
-    <div *ngIf="selectedRegRegion">
-        <label>Regression Region(s):</label>
-        <div>
-            <span *ngFor="let rr of selectedRegRegion;let isLast=last">{{rr.Name}}{{isLast ? "" : ", "}}</span>
-        </div>
-    </div>
-
-    <br />
     <div *ngIf="selectedStatisticGrp">
         <label>Statistic Group(s):</label>
         <div>
@@ -29,6 +21,15 @@
     </div>
 
     <br />
+    <div *ngIf="selectedRegRegion">
+        <label>Regression Group(s):</label>
+        <div>
+            <span *ngFor="let rr of selectedRegRegion;let isLast=last">{{rr.Name}}{{isLast ? "" : ", "}}</span>
+        </div>
+    </div>
+
+    <br />
+    
      <!-- scenarios && !resultsBack-->
     <div *ngIf="scenarios && !resultsBack">
         <label>Equation Variables</label>
@@ -37,10 +38,10 @@
         <form #scenarioForm="ngForm">
             <div class="col-md-11" *ngFor="let sc of scenarios;let sInd = index">
                 <h3>{{sc.StatisticGroupName}}</h3>
-                <div class="col-md-7" *ngIf="sc.RegressionRegions?.length > 0">
+                <div class="col-md-10" *ngIf="sc.RegressionRegions?.length > 0">
                     <table class="table-condensed">
                         <tr *ngFor="let rr of sc.RegressionRegions;let rInd = index">
-                            <td style="vertical-align:middle;">{{rr.Name}}</td>
+                            <td style="vertical-align:middle;">{{rr.Name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_ID: {{rr.ID}})</span></td>
                             <td *ngIf="showWeights" class="col-md-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
                             <td *ngIf="showWeights" class="col-md-2">
                                 <input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.PercentWeight">
@@ -53,7 +54,14 @@
 
             <table *ngIf="scenarios[0].RegressionRegions.length > 0" style="border:solid 1px gray" class="table table-condensed">
                 <thead>
-                    <tr><th class="col-md-5">Parameter</th><th>Code</th><th class="col-md-3">Value</th><th class="col-md-2">Min Limit</th><th class="col-md-2">Max Limit</th></tr>
+                    <tr>
+                        <th class="col-md-5">Parameter</th>
+                        <th>Code</th>
+                        <th class="col-md-2">Value</th>
+                        <th class="col-md-1" *ngIf="multipleRegRegions"></th>
+                        <th class="col-md-2">Min Limit</th>
+                        <th class="col-md-3">Max Limit</th>
+                    </tr>
                 </thead>
                 <tbody> 
                     <tr *ngFor="let p of uniqueParameters;let pInd=index ">
@@ -69,12 +77,25 @@
                         <td>
                             <div class="col-md-10" style="margin-left:0;padding-left:0;">                         
                                 <input class="form-control" style="display:inline;width: 70%" [ngClass]="{'reqError':p.missingVal}" type="text" 
-                                        (keypress)="_keyPress($event)" (blur)="compareValue(p)" [(ngModel)]="p.Value" name="Value-{{pInd}}" required>
-                                <span style="display:inline;">({{p.UnitType.Abbr}})</span>
+                                        (keypress)="_keyPress($event)" (blur)="compareValue(p)" [(ngModel)]="p.Value" name="Value-{{pInd}}" required>                                
+                                <span [innerHTML]="setSuperScript(p.UnitType.Abbr)" style="display:inline;"></span>
                             </div>
                         </td>
-                        <td><span *ngFor="let l of p.LimitArray"><span *ngIf="l!=undefined" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? (l.Min | number:'2.1-2'): "--"}} ({{p.UnitType.Abbr}})<br/></span></span></td>
-                        <td><span *ngFor="let l of p.LimitArray"><span *ngIf="l!=undefined" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? (l.Max | number:'2.1-2') : "--"}} ({{p.UnitType.Abbr}})<br/></span></span></td>
+                        <td *ngIf="multipleRegRegions">
+                            <span *ngFor="let l of p.LimitArray">
+                                <span  class="pull-right" *ngIf="l != undefined" [ngClass]="{'redFont':l.OutOfRange}">
+                                    <span style="font-size: x-small">{{l != undefined ? l.rrID : ''}}</span><br />
+                                </span>
+                            </span>
+                        </td>
+                        <td>
+                            <span *ngFor="let l of p.LimitArray">
+                            <span *ngIf="l!=undefined" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? (l.Min | number:'2.1-2'): "--"}} 
+                                <span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>
+                                <br/>
+                            </span>
+                        </span></td>
+                        <td><span *ngFor="let l of p.LimitArray"><span *ngIf="l!=undefined" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? (l.Max | number:'2.1-2') : "--"}} <span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span><br/></span></span></td>
                     </tr>
                 </tbody>
             </table>       
@@ -88,7 +109,7 @@
                     </a>
                     <br />                    
                 </div>
-            </div><!--end foreach scenario (for citations) -->            
+            </div><!--end foreach scenario (for citations) {{l != undefined ? l.rrID : ''}}-->            
         </form>
     </div> <!--end if scenarios-->
 
@@ -115,24 +136,29 @@
                                     <th>Value</th>                                    
                                     <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Predicted Interval</th>
                                     <th colspan="3" *ngIf="rr.Results[0].Errors">Errors (%)</th>
-                                    <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent</th>
+                                    <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent Yrs.</th>
                                 </tr>
                                 <tr>
                                     <th class="col-md-6">Description</th>
                                     <th>{{rr.Results[0].Unit.Abbr}}</th>                                    
                                     <th *ngIf="rr.Results[0].IntervalBounds">Low</th>
                                     <th *ngIf="rr.Results[0].IntervalBounds">High</th>
-                                    <th *ngFor="let e of rr.Results[0].Errors">{{e.Code}}</th>
-                                    <th *ngIf="rr.Results[0].EquivalentYears>0">Years</th>
+                                    <th *ngFor="let e of rr.Results[0].Errors">{{e.Code}}</th>    
+                                    <th *ngIf="rr.Results[0].Errors.length < 3"></th>
+                                    <th *ngIf="rr.Results[0].Errors.length < 2"></th>       
+                                    <th></th>                         
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let result of rr.Results">
                                     <td>{{result.Description}} ({{result.code}})</td>
                                     <td>{{result.Value | number:'2.1-3'}}</td>                                    
-                                    <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined ? (result.IntervalBounds.Lower | number:'2.1-3') : '---'}}</td>
-                                    <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined ? (result.IntervalBounds.Upper | number:'2.1-3') : '---'}}</td>
+                                    <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Lower != "NaN" ? (result.IntervalBounds.Lower | number:'2.1-3') : '---'}}</td>
+                                    <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Upper != "NaN" ? (result.IntervalBounds.Upper | number:'2.1-3') : '---'}}</td>
                                     <td *ngFor="let e of result.Errors">{{e.Value}}</td>
+                                    <td *ngIf="result.Errors.length < 3"></td>
+                                    <td *ngIf="result.Errors.length < 2"></td>
+                                    <td *ngIf="result.Errors.length < 1"></td>
                                     <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears > 0 && result.EquivalentYears !== 999 ? result.EquivalentYears : 'N/A'}}</td>
                                 </tr>
                             </tbody>
@@ -268,6 +294,23 @@
                     </tr>
                 </tbody>
            </table>
+        </div>
+        <br clear="all"/>
+        <h4>Unit Types</h4>
+        <div class="col-md-8">
+            <table style="border:solid 1px gray" class="table table-condensed">
+                <thead><tr>
+                        <th class="col-md-1">Abbrev</th>
+                        <th class="col-md-8">Unit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let u of uniqueUnitTypes">
+                        <td><span [innerHTML]="setSuperScript(u.Abbr)"></span></td>
+                        <td>{{u.Unit}}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

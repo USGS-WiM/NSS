@@ -12,16 +12,6 @@
             <br clear="all"/>
         </div>  <!-- end sidebar-item-->
         
-        <div class="sidebar-item" *ngIf="regressionRegions">
-            <label>Limit by Regression Region(s):</label>
-            <div class="col-md-12">
-                <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myRRTexts" [settings]="myRRSettings" 
-                            [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)">
-                </ss-multiselect-dropdown>
-            </div>
-            <br clear="all"/>
-        </div>   <!-- end sidebar-item-->
-
         <div class="sidebar-item" *ngIf="statisticGroups">
             <label>Limit by Statistic Group(s):</label>
             <div class="col-md-12">
@@ -32,8 +22,18 @@
             <br clear="all" />
         </div>  <!-- end sidebar-item-->
 
+        <div class="sidebar-item" *ngIf="regressionRegions">
+            <label>Limit by Regression Group(s):</label>
+            <div class="col-md-12">
+                <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myRRTexts" [settings]="myRRSettings" 
+                            [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)">
+                </ss-multiselect-dropdown>
+            </div>
+            <br clear="all"/>
+        </div>   <!-- end sidebar-item-->        
+
         <div class="sidebar-item" *ngIf="regressionTypes">
-            <label>Limit by Regression Type(s):</label>
+            <label>Limit by Statistic:</label>
             <div class="col-md-12">
                 <ss-multiselect-dropdown [options]="regressionTypes" [texts]="mySGTexts" [settings]="mySGSettings" 
                             [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">

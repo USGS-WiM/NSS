@@ -12,5 +12,5 @@ export interface IParameter {
     LimitArray?:Array<ILimit>;
     OutOfRange?: boolean;
     missingVal?: boolean;
-    seeDescription?: boolean;
+    seeDescription?: boolean;   
 }

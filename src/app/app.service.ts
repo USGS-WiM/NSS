@@ -396,6 +396,7 @@ export class NSSService {
     } 
     public setScenarios(s:Array<IScenario>){
         this._scenarioSubject.next(s);
+        this.chartBind.next("");
     }  
     // -+-+-+-+-+-+ end Scenarios section -+-+-+-+-+-+-+-+-+-+
 
@@ -414,81 +415,21 @@ export class NSSService {
     private getRegionRegressionRegions(id: number, searchArgs?: URLSearchParams) {
         let options = new RequestOptions({ headers: CONFIG.MIN_JSON_HEADERS, search:searchArgs });
          return this._http.get(CONFIG.REGION_URL + '/' + id + '/regressionregions', options)
-            .map(res => <Array<IRegressionRegion>>res.json())
-      /*      .subscribe(rr => {
-                rr.forEach((r) => {
-                    r.id = r.ID; r.name = r.Name;
-                });
-                //remove from _selectedStatGroups if not in response.
-                if (this._selectedRegRegions != undefined) {
-                    for (var srr = this._selectedRegRegions.length; srr--;) {
-                        let RRSind = rr.map(function (eachrr) { return eachrr.ID; }).indexOf(this._selectedRegRegions[srr].ID);
-                        if (RRSind < 0)
-                            this._selectedRegRegions.splice(srr, 1);
-                    };
-                    //repopulate param string comma sep IDs
-                    let regRegIDarray: Array<number> = new Array<number>();
-                    this._selectedRegRegions.forEach((rt) => {
-                        regRegIDarray.push(rt.ID); //pushing each ID into arrayof numbers to then join as comma sep string for parameters
-                    });
-                    this._regRegionIdParams = regRegIDarray.length >= 0 ? regRegIDarray.join(",") : '';
-                };
-                this._regressionRegionSubject.next(rr);
-            }, error => this.handleError);*/            
+            .map(res => <Array<IRegressionRegion>>res.json())      
     }
 
     //get regressiontypes by region
     private getRegionRegressionTypes(id: number, searchArgs?: URLSearchParams) {
         let options = new RequestOptions({ headers: CONFIG.MIN_JSON_HEADERS, search: searchArgs });
         return this._http.get(CONFIG.REGION_URL + '/' + id + '/regressiontypes', options)
-            .map(res => <IRegressionType[]>res.json())
-           /* .subscribe(rt => {
-                rt.forEach((r) => {
-                    r.id = r.ID; r.name = r.Name;
-                });
-                //remove from _selectedStatGroups if not in response.
-                if (this._selectedRegressionTypes != undefined) {
-                    for (var srt = this._selectedRegressionTypes.length; srt--;) {
-                        let RTSind = rt.map(function (eachrt) { return eachrt.ID; }).indexOf(this._selectedRegressionTypes[srt].ID);
-                        if (RTSind < 0)
-                            this._selectedRegressionTypes.splice(srt, 1);
-                    };
-                    //repopulate param string comma sep IDs
-                    let regTypeIDarray: Array<number> = new Array<number>();
-                    this._selectedRegressionTypes.forEach((rt) => {
-                        regTypeIDarray.push(rt.ID); //pushing each ID into arrayof numbers to then join as comma sep string for parameters
-                    });
-                    this._regTypeIdParams = regTypeIDarray.length >= 0 ? regTypeIDarray.join(",") : '';
-                };
-                this._regressionTypeSubject.next(rt);                
-            }, error => this.handleError);*/
+            .map(res => <IRegressionType[]>res.json())          
     }
 
     //get statisticgroups by region
     private getRegionStatisticGrps(id: number, searchArgs?: URLSearchParams) {
         let options = new RequestOptions({ headers: CONFIG.MIN_JSON_HEADERS, search: searchArgs });
         return this._http.get(CONFIG.REGION_URL + '/' + id + '/statisticgroups', options)
-            .map(res => <IStatisticGroup[]>res.json())
-           /* .subscribe(sg => {
-                sg.forEach((s) => {
-                    s.id = s.ID; s.name = s.Name;                    
-                });
-                //remove from _selectedStatGroups if not in response.
-                if (this._selectedStatGroups != undefined) {
-                    for (var si = this._selectedStatGroups.length; si--;) {
-                        let SSind = sg.map(function (eachsg) { return eachsg.ID; }).indexOf(this._selectedStatGroups[si].ID);
-                        if (SSind < 0)
-                            this._selectedStatGroups.splice(si, 1);
-                    };
-                    //repopulate param string comma sep IDs
-                    let statGrpIDarray: Array<number> = new Array<number>();
-                    this._selectedStatGroups.forEach((rt) => {
-                        statGrpIDarray.push(rt.ID); //pushing each ID into arrayof numbers to then join as comma sep string for parameters
-                    });                    
-                    this._statGrpIdParams = statGrpIDarray.length >= 0 ? statGrpIDarray.join(",") : '';
-                };
-                this._statisticGroupSubject.next(sg);
-            }, error => this.handleError);*/
+            .map(res => <IStatisticGroup[]>res.json())           
     }
 
     //get scenarios by region

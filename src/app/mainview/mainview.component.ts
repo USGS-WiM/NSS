@@ -18,6 +18,8 @@ import { IScenarioRegressionRegion }  from '../shared/scenarioregressionregion';
 import { IStatisticGroup }            from '../shared/statisticgroup';
 import { IScenario }                  from '../shared/scenario';
 import { IParameter }                 from '../shared/parameter';
+import { IUnitType }                  from '../shared/unittype';
+import { ILimit }                     from '../shared/limit';
 import { IEquationResult }            from '../shared/equationresult';
 import { IHydro }                     from '../shared/hydrochart';
 import { IChart }                     from '../shared/chart';
@@ -66,7 +68,8 @@ export class MainviewComponent {
   public selectedPlot: string;                    //which plot are they asking for ("Hydrograph" or "Frequency Plot")
   public charts: Array<any>;                      //chart instance 
   public uniqueParameters:Array<IParameter>       //holds unique list of parameters
-
+  public uniqueUnitTypes:Array<IUnitType>         //holds unique list of unit types for parameters to show in appendix
+  public multipleRegRegions: boolean              //if multiple regRegions, set this to true
   constructor(private _nssService:NSSService, 
               private _toasterService: ToasterService,
               @Inject(DOCUMENT) private _document:Document,
@@ -79,16 +82,23 @@ export class MainviewComponent {
       this.hydroChartsArray = []; //instantiate
       this.hydrographs = []; //instantiate
       this.resultsBack = false;
+      this.multipleRegRegions = false;
 
       //subscribe to scenarios
       this._nssService.scenarios.subscribe((s: Array<IScenario>) => {
-          this.scenarios = s; this.resultsBack = false; this.equationResults = []; this.uniqueParameters = [];     
+          this.scenarios = s; this.resultsBack = false; this.equationResults = []; this.uniqueParameters = []; this.uniqueUnitTypes = [];
+          let regID:string = ''; this.multipleRegRegions = false;
           this.scenarios.forEach((s) => {
+              //show weight inputs if more than 1 regression region chosen
               this.showWeights = s.RegressionRegions.length > 1 ? true : false;
+              if (s.RegressionRegions.length > 1) this.multipleRegRegions = true;
+              else this.multipleRegRegions = false;
+
               s.RegressionRegions.forEach((rr) => {
-                  if (rr.Results) {
+                  regID = "(RG_ID: " + rr.ID + ")"; //need to show the regID for each limit so they know which one they are out of range on
+                  if (rr.Results) {                      
                       let eqResult: IEquationResult = { Name: "", Formulas: [] };
-                      //only care if not weighted average result
+                      //only care if average result
                       if (rr.ID > 0) eqResult.Name = rr.Name;
                       this.resultsBack = true;
                       rr.Results.forEach((R) => {
@@ -97,18 +107,29 @@ export class MainviewComponent {
                       if (rr.ID > 0) this.equationResults.push(eqResult);
                       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "MathJax"]); //for the appendix of equations
                   } //end there's results
-                  //populate uniqueParameters
+                  //populate uniqueParameters and uniqueUnitTypes
                   if(rr.ID > 0) {
                     rr.Parameters.forEach((p) =>{
+                        //is this param code already in array list?                        
                         let pIndex = this.uniqueParameters.map(function (parame) { return parame.Code; }).indexOf(p.Code);
                         if (pIndex < 0) {
-                            p.LimitArray = []; 
-                            if (p.Limits != undefined)  p.LimitArray.push(p.Limits);
-                            this.uniqueParameters.push(p);
-                            } else {
-                                //already in here. find the matching one and add it's limits to the LimitArray
-                                this.uniqueParameters[pIndex].LimitArray.push(p.Limits);
+                            p.LimitArray = [];                             
+                            if (p.Limits != undefined){
+                                p.Limits.rrID = regID;
+                                p.LimitArray.push(p.Limits);
                             }
+                            this.uniqueParameters.push(p);
+                        } else {
+                                //already in here. find the matching one and add it's limits to the LimitArray
+                                if (p.Limits != undefined) p.Limits.rrID = regID;
+                                this.uniqueParameters[pIndex].LimitArray.push(p.Limits);
+                        }
+                        //is this unitType already in the array list?                        
+                        let uIndex = this.uniqueUnitTypes.map(function (unit){ return unit.Abbr;}).indexOf(p.UnitType.Abbr);
+                        if (uIndex < 0) {
+                            //not in there yet
+                            this.uniqueUnitTypes.push(p.UnitType);
+                        }                        
                     });
                   }
                 }); // end s.regressionRegion.forEach
@@ -304,6 +325,7 @@ export class MainviewComponent {
           });
       });
       this._nssService.setScenarios(this.scenarios);
+      
   }
   //number only allowed in Value
   public _keyPress(event: any) {
@@ -313,5 +335,15 @@ export class MainviewComponent {
           // invalid character, prevent input
           event.preventDefault();
       }
+  }
+  //need superscript tag in unittype (using <span [innerHTML]="setSuperScript(p.UnitType.Abbr)"> converts tags to actual html)
+  public setSuperScript(unit: string) {
+      let newUnitWithSupTag: string = '';
+      let indexOfSup = unit.indexOf('^');
+      if (indexOfSup > -1)
+          newUnitWithSupTag = '(' + unit.substring(0,indexOfSup) + '<sup>' + unit.substring(indexOfSup+1) + '</sup>)';      
+      else newUnitWithSupTag = unit;
+
+      return newUnitWithSupTag;
   }
 }

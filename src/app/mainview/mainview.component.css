@@ -21,3 +21,10 @@
 .redFont {
     color:red;
 }
+[hidden] { display: none !important;}
+[type="radio"] {
+    position: initial !important;
+}
+[type="checkbox"] {
+    position: initial !important;
+}

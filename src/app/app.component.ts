@@ -19,9 +19,4 @@ export class AppComponent {
  @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
  @ViewChild(SidebarComponent) sidebarComponent: SidebarComponent;
  @ViewChild(MainviewComponent) mainviewCommponent: MainviewComponent;
-   
-  //constructor() {}
-
-  //ngOnInit() {}
-
 }

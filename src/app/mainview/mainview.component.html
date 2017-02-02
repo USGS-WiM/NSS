@@ -206,14 +206,15 @@
                 <h2 style="display:inline-block;margin-right:42px;">Charts</h2>
                 <button style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
             </div>
-            <div *ngIf="showCharts_btn">
-                <div class="col-md-11" *ngFor="let c of hydroChartsArray;let i = index">
+            <div [hidden]="!showCharts_btn">
+                <div class="col-md-11" *ngFor="let c of hydroChartsArray;let i = index"> <!-- For Each hydroChartsArray start -->
                     <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
                         <button type="button" class="pull-right" (click)="removeHydroChart(i)">x</button><br clear="all" />
                         <chart (load)="saveInstance($event.context)" [options]="c"></chart>
                     </div>
-                    <div class="col-md-4 pull-right" *ngIf="selectedPlot=='Hydrograph'">
-                        <form #plotForm="ngForm" (ngSubmit)="refreshHydrograph()">
+                    <div class="col-md-5 pull-right" *ngIf="selectedPlot=='Hydrograph'">
+                        <!-- Start of FORM for hydrochart -->
+                        <form id="myChartForm" name="myChartForm" #myChartForm="ngForm" (ngSubmit)="refreshHydrograph()">
                             <div class="form-group">
                                 <label class="col-md-7">Recurrence Interval:</label>
                                 <div class="col-md-5">
@@ -228,14 +229,114 @@
                                     <input type="text" class="form-control" name="lagTime" (keypress)="_keyPress($event)" [(ngModel)]="hydrographs[i].lagTime" required>
                                 </div>
                             </div>
-                            <br clear="all" />
                             <div class="col-md-12">
-                                <button type="button" [disabled]="hydrographs[i].recurrence==null || hydrographs[i].lagTime==null" class="btn-wim-primary" (click)="refreshHydrograph(i)">Update chart</button>
+                                <button type="button" [disabled]="hydrographs[i].recurrence==null || hydrographs[i].lagTime==null" class="btn-wim-primary" (click)="refreshHydrograph(i, myChartForm.form.controls)">Update chart</button>
                             </div>
+
                             <br clear="all" />
+                            <div class="pull-right"><a (click)="showHideAdditionalChartSettings(i)" style="cursor: pointer">More options</a></div>
+                            <br clear="all" />
+                            <div [hidden]="!hydrographs[i].showExtraSettings" class="panel panel-default">
+                                <div class="panel-body">
+                                    <div style="font-size: small">* To zoom in, click and drag a box in the chart</div>
+                                    <!-- Nav tabs -->
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li role="presentation" class="active"><a href="#Axes" aria-controls="Axes" role="tab" data-toggle="tab">Axes</a></li>
+                                        <li role="presentation"><a href="#Curves" aria-controls="Curves" role="tab" data-toggle="tab">Curves</a></li>
+                                        <li role="presentation"><a href="#Legend" aria-controls="Legend" role="tab" data-toggle="tab">Legend</a></li>
+                                        <li role="presentation"><a href="#Text" aria-controls="Text" role="tab" data-toggle="tab">Text</a></li>
+                                    </ul>
+                                    <!-- Tab panes -->
+                                    <div class="tab-content">
+                                        <!-- AXIS -->
+                                        <div role="tabpanel" class="tab-pane active" id="Axes" style="padding-top:10px">
+                                            <div class="form-group">
+                                                <label class="control-label">Which Axis:</label>
+                                                <div>                                                    
+                                                    <span class="radio-inline">
+                                                        <input type="radio"  name="axis" [(ngModel)]="hydrographs[i].axis" value="BottomX" (click)="axis='BottomX'" />Bottom X
+                                                    </span>
+                                                    <span class="radio-inline">
+                                                        <input type="radio" name="axis" [(ngModel)]="hydrographs[i].axis" value="LeftY" (click)="axis='LeftY'" />Left Y
+                                                    </span>                                                    
+                                                </div>
+                                            </div> <!-- end (AXIS) form group  -->
+                                            <!-- TYPE -->
+                                            <div class="form-group">
+                                                <label class="control-label">Type:</label>
+                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">                                             
+                                                    <span class="radio-inline">
+                                                        <input type="radio" name="type_BX" [(ngModel)]="hydrographs[i].type_BX" (click)="setXaxisType(i, 'linear')" value="linear" />Linear
+                                                    </span>
+                                                    <span class="radio-inline">
+                                                        <input type="radio" name="type_BX" [(ngModel)]="hydrographs[i].type_BX" (click)="setXaxisType(i, 'logarithmic')" value="logarithmic" />Logarithmic
+                                                    </span>
+                                                </div>
+                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">                                             
+                                                    <span class="radio-inline">
+                                                        <input type="radio" name="type_LY" [(ngModel)]="hydrographs[i].type_LY" (click)="setYaxisType(i, 'linear')" value="linear" />Linear
+                                                    </span>
+                                                    <span class="radio-inline">
+                                                        <input type="radio" name="type_LY" [(ngModel)]="hydrographs[i].type_LY" (click)="setYaxisType(i, 'logarithmic')" value="logarithmic" />Logarithmic
+                                                    </span>
+                                                </div>                                                 
+                                            </div> <!-- end (TYPE) form group -->
+                                            <!-- TITLE -->
+                                            <div class="form-group">
+                                                <label class="control-label">Title:</label>
+                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">
+                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_BX" name="title_BX" (keyup)="updateBXtitle(i)" [(ngModel)]="hydrographs[i].title_BX"></textarea>
+                                                </div>
+                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">
+                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_LY" name="title_LY" (keyup)="updateLYtitle(i)"  [(ngModel)]="hydrographs[i].title_LY"></textarea>
+                                                </div>                                                
+                                            </div> <!-- end (TITLE) form group -->
+                                            <!-- MAJOR UNITS -->
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3">Major Units:</label>
+                                                <div [hidden]="hydrographs[i].axis != 'BottomX'" class="col-md-5">
+                                                    <div class="col-md-6"><input type="checkbox" name="majorGrid_BX" (change)="setXChartLines(i, 'gridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorGrid_BX" /> grid</div>
+                                                    <div class="col-md-6"><input type="checkbox" name="majorTic_BX" (change)="setXChartLines(i, 'tickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorTic_BX"  /> tics</div>
+                                                </div>
+                                                <div [hidden]="hydrographs[i].axis != 'LeftY'" class="col-md-5">
+                                                    <div class="col-md-6"><input type="checkbox" name="majorGrid_LY" (change)="setYChartLines(i, 'gridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorGrid_LY" /> grid</div>
+                                                    <div class="col-md-6"><input type="checkbox" name="majorTic_LY" (change)="setYChartLines(i, 'tickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorTic_LY" /> tics</div>
+                                                </div>
+                                            </div> <!-- end (MAJOR UNITS) form group -->
+                                            <br clear="all"/>
+                                            <!-- MINOR UNITS -->
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3">Minor Units:</label>
+                                                <div [hidden]="hydrographs[i].axis != 'BottomX'" class="col-md-9">
+                                                    <div class="col-md-3"><input [disabled]="hydrographs[i].type_BX == 'logarithmic'" type="checkbox" name="minorGrid_BX" (change)="setXChartLines(i, 'minorGridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorGrid_BX" /> grid</div>
+                                                    <div class="col-md-3"><input [disabled]="hydrographs[i].type_BX == 'logarithmic'" type="checkbox" name="minorTic_BX" (change)="setXChartLines(i, 'minorTickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorTic_BX" /> tics</div>
+                                                    <div class="col-md-6" [hidden]="hydrographs[i].type_BX != 'logarithmic'" style="font-size: small">Minor Units disabled with Logarithmic</div>
+                                                </div>
+                                                
+                                                <div [hidden]="hydrographs[i].axis != 'LeftY'" class="col-md-9">
+                                                    <div class="col-md-3"><input [disabled]="hydrographs[i].type_LY == 'logarithmic'" type="checkbox" name="minorGrid_LY" (change)="setYChartLines(i, 'minorGridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorGrid_LY" /> grid</div>
+                                                    <div class="col-md-3"><input [disabled]="hydrographs[i].type_LY == 'logarithmic'" type="checkbox" name="minorTic_LY" (change)="setYChartLines(i, 'minorTickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorTic_LY" /> tics</div>
+                                                    <div class="col-md-6" [hidden]="hydrographs[i].type_LY != 'logarithmic'" style="font-size: small">Minor Units disabled with Logarithmic</div>
+                                                </div>
+                                                
+                                            </div> <!-- end (MINOR UNITS) form group -->
+                                        </div><!-- end Axes tab -->
+                                        <div role="tabpanel" class="tab-pane" id="Curves" style="padding-top:10px">
+                                            Curve, Label, color (if cant export as vector)
+                                        </div> <!-- end curves tab -->
+                                        <div role="tabpanel" class="tab-pane" id="Legend" style="padding-top:10px">
+                                            Legend stuff
+                                        </div> <!-- end Legend tab -->
+                                        <div role="tabpanel" class="tab-pane" id="Text" style="padding-top:10px">
+                                            Text stuff (if cant export as vector)
+                                        </div> <!-- end Text tab -->
+                                    </div>
+                                </div>
+                            </div>
+                            <br clear="all" />                            
                         </form>
                     </div><!-- end form for inputs-->
-                </div>
+                </div> <!-- end for each hydroChartsArray loop -->
             </div>
             <div *ngIf="fChartOptions">
                 <div *ngIf="hydroChartsArray.length == 0">

@@ -17,4 +17,6 @@ export interface IHydro {
     majorGrid_LY?:boolean;
     minorTic_LY?:boolean;
     minorGrid_LY?:boolean;
+    colorPickerColor:string;
+    curveLabel: string;
 }

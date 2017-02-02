@@ -10,7 +10,10 @@
 import { Component, Inject, ViewChild }          from '@angular/core';
 import { ActivatedRoute }             from '@angular/router';
 import { DOCUMENT }                   from '@angular/platform-browser';
-
+// You can load Highcharts static if you need its API
+import * as Highcharts from 'highcharts';
+//add the module
+import * as HighchartsExport from 'highcharts/modules/exporting';
 import { IRegion}                     from '../shared/region';
 import { IRegressionRegion }          from '../shared/regressionregion';
 import { IRegressionType }            from '../shared/regressiontype';
@@ -34,7 +37,7 @@ import { PageScrollService,
 declare var MathJax: {
     Hub: { Queue: (param: Object[]) => void; }
 }
-
+HighchartsExport(Highcharts); // Plug the highchartsExport module
 @Component({
   selector: 'wim-mainview',
   styleUrls: ['./mainview.component.css'],
@@ -156,7 +159,7 @@ export class MainviewComponent {
               this.selectedPlot = "Hydrograph";
               this.hydrograph = { recurrence: null, lagTime: null, showExtraSettings: false, axis: 'BottomX', type_BX: 'linear', type_LY: 'linear', 
                                     majorTic_BX: true, majorGrid_BX: true, minorTic_BX: true, minorGrid_BX:true, 
-                                    majorTic_LY: true,majorGrid_LY:true, minorTic_LY:true, minorGrid_LY:true };
+                                    majorTic_LY: true,majorGrid_LY:true, minorTic_LY:true, minorGrid_LY:true, colorPickerColor: '#7CB5EC', curveLabel: 'Chart' };
                                     
               this.showChartBtn_txt = "Hide"; this.showCharts_btn = true;
               //get array of recurrences from result                
@@ -179,10 +182,22 @@ export class MainviewComponent {
               this.hydrograph.title_LY = 'Discharge (cubic meters per second)';
               // http://api.highcharts.com/highcharts   , panning: true, panKey: 'shift'
               this.hChartOptions = {
+                   exporting: {
+                       chartOptions: { // specific options for the exported image
+                           plotOptions: {
+                               series: {
+                                   dataLabels: {
+                                       enabled: true
+                                    }
+                                }
+                            }
+                        },
+                        fallbackToExportServer: false
+                    },
                   chart: {type:'line', zoomType:'xy'},
-                  title: { text: 'Hydrograph (Recurrence Interval: ' + this.hydrograph.recurrence + ')' },
+                  title: { text: ''},// 'Hydrograph (Recurrence Interval: ' + this.hydrograph.recurrence + ')' },
                   series: [{
-                      data: this.hChartValues
+                      data: this.hChartValues, name: 'Chart' //, dashStyle: 'solid'
                   }],
                   tooltip: {
                       formatter: function () {
@@ -428,6 +443,19 @@ export class MainviewComponent {
             else this.charts[i].yAxis[0].update({minorTickWidth: 0});
             break;
       }          
+  }
+  //change line color
+  public changeLineColor(i:number, c:string){
+      this.charts[0].series[0].update({color: c});
+      this.hydrographs[i].colorPickerColor = c;
+  }
+  //change curve label
+  public updateCurveLabel(i:number){
+      this.charts[0].series[0].update({ name: this.hydrographs[i].curveLabel });
+  }
+  //change chart title
+  public updateChartTitle(i:number){
+
   }
   //show/hide additional user settings options for the chart (axis, title, etc)
   public showHideAdditionalChartSettings(i){

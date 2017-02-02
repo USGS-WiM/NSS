@@ -242,9 +242,7 @@
                                     <!-- Nav tabs -->
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active"><a href="#Axes" aria-controls="Axes" role="tab" data-toggle="tab">Axes</a></li>
-                                        <li role="presentation"><a href="#Curves" aria-controls="Curves" role="tab" data-toggle="tab">Curves</a></li>
-                                        <li role="presentation"><a href="#Legend" aria-controls="Legend" role="tab" data-toggle="tab">Legend</a></li>
-                                        <li role="presentation"><a href="#Text" aria-controls="Text" role="tab" data-toggle="tab">Text</a></li>
+                                        <li role="presentation"><a href="#Curves" aria-controls="Curves" role="tab" data-toggle="tab">Curve and Text</a></li>                                        
                                     </ul>
                                     <!-- Tab panes -->
                                     <div class="tab-content">
@@ -322,14 +320,15 @@
                                             </div> <!-- end (MINOR UNITS) form group -->
                                         </div><!-- end Axes tab -->
                                         <div role="tabpanel" class="tab-pane" id="Curves" style="padding-top:10px">
-                                            Curve, Label, color (if cant export as vector)
-                                        </div> <!-- end curves tab -->
-                                        <div role="tabpanel" class="tab-pane" id="Legend" style="padding-top:10px">
-                                            Legend stuff
-                                        </div> <!-- end Legend tab -->
-                                        <div role="tabpanel" class="tab-pane" id="Text" style="padding-top:10px">
-                                            Text stuff (if cant export as vector)
-                                        </div> <!-- end Text tab -->
+                                            <div class="form-group">
+                                                <label class="control-label">Curve Color:</label>
+                                                <div><input [colorPicker]="hydrographs[i].colorPickerColor" (colorPickerChange)="changeLineColor(i,$event)" [style.background]="hydrographs[i].colorPickerColor" [value]="hydrographs[i].colorPickerColor"/></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label">Legend Label:</label>
+                                                <div><input type="text" class="form-control" name="curveLabel" [(ngModel)]="hydrographs[i].curveLabel" (keyup)="updateCurveLabel(i)" /></div>
+                                            </div>                                            
+                                        </div> <!-- end curves tab -->                                       
                                     </div>
                                 </div>
                             </div>

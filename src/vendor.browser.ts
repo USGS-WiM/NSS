@@ -21,6 +21,7 @@ import '@angularclass/hmr';
 import 'angular2-toaster/angular2-toaster.js';
 import 'ng2-page-scroll';
 import 'angular2-highcharts';
+import 'angular2-color-picker';
 
 // RxJS
 import 'rxjs/add/operator/map';

@@ -1,4 +1,5 @@
 export interface IChart {
+    exporting: any;
     chart: IchartParts;
     title: ItitleParts;
     series: Array<IseriesParts>;
@@ -17,6 +18,7 @@ class ItitleParts{
 }
 class IseriesParts {
     public data: Array<number>[];
+    public name: string;
 }
 class subTitlePart {
     public title: ItitleParts;

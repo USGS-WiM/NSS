@@ -166,6 +166,7 @@ module.exports = function (options) {
         $: 'jquery',
         jquery: 'jquery'
       }),
+
       /*
        * Plugin: ForkCheckerPlugin
        * Description: Do type checking in a separate process, so webpack don't need to wait.

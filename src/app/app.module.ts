@@ -15,11 +15,14 @@ import { MultiselectDropdownModule }        from 'angular-2-dropdown-multiselect
 import { MathJaxDirective }                 from './mainview/mathjax/mathjax.directive';
 import { Ng2PageScrollModule }              from 'ng2-page-scroll'; 
 import { ChartModule }                      from 'angular2-highcharts';
+//require('highcharts/modules/exporting');
+import {ColorPickerModule}                  from 'angular2-color-picker';
 
 @NgModule({
   bootstrap: [ AppComponent ],
   declarations: [ AppComponent, MainviewComponent,NavbarComponent, SidebarComponent, MathJaxDirective],
-  imports: [ BrowserModule, FormsModule, HttpModule, ToasterModule, MultiselectDropdownModule,  Ng2PageScrollModule.forRoot(), ChartModule ],
+  imports: [ BrowserModule, FormsModule, HttpModule, ToasterModule, MultiselectDropdownModule,  
+          Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule ],
   providers: [ NSSService ]
 })
 

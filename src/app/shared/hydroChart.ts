@@ -17,6 +17,13 @@ export interface IHydro {
     majorGrid_LY?:boolean;
     minorTic_LY?:boolean;
     minorGrid_LY?:boolean;
+
     colorPickerColor:string;
     curveLabel: string;
+    lineWidth: number;
+    lineSymbol:string; //circle", "square", "diamond", "triangle", "triangle-down"    
+    lineSymbolFillColor:string;
+    reverse_LY: boolean;
+    reverse_BX:boolean;
+    dataLabels:boolean;
 }

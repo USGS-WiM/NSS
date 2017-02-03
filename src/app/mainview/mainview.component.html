@@ -218,7 +218,7 @@
                             <div class="form-group">
                                 <label class="col-md-7">Recurrence Interval:</label>
                                 <div class="col-md-5">
-                                    <select name="recurrence" class="form-control" [(ngModel)]="hydrographs[i].recurrence" required>
+                                    <select name="recurrence" class="form-control" [(ngModel)]="hydrographs[i].recurrence" (ngModelChange)="refreshHydrograph(i, myChartForm.form.controls)" >
                                         <option *ngFor="let r of hChartXAxisValues" [value]="r">{{r}}</option>
                                     </select>
                                 </div>
@@ -226,11 +226,8 @@
                             <div class="form-group" style="padding-top:5px;">
                                 <label class="col-md-7">Lag Time (hrs):</label>
                                 <div class="col-md-5">
-                                    <input type="text" class="form-control" name="lagTime" (keypress)="_keyPress($event)" [(ngModel)]="hydrographs[i].lagTime" required>
+                                    <input type="text" class="form-control" name="lagTime" (keypress)="_keyPress($event)" [(ngModel)]="hydrographs[i].lagTime" (keyup)="refreshHydrograph(i, myChartForm.form.controls)">
                                 </div>
-                            </div>
-                            <div class="col-md-12">
-                                <button type="button" [disabled]="hydrographs[i].recurrence==null || hydrographs[i].lagTime==null" class="btn-wim-primary" (click)="refreshHydrograph(i, myChartForm.form.controls)">Update chart</button>
                             </div>
 
                             <br clear="all" />
@@ -238,99 +235,138 @@
                             <br clear="all" />
                             <div [hidden]="!hydrographs[i].showExtraSettings" class="panel panel-default">
                                 <div class="panel-body">
-                                    <div style="font-size: small">* To zoom in, click and drag a box in the chart</div>
-                                    <!-- Nav tabs -->
-                                    <ul class="nav nav-tabs" role="tablist">
-                                        <li role="presentation" class="active"><a href="#Axes" aria-controls="Axes" role="tab" data-toggle="tab">Axes</a></li>
-                                        <li role="presentation"><a href="#Curves" aria-controls="Curves" role="tab" data-toggle="tab">Curve and Text</a></li>                                        
-                                    </ul>
-                                    <!-- Tab panes -->
-                                    <div class="tab-content">
-                                        <!-- AXIS -->
-                                        <div role="tabpanel" class="tab-pane active" id="Axes" style="padding-top:10px">
-                                            <div class="form-group">
-                                                <label class="control-label">Which Axis:</label>
-                                                <div>                                                    
-                                                    <span class="radio-inline">
-                                                        <input type="radio"  name="axis" [(ngModel)]="hydrographs[i].axis" value="BottomX" (click)="axis='BottomX'" />Bottom X
-                                                    </span>
-                                                    <span class="radio-inline">
-                                                        <input type="radio" name="axis" [(ngModel)]="hydrographs[i].axis" value="LeftY" (click)="axis='LeftY'" />Left Y
-                                                    </span>                                                    
-                                                </div>
-                                            </div> <!-- end (AXIS) form group  -->
-                                            <!-- TYPE -->
-                                            <div class="form-group">
-                                                <label class="control-label">Type:</label>
-                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">                                             
-                                                    <span class="radio-inline">
-                                                        <input type="radio" name="type_BX" [(ngModel)]="hydrographs[i].type_BX" (click)="setXaxisType(i, 'linear')" value="linear" />Linear
-                                                    </span>
-                                                    <span class="radio-inline">
-                                                        <input type="radio" name="type_BX" [(ngModel)]="hydrographs[i].type_BX" (click)="setXaxisType(i, 'logarithmic')" value="logarithmic" />Logarithmic
-                                                    </span>
-                                                </div>
-                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">                                             
-                                                    <span class="radio-inline">
-                                                        <input type="radio" name="type_LY" [(ngModel)]="hydrographs[i].type_LY" (click)="setYaxisType(i, 'linear')" value="linear" />Linear
-                                                    </span>
-                                                    <span class="radio-inline">
-                                                        <input type="radio" name="type_LY" [(ngModel)]="hydrographs[i].type_LY" (click)="setYaxisType(i, 'logarithmic')" value="logarithmic" />Logarithmic
-                                                    </span>
-                                                </div>                                                 
-                                            </div> <!-- end (TYPE) form group -->
-                                            <!-- TITLE -->
-                                            <div class="form-group">
-                                                <label class="control-label">Title:</label>
+                                    <div style="font-size: small">
+                                        <span>* To zoom in, click and drag a box in the chart</span>
+                                        
+                                    </div>
+                                    <!-- AXIS -->
+                                    <div>
+                                        <div style="font-size: large">Axes</div>                                             
+                                        <div class="form-group col-md-6">
+                                            <label class="control-label">Choose Axis to update:</label>
+                                            <div>                                                    
+                                                <span style="padding-right: 10px">
+                                                    <input type="radio"  name="axis" [(ngModel)]="hydrographs[i].axis" value="BottomX" (click)="axis='BottomX'" />Bottom X
+                                                </span>
+                                                <span>
+                                                    <input type="radio" name="axis" [(ngModel)]="hydrographs[i].axis" value="LeftY" (click)="axis='LeftY'" />Left Y
+                                                </span>                                                    
+                                            </div>
+                                        </div> <!-- end (AXIS) form group  -->
+                                        <!-- TYPE -->
+                                        <div class="form-group col-md-6">
+                                            <label class="control-label">Type:</label>
+                                            <div [hidden]="hydrographs[i].axis != 'BottomX'">                                             
+                                                <span style="padding-right:10px">
+                                                    <input type="radio" name="type_BX" [(ngModel)]="hydrographs[i].type_BX" (click)="setXaxisType(i, 'linear')" value="linear" />Linear
+                                                </span>
+                                                <span>
+                                                    <input type="radio" name="type_BX" [(ngModel)]="hydrographs[i].type_BX" (click)="setXaxisType(i, 'logarithmic')" value="logarithmic" />Logarithmic
+                                                </span>
+                                            </div>
+                                            <div [hidden]="hydrographs[i].axis != 'LeftY'">                                             
+                                                <span style="padding-right: 10px">
+                                                    <input type="radio" name="type_LY" [(ngModel)]="hydrographs[i].type_LY" (click)="setYaxisType(i, 'linear')" value="linear" />Linear
+                                                </span>
+                                                <span>
+                                                    <input type="radio" name="type_LY" [(ngModel)]="hydrographs[i].type_LY" (click)="setYaxisType(i, 'logarithmic')" value="logarithmic" />Logarithmic
+                                                </span>
+                                            </div>                                                 
+                                        </div> <!-- end (TYPE) form group -->                                            
+                                        <!-- TITLE -->
+                                        <div class="form-group  col-md-12">
+                                            <label class="control-label">Axis Title:</label>
+                                            <div [hidden]="hydrographs[i].axis != 'BottomX'">
+                                                <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_BX" name="title_BX" (keyup)="updateBXtitle(i)" [(ngModel)]="hydrographs[i].title_BX"></textarea>
+                                            </div>
+                                            <div [hidden]="hydrographs[i].axis != 'LeftY'">
+                                                <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_LY" name="title_LY" (keyup)="updateLYtitle(i)"  [(ngModel)]="hydrographs[i].title_LY"></textarea>
+                                            </div>                                                
+                                        </div> <!-- end (TITLE) form group -->
+                                        <!-- MAJOR UNITS -->
+                                        <div class="form-group col-md-4">
+                                            <label class="control-label">Major Units:</label>
+                                            <div [hidden]="hydrographs[i].axis != 'BottomX'">
+                                                <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_BX" (change)="setXChartLines(i, 'gridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorGrid_BX" /> grid</span>
+                                                <span><input type="checkbox" name="majorTic_BX" (change)="setXChartLines(i, 'tickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorTic_BX"  /> tics</span>
+                                            </div>
+                                            <div [hidden]="hydrographs[i].axis != 'LeftY'">
+                                                <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_LY" (change)="setYChartLines(i, 'gridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorGrid_LY" /> grid</span>
+                                                <span><input type="checkbox" name="majorTic_LY" (change)="setYChartLines(i, 'tickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorTic_LY" /> tics</span>
+                                            </div>                                            
+                                        </div> <!-- end (MAJOR UNITS) form group -->
+                                        
+                                        <!-- MINOR UNITS -->
+                                        <div class="form-group col-md-4">
+                                            <label class="control-label">Minor Units:</label>
+                                            <div [hidden]="hydrographs[i].axis != 'BottomX'">
+                                                <span style="padding-right: 10px"><input [disabled]="hydrographs[i].type_BX == 'logarithmic'" type="checkbox" name="minorGrid_BX" (change)="setXChartLines(i, 'minorGridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorGrid_BX"/> grid</span>
+                                                <span style="padding-right:5px"><input [disabled]="hydrographs[i].type_BX == 'logarithmic'" type="checkbox" name="minorTic_BX" (change)="setXChartLines(i, 'minorTickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorTic_BX" /> tics</span>
+                                                 <span [hidden]="hydrographs[i].type_LY != 'logarithmic' && hydrographs[i].type_BX != 'logarithmic'" style="font-size: small">(Disabled with Log)</span>
+                                            </div>
+                                            
+                                            <div [hidden]="hydrographs[i].axis != 'LeftY'">
+                                                <span style="padding-right: 10px"><input [disabled]="hydrographs[i].type_LY == 'logarithmic'" type="checkbox" name="minorGrid_LY" (change)="setYChartLines(i, 'minorGridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorGrid_LY" /> grid</span>
+                                                <span style="padding-right:5px"><input [disabled]="hydrographs[i].type_LY == 'logarithmic'" type="checkbox" name="minorTic_LY" (change)="setYChartLines(i, 'minorTickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorTic_LY" /> tics</span>           
+                                                 <span [hidden]="hydrographs[i].type_LY != 'logarithmic' && hydrographs[i].type_BX != 'logarithmic'" style="font-size: small">(Disabled with Log)</span>                                         
+                                            </div>                                                
+                                        </div> <!-- end (MINOR UNITS) form group -->
+                                        <div class="form-group col-md-4">
+                                            <label class="control-label">
                                                 <div [hidden]="hydrographs[i].axis != 'BottomX'">
-                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_BX" name="title_BX" (keyup)="updateBXtitle(i)" [(ngModel)]="hydrographs[i].title_BX"></textarea>
+                                                    <span><input type="checkbox" name="reverse_BX" (change)="setReverseData(i, 'bx', $event.target.checked)" [(ngModel)]="hydrographs[i].reverse_BX"/> reverse</span>
                                                 </div>
                                                 <div [hidden]="hydrographs[i].axis != 'LeftY'">
-                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_LY" name="title_LY" (keyup)="updateLYtitle(i)"  [(ngModel)]="hydrographs[i].title_LY"></textarea>
-                                                </div>                                                
-                                            </div> <!-- end (TITLE) form group -->
-                                            <!-- MAJOR UNITS -->
-                                            <div class="form-group">
-                                                <label class="control-label col-md-3">Major Units:</label>
-                                                <div [hidden]="hydrographs[i].axis != 'BottomX'" class="col-md-5">
-                                                    <div class="col-md-6"><input type="checkbox" name="majorGrid_BX" (change)="setXChartLines(i, 'gridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorGrid_BX" /> grid</div>
-                                                    <div class="col-md-6"><input type="checkbox" name="majorTic_BX" (change)="setXChartLines(i, 'tickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorTic_BX"  /> tics</div>
+                                                    <span><input type="checkbox" name="reverse_LY" (change)="setReverseData(i, 'ly', $event.target.checked)" [(ngModel)]="hydrographs[i].reverse_LY"/> reverse</span>
                                                 </div>
-                                                <div [hidden]="hydrographs[i].axis != 'LeftY'" class="col-md-5">
-                                                    <div class="col-md-6"><input type="checkbox" name="majorGrid_LY" (change)="setYChartLines(i, 'gridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorGrid_LY" /> grid</div>
-                                                    <div class="col-md-6"><input type="checkbox" name="majorTic_LY" (change)="setYChartLines(i, 'tickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorTic_LY" /> tics</div>
-                                                </div>
-                                            </div> <!-- end (MAJOR UNITS) form group -->
-                                            <br clear="all"/>
-                                            <!-- MINOR UNITS -->
-                                            <div class="form-group">
-                                                <label class="control-label col-md-3">Minor Units:</label>
-                                                <div [hidden]="hydrographs[i].axis != 'BottomX'" class="col-md-9">
-                                                    <div class="col-md-3"><input [disabled]="hydrographs[i].type_BX == 'logarithmic'" type="checkbox" name="minorGrid_BX" (change)="setXChartLines(i, 'minorGridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorGrid_BX" /> grid</div>
-                                                    <div class="col-md-3"><input [disabled]="hydrographs[i].type_BX == 'logarithmic'" type="checkbox" name="minorTic_BX" (change)="setXChartLines(i, 'minorTickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorTic_BX" /> tics</div>
-                                                    <div class="col-md-6" [hidden]="hydrographs[i].type_BX != 'logarithmic'" style="font-size: small">Minor Units disabled with Logarithmic</div>
-                                                </div>
-                                                
-                                                <div [hidden]="hydrographs[i].axis != 'LeftY'" class="col-md-9">
-                                                    <div class="col-md-3"><input [disabled]="hydrographs[i].type_LY == 'logarithmic'" type="checkbox" name="minorGrid_LY" (change)="setYChartLines(i, 'minorGridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorGrid_LY" /> grid</div>
-                                                    <div class="col-md-3"><input [disabled]="hydrographs[i].type_LY == 'logarithmic'" type="checkbox" name="minorTic_LY" (change)="setYChartLines(i, 'minorTickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorTic_LY" /> tics</div>
-                                                    <div class="col-md-6" [hidden]="hydrographs[i].type_LY != 'logarithmic'" style="font-size: small">Minor Units disabled with Logarithmic</div>
-                                                </div>
-                                                
-                                            </div> <!-- end (MINOR UNITS) form group -->
-                                        </div><!-- end Axes tab -->
-                                        <div role="tabpanel" class="tab-pane" id="Curves" style="padding-top:10px">
-                                            <div class="form-group">
+                                            </label>
+                                        </div>                                        
+                                    </div><!-- end Axes -->
+                                    <br clear="all"/>
+                                    <div>
+                                        <div style="font-size: large">Curves and Legend</div>
+                                        <div>
+                                            <div class="form-group col-md-6">
                                                 <label class="control-label">Curve Color:</label>
                                                 <div><input [colorPicker]="hydrographs[i].colorPickerColor" (colorPickerChange)="changeLineColor(i,$event)" [style.background]="hydrographs[i].colorPickerColor" [value]="hydrographs[i].colorPickerColor"/></div>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Curve Width:</label>
+                                                <div><input type="text" name="lineWidth" (keyup)="setLineWidth(i)" [(ngModel)]="hydrographs[i].lineWidth"/></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Line Symbol Color:</label>
+                                                <div><input [colorPicker]="hydrographs[i].lineSymbolFillColor" (colorPickerChange)="changeLineSymbolColor(i,$event)" [style.background]="hydrographs[i].lineSymbolFillColor" [value]="hydrographs[i].lineSymbolFillColor"/></div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Point Symbol:</label>
+                                                <div>
+                                                    <select class="form-control" [(ngModel)]="hydrographs[i].lineSymbol" (ngModelChange)="setLineSymbol(i,$event)" name="lineSymbol">
+                                                        <option value="circle">Circle</option>
+                                                        <option value="square">Square</option>
+                                                        <option value="diamond">Diamond</option>                                                            
+                                                        <option value="triangle">Triangle</option>
+                                                        <option value="triangle-down">Triangle-down</option>
+                                                    </select>                                                        
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br clear="all"/>
+                                        <div>
+                                            <div class="form-group col-md-6">
                                                 <label class="control-label">Legend Label:</label>
                                                 <div><input type="text" class="form-control" name="curveLabel" [(ngModel)]="hydrographs[i].curveLabel" (keyup)="updateCurveLabel(i)" /></div>
-                                            </div>                                            
-                                        </div> <!-- end curves tab -->                                       
-                                    </div>
-                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">
+                                                    <input type="checkbox" name="dataLabels" (change)="updateDataLabels(i, $event.target.checked)" [(ngModel)]="hydrographs[i].dataLabels"/> Show Data Values
+                                                </label>
+                                            </div>                         
+                                        </div>
+                                    </div> <!-- end curves-->                                    
+                                </div> <!-- end panel-body -->
                             </div>
                             <br clear="all" />                            
                         </form>
@@ -346,7 +382,157 @@
                 <div class="col-md-11" *ngIf="showCharts_btn">
                     <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
                         <button type="button" class="pull-right" (click)="removeFreqChart()">x</button><br clear="all" />
-                        <chart [options]="fChartOptions"></chart>
+                        <chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>
+                    </div>
+                    <div class="col-md-5 pull-right">
+                        <br clear="all" />
+                            <div class="pull-right"><a (click)="showHideAddFChartSettings()" style="cursor: pointer">More options</a></div>
+                            <br clear="all" />
+                            <div [hidden]="!showExtraFREQSettings" class="panel panel-default">
+                                <div class="panel-body">
+                                    <form id="myFChartForm" name="myFChartForm" #myFChartForm="ngForm">
+                                        <div style="font-size: small">
+                                            <span>* To zoom in, click and drag a box in the chart</span>                                        
+                                        </div>
+                                        <!-- AXIS -->
+                                        <div>
+                                            <div style="font-size: large">Axes</div>                                             
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Choose Axis to update:</label>
+                                                <div>                                                    
+                                                    <span style="padding-right: 10px">
+                                                        <input type="radio"  name="Faxis" [(ngModel)]="frequencyPlotChart.Faxis" value="BottomX" (click)="Faxis='BottomX'" />Bottom X
+                                                    </span>
+                                                    <span>
+                                                        <input type="radio" name="Faxis" [(ngModel)]="frequencyPlotChart.Faxis" value="LeftY" (click)="Faxis='LeftY'" />Left Y
+                                                    </span>                                                    
+                                                </div>
+                                            </div> <!-- end (AXIS) form group  -->
+                                            <!-- TYPE -->
+                                            <div class="form-group col-md-6">
+                                                <label class="control-label">Type:</label>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">                                             
+                                                    <span style="padding-right:10px">
+                                                        <input type="radio" name="type_BX" [(ngModel)]="frequencyPlotChart.type_BX" (click)="setFreqXaxisType('linear')" value="linear" />Linear
+                                                    </span>
+                                                    <span>
+                                                        <input type="radio" name="type_BX" [(ngModel)]="frequencyPlotChart.type_BX" (click)="setFreqXaxisType('logarithmic')" value="logarithmic" />Logarithmic
+                                                    </span>
+                                                </div>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">                                             
+                                                    <span style="padding-right: 10px">
+                                                        <input type="radio" name="type_LY" [(ngModel)]="frequencyPlotChart.type_LY" (click)="setFreqYaxisType('linear')" value="linear" />Linear
+                                                    </span>
+                                                    <span>
+                                                        <input type="radio" name="type_LY" [(ngModel)]="frequencyPlotChart.type_LY" (click)="setFreqYaxisType('logarithmic')" value="logarithmic" />Logarithmic
+                                                    </span>
+                                                </div>                                                 
+                                            </div> <!-- end (TYPE) form group -->                                            
+                                            <!-- TITLE -->
+                                            <div class="form-group  col-md-12">
+                                                <label class="control-label">Axis Title:</label>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="frequencyPlotChart.title_BX" name="title_BX" (keyup)="updateFreqBXtitle()" [(ngModel)]="frequencyPlotChart.title_BX"></textarea>
+                                                </div>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="frequencyPlotChart.title_LY" name="title_LY" (keyup)="updateFreqLYtitle()"  [(ngModel)]="frequencyPlotChart.title_LY"></textarea>
+                                                </div>                                                
+                                            </div> <!-- end (TITLE) form group -->
+                                            <!-- MAJOR UNITS -->
+                                            <div class="form-group col-md-4">
+                                                <label class="control-label">Major Units:</label>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+                                                    <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_BX" (change)="setFreqXChartLines('gridLineWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorGrid_BX" /> grid</span>
+                                                    <span><input type="checkbox" name="majorTic_BX" (change)="setFreqXChartLines('tickWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorTic_BX"  /> tics</span>
+                                                </div>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+                                                    <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_LY" (change)="setFreqYChartLines('gridLineWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorGrid_LY" /> grid</span>
+                                                    <span><input type="checkbox" name="majorTic_LY" (change)="setFreqYChartLines('tickWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorTic_LY" /> tics</span>
+                                                </div>                                            
+                                            </div> <!-- end (MAJOR UNITS) form group -->
+                                            
+                                            <!-- MINOR UNITS -->
+                                            <div class="form-group col-md-4">
+                                                <label class="control-label">Minor Units:</label>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+                                                    <span style="padding-right: 10px">
+                                                        <input [disabled]="frequencyPlotChart.type_BX == 'logarithmic'" type="checkbox" name="minorGrid_BX" (change)="setFreqXChartLines('minorGridLineWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.minorGrid_BX"/> grid
+                                                    </span>
+                                                    <span style="padding-right:5px">
+                                                        <input [disabled]="frequencyPlotChart.type_BX == 'logarithmic'" type="checkbox" name="minorTic_BX" (change)="setFreqXChartLines('minorTickWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.minorTic_BX" /> tics
+                                                    </span>
+                                                    <span [hidden]="frequencyPlotChart.type_LY != 'logarithmic' && frequencyPlotChart.type_BX != 'logarithmic'" style="font-size: small">(Disabled with Log)</span>
+                                                </div>
+                                                
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+                                                    <span style="padding-right: 10px">
+                                                        <input [disabled]="frequencyPlotChart.type_LY == 'logarithmic'" type="checkbox" name="minorGrid_LY" (change)="setFreqYChartLines('minorGridLineWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.minorGrid_LY" /> grid
+                                                    </span>
+                                                    <span style="padding-right:5px">
+                                                        <input [disabled]="frequencyPlotChart.type_LY == 'logarithmic'" type="checkbox" name="minorTic_LY" (change)="setFreqYChartLines('minorTickWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.minorTic_LY" /> tics
+                                                    </span>           
+                                                    <span [hidden]="frequencyPlotChart.type_LY != 'logarithmic' && frequencyPlotChart.type_BX != 'logarithmic'" style="font-size: small">(Disabled with Log)</span>                                         
+                                                </div>                                                
+                                            </div> <!-- end (MINOR UNITS) form group -->
+                                            <div class="form-group col-md-4">
+                                                <label class="control-label">
+                                                    <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+                                                        <span><input type="checkbox" name="reverse_BX" (change)="setFreqReverseData('bx', $event.target.checked)" [(ngModel)]="frequencyPlotChart.reverse_BX"/> reverse</span>
+                                                    </div>
+                                                    <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+                                                        <span><input type="checkbox" name="reverse_LY" (change)="setFreqReverseData('ly', $event.target.checked)" [(ngModel)]="frequencyPlotChart.reverse_LY"/> reverse</span>
+                                                    </div>
+                                                </label>
+                                            </div>                                        
+                                        </div><!-- end Axes -->
+                                        <br clear="all"/>
+                                        <div>
+                                            <div style="font-size: large">Curves and Legend</div>
+                                            <div>
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Curve Color:</label>
+                                                    <div><input [colorPicker]="frequencyPlotChart.colorPickerColor" (colorPickerChange)="changeFreqLineColor($event)" [style.background]="frequencyPlotChart.colorPickerColor" [value]="frequencyPlotChart.colorPickerColor"/></div>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Curve Width:</label>
+                                                    <div><input type="text" name="lineWidth" (keyup)="setFreqLineWidth()" [(ngModel)]="frequencyPlotChart.lineWidth"/></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Line Symbol Color:</label>
+                                                    <div><input [colorPicker]="frequencyPlotChart.lineSymbolFillColor" (colorPickerChange)="changeFreqLineSymbolColor($event)" [style.background]="frequencyPlotChart.lineSymbolFillColor" [value]="frequencyPlotChart.lineSymbolFillColor"/></div>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Point Symbol:</label>
+                                                    <div>
+                                                        <select class="form-control" [(ngModel)]="frequencyPlotChart.lineSymbol" (ngModelChange)="setFreqLineSymbol($event)" name="lineSymbol">
+                                                            <option value="circle">Circle</option>
+                                                            <option value="square">Square</option>
+                                                            <option value="diamond">Diamond</option>                                                            
+                                                            <option value="triangle">Triangle</option>
+                                                            <option value="triangle-down">Triangle-down</option>
+                                                        </select>                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br clear="all"/>
+                                            <div>
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">Legend Label:</label>
+                                                    <div><input type="text" class="form-control" name="curveLabel" [(ngModel)]="frequencyPlotChart.curveLabel" (keyup)="updateFreqCurveLabel()" /></div>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label class="control-label">
+                                                        <input type="checkbox" name="dataLabels" (change)="updateFreqDataLabels($event.target.checked)" [(ngModel)]="frequencyPlotChart.dataLabels"/> Show Data Values
+                                                    </label>
+                                                </div>                         
+                                            </div>
+                                        </div> <!-- end curves-->     
+                                    </form>                               
+                                </div> <!-- end panel-body -->
+                            </div>
+                            <br clear="all" />                            
                     </div>
                 </div>
             </div>

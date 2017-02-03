@@ -19,6 +19,7 @@ class ItitleParts{
 class IseriesParts {
     public data: Array<number>[];
     public name: string;
+    public states: any;
 }
 class subTitlePart {
     public title: ItitleParts;

@@ -23,6 +23,8 @@ class IseriesParts {
 }
 class subTitlePart {
     public title: ItitleParts;
+    public startOnTick: boolean;
+    public endOnTick: boolean;
     public gridLineWidth: number;
     public minorGridLineWidth: number;
     public minorTickWidth: number;

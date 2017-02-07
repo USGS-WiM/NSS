@@ -10,10 +10,10 @@
 import { Component, Inject, ViewChild }          from '@angular/core';
 import { ActivatedRoute }             from '@angular/router';
 import { DOCUMENT }                   from '@angular/platform-browser';
-// You can load Highcharts static if you need its API
-import * as Highcharts from 'highcharts';
-//add the module
-import * as HighchartsExport from 'highcharts/modules/exporting';
+
+import * as Highcharts from 'highcharts';// You can load Highcharts static if you need its API
+import * as HighchartsExport from 'highcharts/modules/exporting'; //add the module
+import * as jsPDF from 'jspdf';
 import { IRegion}                     from '../shared/region';
 import { IRegressionRegion }          from '../shared/regressionregion';
 import { IRegressionType }            from '../shared/regressiontype';
@@ -39,6 +39,7 @@ declare var MathJax: {
     Hub: { Queue: (param: Object[]) => void; }
 }
 HighchartsExport(Highcharts); // Plug the highchartsExport module
+
 @Component({
   selector: 'wim-mainview',
   styleUrls: ['./mainview.component.css'],
@@ -82,7 +83,7 @@ export class MainviewComponent {
   constructor(private _nssService:NSSService, 
               private _toasterService: ToasterService,
               @Inject(DOCUMENT) private _document:Document,
-              private _pageScrollService: PageScrollService) { }
+              private _pageScrollService: PageScrollService) {}
 
   ngOnInit() {
       this.title = "NSS Report";
@@ -157,6 +158,7 @@ export class MainviewComponent {
               this._pageScrollService.start(pageScrollInstance);
           }
           if (c == "Hydrograph") {
+              let H_areaAveraged: boolean = false;
               this.selectedPlot = "Hydrograph";
               let hydroG: IHydro;
               hydroG = { recurrence: null, lagTime: null, showExtraSettings: false, axis: 'BottomX', type_BX: 'linear', type_LY: 'linear', lineWidth: 1, lineSymbol: 'circle',              
@@ -168,16 +170,30 @@ export class MainviewComponent {
               //get array of recurrences from result      
               let rec:number;     
               this.scenarios.forEach((s) => {
-                  s.RegressionRegions.forEach((rr) => {
-                      if (rr.Results) {                          
+                  if (s.RegressionRegions.length > 1){
+                    s.RegressionRegions.forEach((rr) => {
+                        if (rr.Name == "Area-Averaged"){
+                            H_areaAveraged = true; //area averaged, add title to chart stating
+                            hydroG.curveLabel = "Area-Averaged";
+                            this.hChartXAxisValues = [];
+                            rr.Results.forEach((R) => {
+                               this.hChartXAxisValues.push(R.code);
+                            });
+                            //use constant array to populate chart [][]
+                            rec = rr.Results.filter(r => r.code == this.hChartXAxisValues[0])[0].Value;      
+                        }
+                    });
+                  } else {
+                      s.RegressionRegions.forEach((rr) => {
                           this.hChartXAxisValues = [];
                           rr.Results.forEach((R) => {
                              this.hChartXAxisValues.push(R.code);
                           });
                           //use constant array to populate chart [][]
                           rec = rr.Results.filter(r => r.code == this.hChartXAxisValues[0])[0].Value;      
-                      }//
-                  });
+                      
+                      });
+                   }
               });//end foreach scenario
               hydroG.recurrence = this.hChartXAxisValues[0]; //default to first one;
               hydroG.lagTime = 1; //default value to change later
@@ -201,19 +217,21 @@ export class MainviewComponent {
                   title: { text: ''},
                   series: [{
                       data: this.DIMLESS_ARRAY.map(p => { return [p[0]*1, p[1]*rec] }),
-                      name: 'Chart', //, dashStyle: 'solid',
+                      name: H_areaAveraged ? 'Area Averaged' : 'Chart', //, dashStyle: 'solid',
                       states: {
                         hover: { enabled: false } //stops the line from getting thicker when mouse onto the chart
                       }
                   }],
                   tooltip: {
                       formatter: function () {
-                          var s = '<b>(' + this.x + ', ' + Math.round(this.y*1000)/1000 + ')</b>';                          
+                          var s = '<b>(' + Math.round(this.x*1000)/1000 + ', ' + Math.round(this.y*1000)/1000 + ')</b>';                          
                           return s;
                       }
                   },
                   xAxis: {                      
                       title: { text: 'Time (hours)<br/>Hydrograph for ' + hydroG.lagTime + '-yr interval<br/>NOTE: May not represent actual hydrograph' },
+                      startOnTick: true,
+                      endOnTick: true,
                       gridLineWidth: 1, //major grid (0/1)
                       minorGridLineWidth: 1,   //minor grid (0/1)
                       tickWidth: 1, //major tic (0/1)
@@ -228,6 +246,8 @@ export class MainviewComponent {
                   },
                   yAxis: {
                       title: { text: 'Discharge (cubic meters per second)' },                 
+                      startOnTick: true,
+                      endOnTick: true,                      
                       gridLineWidth: 1, //major grid (0/1)
                       minorGridLineWidth: 1,   //minor grid (0/1)                         
                       tickWidth: 1, //major tic (0/1)
@@ -245,27 +265,42 @@ export class MainviewComponent {
               this.hydrographs.push(hydroG);
           } else if (c == "Frequency Plot"){
               if (this.fChartValues == undefined) {   
-                //only come in here if there isn't already a frequency plot
-                this.frequencyPlotChart = { Faxis: 'BottomX', type_BX: 'linear', type_LY: 'linear', title_LY: 'Peak Discharge, In cubic meters per second',
-                                            title_BX: 'Recurrence Interval, in years<br/>Flood Frequency Plot', lineWidth: 1, lineSymbol: 'circle',              
-                                            majorTic_BX: true, majorGrid_BX: true, minorTic_BX: true, minorGrid_BX:true, 
-                                            majorTic_LY: true,majorGrid_LY:true, minorTic_LY:true, minorGrid_LY:true, 
+                  let F_areaAveraged:boolean = false;
+                  this.fChartOptions = {};
+                  //only come in here if there isn't already a frequency plot
+                  this.frequencyPlotChart = { Faxis: 'BottomX', type_BX: 'returnPeriod', type_LY: 'returnPeriod', title_LY: 'Peak Discharge, In cubic meters per second',
+                                            title_BX: 'Recurrence Interval, in years\nFlood Frequency Plot', lineWidth: 1, lineSymbol: 'circle',              
+                                            majorTic_BX: true, majorGrid_BX: true, minorTic_BX: true, minorGrid_BX: true, 
+                                            majorTic_LY: true,majorGrid_LY:true, minorTic_LY:false, minorGrid_LY:false, 
                                             colorPickerColor: '#7CB5EC', curveLabel: 'Chart', lineSymbolFillColor: '#7CB5EC', reverse_LY: false, reverse_BX: false, dataLabels:false };           
-                //get array of recurrences from result      
-                let freqDataArray:number[][];
-                freqDataArray = [];
-                this.scenarios.forEach((s) => {
-                    s.RegressionRegions.forEach((rr) => {
-                        if (rr.Results) {                          
+                  //get array of recurrences from result      
+                  let freqDataArray:number[][];
+                  freqDataArray = [];
+                  this.scenarios.forEach((s) => {
+                      if (s.RegressionRegions.length > 1){                          
+                          s.RegressionRegions.forEach((rr) => {      
+                              if (rr.Name == "Area-Averaged") {
+                                  F_areaAveraged = true; //area averaged, add title to chart stating
+                                  this.frequencyPlotChart.curveLabel = "Area-Averaged";                                           
+                                  this.hChartXAxisValues = [];
+                                  rr.Results.forEach((R) => {
+                                      let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
+                                      freqDataArray.push([x, R.Value]);
+                                  })
+                              }
+                           });
+                      } else {
+                          s.RegressionRegions.forEach((rr) => {
                             this.hChartXAxisValues = [];
                             rr.Results.forEach((R) => {
                                 let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
                                 freqDataArray.push([x, R.Value]);
                             }) 
-                        }//
-                    });
+                          })
+                      }
+                   
                 });//end foreach scenario
-                console.log("freq: " + freqDataArray);
+                console.log("freq (start): " + freqDataArray);
                 this.fChartValues = freqDataArray;
                 this.showChartBtn_txt = "Hide"; this.showCharts_btn = true;
                 this.fChartOptions = {
@@ -276,35 +311,39 @@ export class MainviewComponent {
                                     dataLabels: {
                                         enabled: true,
                                         formatter: function () {return Highcharts.numberFormat(this.y,4); }
-                                        }
+                                    },
+                                    name: F_areaAveraged ? 'Area Averaged' : 'Chart',
+                                    states: {
+                                        hover: { enabled: false } //stops the line from getting thicker when mouse onto the chart
                                     }
                                 }
-                            },
-                            fallbackToExportServer: false
+                            }
                         },
+                        fallbackToExportServer: false
+                    },
                     chart: {type:'line', zoomType:'xy'},
                     title: { text: ''},
                     series: [{
                         data: this.fChartValues,
                         marker: { enabled: true},
-                        name: 'Chart', //, dashStyle: 'solid',
+                        name: F_areaAveraged ? 'Area Averaged' : 'Chart', //, dashStyle: 'solid',
                         states: {
                             hover: { enabled: false } //stops the line from getting thicker when mouse onto the chart
                         }
                     }],
                     tooltip: {
                         formatter: function () {
-                            var s = '<b>(' + this.x + ', ' + Math.round(this.y*1000)/1000 + ')</b>';                          
+                            var s = '<b>(' + Math.round(this.x*1000)/1000 + ', ' + Math.round(this.y*1000)/1000 + ')</b>';                          
                             return s;
                         }
                     },
-                    xAxis: {                      
+                    xAxis: {       
                         title: { text: 'Recurrence Interval, in years<br/>Flood Frequency Plot' },
+                        type: 'logarithmic',  
+                        startOnTick: true,
+                        endOnTick: true,                  
                         gridLineWidth: 1, //major grid (0/1)
-                        minorGridLineWidth: 1,   //minor grid (0/1)
-                        tickWidth: 1, //major tic (0/1)
-                        minorTickWidth: 1, //minor tic (0/1)
-                                    
+                        tickWidth: 1, //major tic (0/1)              
                         minorTickInterval: 'auto', //line 191-196 needed for above to be changed                       
                         minorTickLength:5,
                         tickPosition: 'inside',
@@ -313,13 +352,12 @@ export class MainviewComponent {
                         minorTickColor: '#000000' 
                     },
                     yAxis: {
-                        title: { text: 'Peak Discharge, In cubic meters per second' },                 
+                        title: { text: 'Peak Discharge, In cubic meters per second' },    
+                        type: 'logarithmic',
+                        startOnTick: true,
+                        endOnTick: true,                        
                         gridLineWidth: 1, //major grid (0/1)
-                        minorGridLineWidth: 1,   //minor grid (0/1)                         
                         tickWidth: 1, //major tic (0/1)
-                        minorTickWidth: 1, //minor tic (0/1)
-                                    
-                        minorTickInterval: 'auto', //line 205-210 needed for above to be changed                      
                         minorTickLength: 5, 
                         tickPosition: 'inside',
                         minorTickPosition: 'inside',
@@ -518,7 +556,7 @@ export class MainviewComponent {
   } 
   //show/hide data labels  HYDRO
   public updateDataLabels(i:number, value:boolean){
-      this.charts[i].series[0].update({ dataLabels: { enabled: value, formatter: function () {return Highcharts.numberFormat(this.y,4); }}});
+      this.charts[i].series[0].update({ dataLabels: { enabled: value, formatter: function () {return '(' + this.x + ', ' + Highcharts.numberFormat(this.y,4) + ')'; }}});
   }
   //changed values, refresh the hydrograph with new data HYDRO
   public refreshHydrograph(i, values) {
@@ -563,30 +601,59 @@ export class MainviewComponent {
       this.freqChart = freqChartInst;
   }
   //clicked Bottom x & type == update chart FREQUENCY
-  public setFreqXaxisType(newType:string){      
-      //converting to logarithmic gets ugly (line draws partially outside of plot area) due to the minorTickInterval being set to auto
-      if (newType == 'logarithmic') {     
-          //this makes minor ticks and grid lines disappear..turn them off and uncheck boxes
-          this.freqChart.xAxis[0].update({tickInterval: 'auto', minorGridLineWidth: 0, minorTickWidth: 0});           
-          this.frequencyPlotChart.minorGrid_BX = false; this.frequencyPlotChart.minorTic_BX = false;     
+  public setFreqXaxisType(newType:string){   
+      let freqDataArray:number[][]; freqDataArray = [];   
+      //converting 'percent', 'fraction', or 'returnPeriod' (default/onload is returnPeriod)
+      if (newType == 'percent') {     
+          this.scenarios.forEach((s) => {
+              s.RegressionRegions.forEach((rr) => {
+                  if (rr.Results) {                          
+                      this.hChartXAxisValues = [];
+                      rr.Results.forEach((R) => {
+                          let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
+                          freqDataArray.push([(1/x)*100, R.Value]);                         
+                      }) 
+                  }
+              });
+          });//end foreach scenario       
+          this.frequencyPlotChart.reverse_BX = true;
+          this.freqChart.xAxis[0].update({reversed:true, labels: {formatter:function() {                
+                return Highcharts.numberFormat(this.value ,0,',') + '%';
+                }}});          
+      } else if (newType == 'fraction') {
+          //divide 1 into probability (pk500)
+          this.scenarios.forEach((s) => {
+              s.RegressionRegions.forEach((rr) => {
+                  if (rr.Results) {                          
+                      this.hChartXAxisValues = [];
+                      rr.Results.forEach((R) => {
+                          let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
+                          freqDataArray.push([1/x, R.Value]);                          
+                      }) 
+                  }
+              });
+          });//end foreach scenario
+          this.frequencyPlotChart.reverse_BX = true;
+          this.freqChart.xAxis[0].update({reversed:true, labels: {formatter:function() { return this.value; }}});                  
       } else {
-          this.freqChart.xAxis[0].update({tickInterval: null});       
-      }
-      this.freqChart.xAxis[0].update({ type: newType});
-  }
-  //clicked Left y & type == update chart FREQUENCY
-  public setFreqYaxisType(newType:string){      
-      //converting to logarithmic gets ugly (line draws partially outside of plot area) due to the minorTickInterval being set to auto
-      if (newType == 'logarithmic') {
-          //this makes minor ticks and grid lines disappear..turn them off and uncheck boxes
-          this.freqChart.yAxis[0].update({ minorGridLineWidth: 0, minorTickWidth: 0}); //tickInterval:'auto'
-          this.frequencyPlotChart.minorGrid_LY = false; this.frequencyPlotChart.minorTic_LY = false;   
-
-      } else {
-          this.freqChart.yAxis[0].update({tickInterval: null});          
-      }
-      this.freqChart.yAxis[0].update({ type: newType});        
-  }
+          //returnPeriod
+          this.scenarios.forEach((s) => {
+              s.RegressionRegions.forEach((rr) => {
+                  if (rr.Results) {                          
+                      this.hChartXAxisValues = [];
+                      rr.Results.forEach((R) => {
+                          let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
+                          freqDataArray.push([x, R.Value]);                          
+                      }) 
+                  }
+              });
+          });//end foreach scenario
+          this.frequencyPlotChart.reverse_BX = false;
+          this.freqChart.xAxis[0].update({reversed:false, labels: {formatter:function() { return this.value; }}});              
+          console.log("return period: " + freqDataArray);
+      }      
+      this.freqChart.series[0].setData(freqDataArray);
+  } 
   //update title on x axis as they type FREQUENCY
   public updateFreqBXtitle(){      
       this.fChartOptions.xAxis.title.text = this.frequencyPlotChart.title_BX.replace(/\n/g, '<br/>'); //bottom title      
@@ -621,24 +688,16 @@ export class MainviewComponent {
   }
   //update ticks or grids on chart (0/1) FREQUENCY
   public setFreqYChartLines(whichOne:string, value:boolean){
-      /* gridLineWidth: 1 //major grid (0/1)    minorGridLineWidth: 1 //minor grid (0/1)   tickWidth: 1 //major tic (0/1)  minorTickWidth: 1 //minor tic (0/1)  */
+      /* gridLineWidth: 1 //major grid (0/1)    minorGridLineWidth: 1 //minor grid (NOT USED WITH LOG)  tickWidth: 1 //major tic (0/1)  minorTickWidth: 1 //minor tic (NOT USED WITH LOG)  */
       switch (whichOne){
           case 'gridLineWidth':
             if (value) this.freqChart.yAxis[0].update({gridLineWidth: 1});
             else this.freqChart.yAxis[0].update({gridLineWidth: 0});
-            break;
-          case 'minorGridLineWidth':
-            if (value) this.freqChart.yAxis[0].update({minorGridLineWidth: 1});
-            else  this.freqChart.yAxis[0].update({minorGridLineWidth: 0});
-            break;
+            break;          
           case 'tickWidth':
             if (value) this.freqChart.yAxis[0].update({tickWidth: 1});
             else this.freqChart.yAxis[0].update({tickWidth: 0});
-            break;
-          case 'minorTickWidth':
-            if (value) this.freqChart.yAxis[0].update({minorTickWidth: 1});
-            else this.freqChart.yAxis[0].update({minorTickWidth: 0});
-            break;
+            break;          
       }          
   }  
   //reverse the data FREQUENCY
@@ -673,16 +732,19 @@ export class MainviewComponent {
   } 
   //show/hide data labels  FREQUENCY
   public updateFreqDataLabels(value:boolean){
-      this.freqChart.series[0].update({ dataLabels: { enabled: value, formatter: function () {return Highcharts.numberFormat(this.y,4); }}});
-  }
-  //////////////////////////////////////end FREQUENCY STUFF  /////////////////////////////////////////////////////
+      this.freqChart.series[0].update({ dataLabels: { enabled: value, formatter: function () {return '('+this.x +'yr, ' + Highcharts.numberFormat(this.y,4) + ')'; }}});
+  }  
   //show/hid additional user settings options for the chart Frequency
   public showHideAddFChartSettings(){
       this.showExtraFREQSettings = !this.showExtraFREQSettings;
   }  
   public removeFreqChart() {
-      this.fChartOptions = null;
+      this.frequencyPlotChart = undefined;
+      this.freqChart = undefined;
+      this.fChartOptions = undefined;
+      this.fChartValues = undefined;
   }
+  //////////////////////////////////////end FREQUENCY STUFF  /////////////////////////////////////////////////////
   //toggle charts
   public showHideCharts() {
       //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
@@ -723,5 +785,23 @@ export class MainviewComponent {
 
       return newUnitWithSupTag;
   }
-  
-}
+  //print pdf 
+  public printPage() {
+      let printContents, popupWin;
+    printContents = document.getElementById('printArea').innerHTML;
+    popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+    popupWin.document.open();
+    popupWin.document.write(`
+      <html>
+        <head>
+          <title>Print tab</title>
+          <style>
+          //........Customized style.......
+          </style>
+        </head>
+    <body onload="window.print();window.close()">${printContents}</body>
+      </html>`
+    );
+    popupWin.document.close();
+    }  
+} //end component

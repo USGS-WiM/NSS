@@ -71,3 +71,15 @@ span.active {
     background-color: #efe1e1!important;
     border: 1px solid #a94442!important;
 }
+@media print{
+    body * {
+        visibility: hidden;
+        -webkit-print-color-adjust: exact !important; 
+    }        
+    .hidden-print {
+        display: none !important;
+    }
+    #print-content * {
+        visibility: visible;
+    }
+}

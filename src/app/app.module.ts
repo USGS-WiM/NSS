@@ -15,7 +15,7 @@ import { MultiselectDropdownModule }        from 'angular-2-dropdown-multiselect
 import { MathJaxDirective }                 from './mainview/mathjax/mathjax.directive';
 import { Ng2PageScrollModule }              from 'ng2-page-scroll'; 
 import { ChartModule }                      from 'angular2-highcharts';
-//require('highcharts/modules/exporting');
+//import { jspdf }                            from 'jspdf';
 import {ColorPickerModule}                  from 'angular2-color-picker';
 
 @NgModule({

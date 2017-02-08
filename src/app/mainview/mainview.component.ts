@@ -794,10 +794,25 @@ export class MainviewComponent {
     popupWin.document.write(`
       <html>
         <head>
-          <title>Print tab</title>
-          <style>
-          //........Customized style.......
+          <title></title>
+          <style>                   
+            .hidden-print {
+                display: none !important;
+            }
+            #print-content * {
+                visibility: visible;
+            }
+            h3 {
+                text-align: center;
+            }
+            th, td {
+                margin-top:-8px;
+                padding-top:8px;
+                page-break-inside:avoid;
+            }
           </style>
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         </head>
     <body onload="window.print();window.close()">${printContents}</body>
       </html>`

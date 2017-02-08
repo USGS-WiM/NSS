@@ -134,9 +134,8 @@
                                 <tr>
                                     <th class="col-md-6"></th>
                                     <th>Value</th>                                    
-                                    <th *ngIf="rr.Results[0].IntervalBounds">Predicted Interval</th><th *ngIf="rr.Results[0].IntervalBounds" ></th>                                   
-                                    <th *ngIf="rr.Results[0].Errors">Errors (%)</th>
-                                    <th *ngIf="rr.Results[0].Errors"></th><th *ngIf="rr.Results[0].Errors"></th>
+                                    <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Predicted Interval</th>
+                                    <th *ngIf="rr.Results[0].Errors" colspan="3">Errors (%)</th>
                                     <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent Yrs.</th>
                                 </tr>
                                 <tr>
@@ -210,7 +209,7 @@
             <div [hidden]="!showCharts_btn">
                 <div class="col-md-11" *ngFor="let c of hydroChartsArray;let i = index"> <!-- For Each hydroChartsArray start -->
                     <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
-                        <button type="button" class="pull-right" (click)="removeHydroChart(i)">x</button><br clear="all" />
+                        <button type="button" class="pull-right hidden-print" (click)="removeHydroChart(i)">x</button><br clear="all" />
                         <chart (load)="saveInstance($event.context)" [options]="c"></chart>
                     </div>
                     <div class="col-md-5 pull-right hidden-print" *ngIf="selectedPlot=='Hydrograph'">
@@ -382,7 +381,7 @@
                 </div>
                 <div class="col-md-11" *ngIf="showCharts_btn">
                     <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
-                        <button type="button" class="pull-right" (click)="removeFreqChart()">x</button><br clear="all" />
+                        <button type="button" class="pull-right hidden-print" (click)="removeFreqChart()">x</button><br clear="all" />
                         <chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>
                     </div>
                     <div class="col-md-5 pull-right">

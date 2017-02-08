@@ -282,7 +282,6 @@ export class MainviewComponent {
                               if (rr.Name == "Area-Averaged") {
                                   F_areaAveraged = true; //area averaged, add title to chart stating
                                   this.frequencyPlotChart.curveLabel = "Area-Averaged";                                           
-                                  this.hChartXAxisValues = [];
                                   rr.Results.forEach((R) => {
                                       let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
                                       freqDataArray.push([x, R.Value]);
@@ -291,7 +290,6 @@ export class MainviewComponent {
                            });
                       } else {
                           s.RegressionRegions.forEach((rr) => {
-                            this.hChartXAxisValues = [];
                             rr.Results.forEach((R) => {
                                 let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
                                 freqDataArray.push([x, R.Value]);
@@ -607,8 +605,7 @@ export class MainviewComponent {
       if (newType == 'percent') {     
           this.scenarios.forEach((s) => {
               s.RegressionRegions.forEach((rr) => {
-                  if (rr.Results) {                          
-                      this.hChartXAxisValues = [];
+                  if (rr.Results) {               
                       rr.Results.forEach((R) => {
                           let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
                           freqDataArray.push([(1/x)*100, R.Value]);                         
@@ -624,8 +621,7 @@ export class MainviewComponent {
           //divide 1 into probability (pk500)
           this.scenarios.forEach((s) => {
               s.RegressionRegions.forEach((rr) => {
-                  if (rr.Results) {                          
-                      this.hChartXAxisValues = [];
+                  if (rr.Results) {                 
                       rr.Results.forEach((R) => {
                           let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
                           freqDataArray.push([1/x, R.Value]);                          
@@ -639,8 +635,7 @@ export class MainviewComponent {
           //returnPeriod
           this.scenarios.forEach((s) => {
               s.RegressionRegions.forEach((rr) => {
-                  if (rr.Results) {                          
-                      this.hChartXAxisValues = [];
+                  if (rr.Results) {                 
                       rr.Results.forEach((R) => {
                           let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
                           freqDataArray.push([x, R.Value]);                          

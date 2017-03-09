@@ -166,7 +166,7 @@ export class MainviewComponent {
               hydroG = { recurrence: null, lagTime: null, showExtraSettings: false, axis: 'BottomX', type_BX: 'linear', type_LY: 'linear', lineWidth: 1, lineSymbol: 'circle',              
                                     majorTic_BX: true, majorGrid_BX: true, minorTic_BX: true, minorGrid_BX:true, 
                                     majorTic_LY: true,majorGrid_LY:true, minorTic_LY:true, minorGrid_LY:true, 
-                                    colorPickerColor: '#7CB5EC', curveLabel: 'Chart', lineSymbolFillColor: '#7CB5EC', reverse_LY: false, reverse_BX: false, dataLabels:false };
+                                    colorPickerColor: '#7CB5EC', curveLabel: 'PK25', lineSymbolFillColor: '#7CB5EC', reverse_LY: false, reverse_BX: false, dataLabels:false };
                                     
               this.showChartBtn_txt = "Hide"; this.showCharts_btn = true;
               //get array of recurrences from result      
@@ -218,7 +218,7 @@ export class MainviewComponent {
                   title: { text: ''},
                   series: [{
                       data: this.DIMLESS_ARRAY.map(p => { return [p[0]*1, this.sigFigures(p[1]*rec)] }),
-                      name: H_areaAveraged ? 'Area Averaged' : 'Chart', 
+                      name: H_areaAveraged ? 'PK25 (Area-weighted average)' : 'PK25', 
                       states: {
                         hover: { enabled: false } //stops the line from getting thicker when mouse onto the chart
                       }
@@ -232,7 +232,7 @@ export class MainviewComponent {
                   xAxis: {                      
                       title: { 
                           text: 'Time (hours)<br/>Hydrograph for ' + hydroG.lagTime + '-yr interval<br/>NOTE: May not represent actual hydrograph',
-                          style: { fontWeight: 'bold'}
+                      //    style: { fontWeight: 'bold'}
                       },
                       startOnTick: true,
                       endOnTick: true,
@@ -276,7 +276,7 @@ export class MainviewComponent {
                                             title_BX: 'Recurrence Interval, in years\nFlood Frequency Plot', lineWidth: 1, lineSymbol: 'circle',              
                                             majorTic_BX: true, majorGrid_BX: true, minorTic_BX: true, minorGrid_BX: true, 
                                             majorTic_LY: true,majorGrid_LY:true, minorTic_LY:false, minorGrid_LY:false, 
-                                            colorPickerColor: '#7CB5EC', curveLabel: 'Chart', lineSymbolFillColor: '#7CB5EC', reverse_LY: false, reverse_BX: false, dataLabels:false };           
+                                            colorPickerColor: '#7CB5EC', curveLabel: 'PK25', lineSymbolFillColor: '#7CB5EC', reverse_LY: false, reverse_BX: false, dataLabels:false };           
                   //get array of recurrences from result      
                   let freqDataArray:number[][];
                   freqDataArray = [];
@@ -285,7 +285,7 @@ export class MainviewComponent {
                           s.RegressionRegions.forEach((rr) => {      
                               if (rr.Name == "Area-Averaged") {
                                   F_areaAveraged = true; //area averaged, add title to chart stating
-                                  this.frequencyPlotChart.curveLabel = "Area-Averaged";                                           
+                                  this.frequencyPlotChart.curveLabel = "PK25 (Area-weighted average)";                                           
                                   rr.Results.forEach((R) => {
                                       let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
                                       freqDataArray.push([x, this.sigFigures(R.Value)]);
@@ -313,7 +313,7 @@ export class MainviewComponent {
                                     dataLabels: {
                                         enabled: true                                        
                                     },
-                                    name: F_areaAveraged ? 'Area Averaged' : 'Chart',
+                                    name: F_areaAveraged ? 'PK25 (Area-weighted average)' : 'PK25',
                                     states: {
                                         hover: { enabled: false } //stops the line from getting thicker when mouse onto the chart
                                     }
@@ -327,7 +327,7 @@ export class MainviewComponent {
                     series: [{
                         data: this.fChartValues,
                         marker: { enabled: true},
-                        name: F_areaAveraged ? 'Area Averaged' : 'Chart', 
+                        name: F_areaAveraged ? 'PK25 (Area-weighted average)' : 'PK25', 
                         states: {
                             hover: { enabled: false } //stops the line from getting thicker when mouse onto the chart
                         }
@@ -383,8 +383,10 @@ export class MainviewComponent {
 
   //round all parameters and statistic values to 3 significant figures
   public sigFigures(n){
-      var mult = Math.pow(10, 3 - Math.floor(Math.log(n) / Math.LN10) - 1);
-      return Math.round(n * mult) / mult;  
+      if (n > 0){
+          var mult = Math.pow(10, 3 - Math.floor(Math.log(n) / Math.LN10) - 1);
+          return Math.round(n * mult) / mult;  
+      } else return n;
   }
   //add backticks around parameter code to escape in equation
   private buildEquation(p: IParameter[], equation: string): string {
@@ -392,6 +394,8 @@ export class MainviewComponent {
       let arrayOfparameterValues = [];
       p.forEach((P) => {
           equation = equation != "0" ? equation.replace(new RegExp(P.Code, 'g'), "`" + P.Code + "`"): "";
+         // equation = equation != "0" ? equation.replace(new RegExp(/\(/g), "`(`"):"";
+         // equation = equation != "0" ? equation.replace(new RegExp(/\)/g), "`)`"): "";
       });
       fullEquation = "`" + equation + "`";
       return fullEquation;

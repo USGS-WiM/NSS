@@ -44,7 +44,7 @@
 
         <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0">
             <label>Calculate Statistic:</label>
-            <button [disabled]="scenarios[0].RegressionRegions[0].Results != undefined" type="button" class="btn-wim-primary" (click)="CalculateScenario()">Compute</button>
+            <button [disabled]="scenarios[0].RegressionRegions[0].Results != undefined" type="button" class="btn-wim-primary" style="color:white" (click)="CalculateScenario()">Compute</button>
         </div>  <!-- end sidebar-item-->
 
         <div class="sidebar-item" *ngIf="showChart">

@@ -15,6 +15,7 @@ class IchartParts {
 }
 class ItitleParts{
     public text: string;
+    public style?: any;
 }
 class IseriesParts {
     public data: Array<number>[];

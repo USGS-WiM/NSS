@@ -79,6 +79,7 @@ export class MainviewComponent {
                 [1.40, 0.54], [1.45, 0.48], [1.50, 0.44], [1.55, 0.39], [1.60, 0.36], [1.65, 0.32], [1.70, 0.30]];
   public frequencyPlotChart: IFrequency;            //holder of the freq plot properties ()
   public showExtraFREQSettings: boolean;            //showhide flag for additional settings on frequency plot
+  public resultsErrorLength: number;
 
   constructor(private _nssService:NSSService, 
               private _toasterService: ToasterService,
@@ -93,7 +94,7 @@ export class MainviewComponent {
       this.hydrographs = []; //instantiate
       this.resultsBack = false;
       this.multipleRegRegions = false;
-
+      this.resultsErrorLength = 0; //used for colspan on Errors <th>
       //subscribe to scenarios
       this._nssService.scenarios.subscribe((s: Array<IScenario>) => {
           this.scenarios = s; this.resultsBack = false; this.equationResults = []; this.uniqueParameters = []; this.uniqueUnitTypes = [];
@@ -106,7 +107,8 @@ export class MainviewComponent {
 
               s.RegressionRegions.forEach((rr) => {
                   regID = "(RG_ID: " + rr.ID + ")"; //need to show the regID for each limit so they know which one they are out of range on
-                  if (rr.Results) {                      
+                  if (rr.Results) {       
+                      if (rr.Results[0].Errors) {this.resultsErrorLength = rr.Results[0].Errors.length;}; 
                       let eqResult: IEquationResult = { Name: "", Formulas: [] };
                       //only care if average result
                       if (rr.ID > 0) eqResult.Name = rr.Name;
@@ -190,8 +192,7 @@ export class MainviewComponent {
                              this.hChartXAxisValues.push(R.code);
                           });
                           //use constant array to populate chart [][]
-                          rec = rr.Results.filter(r => r.code == this.hChartXAxisValues[0])[0].Value;      
-                      
+                          rec = rr.Results.filter(r => r.code == this.hChartXAxisValues[0])[0].Value;
                       });
                    }
               });//end foreach scenario
@@ -216,20 +217,23 @@ export class MainviewComponent {
                   chart: {type:'line', zoomType:'xy'},
                   title: { text: ''},
                   series: [{
-                      data: this.DIMLESS_ARRAY.map(p => { return [p[0]*1, p[1]*rec] }),
-                      name: H_areaAveraged ? 'Area Averaged' : 'Chart', //, dashStyle: 'solid',
+                      data: this.DIMLESS_ARRAY.map(p => { return [p[0]*1, this.sigFigures(p[1]*rec)] }),
+                      name: H_areaAveraged ? 'Area Averaged' : 'Chart', 
                       states: {
                         hover: { enabled: false } //stops the line from getting thicker when mouse onto the chart
                       }
                   }],
                   tooltip: {
                       formatter: function () {
-                          var s = '<b>(' + Math.round(this.x*1000)/1000 + ', ' + Math.round(this.y*1000)/1000 + ')</b>';                          
+                          var s = '<b>(' + this.x + ', ' + this.y + ')</b>';
                           return s;
                       }
                   },
                   xAxis: {                      
-                      title: { text: 'Time (hours)<br/>Hydrograph for ' + hydroG.lagTime + '-yr interval<br/>NOTE: May not represent actual hydrograph' },
+                      title: { 
+                          text: 'Time (hours)<br/>Hydrograph for ' + hydroG.lagTime + '-yr interval<br/>NOTE: May not represent actual hydrograph',
+                          style: { fontWeight: 'bold'}
+                      },
                       startOnTick: true,
                       endOnTick: true,
                       gridLineWidth: 1, //major grid (0/1)
@@ -284,7 +288,7 @@ export class MainviewComponent {
                                   this.frequencyPlotChart.curveLabel = "Area-Averaged";                                           
                                   rr.Results.forEach((R) => {
                                       let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
-                                      freqDataArray.push([x, R.Value]);
+                                      freqDataArray.push([x, this.sigFigures(R.Value)]);
                                   })
                               }
                            });
@@ -292,7 +296,7 @@ export class MainviewComponent {
                           s.RegressionRegions.forEach((rr) => {
                             rr.Results.forEach((R) => {
                                 let x:number = +R.Name.substring(0,R.Name.indexOf(" "));
-                                freqDataArray.push([x, R.Value]);
+                                freqDataArray.push([x, this.sigFigures(R.Value)]);
                             }) 
                           })
                       }
@@ -307,8 +311,7 @@ export class MainviewComponent {
                             plotOptions: {
                                 series: {
                                     dataLabels: {
-                                        enabled: true,
-                                        formatter: function () {return Highcharts.numberFormat(this.y,4); }
+                                        enabled: true                                        
                                     },
                                     name: F_areaAveraged ? 'Area Averaged' : 'Chart',
                                     states: {
@@ -324,14 +327,14 @@ export class MainviewComponent {
                     series: [{
                         data: this.fChartValues,
                         marker: { enabled: true},
-                        name: F_areaAveraged ? 'Area Averaged' : 'Chart', //, dashStyle: 'solid',
+                        name: F_areaAveraged ? 'Area Averaged' : 'Chart', 
                         states: {
                             hover: { enabled: false } //stops the line from getting thicker when mouse onto the chart
                         }
                     }],
                     tooltip: {
                         formatter: function () {
-                            var s = '<b>(' + Math.round(this.x*1000)/1000 + ', ' + Math.round(this.y*1000)/1000 + ')</b>';                          
+                            var s = '<b>(' + this.x +', ' + this.y + ')</b>';                          
                             return s;
                         }
                     },
@@ -378,12 +381,17 @@ export class MainviewComponent {
       });
   } //end ngOnInit
 
+  //round all parameters and statistic values to 3 significant figures
+  public sigFigures(n){
+      var mult = Math.pow(10, 3 - Math.floor(Math.log(n) / Math.LN10) - 1);
+      return Math.round(n * mult) / mult;  
+  }
   //add backticks around parameter code to escape in equation
   private buildEquation(p: IParameter[], equation: string): string {
       let fullEquation: string = "";
       let arrayOfparameterValues = [];
       p.forEach((P) => {
-          equation = equation != "0" ? equation.replace(P.Code, "`" + P.Code + "`") : "";
+          equation = equation != "0" ? equation.replace(new RegExp(P.Code, 'g'), "`" + P.Code + "`"): "";
       });
       fullEquation = "`" + equation + "`";
       return fullEquation;
@@ -554,7 +562,7 @@ export class MainviewComponent {
   } 
   //show/hide data labels  HYDRO
   public updateDataLabels(i:number, value:boolean){
-      this.charts[i].series[0].update({ dataLabels: { enabled: value, formatter: function () {return '(' + this.x + ', ' + Highcharts.numberFormat(this.y,4) + ')'; }}});
+      this.charts[i].series[0].update({ dataLabels: { enabled: value, formatter: function () {return '(' + this.x + ', ' + this.y + ')'; }}});
   }
   //changed values, refresh the hydrograph with new data HYDRO
   public refreshHydrograph(i, values) {
@@ -727,7 +735,7 @@ export class MainviewComponent {
   } 
   //show/hide data labels  FREQUENCY
   public updateFreqDataLabels(value:boolean){
-      this.freqChart.series[0].update({ dataLabels: { enabled: value, formatter: function () {return '('+this.x +'yr, ' + Highcharts.numberFormat(this.y,4) + ')'; }}});
+      this.freqChart.series[0].update({ dataLabels: { enabled: value, formatter: function () {return '('+this.x +'yr, ' + this.y + ')'; }}});
   }  
   //show/hid additional user settings options for the chart Frequency
   public showHideAddFChartSettings(){
@@ -775,7 +783,7 @@ export class MainviewComponent {
       let newUnitWithSupTag: string = '';
       let indexOfSup = unit.indexOf('^');
       if (indexOfSup > -1)
-          newUnitWithSupTag = '(' + unit.substring(0,indexOfSup) + '<sup>' + unit.substring(indexOfSup+1) + '</sup>)';      
+          newUnitWithSupTag = unit.substring(0,indexOfSup) + '<sup>' + unit.substring(indexOfSup+1) + '</sup>';      
       else newUnitWithSupTag = unit;
 
       return newUnitWithSupTag;

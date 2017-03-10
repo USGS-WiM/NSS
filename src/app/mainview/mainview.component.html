@@ -116,24 +116,26 @@
      <!-- resultsBack-->
     <div *ngIf="resultsBack">        
         <button type="button" class="btn-wim-primary hidden-print" (click)="editScenario()">Edit Scenario Parameters</button>
-        <div  *ngFor="let s of scenarios">
+        <div *ngFor="let s of scenarios">
             <h3>{{s.StatisticGroupName}}</h3>
-            <div *ngFor="let rr of s.RegressionRegions">
-                <div *ngIf="rr.ID > 0">
-                    {{rr.Name}} Region<br />
-                    <span *ngIf="rr.PercentWeight">{{rr.PercentWeight}}% Weighted</span>
-                    <div *ngFor="let p of rr.Parameters">
-                        {{p.Name}} = {{p.Value}} (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)
-                    </div> <br />
-                    
+            <div *ngFor="let rr of s.RegressionRegions;let r = index">
+                <div *ngIf="rr.ID > 0">  
+                    <div class="col-md-12">
+                        <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
+                        <table #inputsTable>
+                            <tr><td>{{rr.Name}} Region</td></tr>
+                            <tr *ngIf="rr.PercentWeight"><td>{{rr.PercentWeight}}% Weighted</td></tr>
+                            <tr *ngFor="let p of rr.Parameters"><td>{{p.Name}} = {{p.Value}} (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)</td></tr>
+                        </table>        
+                    </div>
                     <br />
                     <div class="col-md-12">
-                        <!--<span>[Errors SE, Average Standard Error (of either estimate or prediction); Errors SEe, Average Standard Error of Estimate; Errors SEp, Average Standard Error of Prediction;]</span>-->
+                        <!--<a class="hidden-print" (click)="exportTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>-->
                         <span>[SEe, Standard Error of Estimate; SEp, Standard Error of Prediction; SE, Standard Error (other -- see report)]</span>
-                        <table style="border:solid 1px gray" class="table table-condensed">
+                        <table #resultsTable style="border:solid 1px gray" class="table table-condensed">
                             <thead>
                                 <tr>
-                                    <th class="col-md-6"></th>
+                                    <th class="col-md-6">{{rr.Name}} Region</th>
                                     <th>Value</th>                                    
                                     <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Prediction Interval</th>
                                     <th *ngIf="rr.Results[0].Errors" [attr.colspan]="rr.Results[0].Errors.length">Errors (%)</th>
@@ -144,9 +146,7 @@
                                     <th>(<span [innerHTML]="setSuperScript(rr.Results[0].Unit.Abbr)"></span>)</th>
                                     <th *ngIf="rr.Results[0].IntervalBounds">Low</th>
                                     <th *ngIf="rr.Results[0].IntervalBounds">High</th>
-                                    <th *ngFor="let e of rr.Results[0]?.Errors">{{e.Code}}</th>
-                                    <!--<th *ngIf="rr.Results[0].Errors?.length < 3"></th>
-                                    <th *ngIf="rr.Results[0].Errors?.length < 2"></th>       -->
+                                    <th *ngFor="let e of rr.Results[0]?.Errors">{{e.Code}}</th>                                    
                                     <th *ngIf="rr.Results[0].EquivalentYears>0"></th><!--space for if Equivalent Yrs-->
                                 </tr>
                             </thead>
@@ -154,23 +154,26 @@
                                 <tr *ngFor="let result of rr.Results">
                                     <td>{{result.Description}} ({{result.code}})</td>
                                     <td>{{sigFigures(result.Value)}}</td>                                    
-                                    <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Lower != "NaN" ? (result.IntervalBounds.Lower | number:'2.1-3') : '---'}}</td>
-                                    <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Upper != "NaN" ? (result.IntervalBounds.Upper | number:'2.1-3') : '---'}}</td>
-                                    <td *ngFor="let e of result?.Errors">{{e.Value}}</td>
-                                    <!--<td *ngIf="result.Errors?.length < 3"></td>
-                                    <td *ngIf="result.Errors?.length < 2"></td>
-                                    <td *ngIf="result.Errors?.length < 1"></td>-->
+                                    <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Lower != "NaN" ? sigFigures(result.IntervalBounds.Lower) : '---'}}</td>
+                                    <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Upper != "NaN" ? sigFigures(result.IntervalBounds.Upper) : '---'}}</td>
+                                    <td *ngFor="let e of result?.Errors">{{e.Value}}</td>                                    
                                     <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears > 0 && result.EquivalentYears !== 999 ? result.EquivalentYears : 'N/A'}}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div><!-- END rr.ID > 0 -->
                 <div *ngIf="rr.ID == 0">
-                    {{rr.Name}}<br />
+                    <div class="col-md-12">
+                        <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
+                        <table #inputsTable>
+                            <tr><td>{{rr.Name}}</td></tr>
+                        </table>
+                    </div>
+                    <br />
                     <br />
                     <div class="col-md-12">
-                        <table style="border:solid 1px gray" class="table table-condensed">
+                        <table #resultsTable style="border:solid 1px gray" class="table table-condensed">
                             <thead>
                                 <tr>
                                     <th class="col-md-6">Description</th>                                    
@@ -181,7 +184,7 @@
                             <tbody>
                                 <tr *ngFor="let result of rr.Results">
                                     <td>{{result.Description}} ({{result.code}})</td>                                    
-                                    <td>{{sigFigures(result.Value)}}</td><!-- | number:'2.1-3'}}</td>                                    -->
+                                    <td>{{sigFigures(result.Value)}}</td>
                                     <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears}}</td>
                                 </tr>
                             </tbody>
@@ -543,24 +546,17 @@
         <br clear="all"/>
 
         <!-- appendix section for equation -->
-        <h2 id="appendix">Appendix</h2>
+        <a class="hidden-print" (click)="exportAppendix()" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
+        <h2 style="margin:0;padding:0" id="appendix">Appendix</h2>
         
         <h4>Equations</h4>
         <div *ngFor="let e of equationResults" class="col-md-10">
-            <div>{{e.Name}}</div>
-            <table style="border:solid 1px gray" class="table table-condensed">
-                <!--<thead>
-                    <tr>
-                        <th class="col-md-2">Code</th>
-                        <th class="col-md-6">Equation</th>
-                    </tr>
-                </thead>-->
-                <tbody>
-                    <tr *ngFor="let c of e.Formulas">
-                        <td>{{c.Code}} = </td>
-                        <td><span [MathJax]="c.Equation">{{c.Equation}}</span></td>
-                    </tr>
-                </tbody>
+           <table style="border:solid 1px gray" class="table table-condensed">
+                <tr><td colspan="2">{{e.Name}}</td><tr>
+                <tr *ngFor="let c of e.Formulas">
+                    <td>{{c.Code}} = </td>
+                    <td><span [MathJax]="c.Equation">{{c.Equation}}</span></td>
+                </tr>                
            </table>
         </div><!--End equations-->
         <br clear="all"/>

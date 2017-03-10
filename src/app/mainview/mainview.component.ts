@@ -7,7 +7,7 @@
 //12.06.2016 tr - Created
 //
 
-import { Component, Inject, ViewChild }          from '@angular/core';
+import { Component, Inject, ViewChild, ViewChildren, ViewContainerRef}          from '@angular/core';
 import { ActivatedRoute }             from '@angular/router';
 import { DOCUMENT }                   from '@angular/platform-browser';
 
@@ -47,6 +47,9 @@ HighchartsExport(Highcharts); // Plug the highchartsExport module
 })
 
 export class MainviewComponent {  
+  @ViewChildren('inputsTable', {read:ViewContainerRef}) private inputTable;
+  @ViewChildren('resultsTable',{ read: ViewContainerRef }) private resultTable;
+  
   public title:string;
   public resultsBack: boolean;                //flag that swaps content on mainpage from scenarios w/o results to those with results
   public equationResults: IEquationResult[];  //used in Appendix
@@ -80,7 +83,7 @@ export class MainviewComponent {
   public frequencyPlotChart: IFrequency;            //holder of the freq plot properties ()
   public showExtraFREQSettings: boolean;            //showhide flag for additional settings on frequency plot
   public resultsErrorLength: number;
-
+  public appendixEquationsforExport: Array<string>;
   constructor(private _nssService:NSSService, 
               private _toasterService: ToasterService,
               @Inject(DOCUMENT) private _document:Document,
@@ -100,23 +103,35 @@ export class MainviewComponent {
           this.scenarios = s; this.resultsBack = false; this.equationResults = []; this.uniqueParameters = []; this.uniqueUnitTypes = [];
           let regID:string = ''; this.multipleRegRegions = false;
           this.scenarios.forEach((s) => {
+              this.appendixEquationsforExport = [];
               //show weight inputs if more than 1 regression region chosen
               this.showWeights = s.RegressionRegions.length > 1 ? true : false;
               if (s.RegressionRegions.length > 1) this.multipleRegRegions = true;
               else this.multipleRegRegions = false;
 
-              s.RegressionRegions.forEach((rr) => {
+              s.RegressionRegions.forEach((rr,index) => {
                   regID = "(RG_ID: " + rr.ID + ")"; //need to show the regID for each limit so they know which one they are out of range on
                   if (rr.Results) {       
                       if (rr.Results[0].Errors) {this.resultsErrorLength = rr.Results[0].Errors.length;}; 
-                      let eqResult: IEquationResult = { Name: "", Formulas: [] };
+                      let eqResult: IEquationResult = { Name: "", Formulas: [] }; 
+                      let equationString:string = '';
+                      if (index < 1){//first time thru
+                        equationString = rr.Name !== 'Area-Averaged' ? rr.Name + '\r\n' : '';
+                      } else {
+                          let name = rr.Name !== 'Area-Averaged' ? rr.Name + '\r\n' : '';
+                          equationString = '\r\n' + name;
+                      };                      
                       //only care if average result
                       if (rr.ID > 0) eqResult.Name = rr.Name;
                       this.resultsBack = true;
                       rr.Results.forEach((R) => {
-                          if (eqResult.Name != "") eqResult.Formulas.push({ "Code": R.code, "Equation": this.buildEquation(rr.Parameters, R.Equation) });
+                          if (eqResult.Name != "") {
+                              eqResult.Formulas.push({ "Code": R.code, "Equation": this.buildEquation(rr.Parameters, R.Equation) });
+                              equationString += R.code + '= ,' + R.Equation + '\r\n';
+                          }
                       });
                       if (rr.ID > 0) this.equationResults.push(eqResult);
+                      this.appendixEquationsforExport.push(equationString);//push each equation string in for use when exporting appendix table later
                       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "MathJax"]); //for the appendix of equations
                   } //end there's results
                   //populate uniqueParameters and uniqueUnitTypes
@@ -392,13 +407,104 @@ export class MainviewComponent {
   private buildEquation(p: IParameter[], equation: string): string {
       let fullEquation: string = "";
       let arrayOfparameterValues = [];
-      p.forEach((P) => {
-          equation = equation != "0" ? equation.replace(new RegExp(P.Code, 'g'), "`" + P.Code + "`"): "";
+      //p.forEach((P) => {
+        //  equation = equation != "0" ? equation.replace(new RegExp(P.Code, 'g'), "`" + P.Code + "`"): "";
          // equation = equation != "0" ? equation.replace(new RegExp(/\(/g), "`(`"):"";
          // equation = equation != "0" ? equation.replace(new RegExp(/\)/g), "`)`"): "";
-      });
+      //});
       fullEquation = "`" + equation + "`";
       return fullEquation;
+  }
+
+  //use tableString and tName to export a table to the browser
+  private triggerExportTable(tableString, tName) {
+      let csvData = tableString;
+      var a = document.createElement("a");
+      a.setAttribute('style', 'display:none;');
+      document.body.appendChild(a);
+      var blob = new Blob([csvData], { type: 'text/csv' });
+      var url= window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = tName.replace(/ /g,"_") + '.csv';
+      a.click();      
+  }
+
+  //export inputs table
+  public exportInputTable(tableIndex){
+      let inputTableRows = this.inputTable._results[tableIndex].element.nativeElement.rows;
+      let vals:string = ''; let str:string = ''; 
+      for (var r = 0; r < inputTableRows.length; r++){
+          vals = '';
+          for (var t = 0; t < inputTableRows[r].children.length; t++){
+              let child = inputTableRows[r].children[t];              
+              vals += child.innerText + ',';              
+              //if last one in this row 
+              if (t == inputTableRows[r].children.length-1 && child.localName == 'td') {
+                  vals = vals.slice(0,-1);
+                  str+= vals + '\r\n';
+              }
+          }
+      };
+      str += '\r\n';
+      //go get results table and tack it on to this before exporting 
+      this.exportTable(tableIndex, str);
+  }
+  
+  //export resultTable
+  public exportTable(tableIndex,inputTableStr){
+      let tableRows = this.resultTable._results[tableIndex].element.nativeElement.rows;
+      let keys:any = ''; let vals:string = ''; let str:string = ''; let tableName = '';
+      for (var r = 0; r < tableRows.length; r++){
+          keys = ''; vals = '';
+          for (var t = 0; t < tableRows[r].children.length; t++){
+              let child = tableRows[r].children[t];                            
+              if (child.localName == 'th') {
+                  if (keys == '' && tableName == '') tableName = inputTableStr.indexOf("Area-Averaged") == 0 ? "Area_Averaged" : child.innerText;
+                  keys += child.innerText + ',';
+                  if (child.colSpan > 1){
+                      for (var cs = 1; cs < child.colSpan; cs++) keys += ' ,';                      
+                  }
+              }
+              else vals += child.innerText + ',';
+              if (t == tableRows[r].children.length-1 && child.localName == 'th') {
+                  keys = keys.slice(0, -1);
+                  inputTableStr += keys + '\r\n';
+                 // str += keys + '\r\n';
+              } else if (t == tableRows[r].children.length-1 && child.localName == 'td') {
+                  vals = vals.slice(0,-1);
+                  inputTableStr += vals + '\r\n';
+                 // str+= vals + '\r\n';
+              }
+          }
+      };
+     this.triggerExportTable(inputTableStr, tableName);
+  }
+
+  public exportAppendix(){
+    let tableName = 'Appendix';
+    //parameter table
+    let paramTable = this.uniqueParameters;
+    let p_str:string = ''; 
+    p_str += '\r\n' + 'Parameter Definitions' + '\r\n';
+    p_str += 'Name,Abbrev,Description' + '\r\n';
+    for (var p = 0; p < paramTable.length; p++){
+        p_str += paramTable[p].Name + ',' + paramTable[p].Code + ',' + paramTable[p].Description + '\r\n';
+    };
+    p_str += '\r\n';
+
+    //unit types table
+    let unitTable = this.uniqueUnitTypes;
+    let u_str:string = ''; 
+    u_str += '\r\n' + 'Unit Types' + '\r\n';
+    u_str += 'Abbrev,Unit' + '\r\n';
+    for (var u = 0; u < unitTable.length; u++){
+        u_str += '(' + unitTable[u].Abbr + '),' + unitTable[u].Unit + '\r\n';
+    };
+    u_str += '\r\n';    
+    let equa_str = this.appendixEquationsforExport.join(',');
+    let allTablesJoinedString = equa_str + p_str + u_str;
+    this.triggerExportTable(allTablesJoinedString, tableName);
+    //this.triggerExportTable(this.appendixEquationsforExport.join(','), tableName);
   }
   //onBlur of Value, compare to min/max and show warning
   public compareValue(value: IParameter) {

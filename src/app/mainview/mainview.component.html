@@ -143,7 +143,7 @@
                                         <th class="col-xs-6">{{rr.Name}} Region</th>
                                         <th>Value</th>                                    
                                         <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Prediction Interval</th>
-                                        <th *ngIf="rr.Results[0].Errors" [attr.colspan]="rr.Results[0].Errors.length">Errors (%)</th>
+                                        <th *ngIf="rr.Results[0].Errors && rr.Results[0].Errors.length > 0" [attr.colspan]="rr.Results[0].Errors.length">Errors (%)</th>
                                         <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent Yrs.</th>
                                     </tr>
                                     <tr>

@@ -1,0 +1,628 @@
+<div id="printArea" class="mainPage scrollable">
+    
+    <!-- toaster directive -->
+    <toaster-container></toaster-container>
+    <!-- / toaster directive -->
+
+    <div><h3>{{title}}</h3></div>
+    <div>{{timestamp | date:"MMMM d, y hh:mma"}}</div>
+    
+    <div *ngIf="selectedRegion">       
+       <label>Region:</label>
+       <div>{{selectedRegion.Name}}</div>        
+    </div>   
+    
+    <br/>
+    <div *ngIf="selectedStatisticGrp">
+        <label>Statistic Group(s):</label>
+        <div>
+            <span *ngFor="let st of selectedStatisticGrp;let isLast=last">{{st.Name}}{{isLast ? "" : ", "}}</span>
+        </div>
+    </div>
+
+    <br />
+    <div *ngIf="selectedRegRegion">
+        <label>Regression Group(s):</label>
+        <div>
+            <span *ngFor="let rr of selectedRegRegion;let isLast=last">{{rr.Name}}{{isLast ? "" : ", "}}</span>
+        </div>
+    </div>
+
+    <br />
+    
+     <!-- scenarios && !resultsBack-->
+    <div class="hidden-print" *ngIf="scenarios && !resultsBack">
+        <label>Equation Variables</label>
+        <br/>
+        <div *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</div>
+        <form #scenarioForm="ngForm">
+            <div class="row">
+                <div class="col-xs-11" *ngFor="let sc of scenarios;let sInd = index">
+                    <h3>{{sc.StatisticGroupName}}</h3>
+                    <div class="col-xs-10" *ngIf="sc.RegressionRegions?.length > 0">
+                        <table class="table-condensed">
+                            <tr *ngFor="let rr of sc.RegressionRegions;let rInd = index">
+                                <td style="vertical-align:middle;">{{rr.Name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_ID: {{rr.ID}})</span></td>
+                                <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
+                                <td *ngIf="showWeights" class="col-xs-2">
+                                    <input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.PercentWeight">
+                                </td>
+                            </tr>
+                        </table>                   
+                    </div><!-- end length > 0-->
+                    <div *ngIf="sc.RegressionRegions.length == 0"><h3>There are no Results for your selection. Please try another .... </h3></div>
+                </div>  <!-- end ngFor scenarios -->
+            </div>
+            <table *ngIf="scenarios[0].RegressionRegions.length > 0" style="border:solid 1px gray" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-xs-5">Parameter</th>
+                        <th>Code</th>
+                        <th class="col-xs-2">Value</th>
+                        <th class="col-xs-1" *ngIf="multipleRegRegions"></th>
+                        <th class="col-xs-2">Min Limit</th>
+                        <th class="col-xs-3">Max Limit</th>
+                    </tr>
+                </thead>
+                <tbody> 
+                    <tr *ngFor="let p of uniqueParameters;let pInd=index ">
+                        <td>{{p.Name}} <a (click)="showDescription(p, pInd)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>
+                            <!-- description span -->
+                            <br *ngIf="p.seeDescription"/>
+                            <span style="font-size:small;" *ngIf="p.seeDescription">{{p.Description}}</span>
+                            <!-- outOfRange span -->
+                            <br *ngIf="p.OutOfRange"/>
+                            <span *ngIf="p.OutOfRange" class="warning-text">Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors</span>                                        
+                        </td>
+                        <td>{{p.Code}}</td>
+                        <td>
+                            <div class="col-xs-10" style="margin-left:0;padding-left:0;">                         
+                                <input class="form-control" style="display:inline;width: 70%" [ngClass]="{'reqError':p.missingVal}" type="text" 
+                                        (keypress)="_keyPress($event)" (blur)="compareValue(p)" [(ngModel)]="p.Value" name="Value-{{pInd}}" required>                                
+                                (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)" style="display:inline;"></span>)
+                            </div>
+                        </td>
+                        <td *ngIf="multipleRegRegions">
+                            <span *ngFor="let l of p.LimitArray">
+                                <span  class="pull-right" *ngIf="l != undefined" [ngClass]="{'redFont':l.OutOfRange}">
+                                    <span style="font-size: x-small">{{l != undefined ? l.rrID : ''}}</span><br />
+                                </span>
+                            </span>
+                        </td>
+                        <td>
+                            <span *ngFor="let l of p.LimitArray">
+                            <span *ngIf="l!=undefined" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? sigFigures(l.Min): "--"}} 
+                                (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)
+                                <br/>
+                            </span>
+                        </span></td>
+                        <td><span *ngFor="let l of p.LimitArray"><span *ngIf="l!=undefined" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? sigFigures(l.Max) : "--"}} (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)<br/></span></span></td>
+                    </tr>
+                </tbody>
+            </table>       
+            
+            <h2 style="margin:0;padding:0">Citations</h2>
+            <div *ngFor="let sc of scenarios">
+                <label *ngIf="sc.Citations">{{sc.StatisticGroupName}} Citations</label>
+                <div *ngFor="let l of sc.Citations">
+                    <a [href]="l.CitationURL" [target]="_blank">
+                        <div>{{l.Author}}</div>
+                        <div>{{l.Title}}</div>
+                    </a>
+                    <br />                    
+                </div>
+            </div><!--end foreach scenario (for citations) {{l != undefined ? l.rrID : ''}}-->            
+        </form>
+    </div> <!--end if scenarios-->
+
+     <!-- resultsBack-->
+    <div *ngIf="resultsBack">        
+        <button type="button" class="btn-wim-primary hidden-print" (click)="editScenario()">Edit Scenario Parameters</button>
+        <div *ngFor="let s of scenarios">
+            <h3>{{s.StatisticGroupName}}</h3>
+            <div *ngFor="let rr of s.RegressionRegions;let r = index">
+                <div><!-- *ngIf="rr.ID > 0">  -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
+                            <table #inputsTable>
+                                <tr><td>{{rr.Name}} Region</td></tr>
+                                <tr *ngIf="rr.PercentWeight"><td>{{rr.PercentWeight}}% Weighted</td></tr>
+                                <tr *ngFor="let p of rr.Parameters"><td>{{p.Name}} = {{p.Value}} (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)</td></tr>
+                            </table>        
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <!--<a class="hidden-print" (click)="exportTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>-->
+                            <span>[SEe, Standard Error of Estimate; SEp, Standard Error of Prediction; SE, Standard Error (other -- see report)]</span>
+                            <table #resultsTable style="border:solid 1px gray" class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="col-xs-6">{{rr.Name}} Region</th>
+                                        <th>Value</th>                                    
+                                        <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Prediction Interval</th>
+                                        <th *ngIf="rr.Results[0].Errors" [attr.colspan]="rr.Results[0].Errors.length">Errors (%)</th>
+                                        <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent Yrs.</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="col-xs-6">Description</th>
+                                        <th>(<span [innerHTML]="setSuperScript(rr.Results[0].Unit.Abbr)"></span>)</th>
+                                        <th *ngIf="rr.Results[0].IntervalBounds">Low</th>
+                                        <th *ngIf="rr.Results[0].IntervalBounds">High</th>
+                                        <th *ngFor="let e of rr.Results[0]?.Errors">{{e.Code}}</th>                                    
+                                        <th *ngIf="rr.Results[0].EquivalentYears>0"></th><!--space for if Equivalent Yrs-->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let result of rr.Results">
+                                        <td>{{result.Description}} ({{result.code}})</td>
+                                        <td>{{sigFigures(result.Value)}}</td>                                    
+                                        <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Lower != "NaN" ? sigFigures(result.IntervalBounds.Lower) : '---'}}</td>
+                                        <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Upper != "NaN" ? sigFigures(result.IntervalBounds.Upper) : '---'}}</td>
+                                        <td *ngFor="let e of result?.Errors">{{e.Value}}</td>                                    
+                                        <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears > 0 && result.EquivalentYears !== 999 ? result.EquivalentYears : 'N/A'}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- END rr.ID > 0
+                <div *ngIf="rr.ID == 0">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
+                            <table #inputsTable>
+                                <tr><td>{{rr.Name}}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table #resultsTable style="border:solid 1px gray" class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="col-xs-6">Description</th>                                    
+                                        <th>Value</th>
+                                        <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent<br/>Years</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let result of rr.Results">
+                                        <td>{{result.Description}} ({{result.code}})</td>                                    
+                                        <td>{{sigFigures(result.Value)}}</td>
+                                        <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> --><!-- end 'Area-averaged'-->
+            </div>            
+        </div> <!-- end for each Scenario-->   
+
+        <!-- Citations -->
+        <h2 id="citations" style="margin:0;padding:0">Citations</h2>
+        <div *ngFor="let sc of scenarios">    
+            <div *ngFor="let c of sc.Citations"><!--" | unique">-->
+            <a [href]="c.CitationURL" [target]="_blank">
+                <div>{{c.Author}}</div>
+                <div>{{c.Title}}</div>
+            </a>
+            <br />
+        </div>
+        <!-- ngfor each chart being added show here
+            //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
+            //if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show" -->
+        <!-- charts-->
+        <div id="chart">
+            <div class="row">
+                <div class="col-xs-12" *ngIf="hydroChartsArray.length >0">
+                    <h2 style="display:inline-block;margin-right:42px;">Charts</h2>
+                    <button class="hidden-print" style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
+                </div>
+            </div>
+            <div [hidden]="!showCharts_btn">
+                <div class="row">
+                    <div class="col-xs-11" *ngFor="let c of hydroChartsArray;let i = index"> <!-- For Each hydroChartsArray start -->
+                        <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
+                            <button type="button" class="pull-right hidden-print" (click)="removeHydroChart(i)">x</button><br clear="all" />
+                            <chart (load)="saveInstance($event.context)" [options]="c"></chart>   
+                        </div>
+                        <div class="col-xs-5 pull-right hidden-print" *ngIf="selectedPlot=='Hydrograph'">
+                            <!-- Start of FORM for hydrochart -->
+                            <form id="myChartForm" name="myChartForm" #myChartForm="ngForm" (ngSubmit)="refreshHydrograph()">
+                                <div class="form-group">
+                                    <label class="col-xs-7">Recurrence Interval:</label>
+                                    <div class="col-xs-5">
+                                        <span class="select-wim">                    
+                                            <select [(ngModel)]="hydrographs[i].recurrence" (ngModelChange)="refreshHydrograph(i, myChartForm.form.controls)" name="recurrence">
+                                                <option [value]="r" *ngFor="let r of hChartXAxisValues">{{r}}</option>
+                                            </select>
+                                        </span>      
+                                    </div>
+                                </div>
+                                <div class="form-group" style="padding-top:5px;">
+                                    <label class="col-xs-7">Lag Time (hrs):</label>
+                                    <div class="col-xs-5">
+                                        <input type="text" class="form-control" name="lagTime" (keypress)="_keyPress($event)" [(ngModel)]="hydrographs[i].lagTime" (keyup)="refreshHydrograph(i, myChartForm.form.controls)">
+                                    </div>
+                                </div>
+
+                                <br clear="all" />
+                                <div class="pull-right hidden-print"><a class="hidden-print" (click)="showHideAdditionalChartSettings(i)" style="cursor: pointer">More options</a></div>
+                                <br clear="all" />
+                                <div [hidden]="!hydrographs[i].showExtraSettings" class="panel panel-default hidden-print">
+                                    <div class="panel-body">
+                                        <div style="font-size: small">
+                                            <span>* To zoom in, click and drag a box in the chart</span>
+                                            
+                                        </div>
+                                        <!-- AXIS -->
+                                        <div>
+                                            <div style="font-size: large">Axes</div>                                             
+                                            <div class="form-group col-xs-6">
+                                                <label class="control-label">Choose Axis to update:</label>
+                                                <div>                                                    
+                                                    <span style="padding-right: 10px">
+                                                        <input type="radio"  name="axis" [(ngModel)]="hydrographs[i].axis" value="BottomX" (click)="axis='BottomX'" />Bottom X
+                                                    </span>
+                                                    <span>
+                                                        <input type="radio" name="axis" [(ngModel)]="hydrographs[i].axis" value="LeftY" (click)="axis='LeftY'" />Left Y
+                                                    </span>                                                    
+                                                </div>
+                                            </div> <!-- end (AXIS) form group  -->
+                                            <!-- TYPE -->
+                                            <div class="form-group col-xs-6">
+                                                <label class="control-label">Type:</label>
+                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">                                             
+                                                    <span style="padding-right:10px">
+                                                        <input type="radio" name="type_BX" [(ngModel)]="hydrographs[i].type_BX" (click)="setXaxisType(i, 'linear')" value="linear" />Linear
+                                                    </span>
+                                                    <span>
+                                                        <input type="radio" name="type_BX" [(ngModel)]="hydrographs[i].type_BX" (click)="setXaxisType(i, 'logarithmic')" value="logarithmic" />Logarithmic
+                                                    </span>
+                                                </div>
+                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">                                             
+                                                    <span style="padding-right: 10px">
+                                                        <input type="radio" name="type_LY" [(ngModel)]="hydrographs[i].type_LY" (click)="setYaxisType(i, 'linear')" value="linear" />Linear
+                                                    </span>
+                                                    <span>
+                                                        <input type="radio" name="type_LY" [(ngModel)]="hydrographs[i].type_LY" (click)="setYaxisType(i, 'logarithmic')" value="logarithmic" />Logarithmic
+                                                    </span>
+                                                </div>                                                 
+                                            </div> <!-- end (TYPE) form group -->                                            
+                                            <!-- TITLE -->
+                                            <div class="form-group  col-xs-12">
+                                                <label class="control-label">Axis Title:</label>
+                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">
+                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_BX" name="title_BX" (keyup)="updateBXtitle(i)" [(ngModel)]="hydrographs[i].title_BX"></textarea>
+                                                </div>
+                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">
+                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_LY" name="title_LY" (keyup)="updateLYtitle(i)"  [(ngModel)]="hydrographs[i].title_LY"></textarea>
+                                                </div>                                                
+                                            </div> <!-- end (TITLE) form group -->
+                                            <!-- MAJOR UNITS -->
+                                            <div class="form-group col-xs-4">
+                                                <label class="control-label">Major Units:</label>
+                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">
+                                                    <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_BX" (change)="setXChartLines(i, 'gridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorGrid_BX" /> grid</span>
+                                                    <span><input type="checkbox" name="majorTic_BX" (change)="setXChartLines(i, 'tickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorTic_BX"  /> tics</span>
+                                                </div>
+                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">
+                                                    <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_LY" (change)="setYChartLines(i, 'gridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorGrid_LY" /> grid</span>
+                                                    <span><input type="checkbox" name="majorTic_LY" (change)="setYChartLines(i, 'tickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorTic_LY" /> tics</span>
+                                                </div>                                            
+                                            </div> <!-- end (MAJOR UNITS) form group -->
+                                            
+                                            <!-- MINOR UNITS -->
+                                            <div class="form-group col-xs-4">
+                                                <label class="control-label">Minor Units:</label>
+                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">
+                                                    <span style="padding-right: 10px"><input [disabled]="hydrographs[i].type_BX == 'logarithmic'" type="checkbox" name="minorGrid_BX" (change)="setXChartLines(i, 'minorGridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorGrid_BX"/> grid</span>
+                                                    <span style="padding-right:5px"><input [disabled]="hydrographs[i].type_BX == 'logarithmic'" type="checkbox" name="minorTic_BX" (change)="setXChartLines(i, 'minorTickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorTic_BX" /> tics</span>
+                                                    <span [hidden]="hydrographs[i].type_LY != 'logarithmic' && hydrographs[i].type_BX != 'logarithmic'" style="font-size: small">(Disabled with Log)</span>
+                                                </div>
+                                                
+                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">
+                                                    <span style="padding-right: 10px"><input [disabled]="hydrographs[i].type_LY == 'logarithmic'" type="checkbox" name="minorGrid_LY" (change)="setYChartLines(i, 'minorGridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorGrid_LY" /> grid</span>
+                                                    <span style="padding-right:5px"><input [disabled]="hydrographs[i].type_LY == 'logarithmic'" type="checkbox" name="minorTic_LY" (change)="setYChartLines(i, 'minorTickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorTic_LY" /> tics</span>           
+                                                    <span [hidden]="hydrographs[i].type_LY != 'logarithmic' && hydrographs[i].type_BX != 'logarithmic'" style="font-size: x-small;font-weight: bold">(Disabled with Log)</span>                                         
+                                                </div>                                                
+                                            </div> <!-- end (MINOR UNITS) form group -->
+                                            <div class="form-group col-xs-4">
+                                                <label class="control-label">
+                                                    <div [hidden]="hydrographs[i].axis != 'BottomX'">
+                                                        <span><input type="checkbox" name="reverse_BX" (change)="setReverseData(i, 'bx', $event.target.checked)" [(ngModel)]="hydrographs[i].reverse_BX"/> reverse</span>
+                                                    </div>
+                                                    <div [hidden]="hydrographs[i].axis != 'LeftY'">
+                                                        <span><input type="checkbox" name="reverse_LY" (change)="setReverseData(i, 'ly', $event.target.checked)" [(ngModel)]="hydrographs[i].reverse_LY"/> reverse</span>
+                                                    </div>
+                                                </label>
+                                            </div>                                        
+                                        </div><!-- end Axes -->
+                                        <br clear="all"/>
+                                        <!--Curves and Legend-->
+                                        <div>
+                                            <div style="font-size: large">Curves and Legend</div>
+                                            <div><!--Curves color/width -->
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">Curve Color:</label>
+                                                  <div><input [colorPicker]="hydrographs[i].colorPickerColor" (colorPickerChange)="changeLineColor(i,$event)" [style.background]="hydrographs[i].colorPickerColor" [value]="hydrographs[i].colorPickerColor"/></div> 
+                                                </div>
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">Curve Width:</label>
+                                                    <div><input type="text" name="lineWidth" (keyup)="setLineWidth(i)" [(ngModel)]="hydrographs[i].lineWidth"/></div>
+                                                </div>
+                                            </div>
+                                            <div><!-- Line symbol color/point symbol -->
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">Line Symbol Color:</label>
+                                                    <div><input [colorPicker]="hydrographs[i].lineSymbolFillColor" (colorPickerChange)="changeLineSymbolColor(i,$event)" [style.background]="hydrographs[i].lineSymbolFillColor" [value]="hydrographs[i].lineSymbolFillColor"/></div> 
+                                                </div>
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">Point Symbol:</label>
+                                                    <div>
+                                                        <span class="select-wim">
+                                                            <select [(ngModel)]="hydrographs[i].lineSymbol" (ngModelChange)="setLineSymbol(i,$event)" name="lineSymbol">
+                                                                <option value="circle">Circle</option>
+                                                                <option value="square">Square</option>
+                                                                <option value="diamond">Diamond</option>                                                            
+                                                                <option value="triangle">Triangle</option>
+                                                                <option value="triangle-down">Triangle-down</option>
+                                                            </select>                                                        
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br clear="all"/>
+                                            <div>
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">Legend Label:</label>
+                                                    <div><input type="text" class="form-control" name="curveLabel" [(ngModel)]="hydrographs[i].curveLabel" (keyup)="updateCurveLabel(i)" /></div>
+                                                </div>
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">
+                                                        <input type="checkbox" name="dataLabels" (change)="updateDataLabels(i, $event.target.checked)" [(ngModel)]="hydrographs[i].dataLabels"/> Show Data Values
+                                                    </label>
+                                                </div>                         
+                                            </div>
+                                        </div> <!-- end curves-->                                    
+                                    </div> <!-- end panel-body -->
+                                </div>
+                                <br clear="all" />                            
+                            </form>
+                        </div><!-- end form for inputs-->
+                    </div> <!-- end for each hydroChartsArray loop -->
+                </div>
+            </div>
+            <div *ngIf="fChartOptions">
+                <div *ngIf="hydroChartsArray.length == 0">
+                    <!-- show show/hide button only if there are no hydrographs above it (because that has the button also)-->
+                    <h2 style="display:inline-block;margin-right:42px;">Charts</h2>
+                    <button class="hidden-print" style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
+                </div>
+                <div class="row">
+                    <div class="col-xs-11" *ngIf="showCharts_btn">
+                        <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
+                            <button type="button" class="pull-right hidden-print" (click)="removeFreqChart()">x</button><br clear="all" />
+                            <chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>  
+                        </div>
+                        <div class="col-xs-5 pull-right">
+                            <br clear="all" />
+                            <div class="pull-right hidden-print"><a (click)="showHideAddFChartSettings()" style="cursor: pointer">More options</a></div>
+                            <br clear="all" />
+                            <div [hidden]="!showExtraFREQSettings" class="panel panel-default hidden-print">
+                                <div class="panel-body">
+                                    <form id="myFChartForm" name="myFChartForm" #myFChartForm="ngForm">
+                                        <div style="font-size: small">
+                                            <span>* To zoom in, click and drag a box in the chart</span>                                        
+                                        </div>
+                                        <!-- AXIS -->
+                                        <div>
+                                            <div style="font-size: large">Axes</div>                                             
+                                            <div class="form-group col-xs-6">
+                                                <label class="control-label">Choose Axis to update:</label>
+                                                <div>                                                    
+                                                    <span style="padding-right: 10px">
+                                                        <input type="radio"  name="Faxis" [(ngModel)]="frequencyPlotChart.Faxis" value="BottomX" (click)="Faxis='BottomX'" />Bottom X
+                                                    </span>
+                                                    <span>
+                                                        <input type="radio" name="Faxis" [(ngModel)]="frequencyPlotChart.Faxis" value="LeftY" (click)="Faxis='LeftY'" />Left Y
+                                                    </span>                                                    
+                                                </div>
+                                            </div> <!-- end (AXIS) form group  -->
+                                            <!-- TYPE -->
+                                            <div class="form-group col-xs-6">
+                                                <label class="control-label" [hidden]="frequencyPlotChart.Faxis != 'BottomX'">Type:</label>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">                                                    
+                                                    <span>
+                                                        <input type="radio" name="type_BX" [(ngModel)]="frequencyPlotChart.type_BX" (click)="setFreqXaxisType('returnPeriod')" value="returnPeriod" />Return Period
+                                                    </span><br/>
+                                                    <span style="padding-right: 10px">
+                                                        <input type="radio" name="type_BX" [(ngModel)]="frequencyPlotChart.type_BX" (click)="setFreqXaxisType('percent')" value="percent" />Percent
+                                                    </span>
+                                                    <span>
+                                                        <input type="radio" name="type_BX" [(ngModel)]="frequencyPlotChart.type_BX" (click)="setFreqXaxisType('fraction')" value="fraction" />Fraction
+                                                    </span>
+                                                    
+                                                </div>                                                                                
+                                            </div> <!-- end (TYPE) form group -->                                            
+                                            <!-- TITLE -->
+                                            <div class="form-group  col-xs-12">
+                                                <label class="control-label">Axis Title:</label>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="frequencyPlotChart.title_BX" name="title_BX" (keyup)="updateFreqBXtitle()" [(ngModel)]="frequencyPlotChart.title_BX"></textarea>
+                                                </div>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="frequencyPlotChart.title_LY" name="title_LY" (keyup)="updateFreqLYtitle()"  [(ngModel)]="frequencyPlotChart.title_LY"></textarea>
+                                                </div>                                                
+                                            </div> <!-- end (TITLE) form group -->
+                                            <!-- MAJOR UNITS -->
+                                            <div class="form-group col-xs-4">
+                                                <label class="control-label">Major Units:</label>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+                                                    <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_BX" (change)="setFreqXChartLines('gridLineWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorGrid_BX" /> grid</span>
+                                                    <span><input type="checkbox" name="majorTic_BX" (change)="setFreqXChartLines('tickWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorTic_BX"  /> tics</span>
+                                                </div>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+                                                    <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_LY" (change)="setFreqYChartLines('gridLineWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorGrid_LY" /> grid</span>
+                                                    <span><input type="checkbox" name="majorTic_LY" (change)="setFreqYChartLines('tickWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorTic_LY" /> tics</span>
+                                                </div>                                            
+                                            </div> <!-- end (MAJOR UNITS) form group -->
+                                            
+                                            <!-- MINOR UNITS -->
+                                            <div class="form-group col-xs-4">
+                                                <label class="control-label">Minor Units:</label>
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+                                                    <span style="padding-right: 10px">
+                                                        <input type="checkbox" name="minorGrid_BX" (change)="setFreqXChartLines('minorGridLineWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.minorGrid_BX"/> grid
+                                                    </span>
+                                                    <span style="padding-right:5px">
+                                                        <input type="checkbox" name="minorTic_BX" (change)="setFreqXChartLines('minorTickWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.minorTic_BX" /> tics
+                                                    </span>                                                    
+                                                </div>
+                                                    
+                                                <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+                                                    <span style="padding-right: 10px">
+                                                        <input [disabled]="'true'" type="checkbox" name="minorGrid_LY" [(ngModel)]="frequencyPlotChart.minorGrid_LY" /> grid
+                                                    </span>
+                                                    <span style="padding-right:5px">
+                                                        <input [disabled]="'true'" type="checkbox" name="minorTic_LY" [(ngModel)]="frequencyPlotChart.minorTic_LY" /> tics
+                                                    </span>           
+                                                    <span style="font-size: x-small;font-weight: bold">(Disabled with Log)</span>                                         
+                                                </div>                                                
+                                            </div> <!-- end (MINOR UNITS) form group -->
+                                            <div class="form-group col-xs-4">
+                                                <label class="control-label">
+                                                    <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+                                                        <span><input type="checkbox" name="reverse_BX" (change)="setFreqReverseData('bx', $event.target.checked)" [(ngModel)]="frequencyPlotChart.reverse_BX"/> reverse</span>
+                                                    </div>
+                                                    <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+                                                        <span><input type="checkbox" name="reverse_LY" (change)="setFreqReverseData('ly', $event.target.checked)" [(ngModel)]="frequencyPlotChart.reverse_LY"/> reverse</span>
+                                                    </div>
+                                                </label>
+                                            </div>                                        
+                                        </div><!-- end Axes -->
+                                        <br clear="all"/>
+                                        <div>
+                                            <div style="font-size: large">Curves and Legend</div>
+                                            <div>
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">Curve Color:</label>
+                                                    <div><input [colorPicker]="frequencyPlotChart.colorPickerColor" (colorPickerChange)="changeFreqLineColor($event)" [style.background]="frequencyPlotChart.colorPickerColor" [value]="frequencyPlotChart.colorPickerColor"/></div>
+                                                </div>
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">Curve Width:</label>
+                                                    <div><input type="text" name="lineWidth" (keyup)="setFreqLineWidth()" [(ngModel)]="frequencyPlotChart.lineWidth"/></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">Line Symbol Color:</label>
+                                                    <div><input [colorPicker]="frequencyPlotChart.lineSymbolFillColor" (colorPickerChange)="changeFreqLineSymbolColor($event)" [style.background]="frequencyPlotChart.lineSymbolFillColor" [value]="frequencyPlotChart.lineSymbolFillColor"/></div>
+                                                </div>
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">Point Symbol:</label>
+                                                    <div>
+                                                        <span class="select-wim">
+                                                            <select [(ngModel)]="frequencyPlotChart.lineSymbol" (ngModelChange)="setFreqLineSymbol($event)" name="lineSymbol">
+                                                                <option value="circle">Circle</option>
+                                                                <option value="square">Square</option>
+                                                                <option value="diamond">Diamond</option>                                                            
+                                                                <option value="triangle">Triangle</option>
+                                                                <option value="triangle-down">Triangle-down</option>
+                                                            </select>                                                        
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br clear="all"/>
+                                            <div>
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">Legend Label:</label>
+                                                    <div><input type="text" class="form-control" name="curveLabel" [(ngModel)]="frequencyPlotChart.curveLabel" (keyup)="updateFreqCurveLabel()" /></div>
+                                                </div>
+                                                <div class="form-group col-xs-6">
+                                                    <label class="control-label">
+                                                        <input type="checkbox" name="dataLabels" (change)="updateFreqDataLabels($event.target.checked)" [(ngModel)]="frequencyPlotChart.dataLabels"/> Show Data Values
+                                                    </label>
+                                                </div>                         
+                                            </div>
+                                        </div> <!-- end curves-->     
+                                    </form>                               
+                                </div> <!-- end panel-body -->
+                            </div>
+                            <br clear="all" />                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br clear="all"/>
+
+        <!-- appendix section for equation -->
+        <a class="hidden-print" (click)="exportAppendix()" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
+        <h2 style="margin:0;padding:0" id="appendix">Appendix</h2>
+        
+        <h4>Equations</h4>
+        <div class="row">
+            <div *ngFor="let e of equationResults" class="col-xs-10">
+            <table style="border:solid 1px gray" class="table table-condensed">
+                    <tr><td colspan="2">{{e.Name}}</td><tr>
+                    <tr *ngFor="let c of e.Formulas">
+                        <td>{{c.Code}} = </td>
+                        <td><span [MathJax]="c.Equation">{{c.Equation}}</span></td>          
+                    </tr>                
+            </table>
+            </div><!--End equations-->
+        </div>
+        <br clear="all"/>
+       
+        <h4>Parameter Definitions</h4>
+        <div class="row">
+            <div class="col-xs-8">
+                <table style="border:solid 1px gray" class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="col-xs-3">Name</th>
+                            <th class="col-xs-1">Abbrev</th>
+                            <th class="col-xs-8">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let p of uniqueParameters">
+                            <td>{{p.Name}}</td>
+                            <td>{{p.Code}}</td>
+                            <td>{{p.Description}}</td>
+                        </tr>
+                    </tbody>
+            </table>
+            </div>
+        </div>
+        <br clear="all"/>
+        <h4>Unit Types</h4>
+        <div class="row">
+            <div class="col-xs-8">
+                <table style="border:solid 1px gray" class="table table-condensed">
+                    <thead><tr>
+                            <th class="col-xs-1">Abbrev</th>
+                            <th class="col-xs-8">Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let u of uniqueUnitTypes">
+                            <td>(<span [innerHTML]="setSuperScript(u.Abbr)"></span>)</td>
+                            <td>{{u.Unit}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br clear="all"/>
+        <button type="button" class="btn btn-wim-primary hidden-print" (click)="printPage()">Print Report</button>
+    </div><!-- end results back -->
+</div>

@@ -6,7 +6,7 @@ import { Scenario }                from '../shared/scenario';
 import { Statisticgroup }          from '../shared/statisticgroup';
 import { Regressiontype }          from '../shared/regressiontype';
 import { Regressionregion }        from '../shared/regressionregion';
-import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
+import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/angular-2-dropdown-multiselect';
 import { ToasterContainerComponent, ToasterService } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
 

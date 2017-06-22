@@ -1,1 +1,34 @@
 /* You can add global styles to this file, and also import other style files */
+
+/*
+    Multiselect
+    Styling
+*/
+.dropdown,
+.dropup,
+.dropdown-inline[_ngcontent-c4]{
+    width: 100% !important;
+}
+.dropdown .btn,
+.dropup .btn{
+    display: block;
+    width: 100%;
+}
+
+/*
+    Results
+    Table
+    Styling
+*/
+.table-condensed{
+    display: block;
+    width: 95%;
+}
+
+/*
+    Results
+    Form Styling
+*/
+form{
+    margin-bottom: 55px;
+}

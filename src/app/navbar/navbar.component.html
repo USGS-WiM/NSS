@@ -1,7 +1,23 @@
-<div class="navbar hidden-print">
+<!--<nav class="main hidden-print">
     <div class="btn sidebar-toggle visible-sm visible-xs">
         <i class="fa fa-bars fa-2x" (click)="toggleSidebar()"></i>
     </div>
     <a class="navbar-brand" href="http://www.usgs.gov"><img src="assets/img/usgs-logo.png"></a>
     <span class="app-name">{{title}}</span>
-</div>
+</nav>-->
+<nav class="wim-nav">
+    <div class="container" style="width: 100%;">
+        <button class="mobile-nav-toggle" (click)="toggleSidebar()"></button>
+        <a href="http://usgs.gov" class="nav-branding">
+            <img src="http://wim.usgs.gov/website-assets/usgs-logo.png" />
+        </a>
+        <span class="nav-title">
+            {{title}}
+        </span>
+        <div class="nav-links">
+            <!--<a href="/#/"><span><i class="ion-plus-round"></i> New Site</span></a>
+            <a href="/#/"><span><i class="ion-ios-book"></i> Guide</span></a>
+            <a href="/#/"><span><i class="ion-help"></i> FAQ</span></a>-->
+        </div>
+    </div>
+</nav>

@@ -1,82 +1,58 @@
-<div class="hidden-print scrollable sidebar sidebar-left">
-    <div class="sidebar-group">
-        <div class="sidebar-item">
-            <label>Choose Region:</label>
-            <div class="row">
-                <div class="col-xs-12">
-                    <span class="select-wim">                    
-                        <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
-                            <option [ngValue]="i" *ngFor="let i of regions">{{i.Name}}</option>
-                        </select>
-                    </span>
-                </div>
-            </div>
-            <br clear="all"/>
-        </div>  <!-- end sidebar-item-->
-        
-        <div class="sidebar-item" *ngIf="statisticGroups">
-            <label>Limit by Statistic Group(s):</label>
-            <div class="row">
-                <div class="col-xs-12">
-                    <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myRTTexts" [settings]="myRTSettings" 
-                            [(ngModel)]="selectedStatGrpIDs" (ngModelChange)="onStatGrpSelect($event)">
-                    </ss-multiselect-dropdown>
-                </div>
-            </div>
-            <br clear="all" />
-        </div>  <!-- end sidebar-item-->
+<form class="wim-sidebar fixed">
 
-        <div class="sidebar-item" *ngIf="regressionRegions">
-            <label>Limit by Regression Group(s):</label>
-            <div class="row">
-                <div class="col-xs-12">
-                    <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myRRTexts" [settings]="myRRSettings" 
-                                [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)">
-                    </ss-multiselect-dropdown>
-                </div>
-            </div>
-            <br clear="all"/>
-        </div>   <!-- end sidebar-item-->        
-
-        <div class="sidebar-item" *ngIf="regressionTypes">
-            <label>Limit by Statistic:</label>
-            <div class="row">
-                <div class="col-xs-12">
-                    <ss-multiselect-dropdown [options]="regressionTypes" [texts]="mySGTexts" [settings]="mySGSettings" 
-                                [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
-                    </ss-multiselect-dropdown>
-                </div>
-            </div>
-            <br clear="all" />
-        </div>  <!-- end sidebar-item-->
-
-        <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0">
-            <label>Calculate Statistic:</label>
-            <button [disabled]="scenarios[0].RegressionRegions[0].Results != undefined" type="button" class="btn-wim-primary" style="color:white" (click)="CalculateScenario()">Compute</button>
-        </div>  <!-- end sidebar-item-->
-
-        <div class="sidebar-item" *ngIf="showChart">
-            <label class="pull-left">Chart:</label>
-            <div class="row">
-                <div class="col-xs-10">
-                    <ul>
-                        <li *ngFor="let pt of plotTypes" (click)="selectChart(pt)" style="list-style:none;cursor:pointer;">{{pt}}</li>
-                    </ul>                
-                </div>       
-            </div>
-            <br clear="all"/> <br/>           
-        </div>   <!-- end sidebar-item-->
-
-        <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0 && scenarios[0].RegressionRegions[0].Results != undefined">
-            <label>Go To:</label>
-            <ul>                
-                <li style="list-style:none"><a pageScroll href="#citations">Citations</a></li>
-                <li *ngIf="showChart" style="list-style:none"><a pageScroll href="#chart">charts</a></li>
-                <li style="list-style:none"><a pageScroll href="#appendix">appendix</a></li>
-            </ul>            
-        </div>    <!-- end sidebar-item-->
-
-    </div> <!-- end sidebar-group-->
+    <div class="sidebar-item">
+        <label>Choose Region:</label>
+        <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
+            <option [ngValue]="i" *ngFor="let i of regions">{{i.Name}}</option>
+        </select>
+    </div>  <!-- end sidebar-item-->
     
-    
-</div>
+
+    <div class="sidebar-item" *ngIf="statisticGroups">
+        <label>Limit by Statistic Group(s):</label>
+        <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myRTTexts" [settings]="myRTSettings" 
+                [(ngModel)]="selectedStatGrpIDs" (ngModelChange)="onStatGrpSelect($event)">
+        </ss-multiselect-dropdown>
+    </div>  <!-- end sidebar-item-->
+
+
+    <div class="sidebar-item" *ngIf="regressionRegions">
+        <label>Limit by Regression Group(s):</label>
+        <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myRRTexts" [settings]="myRRSettings" 
+                    [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)">
+        </ss-multiselect-dropdown>
+    </div>   <!-- end sidebar-item-->        
+
+
+    <div class="sidebar-item" *ngIf="regressionTypes">
+        <label>Limit by Statistic:</label>
+        <ss-multiselect-dropdown [options]="regressionTypes" [texts]="mySGTexts" [settings]="mySGSettings" 
+                    [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
+        </ss-multiselect-dropdown>
+    </div>  <!-- end sidebar-item-->
+
+
+    <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0">
+        <label>Calculate Statistic:</label>
+        <button style="margin-top: 6px" [disabled]="scenarios[0].RegressionRegions[0].Results != undefined" type="button" class="btn-black" (click)="CalculateScenario()">Compute</button>
+    </div>  <!-- end sidebar-item-->
+
+    <div class="sidebar-item" *ngIf="showChart">
+        <label>Chart:</label>
+        <ul>
+            <li *ngFor="let pt of plotTypes" (click)="selectChart(pt)" style="list-style:none;cursor:pointer;">{{pt}}</li>
+        </ul>                
+    </div>   <!-- end sidebar-item-->
+
+    <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0 && scenarios[0].RegressionRegions[0].Results != undefined">
+        <label>Go To:</label>
+        <ul>                
+            <li style="list-style:none"><a pageScroll href="#citations">Citations</a></li>
+            <li *ngIf="showChart" style="list-style:none"><a pageScroll href="#chart">charts</a></li>
+            <li style="list-style:none"><a pageScroll href="#appendix">appendix</a></li>
+        </ul>            
+    </div>    <!-- end sidebar-item-->
+
+
+
+</form>

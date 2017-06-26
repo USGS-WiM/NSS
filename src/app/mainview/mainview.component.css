@@ -1,8 +1,10 @@
 .mainPage {
     width:auto;
     margin-top: 102px;
-    margin-left: 365px;
+    margin-left: 345px;
     position:relative;
+    box-sizing: border-box;
+    padding-right: 15px;
 }
 
 .scrollable{
@@ -31,8 +33,8 @@
 @media print{
     body * {
         visibility: hidden;
-        -webkit-print-color-adjust: exact !important; 
-    }        
+        -webkit-print-color-adjust: exact !important;
+    }
     .hidden-print {
         display: none !important;
     }
@@ -40,4 +42,3 @@
         visibility: visible;
     }
 }
-

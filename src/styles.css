@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
+*{
+  font-size: 98% !important;
+}
 /*
     Multiselect
     Styling
@@ -31,4 +34,8 @@
 */
 form{
     margin-bottom: 55px;
+}
+
+.open>.dropdown-menu{
+  max-width: 100% !important;
 }

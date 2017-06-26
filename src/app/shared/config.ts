@@ -3,7 +3,7 @@ import {Headers} from '@angular/http';
 
 @Injectable()
 export class Config {
-    private static baseURL: string = 'https://streamstatstest.wim.usgs.gov/nssservices/';
+    private static baseURL: string = 'https://test.streamstats.usgs.gov/nssservices/';
 
     public static get REGION_URL(): string { return this.baseURL + 'regions' };
     public static get REG_REGION_URL(): string { return this.baseURL + 'regressionregions' };

@@ -18,8 +18,7 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.css",
-        "../node_modules/wim-styles/core/css/wim.css",
+        "styles.css",        
         "../node_modules/angular2-toaster/toaster.css"
       ],
       "scripts": [

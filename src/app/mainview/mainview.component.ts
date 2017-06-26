@@ -60,9 +60,12 @@ export class MainviewComponent implements OnInit {
   public uniqueParameters:Array<Parameter>       //holds unique list of parameters
   public uniqueUnitTypes:Array<Unittype>         //holds unique list of unit types for parameters to show in appendix
   public multipleRegRegions: boolean              //if multiple regRegions, set this to true
-  private DIMLESS_ARRAY = [[0.45, 0.27], [0.50, 0.37], [0.55, 0.46], [0.60, 0.56], [0.65, 0.67], [0.70, 0.76], [0.75, 0.86], [0.80, 0.92], [0.85, 0.97],
-                [0.90, 1.00], [0.95, 1.00], [1.00, 0.98], [1.05, 0.95], [1.10, 0.90], [1.15, 0.84], [1.20, 0.78], [1.25, 0.71], [1.30, 0.65], [1.35, 0.59],
-                [1.40, 0.54], [1.45, 0.48], [1.50, 0.44], [1.55, 0.39], [1.60, 0.36], [1.65, 0.32], [1.70, 0.30]];
+  private DIMLESS_ARRAY = [
+      [0.25, 0.12], [0.3, 0.16], [0.35, 0.21], [0.4, 0.26], [0.45, 0.33], [0.5, 0.4], [0.55, 0.49], [0.6, 0.58], [0.65, 0.67], [0.7, 0.76], 
+      [0.75, 0.84], [0.8, 0.9], [0.85, 0.95], [0.9, 0.98], [0.95, 1.00], [1.00, 0.99], [1.05, 0.96], [1.1, 0.92], [1.15, 0.86], [1.2, 0.8], 
+      [1.25, 0.74], [1.3, 0.68], [1.35, 0.62], [1.4, 0.56], [1.45, 0.51], [1.5, 0.47], [1.55, 0.43], [1.6, 0.39],[1.65, 0.36], [1.7, 0.33], 
+      [1.75, 0.3], [1.8, 0.28], [1.85, 0.26], [1.9, 0.24], [1.95, 0.22], [2.0, 0.2], [2.05, 0.19], [2.1, 0.17], [2.15, 0.16], [2.2, 0.15], 
+      [2.25, 0.14], [2.3, 0.13], [2.35, 0.12], [2.4, 0.11] ];
   public frequencyPlotChart: Freqchart;            //holder of the freq plot properties ()
   public showExtraFREQSettings: boolean;            //showhide flag for additional settings on frequency plot
   public resultsErrorLength: number;

@@ -28,6 +28,10 @@
     width: 95%;
 }
 
+.MathJax{
+  font-size: 140% !important;
+}
+
 /*
     Results
     Form Styling
@@ -37,6 +41,8 @@ form{
 }
 
 .open>.dropdown-menu{
-  max-width: 100% !important;
-  
+  /*max-width: 100% !important;*/
+}
+.wim-sidebar{
+  overflow: visible !important;
 }

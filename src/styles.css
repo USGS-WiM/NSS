@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
+*{
+  font-size: 98% !important;
+}
 /*
     Multiselect
     Styling
@@ -25,10 +28,21 @@
     width: 95%;
 }
 
+.MathJax{
+  font-size: 140% !important;
+}
+
 /*
     Results
     Form Styling
 */
 form{
     margin-bottom: 55px;
+}
+
+.open>.dropdown-menu{
+  /*max-width: 100% !important;*/
+}
+.wim-sidebar{
+  overflow: visible !important;
 }

@@ -10,7 +10,7 @@
 
     <div class="sidebar-item" *ngIf="statisticGroups">
         <label>Limit by Statistic Group(s):</label>
-        <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myRTTexts" [settings]="myRTSettings" name="selectedStatGrpIDs"
+        <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedStatGrpIDs"
                 [(ngModel)]="selectedStatGrpIDs" (ngModelChange)="onStatGrpSelect($event)">
         </ss-multiselect-dropdown>
     </div>  <!-- end sidebar-item-->
@@ -18,7 +18,7 @@
 
     <div class="sidebar-item" *ngIf="regressionRegions">
         <label>Limit by Regression Group(s):</label>
-        <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myRRTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"
+        <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"
                     [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)">
         </ss-multiselect-dropdown>
     </div>   <!-- end sidebar-item-->        
@@ -26,7 +26,7 @@
 
     <div class="sidebar-item" *ngIf="regressionTypes">
         <label>Limit by Statistic:</label>
-        <ss-multiselect-dropdown [options]="regressionTypes" [texts]="mySGTexts" [settings]="mySGSettings" name="selectedRegTypeIDs"
+        <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="mySGSettings" name="selectedRegTypeIDs"
                     [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
         </ss-multiselect-dropdown>
     </div>  <!-- end sidebar-item-->
@@ -52,7 +52,7 @@
             <li style="list-style:none"><a pageScroll href="#appendix">appendix</a></li>
         </ul>            
     </div>    <!-- end sidebar-item-->
-
+   <!-- <div class="identification pull-right">powered by <a href="https://wim.usgs.gov/" target="_blank">WiM</a></div>-->
 
 
 </form>

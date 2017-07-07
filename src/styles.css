@@ -46,3 +46,16 @@ form{
 .wim-sidebar{
   overflow: visible !important;
 }
+.identification {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 9pt;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    padding-left: 8px;
+    opacity: .75;
+    text-align: center;
+    color: #6e7490;
+}

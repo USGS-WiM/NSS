@@ -84,19 +84,26 @@
                         </td>
                         <td *ngIf="multipleRegRegions">
                             <span *ngFor="let l of p.LimitArray">
-                                <span  class="pull-right" *ngIf="l != undefined" [ngClass]="{'redFont':l.OutOfRange}">
+                                <span  class="pull-right" style="white-space:nowrap;" *ngIf="l != undefined" [ngClass]="{'redFont':l.OutOfRange}">
                                     <span style="font-size: x-small">{{l != undefined ? l.rrID : ''}}</span><br />
                                 </span>
                             </span>
                         </td>
                         <td>
                             <span *ngFor="let l of p.LimitArray">
-                            <span *ngIf="l!=undefined" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? sigFigures(l.Min): "--"}}
+                            <span *ngIf="l!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? sigFigures(l.Min): "--"}}
                                 (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)
                                 <br/>
                             </span>
                         </span></td>
-                        <td><span *ngFor="let l of p.LimitArray"><span *ngIf="l!=undefined" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? sigFigures(l.Max) : "--"}} (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)<br/></span></span></td>
+                        <td>
+                            <span *ngFor="let l of p.LimitArray">
+                                <span *ngIf="l!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? sigFigures(l.Max) : "--"}} (
+                                    <span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)
+                                    <br/>
+                                </span>
+                            </span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -139,7 +146,7 @@
                             <span>[SEe, Standard Error of Estimate; SEp, Standard Error of Prediction; SE, Standard Error (other -- see report)]</span>
                             <table #resultsTable style="border:solid 1px gray" class="table">
                                 <thead>
-                                    <tr>
+                                    <tr style="border-bottom: white solid;">
                                         <th class="col-xs-6">{{rr.Name}} Region</th>
                                         <th>Value</th>
                                         <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Prediction Interval</th>

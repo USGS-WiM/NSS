@@ -29,21 +29,19 @@ export class SidebarComponent implements OnInit {
   public get selectedRegRegion(): Array<Regressionregion> { return this._nssService.selectedRegRegions; };
   public regressionRegions: Array<Regressionregion>; 
   private myRRSettings: IMultiSelectSettings;
-  private myRRTexts: IMultiSelectTexts;
+  private myMSTexts: IMultiSelectTexts;
 
   //regression types
   private selectedRegTypeIDs: Array<number>;
   public get selectedRegType(): Array<Regressiontype> { return this._nssService.selectedRegressionTypes; }
   public regressionTypes: Array<Regressiontype>;  
-  private myRTSettings: IMultiSelectSettings;
-  private myRTTexts: IMultiSelectTexts;
+  private myRTSettings: IMultiSelectSettings;  
 
   //statisticGrps
   private selectedStatGrpIDs: Array<number>;
   public get selectedStatGrp(): Array<Statisticgroup> { return this._nssService.selectedStatGroups; };
   public statisticGroups: Array<Statisticgroup>;
   private mySGSettings: IMultiSelectSettings;
-  private mySGTexts: IMultiSelectTexts;
 
   //scenario
   public scenarios: Array<Scenario>;
@@ -142,7 +140,7 @@ export class SidebarComponent implements OnInit {
         dynamicTitleMaxItems: 2,
         maxHeight: '300px'
     }; 
-    this.myRRTexts, this.myRTTexts, this.mySGTexts = {
+    this.myMSTexts = {
         checkAll: 'Check all',
         uncheckAll: 'Uncheck all',
         checked: 'checked',

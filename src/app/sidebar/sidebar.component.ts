@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { URLSearchParams }          from '@angular/http';
 import { NSSService}                from '../app.service';
-import { Region }                  from '../shared/region';
-import { Scenario }                from '../shared/scenario';
-import { Statisticgroup }          from '../shared/statisticgroup';
-import { Regressiontype }          from '../shared/regressiontype';
-import { Regressionregion }        from '../shared/regressionregion';
+import { Region }                  from '../shared/interfaces/region';
+import { Scenario }                from '../shared/interfaces/scenario';
+import { Statisticgroup }          from '../shared/interfaces/statisticgroup';
+import { Regressiontype }          from '../shared/interfaces/regressiontype';
+import { Regressionregion }        from '../shared/interfaces/regressionregion';
 import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/angular-2-dropdown-multiselect';
 import { ToasterContainerComponent, ToasterService } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';

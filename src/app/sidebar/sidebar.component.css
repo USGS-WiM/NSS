@@ -33,4 +33,40 @@
 select:focus{
 	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path fill="#0F8AFF" d="M9.37727 3.625l5.08154 6.93523L19.54036 3.625"/></svg>');
 }
-
+.footer-links {
+    display: block;
+    box-sizing: border-box;
+    padding: 0 5px;
+    text-align: center;
+    line-height: 1.5em;
+    opacity: .75;
+}
+.footer-links a {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 0 4px;
+    font-size: 8pt;
+    text-decoration: none;
+}
+.identification {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 9pt;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    padding-left: 8px;
+    opacity: .75;
+    text-align: center;
+    color: #6e7490;
+}
+.identification a {
+    font-weight: 700;
+    color: #6E7490;
+    transition: .15s;    
+}
+/*.identification a:hover {
+    transition: .15s;
+    color: rgba(0,0,0,.9)!important;
+}*/

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NSSService } from 'app/app.service';
 
 @Component({
   selector: 'wim-navbar',
@@ -7,12 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavbarComponent implements OnInit {
   public title:string;
-  constructor() { }
+  constructor(private _nssService: NSSService) { }
 
   ngOnInit() {
     this.title = "National Stream Flow Statistics";
   }
   public toggleSidebar(){
     //should allow sidebar to go in and come back out
+  }
+  public showAbout(){
+    this._nssService.setAboutModal(true);
   }
 }

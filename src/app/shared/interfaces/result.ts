@@ -1,6 +1,6 @@
-import { Unittype} from '../shared/unitType';
-import { Error } from '../shared/error';
-import { Intervalbound} from '../shared/intervalBound';
+import { Unittype} from './unitType';
+import { Error } from './error';
+import { Intervalbound} from './intervalBound';
 
 export interface Result {
     Description: string;

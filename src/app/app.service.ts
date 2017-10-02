@@ -6,15 +6,17 @@ import { Subject }      from 'rxjs/Subject';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
+
 //interfaces
-import { Region }              from './shared/region';
-import { Regressionregion }    from './shared/regressionregion';
-import { Statisticgroup }      from './shared/statisticgroup';
-import { Regressiontype }      from './shared/regressiontype';
-import { Scenario }            from './shared/scenario';
-import { Citation }            from './shared/citation';
-import { Hydrochart }          from './shared/hydrochart';
-import { Config }              from './shared/config';
+import { Region }              from './shared/interfaces/region';
+import { Regressionregion }    from './shared/interfaces/regressionregion';
+import { Statisticgroup }      from './shared/interfaces/statisticgroup';
+import { Regressiontype }      from './shared/interfaces/regressiontype';
+import { Scenario }            from './shared/interfaces/scenario';
+import { Citation }            from './shared/interfaces/citation';
+import { Hydrochart }          from './shared/interfaces/hydrochart';
+import { Config }              from './shared/interfaces/config';
+import { ConfigService }       from './config.service';
 import { Toast }               from 'angular2-toaster/src/toast';
 
 @Injectable()
@@ -23,9 +25,22 @@ export class NSSService {
     private _regRegionIdParams: string;
     private _regTypeIdParams: string;
     private _statGrpIdParams: string;
+    private configSettings: Config;
+    private jsonHeader: Headers = new Headers({"Accept": "application/json", "Content-Type": "application/json"});
 
-    constructor(private _http: Http) {
+    constructor(private _http: Http, private _configService: ConfigService) {
+        this.configSettings = this._configService.getConfiguration();
         this.getRegions();    
+    }
+
+    // -+-+-+-+-+-+-+-+-+ about modal -+-+-+-+-+-+-+-+
+    private _showHideAboutModal: Subject<boolean> = new Subject<boolean>();
+    public setAboutModal(val:any){
+        this._showHideAboutModal.next(val);
+    }
+    //show the filter modal in the mainview
+    public get showAboutModal():any{
+        return this._showHideAboutModal.asObservable();
     }
 
     // -+-+-+-+-+-+-+-+-+ hydrograph  getter/setter  -+-+-+-+-+-+-+-+-+
@@ -94,11 +109,11 @@ export class NSSService {
     };
     //get all regions
     private getRegions():void {
-    let options = new RequestOptions({headers:Config.MIN_JSON_HEADERS});
-    this._http.get(Config.REGION_URL, options)
-        .map(res=> <Array<Region>>res.json()).subscribe(r=>{
-        this._regionSubject.next(r);
-        }, error => this.handleError);   
+    let options = new RequestOptions({headers: this.jsonHeader});
+    this._http.get(this.configSettings.baseURL + this.configSettings.regionURL, options)
+        .map(res=> <Array<Region>>res.json())
+        .catch(this.handleError)
+        .subscribe( r => { this._regionSubject.next(r); });          
     }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
@@ -415,29 +430,29 @@ export class NSSService {
     // -+-+-+-+-+-+-+-+-+-+-+-+ http GETs -+-+-+-+-+-+-+-+-+-+-+-+
     //get regressionRegions by region
     private getRegionRegressionRegions(id: number, searchArgs?: URLSearchParams) {
-        let options = new RequestOptions({ headers: Config.MIN_JSON_HEADERS, search:searchArgs });
-         return this._http.get(Config.REGION_URL + '/' + id + '/regressionregions', options)
-            .map(res => <Array<Regressionregion>>res.json())      
+        let options = new RequestOptions({ headers: this.jsonHeader, search:searchArgs });
+         return this._http.get(this.configSettings.baseURL + this.configSettings.regionURL + '/' + id + '/regressionregions', options)
+            .map(res => <Array<Regressionregion>>res.json())
     }
 
     //get regressiontypes by region
     private getRegionRegressionTypes(id: number, searchArgs?: URLSearchParams) {
-        let options = new RequestOptions({ headers: Config.MIN_JSON_HEADERS, search: searchArgs });
-        return this._http.get(Config.REGION_URL + '/' + id + '/regressiontypes', options)
+        let options = new RequestOptions({ headers: this.jsonHeader, search: searchArgs });
+        return this._http.get(this.configSettings.baseURL + this.configSettings.regionURL + '/' + id + '/regressiontypes', options)
             .map(res => <Regressiontype[]>res.json())          
     }
 
     //get statisticgroups by region
     private getRegionStatisticGrps(id: number, searchArgs?: URLSearchParams) {
-        let options = new RequestOptions({ headers: Config.MIN_JSON_HEADERS, search: searchArgs });
-        return this._http.get(Config.REGION_URL + '/' + id + '/statisticgroups', options)
+        let options = new RequestOptions({ headers: this.jsonHeader, search: searchArgs });
+        return this._http.get(this.configSettings.baseURL + this.configSettings.regionURL + '/' + id + '/statisticgroups', options)
             .map(res => <Statisticgroup[]>res.json())           
     }
 
     //get scenarios by region
     private getRegionScenario(id: number, searchArgs?: URLSearchParams) {
-        let options = new RequestOptions({ headers: Config.MIN_JSON_HEADERS, search: searchArgs });
-        return this._http.get(Config.REGION_URL + '/' + id + '/scenarios', options)
+        let options = new RequestOptions({ headers: this.jsonHeader, search: searchArgs });
+        return this._http.get(this.configSettings.baseURL + this.configSettings.regionURL + '/' + id + '/scenarios', options)
             .map(res => <Scenario[]>res.json())
             .subscribe(s => {
                 s.forEach(scen => {
@@ -461,9 +476,9 @@ export class NSSService {
     //calculate Scenarios (POST)
     postScenarios(id: number, s: Scenario[], searchArgs?: URLSearchParams) {
         //let body = JSON.stringify(s);
-        let options = new RequestOptions({ headers: Config.MIN_JSON_HEADERS, search: searchArgs });
+        let options = new RequestOptions({ headers: this.jsonHeader, search: searchArgs });
 
-        return this._http.post(Config.REGION_URL + '/' + id + '/scenarios/estimate', s, options)
+        return this._http.post(this.configSettings.baseURL + this.configSettings.regionURL + '/' + id + '/scenarios/estimate', s, options)
             .map(sResult => <Scenario[]>sResult.json())
             .subscribe(sResult => {
                 sResult.forEach(scen => {
@@ -481,18 +496,17 @@ export class NSSService {
     }
 
     private getCitations(searchArgs?: URLSearchParams) {
-        let options = new RequestOptions({ headers: Config.MIN_JSON_HEADERS, search: searchArgs });
+        let options = new RequestOptions({ headers: this.jsonHeader, search: searchArgs });
 
-        return this._http.get(Config.CITATION_URL, options)
+        return this._http.get(this.configSettings.baseURL + this.configSettings.citationURL, options)
             .map(cit => <Citation[]>cit.json())
             .catch(this.handleError);
     }
 
-    private handleError(error: Response) {
-        // TODO figure out a better error handler
-        // in a real world app, we may send the server to some remote logging infrastructure
-        // instead of just logging it to the console
-        console.error(error);
-        return Observable.throw(error.json().error || 'Server error');
+    private handleError(error: any) {
+        let errMsg = (error.message) ? error.message :
+            error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+        console.error(errMsg);
+        return Observable.throw(errMsg);
     }
 }

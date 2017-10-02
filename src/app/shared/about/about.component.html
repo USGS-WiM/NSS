@@ -1,0 +1,46 @@
+<ng-template #about let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="col-xs-12">
+            <h4 class="modal-title pull-left">About National Streamflow Statistics client application v{{appVersion}}</h4>  
+            <button class="close pull-right" (click)="d('closed')">x</button>                
+        </div>  
+    </div>
+    <div class="modal-body">
+        <ngb-tabset>
+            <ngb-tab>
+                <ng-template ngbTabTitle><i class="fa fa-question-circle"></i>&nbsp;&nbsp;About</ng-template>                    
+                <ng-template ngbTabContent>
+                    <h2 style="padding-top:2em">About National Streamflow Statistics (NSS) client application.</h2>
+                    <p>
+                        Spicy jalapeno bacon ipsum dolor amet ea short loin non, exercitation kielbasa brisket mollit alcatra rump swine boudin tempor ribeye ipsum. In 
+                        velit in strip steak pork beef ribs. Pariatur doner spare ribs, anim velit fugiat consectetur ipsum cillum short loin tenderloin adipisicing. Leberkas 
+                        kielbasa eu tri-tip consequat, ad laboris jowl short loin ea bacon ham hock. Turkey deserunt non tenderloin alcatra jerky pork loin shoulder fatback reprehenderit 
+                        aute minim shank. Shank burgdoggen magna flank, qui aliqua porchetta laborum ribeye turducken pastrami labore eiusmod.
+                    </p>
+                    <p>
+                        Ham hock proident brisket, quis cow sausage capicola lorem ut flank. Commodo cillum et swine sed anim duis officia ullamco pariatur. Ex beef ribs eiusmod 
+                        ground round exercitation ham hock duis meatball strip steak pork chop dolor filet mignon short loin. Excepteur sint pastrami duis, sunt hamburger occaecat 
+                        short ribs prosciutto. Ad meatloaf shoulder aliquip pork chop swine porchetta alcatra.
+                    </p>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab>
+                <ng-template ngbTabTitle><i class="fa fa-bell"></i>&nbsp;&nbsp;Disclaimer</ng-template>      
+                <ng-template ngbTabContent>
+                    <p>This software is preliminary or provisional and is subject to revision. It is being provided to meet the need for timely best science. 
+                        The software has not received final approval by the U.S. Geological Survey (USGS). No warranty, expressed or implied, is made by the USGS 
+                        or the U.S. Government as to the functionality of the software and related material nor shall the fact of release constitute any such warranty. 
+                        The software is provided on the condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from 
+                        the authorized or unauthorized use of the software.
+                    </p>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-black" (click)="d('closed')">
+            <i class="fa fa-close"></i>
+            <span>&nbsp;&nbsp;Close</span>
+        </button>
+    </div>
+</ng-template>

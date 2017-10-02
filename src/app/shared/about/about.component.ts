@@ -12,19 +12,8 @@ import { NSSService } from '../../app.service';
 
 @Component({
   selector: 'aboutModal',
-  template: `
-      <ng-template #about let-c="close" let-d="dismiss">
-          <div class="modal-header">
-            <h4 class="modal-title">ABOUT</h4>                  
-          </div>
-          <div class="modal-body">
-            Info here
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="sigl-btn" (click)="d('closed')">OK</button>
-          </div>
-        </ng-template>
-      `
+  templateUrl: './about.component.html',
+  styleUrls: ['./about.component.css']
 })
 
 export class AboutModal {   
@@ -32,6 +21,7 @@ export class AboutModal {
     private modalElement: any;
     public CloseResult: any;
     private modalSubscript;
+    public appVersion: string;
 
     constructor(private _nssService: NSSService, private _modalService: NgbModal){ }
     
@@ -40,6 +30,10 @@ export class AboutModal {
       this.modalSubscript = this._nssService.showAboutModal.subscribe((show: boolean) => {
           if (show) this.showAboutModal();
       });
+      this._nssService.getVersion.subscribe((v: string) => {
+        this.appVersion = v;
+    });
+      
       this.modalElement = this.aboutModal;
     }
 

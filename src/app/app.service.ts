@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions, URLSearchParams } from '@angular/http';
 import { Observable }   from 'rxjs/Observable';
 import { Subject }      from 'rxjs/Subject';
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
@@ -33,6 +34,14 @@ export class NSSService {
         this.getRegions();    
     }
 
+    // -+-+-+-+-+-+-+-+-+ app version (gotten from environment.ts) -+-+-+-+-+-+-+-+
+    private appversion: BehaviorSubject<string> = <BehaviorSubject<string>>new BehaviorSubject("");
+    public setVersion(val: string) {
+        this.appversion.next(val);
+    }
+    public get getVersion(): any {
+        return this.appversion.asObservable();
+    }
     // -+-+-+-+-+-+-+-+-+ about modal -+-+-+-+-+-+-+-+
     private _showHideAboutModal: Subject<boolean> = new Subject<boolean>();
     public setAboutModal(val:any){

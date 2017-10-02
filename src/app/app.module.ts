@@ -24,7 +24,7 @@ import { AboutModal } from 'app/shared/about/about.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 export function ConfigLoader(configService: ConfigService) {
-	//Note: this factory needs to return a function (that returns a promise)
+  //Note: this factory needs to return a function (that returns a promise)  
 	return () => configService.load(environment.configFile);
 }
 

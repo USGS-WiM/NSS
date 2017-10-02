@@ -33,6 +33,16 @@ export class NSSService {
         this.getRegions();    
     }
 
+    // -+-+-+-+-+-+-+-+-+ about modal -+-+-+-+-+-+-+-+
+    private _showHideAboutModal: Subject<boolean> = new Subject<boolean>();
+    public setAboutModal(val:any){
+        this._showHideAboutModal.next(val);
+    }
+    //show the filter modal in the mainview
+    public get showAboutModal():any{
+        return this._showHideAboutModal.asObservable();
+    }
+
     // -+-+-+-+-+-+-+-+-+ hydrograph  getter/setter  -+-+-+-+-+-+-+-+-+
     private hydrograph: Hydrochart;
     private hydroBind: Subject<Hydrochart> = new Subject<Hydrochart>();
@@ -101,9 +111,9 @@ export class NSSService {
     private getRegions():void {
     let options = new RequestOptions({headers: this.jsonHeader});
     this._http.get(this.configSettings.baseURL + this.configSettings.regionURL, options)
-        .map(res=> <Array<Region>>res.json()).subscribe(r=>{
-        this._regionSubject.next(r);
-        }, error => this.handleError);   
+        .map(res=> <Array<Region>>res.json())
+        .catch(this.handleError)
+        .subscribe( r => { this._regionSubject.next(r); });          
     }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
@@ -422,7 +432,7 @@ export class NSSService {
     private getRegionRegressionRegions(id: number, searchArgs?: URLSearchParams) {
         let options = new RequestOptions({ headers: this.jsonHeader, search:searchArgs });
          return this._http.get(this.configSettings.baseURL + this.configSettings.regionURL + '/' + id + '/regressionregions', options)
-            .map(res => <Array<Regressionregion>>res.json())      
+            .map(res => <Array<Regressionregion>>res.json())
     }
 
     //get regressiontypes by region
@@ -493,11 +503,10 @@ export class NSSService {
             .catch(this.handleError);
     }
 
-    private handleError(error: Response) {
-        // TODO figure out a better error handler
-        // in a real world app, we may send the server to some remote logging infrastructure
-        // instead of just logging it to the console
-        console.error(error);
-        return Observable.throw(error.json().error || 'Server error');
+    private handleError(error: any) {
+        let errMsg = (error.message) ? error.message :
+            error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+        console.error(errMsg);
+        return Observable.throw(errMsg);
     }
 }

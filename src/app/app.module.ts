@@ -20,6 +20,8 @@ declare let require : any;
 
 import { ConfigService } from "app/config.service";
 import { environment } from '../environments/environment';
+import { AboutModal } from 'app/shared/about/about.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 export function ConfigLoader(configService: ConfigService) {
 	//Note: this factory needs to return a function (that returns a promise)
@@ -36,11 +38,11 @@ export function highchartsFactory() {
 
 @NgModule({
   declarations: [
-    AppComponent, MainviewComponent, SidebarComponent, NavbarComponent, UniquePipe, MathjaxDirective
+    AppComponent, MainviewComponent, SidebarComponent, NavbarComponent, AboutModal, UniquePipe, MathjaxDirective
   ],
   imports: [
     BrowserModule, FormsModule, HttpModule, ToasterModule, 
-    MultiselectDropdownModule, Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule
+    MultiselectDropdownModule, Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule,  NgbModule.forRoot(),
   ],
   providers: [NSSService,
     { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService,

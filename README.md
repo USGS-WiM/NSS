@@ -79,10 +79,10 @@ In the spirit of open source, please cite any re-use of the source code stored i
 
 ## Acknowledgments
 
-* [angular cli] (https://angular.io/)
-* [angular-2-dropdown-multiselect] (http://softsimon.github.io/angular-2-dropdown-multiselect/)
-* [Mathjax] (https://www.mathjax.org/)
-* [Angular2-Toaster] (https://github.com/stabzs/Angular2-Toaster)
+* [angular cli](https://angular.io/)
+* [angular-2-dropdown-multiselect](http://softsimon.github.io/angular-2-dropdown-multiselect/)
+* [Mathjax](https://www.mathjax.org/)
+* [Angular2-Toaster](https://github.com/stabzs/Angular2-Toaster)
 
 
 ## About WIM

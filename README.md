@@ -84,7 +84,6 @@ In the spirit of open source, please cite any re-use of the source code stored i
 * [Mathjax] (https://www.mathjax.org/)
 * [Angular2-Toaster] (https://github.com/stabzs/Angular2-Toaster)
 
-* Inspiration Note 
 
 ## About WIM
 * This project authored by the [USGS WIM team](https://wim.usgs.gov)

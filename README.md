@@ -65,7 +65,7 @@ To push tags to remote origin: `git push origin --tags`
 
 * **[Tonia Roddick](https://www.usgs.gov/staff-profiles/tonia-m-roddick)**  - *Lead Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/USGS-WiM/NSS/graphs/contributors) who participated in this project.
 
 ## License
 
@@ -79,7 +79,11 @@ In the spirit of open source, please cite any re-use of the source code stored i
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
+* [angular cli] (https://angular.io/)
+* [angular-2-dropdown-multiselect] (http://softsimon.github.io/angular-2-dropdown-multiselect/)
+* [Mathjax] (https://www.mathjax.org/)
+* [Angular2-Toaster] (https://github.com/stabzs/Angular2-Toaster)
+
 * Inspiration Note 
 
 ## About WIM

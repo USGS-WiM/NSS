@@ -235,9 +235,11 @@
             <div [hidden]="!showCharts_btn">
                 <div class="row">
                     <div class="col-xs-12" *ngFor="let c of hydroChartsArray;let i = index"> <!-- For Each hydroChartsArray start -->
-                        <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
-                            <button type="button" class="pull-right hidden-print" (click)="removeHydroChart(i)">x</button><br clear="all" />
-                            <chart (load)="saveInstance($event.context)" [options]="c"></chart>
+                        <div class="row">
+                          <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px; padding: 0 !important;" class="col-xs-12 col-lg-7 col-md-9">
+                              <button type="button" class="pull-right hidden-print" (click)="removeHydroChart(i)">x</button><br clear="all" />
+                              <chart (load)="saveInstance($event.context)" [options]="c"></chart>
+                          </div>
                         </div>
                         <div class="col-xs-6 hidden-print" *ngIf="selectedPlot=='Hydrograph'">
                             <!-- Start of FORM for hydrochart -->
@@ -414,11 +416,13 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-12" *ngIf="showCharts_btn">
-                        <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
-                            <button type="button" class="pull-right hidden-print" (click)="removeFreqChart()">x</button><br clear="all" />
-                            <chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>
+                        <div class="row">
+                          <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px; padding: 0 !important;" class="col-xs-12 col-lg-7 col-md-9">
+                              <button type="button" class="pull-right hidden-print" (click)="removeFreqChart()">x</button><br clear="all" />
+                              <chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>
+                          </div>
                         </div>
-                        <div class="col-xs-12">
+                        <div class="col-xs-12 col-md-8 col-lg-6">
                             <br clear="all" />
                             <div class="hidden-print simple-btn"><a (click)="showHideAddFChartSettings()" style="cursor: pointer">More options</a></div>
                             <br clear="all" />

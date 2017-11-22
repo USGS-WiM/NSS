@@ -4,27 +4,27 @@
     <toaster-container></toaster-container>
     <!-- / toaster directive -->
 
-    <div><h3>{{title}}</h3></div>
-    <div>{{timestamp | date:"MMMM d, y hh:mma"}}</div>
+    <div><h3 style="font-size: 32px !important; font-weight: bolder !important;">{{title}}</h3></div>
+    <div style="margin-bottom: 5px; opacity: 0.5; letter-spacing: 0.6px;">{{timestamp | date:"MMMM d, y hh:mma"}}</div>
 
     <div *ngIf="selectedRegion">
-       <label>Region:</label>
-       <div>{{selectedRegion.Name}}</div>
+       <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Region:</label>
+       <div style="font-weight: bolder !important; font-size: 18px !important;">{{selectedRegion.Name}}</div>
     </div>
 
     <br/>
     <div *ngIf="selectedStatisticGrp">
-        <label>Statistic Group(s):</label>
+        <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Statistic Group(s):</label>
         <div>
-            <span *ngFor="let st of selectedStatisticGrp;let isLast=last">{{st.Name}}{{isLast ? "" : ", "}}</span>
+            <span *ngFor="let st of selectedStatisticGrp;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{st.Name}}{{isLast ? "" : ", "}}</span>
         </div>
     </div>
 
     <br />
     <div *ngIf="selectedRegRegion">
-        <label>Regression Group(s):</label>
+        <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Regression Group(s):</label>
         <div>
-            <span *ngFor="let rr of selectedRegRegion;let isLast=last">{{rr.Name}}{{isLast ? "" : ", "}}</span>
+            <span *ngFor="let rr of selectedRegRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.Name}}{{isLast ? "" : ", "}}</span>
         </div>
     </div>
 
@@ -37,9 +37,9 @@
         <div *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</div>
         <form #scenarioForm="ngForm">
             <div class="row">
-                <div class="col-xs-11" *ngFor="let sc of scenarios;let sInd = index">
+                <div class="col-xs-12" *ngFor="let sc of scenarios;let sInd = index">
                     <h3>{{sc.StatisticGroupName}}</h3>
-                    <div class="col-xs-10" *ngIf="sc.RegressionRegions?.length > 0">
+                    <div class="col-xs-12" *ngIf="sc.RegressionRegions?.length > 0">
                         <table class="table">
                             <tr *ngFor="let rr of sc.RegressionRegions;let rInd = index">
                                 <td style="vertical-align:middle;">{{rr.Name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_ID: {{rr.ID}})</span></td>
@@ -124,7 +124,7 @@
 
      <!-- resultsBack-->
     <div *ngIf="resultsBack">
-        <button type="button" class="btn-wim-primary hidden-print" (click)="editScenario()">Edit Scenario Parameters</button>
+        <button type="button" class="btn-wim-primary hidden-print" style="margin-bottom: 15px;" (click)="editScenario()">Edit Scenario Parameters</button>
         <div *ngFor="let s of scenarios">
             <h3>{{s.StatisticGroupName}}</h3>
             <div *ngFor="let rr of s.RegressionRegions;let r = index">
@@ -234,12 +234,12 @@
             </div>
             <div [hidden]="!showCharts_btn">
                 <div class="row">
-                    <div class="col-xs-11" *ngFor="let c of hydroChartsArray;let i = index"> <!-- For Each hydroChartsArray start -->
+                    <div class="col-xs-12" *ngFor="let c of hydroChartsArray;let i = index"> <!-- For Each hydroChartsArray start -->
                         <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
                             <button type="button" class="pull-right hidden-print" (click)="removeHydroChart(i)">x</button><br clear="all" />
                             <chart (load)="saveInstance($event.context)" [options]="c"></chart>
                         </div>
-                        <div class="col-xs-5 pull-right hidden-print" *ngIf="selectedPlot=='Hydrograph'">
+                        <div class="col-xs-6 hidden-print" *ngIf="selectedPlot=='Hydrograph'">
                             <!-- Start of FORM for hydrochart -->
                             <form id="myChartForm" name="myChartForm" #myChartForm="ngForm" (ngSubmit)="refreshHydrograph()">
                                 <div class="form-group">
@@ -260,7 +260,7 @@
                                 </div>
 
                                 <br clear="all" />
-                                <div class="pull-right hidden-print"><a class="hidden-print" (click)="showHideAdditionalChartSettings(i)" style="cursor: pointer">More options</a></div>
+                                <div class="hidden-print"><a class="hidden-print simple-btn" (click)="showHideAdditionalChartSettings(i)" style="cursor: pointer">More options</a></div>
                                 <br clear="all" />
                                 <div *ngIf="hydrographs[i]?.showExtraSettings" [hidden]="!hydrographs[i].showExtraSettings" class="panel panel-default hidden-print">
                                     <div class="panel-body">
@@ -270,16 +270,16 @@
                                         </div>
                                         <!-- AXIS -->
                                         <div>
-                                            <div style="font-size: large">Axes</div>
+                                            <div style="font-size: 16px !important; font-weight: bold !important;">Axes</div>
                                             <div class="form-group col-xs-6">
                                                 <label class="control-label">Choose Axis to update:</label>
                                                 <div>
-                                                    <span style="padding-right: 10px">
+                                                    <div style="padding-right: 10px">
                                                         <input type="radio"  name="axis" [(ngModel)]="hydrographs[i].axis" value="BottomX" (click)="axis='BottomX'" />Bottom X
-                                                    </span>
-                                                    <span>
+                                                    </div>
+                                                    <div>
                                                         <input type="radio" name="axis" [(ngModel)]="hydrographs[i].axis" value="LeftY" (click)="axis='LeftY'" />Left Y
-                                                    </span>
+                                                    </div>
                                                 </div>
                                             </div> <!-- end (AXIS) form group  -->
                                             <!-- TYPE -->
@@ -304,7 +304,7 @@
                                             </div> <!-- end (TYPE) form group -->
                                             <!-- TITLE -->
                                             <div class="form-group  col-xs-12">
-                                                <label class="control-label">Axis Title:</label>
+                                                <label class="control-label" style="font-size: 16px !important; font-weight: bold !important;">Axis Title:</label>
                                                 <div [hidden]="hydrographs[i].axis != 'BottomX'">
                                                     <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_BX" name="title_BX" (keyup)="updateBXtitle(i)" [(ngModel)]="hydrographs[i].title_BX"></textarea>
                                                 </div>
@@ -354,7 +354,7 @@
                                         <br clear="all"/>
                                         <!--Curves and Legend-->
                                         <div>
-                                            <div style="font-size: large">Curves and Legend</div>
+                                            <div style="font-size: 16px !important; font-weight: bold !important;">Curves and Legend</div>
                                             <div><!--Curves color/width -->
                                                 <div class="form-group col-xs-6">
                                                     <label class="control-label">Curve Color:</label>
@@ -413,14 +413,14 @@
                     <button class="hidden-print" style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
                 </div>
                 <div class="row">
-                    <div class="col-xs-11" *ngIf="showCharts_btn">
+                    <div class="col-xs-12" *ngIf="showCharts_btn">
                         <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
                             <button type="button" class="pull-right hidden-print" (click)="removeFreqChart()">x</button><br clear="all" />
                             <chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>
                         </div>
-                        <div class="col-xs-5 pull-right">
+                        <div class="col-xs-12">
                             <br clear="all" />
-                            <div class="pull-right hidden-print"><a (click)="showHideAddFChartSettings()" style="cursor: pointer">More options</a></div>
+                            <div class="hidden-print simple-btn"><a (click)="showHideAddFChartSettings()" style="cursor: pointer">More options</a></div>
                             <br clear="all" />
                             <div *ngIf="showExtraFREQSettings" [hidden]="!showExtraFREQSettings" class="panel panel-default hidden-print">
                                 <div class="panel-body">
@@ -430,16 +430,16 @@
                                         </div>
                                         <!-- AXIS -->
                                         <div>
-                                            <div style="font-size: large">Axes</div>
+                                            <div style="font-size: 16px !important; font-weight: bold !important;">Axes</div>
                                             <div class="form-group col-xs-6">
                                                 <label class="control-label">Choose Axis to update:</label>
                                                 <div>
-                                                    <span style="padding-right: 10px">
+                                                    <div style="padding-right: 10px">
                                                         <input type="radio"  name="Faxis" [(ngModel)]="frequencyPlotChart.Faxis" value="BottomX" (click)="Faxis='BottomX'" />Bottom X
-                                                    </span>
-                                                    <span>
+                                                    </div>
+                                                    <div>
                                                         <input type="radio" name="Faxis" [(ngModel)]="frequencyPlotChart.Faxis" value="LeftY" (click)="Faxis='LeftY'" />Left Y
-                                                    </span>
+                                                    </div>
                                                 </div>
                                             </div> <!-- end (AXIS) form group  -->
                                             <!-- TYPE -->
@@ -460,7 +460,7 @@
                                             </div> <!-- end (TYPE) form group -->
                                             <!-- TITLE -->
                                             <div class="form-group  col-xs-12">
-                                                <label class="control-label">Axis Title:</label>
+                                                <label class="control-label" style="font-size: 16px !important; font-weight: bold !important;">Axis Title:</label>
                                                 <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
                                                     <textarea cols="60" rows="4" class="form-control" [innerHTML]="frequencyPlotChart.title_BX" name="title_BX" (keyup)="updateFreqBXtitle()" [(ngModel)]="frequencyPlotChart.title_BX"></textarea>
                                                 </div>
@@ -516,7 +516,7 @@
                                         </div><!-- end Axes -->
                                         <br clear="all"/>
                                         <div>
-                                            <div style="font-size: large">Curves and Legend</div>
+                                            <div style="font-size: 16px !important; font-weight: bold !important;">Curves and Legend</div>
                                             <div>
                                                 <div class="form-group col-xs-6">
                                                     <label class="control-label">Curve Color:</label>

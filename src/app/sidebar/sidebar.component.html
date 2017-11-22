@@ -1,4 +1,4 @@
-<form class="wim-sidebar fixed">
+<form class="wim-sidebar fixed" id="wimSidebar">
 
     <div class="sidebar-item">
         <label>Choose Region:</label>
@@ -6,7 +6,7 @@
             <option [ngValue]="i" *ngFor="let i of regions">{{i.Name}}</option>
         </select>
     </div>  <!-- end sidebar-item-->
-    
+
 
     <div class="sidebar-item" *ngIf="statisticGroups">
         <label>Limit by Statistic Group(s):</label>
@@ -21,7 +21,7 @@
         <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"
                     [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)">
         </ss-multiselect-dropdown>
-    </div>   <!-- end sidebar-item-->        
+    </div>   <!-- end sidebar-item-->
 
 
     <div class="sidebar-item" *ngIf="regressionTypes">
@@ -39,18 +39,20 @@
 
     <div class="sidebar-item" *ngIf="showChart">
         <label>Chart:</label>
-        <ul>
-            <li *ngFor="let pt of plotTypes" (click)="selectChart(pt)" style="list-style:none;cursor:pointer;">{{pt}}</li>
-        </ul>                
+        <ul style="padding: 0px !important;">
+            <div *ngFor="let pt of plotTypes" (click)="selectChart(pt)">
+              <li style="list-style: none; cursor: pointer" class="simple-btn">{{pt}}</li>
+            </div>
+        </ul>
     </div>   <!-- end sidebar-item-->
 
     <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0 && scenarios[0].RegressionRegions[0].Results != undefined">
         <label>Go To:</label>
-        <ul>                
-            <li style="list-style:none"><a pageScroll href="#citations">Citations</a></li>
-            <li *ngIf="showChart" style="list-style:none"><a pageScroll href="#chart">charts</a></li>
-            <li style="list-style:none"><a pageScroll href="#appendix">appendix</a></li>
-        </ul>            
+        <ul style="padding: 0 !important;">
+            <li style="list-style:none"><a pageScroll href="#citations" class="simple-btn">Citations</a></li>
+            <li *ngIf="showChart" style="list-style:none"><a pageScroll href="#chart" class="simple-btn">Charts</a></li>
+            <li style="list-style:none"><a pageScroll href="#appendix" class="simple-btn">Appendix</a></li>
+        </ul>
     </div>    <!-- end sidebar-item-->
 
     <div class="footer-links">

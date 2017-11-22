@@ -87,6 +87,15 @@ input[type="radio"]{
   display: inline-block;
   margin-right: 8px;
 }
+.simple-btn-link{
+  padding: 0 0 0 15px;
+  color: #10152C !important;
+  margin-bottom: 6px !important;
+  display: inline-block;
+  margin-bottom: 3px !important;
+  margin-right: 8px;
+  text-decoration: underline;
+}
 
 .mainPage{
   box-sizing: border-box;
@@ -164,4 +173,15 @@ input[type="radio"]{
   letter-spacing: 1px;
   background-color: #FFF;
   color: #10152C;
+}
+
+.charts-header{
+  font-size: 32px !important;
+  letter-spacing: 0 !important;
+  display: inline-block;
+  margin-right: 42px;
+  margin-bottom: 0 !important;
+  position: relative;
+  top: 8px;
+  margin-right: 10px;
 }

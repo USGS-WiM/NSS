@@ -49,9 +49,9 @@
     <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0 && scenarios[0].RegressionRegions[0].Results != undefined">
         <label>Go To:</label>
         <ul style="padding: 0 !important;">
-            <li style="list-style:none"><a pageScroll href="#citations" class="simple-btn">Citations</a></li>
-            <li *ngIf="showChart" style="list-style:none"><a pageScroll href="#chart" class="simple-btn">Charts</a></li>
-            <li style="list-style:none"><a pageScroll href="#appendix" class="simple-btn">Appendix</a></li>
+            <li style="list-style:none"><a pageScroll href="#citations" class="simple-btn-link">Citations</a></li>
+            <li *ngIf="showChart" style="list-style:none"><a pageScroll href="#chart" class="simple-btn-link">Charts</a></li>
+            <li style="list-style:none"><a pageScroll href="#appendix" class="simple-btn-link">Appendix</a></li>
         </ul>
     </div>    <!-- end sidebar-item-->
 

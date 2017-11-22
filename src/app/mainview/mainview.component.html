@@ -232,20 +232,19 @@
                     <button class="hidden-print" style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
                 </div>
             </div>
+
             <div [hidden]="!showCharts_btn">
                 <div class="row">
-                    <div class="col-xs-12" *ngFor="let c of hydroChartsArray;let i = index"> <!-- For Each hydroChartsArray start -->
-                        <div class="row">
-                          <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px; padding: 0 !important;" class="col-xs-12 col-lg-7 col-md-9">
-                              <button type="button" class="pull-right hidden-print" (click)="removeHydroChart(i)">x</button><br clear="all" />
-                              <chart (load)="saveInstance($event.context)" [options]="c"></chart>
-                          </div>
+                    <div class="col-xs-12" *ngFor="let c of hydroChartsArray;let i = index" style="display:flex;"> <!-- For Each hydroChartsArray start -->
+                        <div class="chart-wrapper">
+                            <button type="button" class="pull-right hidden-print" (click)="removeHydroChart(i)">x</button><br clear="all" />
+                            <chart (load)="saveInstance($event.context)" [options]="c"></chart>
                         </div>
-                        <div class="col-xs-6 hidden-print" *ngIf="selectedPlot=='Hydrograph'">
+                        <div class="hidden-print" *ngIf="selectedPlot=='Hydrograph'" style="flex-grow:4;">
                             <!-- Start of FORM for hydrochart -->
                             <form id="myChartForm" name="myChartForm" #myChartForm="ngForm" (ngSubmit)="refreshHydrograph()">
                                 <div class="form-group">
-                                    <label class="col-xs-7">Recurrence Interval:</label>
+                                    <label class="col-xs-5">Recurrence Interval:</label>
                                     <div class="col-xs-5">
                                         <span class="select-wim">
                                             <select [(ngModel)]="hydrographs[i].recurrence" (ngModelChange)="refreshHydrograph(i, myChartForm.form.controls)" name="recurrence">
@@ -255,16 +254,16 @@
                                     </div>
                                 </div>
                                 <div class="form-group" style="padding-top:5px;">
-                                    <label class="col-xs-7">Lag Time (hrs):</label>
+                                    <label class="col-xs-5">Lag Time (hrs):</label>
                                     <div class="col-xs-5">
                                         <input type="text" class="form-control" name="lagTime" (keypress)="_keyPress($event)" [(ngModel)]="hydrographs[i].lagTime" (keyup)="refreshHydrograph(i, myChartForm.form.controls)">
                                     </div>
                                 </div>
 
                                 <br clear="all" />
-                                <div class="hidden-print"><a class="hidden-print simple-btn" (click)="showHideAdditionalChartSettings(i)" style="cursor: pointer">More options</a></div>
+                                <div class="hidden-print"><a class="hidden-print simple-btn" (click)="showHideAdditionalChartSettings(i)" style="cursor: pointer; margin-left: 15px;">More options</a></div>
                                 <br clear="all" />
-                                <div *ngIf="hydrographs[i]?.showExtraSettings" [hidden]="!hydrographs[i].showExtraSettings" class="panel panel-default hidden-print">
+                                <div *ngIf="hydrographs[i]?.showExtraSettings" [hidden]="!hydrographs[i].showExtraSettings" class="panel panel-default hidden-print" style="border: none !important;">
                                     <div class="panel-body">
                                         <div style="font-size: small">
                                             <span>* To zoom in, click and drag a box in the chart</span>
@@ -416,18 +415,16 @@
                     <button class="hidden-print" style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12" *ngIf="showCharts_btn">
-                        <div class="row">
-                          <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px; padding: 0 !important;" class="col-xs-12 col-lg-7 col-md-9">
-                              <button type="button" class="pull-right hidden-print" (click)="removeFreqChart()">x</button><br clear="all" />
-                              <chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>
-                          </div>
+                    <div class="col-xs-12" *ngIf="showCharts_btn" style="display: flex;">
+                        <div class="chart-wrapper">
+                            <button type="button" class="pull-right hidden-print" (click)="removeFreqChart()">x</button><br clear="all" />
+                            <chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>
                         </div>
-                        <div class="col-xs-12 col-md-8 col-lg-6">
+                        <div style="flex-grow: 4;">
                             <br clear="all" />
-                            <div class="hidden-print simple-btn"><a (click)="showHideAddFChartSettings()" style="cursor: pointer">More options</a></div>
+                            <div class="hidden-print"><a (click)="showHideAddFChartSettings()" class="simple-btn" style="cursor: pointer; margin-left: 15px;">More options</a></div>
                             <br clear="all" />
-                            <div *ngIf="showExtraFREQSettings" [hidden]="!showExtraFREQSettings" class="panel panel-default hidden-print">
+                            <div *ngIf="showExtraFREQSettings" [hidden]="!showExtraFREQSettings" class="panel panel-default hidden-print" style="border: none !important;">
                                 <div class="panel-body">
                                     <form id="myFChartForm" name="myFChartForm" #myFChartForm="ngForm">
                                         <div style="font-size: small">

@@ -185,3 +185,28 @@ input[type="radio"]{
   top: 8px;
   margin-right: 10px;
 }
+
+.chart-wrapper{
+  border: 1px solid rgba(0,0,0,0.3);
+  display:inline-block;
+  margin-bottom:65px !important;
+  max-height: 450px !important;
+  padding: 0 !important;
+}
+
+
+.dropdown-item{
+  padding-left: 0 !important;
+  font-size: 12px !important;
+  letter-spacing: -0.5px !important;
+}
+.dropdown-item a{
+  padding-left: 0 !important;
+}
+.dropdown-item.check-control{
+  padding-left: 15px !important;
+}
+
+.dropdown-menu{
+  max-width: 280px !important;
+}

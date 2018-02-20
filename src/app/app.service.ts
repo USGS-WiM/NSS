@@ -7,7 +7,6 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
-
 //interfaces
 import { Region }              from './shared/interfaces/region';
 import { Regressionregion }    from './shared/interfaces/regressionregion';
@@ -22,7 +21,7 @@ import { Toast }               from 'angular2-toaster/src/toast';
 
 @Injectable()
 export class NSSService {
-  //updated whenever selected values are updated - used for getting other parts 
+    // updated whenever selected values are updated - used for getting other parts 
     private _regRegionIdParams: string;
     private _regTypeIdParams: string;
     private _statGrpIdParams: string;
@@ -94,7 +93,7 @@ export class NSSService {
 
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
     private _regionSubject: Subject<Array<Region>> = new Subject<Array<Region>>(); //array of regions that sidebar and mainview use
-    private _selectedRegion: Region; //selectedregion 
+    private _selectedRegion: BehaviorSubject<Region> = new BehaviorSubject<any>(""); //selectedregion 
 
     public get regions(): Observable<Array<Region>> {
         //getter (regions)
@@ -102,10 +101,10 @@ export class NSSService {
     }
     
     //setter (selectedRegion)
-    public set selectedRegion(v: Region) {
-        if (v == this._selectedRegion) return
-        this._selectedRegion = v;
-        this._selectedRegRegions = [];
+    public setSelectedRegion(v: Region) {
+        if (v == this._selectedRegion.getValue()) return
+        this._selectedRegion.next(v);
+        this._selectedRegRegions.next([]);
         this._selectedStatGroups = [];
         this._selectedRegressionTypes = [];
         this.chartBind.next("");
@@ -113,8 +112,8 @@ export class NSSService {
         this.initializeRegion();
     };
     //getter (selectedRegion)
-    public get selectedRegion(): Region{
-        return this._selectedRegion;
+    public get selectedRegion(): Observable<Region> {
+        return this._selectedRegion.asObservable();
     };
     //get all regions
     private getRegions():void {
@@ -132,16 +131,16 @@ export class NSSService {
         return this._regressionRegionSubject.asObservable();
     }
 
-    private _selectedRegRegions: Array<Regressionregion>;   
+    private _selectedRegRegions: BehaviorSubject<Array<Regressionregion>> = new BehaviorSubject<Array<Regressionregion>>([]);   
     //setter (selectedRegion)
-    public set selectedRegRegions(v: Array<Regressionregion>) {
+    public setSelectedRegRegions(v: Array<Regressionregion>) {
         this.chartBind.next("");
         if (v.length > 0) {
-            this._selectedRegRegions = v;
             let srr: Array<number> = [];
-            this._selectedRegRegions.forEach((rr) => {
-                srr.push(rr.ID);
-            });
+            v.forEach((rr) => { srr.push(rr.ID); });
+
+            this._selectedRegRegions.next(v);
+            
             //now update statisticGroups, regressionTypes if there are selectedRegRegions
             this._regRegionIdParams = srr.length >= 0 ? srr.join(",") : '';            
 
@@ -149,7 +148,7 @@ export class NSSService {
             let regTypeParams: URLSearchParams = new URLSearchParams();
             regTypeParams.set('regressionregions', this._regRegionIdParams);
             regTypeParams.set('statisticgroups', this._statGrpIdParams);
-            this.getRegionRegressionTypes(this.selectedRegion.ID, regTypeParams).subscribe(rt => {
+            this.getRegionRegressionTypes(this._selectedRegion.getValue().ID, regTypeParams).subscribe(rt => {
                 //format all reg type stuff
                 this.formatRegTypeStuff(rt);
 
@@ -157,7 +156,7 @@ export class NSSService {
                 let statGrpParams: URLSearchParams = new URLSearchParams();
                 statGrpParams.set('regressionregions', this._regRegionIdParams);
                 statGrpParams.set('regressiontypes', this._regTypeIdParams);
-                this.getRegionStatisticGrps(this.selectedRegion.ID, statGrpParams).subscribe(sg => {
+                this.getRegionStatisticGrps(this._selectedRegion.getValue().ID, statGrpParams).subscribe(sg => {
                     this.formatStatisticGrpStuff(sg);
                 
                     //params for scenarios
@@ -166,23 +165,23 @@ export class NSSService {
                     scenarioParams.set('regressiontypes', this._regTypeIdParams);   
                     scenarioParams.set('statisticgroups', this._statGrpIdParams);
                     scenarioParams.set('unitsystems', '2');
-                    this.getRegionScenario(this.selectedRegion.ID, scenarioParams) //get scenarios 
+                    this.getRegionScenario(this._selectedRegion.getValue().ID, scenarioParams) //get scenarios 
                 }, error => this.handleError);   //get StatisticGroups
             }, error => this.handleError); //get regressionRegions                       
         }//v.lenght > 0
         else {
             //they cleared it
-            this._selectedRegRegions = [];
+            this._selectedRegRegions.next([]);
             //now update statisticGroups, regressionTypes if there are selectedRegRegions
             let regTypeParams: URLSearchParams = new URLSearchParams();
             regTypeParams.set('statisticgroups', this._statGrpIdParams);
-            this.getRegionRegressionTypes(this.selectedRegion.ID, regTypeParams).subscribe(rt=> {
+            this.getRegionRegressionTypes(this._selectedRegion.getValue().ID, regTypeParams).subscribe(rt=> {
                 this.formatRegTypeStuff(rt);
 
                 //params for statistic groups
                 let statGrpParams: URLSearchParams = new URLSearchParams();
                 statGrpParams.set('regressiontypes', this._regTypeIdParams);
-                this.getRegionStatisticGrps(this.selectedRegion.ID, statGrpParams).subscribe(sg => {
+                this.getRegionStatisticGrps(this._selectedRegion.getValue().ID, statGrpParams).subscribe(sg => {
                     this.formatStatisticGrpStuff(sg);
 
                     //params for scenarios
@@ -190,30 +189,31 @@ export class NSSService {
                     scenarioParams.set('regressiontypes', this._regTypeIdParams);
                     scenarioParams.set('statisticgroups', this._statGrpIdParams);
                     scenarioParams.set('unitsystems', '2');
-                    this.getRegionScenario(this.selectedRegion.ID, scenarioParams); //get scenarios
+                    this.getRegionScenario(this._selectedRegion.getValue().ID, scenarioParams); //get scenarios
                 }, error => this.handleError);   //get StatisticGroups            
             }, error => this.handleError); //get RegressionTypes
         }        
     };
     //getter (selectedRegRegion)
-    public get selectedRegRegions(): Array<Regressionregion> {
-        return this._selectedRegRegions;
+    public get selectedRegRegions(): Observable<Array<Regressionregion>> {
+        return this._selectedRegRegions.asObservable();
     };
     //once http.get.map is done.. the .subcribe calls this function to get everything formatted
     private formatRegRegionStuff(rr:Array<Regressionregion>){
         rr.forEach((r) => {
-            r.id = r.ID; r.name = r.Name;
+            r.id = r.ID; 
+            r.name = r.Name;
         });
         //remove from _selectedRegRegions if not in response.
-        if (this._selectedRegRegions != undefined) {
-            for (var srr = this._selectedRegRegions.length; srr--;) {
-                let RRSind = rr.map(function (eachrr) { return eachrr.ID; }).indexOf(this._selectedRegRegions[srr].ID);
+        if (this._selectedRegRegions.getValue() != undefined) {
+            for (var srr = this._selectedRegRegions.getValue().length; srr--;) {
+                let RRSind = rr.map(function (eachrr) { return eachrr.ID; }).indexOf(this._selectedRegRegions.getValue()[srr].ID);
                 if (RRSind < 0)
-                    this._selectedRegRegions.splice(srr, 1);
+                    this._selectedRegRegions.getValue().splice(srr, 1);
             };
             //repopulate param string comma sep IDs
             let regRegIDarray: Array<number> = new Array<number>();
-            this._selectedRegRegions.forEach((rt) => {
+            this._selectedRegRegions.getValue().forEach((rt) => {
                 regRegIDarray.push(rt.ID); //pushing each ID into arrayof numbers to then join as comma sep string for parameters
             });
             this._regRegionIdParams = regRegIDarray.length >= 0 ? regRegIDarray.join(",") : '';
@@ -245,7 +245,7 @@ export class NSSService {
             let regTypeParams: URLSearchParams = new URLSearchParams();
             regTypeParams.set('regressionregions', this._regRegionIdParams);
             regTypeParams.set('statisticgroups', this._statGrpIdParams);
-            this.getRegionRegressionTypes(this.selectedRegion.ID, regTypeParams).subscribe(rt => {
+            this.getRegionRegressionTypes(this._selectedRegion.getValue().ID, regTypeParams).subscribe(rt => {
                 //format all reg type stuff
                 this.formatRegTypeStuff(rt);
                 
@@ -253,7 +253,7 @@ export class NSSService {
                 let regRegionParams: URLSearchParams = new URLSearchParams();
                 regRegionParams.set('statisticgroups', this._statGrpIdParams);
                 regRegionParams.set('regressiontypes', this._regTypeIdParams);
-                this.getRegionRegressionRegions(this.selectedRegion.ID, regRegionParams).subscribe(rr => {
+                this.getRegionRegressionRegions(this._selectedRegion.getValue().ID, regRegionParams).subscribe(rr => {
                     //format all reg regions stuff
                     this.formatRegRegionStuff(rr);
 
@@ -263,7 +263,7 @@ export class NSSService {
                     scenarioParams.set('regressiontypes', this._regTypeIdParams);
                     scenarioParams.set('statisticgroups', this._statGrpIdParams);
                     scenarioParams.set('unitsystems', '2');
-                    this.getRegionScenario(this.selectedRegion.ID, scenarioParams); //get scenarios
+                    this.getRegionScenario(this._selectedRegion.getValue().ID, scenarioParams); //get scenarios
                 }, error => this.handleError);  //getRegionRegressionRegions                      
             }, error => this.handleError); //getRegionRegressionTypes
         }//v.lenght > 0
@@ -273,14 +273,14 @@ export class NSSService {
             //now update statisticGroups, regressionTypes if there are selectedRegRegions
             let regTypeParams: URLSearchParams = new URLSearchParams();
             regTypeParams.set('regressionregions', this._regRegionIdParams);
-            this.getRegionRegressionTypes(this.selectedRegion.ID, regTypeParams).subscribe(rt => {
+            this.getRegionRegressionTypes(this._selectedRegion.getValue().ID, regTypeParams).subscribe(rt => {
                 //format all reg type stuff
                 this.formatRegTypeStuff(rt);
                 
                 //params for regressionRegions
                 let regRegionsParams: URLSearchParams = new URLSearchParams();
                 regRegionsParams.set('regressiontypes', this._regTypeIdParams);
-                this.getRegionRegressionRegions(this.selectedRegion.ID, regRegionsParams).subscribe(rr=>{
+                this.getRegionRegressionRegions(this._selectedRegion.getValue().ID, regRegionsParams).subscribe(rr=>{
                     //format all reg regions stuff
                     this.formatRegRegionStuff(rr);
 
@@ -289,7 +289,7 @@ export class NSSService {
                     scenarioParams.set('regressiontypes', this._regTypeIdParams);
                     scenarioParams.set('regressionregions', this._regRegionIdParams);
                     scenarioParams.set('unitsystems', '2');
-                    this.getRegionScenario(this.selectedRegion.ID, scenarioParams); //get scenarios
+                    this.getRegionScenario(this._selectedRegion.getValue().ID, scenarioParams); //get scenarios
                 }, error => this.handleError);   //get getRegionRegressionRegions            
             }, error => this.handleError); //get RegressionTypes           
         }
@@ -343,14 +343,14 @@ export class NSSService {
             let statGrpParams: URLSearchParams = new URLSearchParams();
             statGrpParams.set('regressionregions', this._regRegionIdParams);
             statGrpParams.set('regressiontypes', this._regTypeIdParams);
-            this.getRegionStatisticGrps(this.selectedRegion.ID, statGrpParams).subscribe(sg =>{
+            this.getRegionStatisticGrps(this._selectedRegion.getValue().ID, statGrpParams).subscribe(sg =>{
                 this.formatStatisticGrpStuff(sg);
 
                 //params for regRegions
                 let regRegionParams: URLSearchParams = new URLSearchParams();
                 regRegionParams.set('statisticgroups', this._statGrpIdParams);
                 regRegionParams.set('regressiontypes', this._regTypeIdParams);
-                this.getRegionRegressionRegions(this.selectedRegion.ID, regRegionParams).subscribe(rr=> {
+                this.getRegionRegressionRegions(this._selectedRegion.getValue().ID, regRegionParams).subscribe(rr=> {
                     this.formatRegRegionStuff(rr);
 
                     //params for scenarios
@@ -359,7 +359,7 @@ export class NSSService {
                     scenarioParams.set('regressiontypes', this._regTypeIdParams);
                     scenarioParams.set('statisticgroups', this._statGrpIdParams);
                     scenarioParams.set('unitsystems', '2');
-                    this.getRegionScenario(this.selectedRegion.ID, scenarioParams); //get scenarios
+                    this.getRegionScenario(this._selectedRegion.getValue().ID, scenarioParams); //get scenarios
                 }, error => this.handleError);   //get regressionRegions
             }, error => this.handleError); //get RegressionTypes
         }//v.lenght > 0
@@ -369,13 +369,13 @@ export class NSSService {
             //now update statisticGroups, regressionTypes if there are selectedRegRegions
             let regTypeParams: URLSearchParams = new URLSearchParams();
             regTypeParams.set('regressionregions', this._regRegionIdParams);
-            this.getRegionStatisticGrps(this.selectedRegion.ID, regTypeParams).subscribe(sg => {
+            this.getRegionStatisticGrps(this._selectedRegion.getValue().ID, regTypeParams).subscribe(sg => {
                 this.formatStatisticGrpStuff(sg);
 
                 //params for reg regions
                 let regRegionsParams: URLSearchParams = new URLSearchParams();
                 regRegionsParams.set('statisticgroups', this._statGrpIdParams);
-                this.getRegionRegressionRegions(this.selectedRegion.ID, regRegionsParams).subscribe(rr => {
+                this.getRegionRegressionRegions(this._selectedRegion.getValue().ID, regRegionsParams).subscribe(rr => {
                     this.formatRegRegionStuff(rr);
 
                     //params for scenarios
@@ -383,7 +383,7 @@ export class NSSService {
                     scenarioParams.set('statisticgroups', this._statGrpIdParams);
                     scenarioParams.set('regressionregions', this._regRegionIdParams);
                     scenarioParams.set('unitsystems', '2');
-                    this.getRegionScenario(this.selectedRegion.ID, scenarioParams); //get scenarios
+                    this.getRegionScenario(this._selectedRegion.getValue().ID, scenarioParams); //get scenarios
                 },error => this.handleError);   //get regressionregions
             }, error => this.handleError); //get RegressionTypes
         }
@@ -428,12 +428,12 @@ export class NSSService {
 
     //region has been selected, populate all other multiselects and get scenarios
     private initializeRegion(): void {        
-        this.getRegionRegressionRegions(this.selectedRegion.ID).subscribe(rr => { this.formatRegRegionStuff(rr);}); //get RegressionRegions
-        this.getRegionStatisticGrps(this.selectedRegion.ID).subscribe(sg=> { this.formatStatisticGrpStuff(sg);}); //get StatisticGroups
-        this.getRegionRegressionTypes(this.selectedRegion.ID).subscribe(rt => {this.formatRegTypeStuff(rt);}); //get RegressionTypes
+        this.getRegionRegressionRegions(this._selectedRegion.getValue().ID).subscribe(rr => { this.formatRegRegionStuff(rr);}); //get RegressionRegions
+        this.getRegionStatisticGrps(this._selectedRegion.getValue().ID).subscribe(sg=> { this.formatStatisticGrpStuff(sg);}); //get StatisticGroups
+        this.getRegionRegressionTypes(this._selectedRegion.getValue().ID).subscribe(rt => {this.formatRegTypeStuff(rt);}); //get RegressionTypes
         let scenarioParams: URLSearchParams = new URLSearchParams();
         scenarioParams.set('unitsystems', '2');
-        this.getRegionScenario(this.selectedRegion.ID, scenarioParams); //get scenarios
+        this.getRegionScenario(this._selectedRegion.getValue().ID, scenarioParams); //get scenarios
     }
 
     // -+-+-+-+-+-+-+-+-+-+-+-+ http GETs -+-+-+-+-+-+-+-+-+-+-+-+

@@ -5,23 +5,30 @@ import { HttpModule } from '@angular/http';
 import { APP_INITIALIZER } from '@angular/core';
 import { MultiselectDropdownModule } from '../../node_modules/angular-2-dropdown-multiselect';
 import { ToasterModule } from 'angular2-toaster/angular2-toaster';
-import { AppComponent } from './app.component';
-import { MainviewComponent } from './mainview/mainview.component';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { UniquePipe} from './mainview/unique.pipe';
-import { NSSService } from './app.service';
+
 import { MathjaxDirective } from './mainview/mathjax/mathjax.directive';
 import { Ng2PageScrollModule } from 'ng2-page-scroll'; 
 import { ChartModule} from "angular2-highcharts";
 import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
 import { ColorPickerModule} from 'ngx-color-picker';
-declare let require : any;
-
-import { ConfigService } from "app/config.service";
-import { environment } from '../environments/environment';
-import { AboutModal } from 'app/shared/about/about.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { AppComponent } from './app.component';
+import { MainviewComponent } from './mainview/mainview.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { AboutModal } from './shared/about/about.component';
+
+import { environment } from '../environments/environment';
+import { UniquePipe} from './mainview/unique.pipe';
+
+import { NSSService } from './app.service';
+import { ConfigService } from "./config.service";
+import { MapService } from './mainview/map.service';
+import { LoaderService } from './shared/components/loader.service';
+import { LoaderComponent } from './shared/components/loader.component';
+
+declare let require : any;
 
 export function ConfigLoader(configService: ConfigService) {
   //Note: this factory needs to return a function (that returns a promise)  
@@ -38,14 +45,14 @@ export function highchartsFactory() {
 
 @NgModule({
   declarations: [
-    AppComponent, MainviewComponent, SidebarComponent, NavbarComponent, AboutModal, UniquePipe, MathjaxDirective
+    AppComponent, MainviewComponent, SidebarComponent, NavbarComponent, AboutModal, LoaderComponent, UniquePipe, MathjaxDirective
   ],
   imports: [
     BrowserModule, FormsModule, HttpModule, ToasterModule, 
     MultiselectDropdownModule, Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule,  NgbModule.forRoot(),
   ],
   providers: [NSSService,
-    { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService,
+    { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService, MapService, LoaderService,
         { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi:true}
   ],
   bootstrap: [AppComponent]

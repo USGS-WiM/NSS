@@ -19,6 +19,10 @@ import { ToasterContainerComponent, ToasterService } from 'angular2-toaster/angu
 import { Toast } from 'angular2-toaster/src/toast';
 import { PageScrollService, PageScrollInstance } from 'ng2-page-scroll';
 import * as Highcharts from 'highcharts';
+import { MapService } from './map.service';
+import { LoaderService } from '../shared/components/loader.service';
+declare var L: any;
+import * as esri from 'esri-leaflet';
 
 declare var MathJax: {
     Hub: { Queue: (param: Object[]) => void; }
@@ -39,8 +43,8 @@ export class MainviewComponent implements OnInit {
     public showWeights: boolean;                //if more than 1 regRegion, then show input for weighted
     public timestamp: Date;                     //display a time stamp when they first get here.
     public toast: Toast;                        //notification when values are required
-    public get selectedRegion(): Region { return this._nssService.selectedRegion; };
-    public get selectedRegRegion(): Array<Regressionregion> { return this._nssService.selectedRegRegions; };
+    public selectedRegion: Region;
+    public selectedRegressionRegion: Array<Regressionregion>;    
     public get selectedStatisticGrp(): Array<Statisticgroup> { return this._nssService.selectedStatGroups; };
     public get selectedRegType(): Array<Regressiontype> { return this._nssService.selectedRegressionTypes; };
     public scenarios: Scenario[];
@@ -70,10 +74,13 @@ export class MainviewComponent implements OnInit {
     public showExtraFREQSettings: boolean;            //showhide flag for additional settings on frequency plot
     public resultsErrorLength: number;
     public appendixEquationsforExport: Array<string>;
-    constructor(private _nssService: NSSService,
-        private _toasterService: ToasterService,
-        @Inject(DOCUMENT) private _document: any,
-        private _pageScrollService: PageScrollService) { }
+    public map: any;
+    public mapServer: esri.dynamicMapLayer;
+    private activeLayerID: number;
+
+    constructor(private _nssService: NSSService, private _mapService: MapService, 
+        private _loaderService:LoaderService, private _toasterService: ToasterService,
+        @Inject(DOCUMENT) private _document: any, private _pageScrollService: PageScrollService) { }
 
     ngOnInit() {
         this.title = "NSS Report";
@@ -84,6 +91,35 @@ export class MainviewComponent implements OnInit {
         this.resultsBack = false;
         this.multipleRegRegions = false;
         this.resultsErrorLength = 0; //used for colspan on Errors <th>
+        this.selectedRegressionRegion = [];
+        this._nssService.selectedRegion.subscribe((reg:Region) => {
+            this.selectedRegion = reg;
+            // only show this region on the map
+            if (this.selectedRegion) {
+                this.activeLayerID = this._mapService.updateMapLayer(this.selectedRegion.Code);
+                // update map with just this region showing
+                this.mapServer.setLayers([this.activeLayerID]);
+            }
+        });
+        this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) =>{
+            this.selectedRegressionRegion = regRegions;
+            if (regRegions.length>0) {
+                // only show these on the map                
+                let queryObj: object = {};
+                let queryString: string = "";
+                this.selectedRegressionRegion.forEach(rr=>{
+                    queryString += "GRIDCODE = '" + rr.Code.toLowerCase() + "' OR ";
+                });
+                if (queryString != "")  {
+                    queryString = queryString.slice(0, -4); // remove the last ' OR'
+                    queryObj = { [this.activeLayerID]: queryString };                
+                    this.mapServer.setLayerDefs(queryObj);
+                }
+            } else {
+                if (this.activeLayerID) 
+                    this.mapServer.setLayerDefs({[this.activeLayerID]: '1=1'})
+            }
+        });
         //subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
             this.scenarios = s; this.resultsBack = false; this.equationResults = []; this.uniqueParameters = []; this.uniqueUnitTypes = [];
@@ -384,7 +420,78 @@ export class MainviewComponent implements OnInit {
                 this.hydrographs = [];
             }
         });
+        this.map = L.map("map", {
+            center: L.latLng(44.55, -104.02),
+            zoom: 3,
+            minZoom: 2,
+            maxZoom: 19,            
+            attributionControl: false,
+            layers: [this._mapService.baseMaps.Topo]
+        });
+        this.mapServer = esri.dynamicMapLayer(this._mapService.mapServerDetails);
+        this.mapServer.on('loading', (event) => {
+            this._loaderService.showLoader();
+        });
+        this.mapServer.on('load', (event) => {
+            this._loaderService.hideLoader();
+        });
+        /*this.map.on('click', (e) =>{
+            this.mapClickQuery(e);
+        });*/
+        
+        this.map.addLayer(this.mapServer);
+        this.mapServer.bindPopup((error, featureCollection) => {
+            this._loaderService.showLoader();
+            if(error || featureCollection.features.length === 0) {     
+                this._loaderService.hideLoader();           
+                let toast: Toast = {
+                    type: 'warning',
+                    title: 'Error',
+                    body: error.message + '. Please try again.'
+                };
+                this._nssService.showToast(toast);    
+              return false;
+            } else {
+                this._loaderService.hideLoader();
+                let popupContent = '';
+                Object.keys(featureCollection.features[0].properties).forEach((key,index) => {
+                    if (key == "grid_name" || key == "state_reg" || key == "GRIDCODE")
+                        popupContent += '<strong>' + key + ': </strong>' + featureCollection.features[0].properties[key] + '</br>'
+                });
+                return popupContent;
+            }
+        });
     }// end ngOnInit()
+    
+    /*private mapClickQuery(e){
+        this._loaderService.showLoader();
+        this.mapServer.identify().on(this.map).at(e.latlng).run((error, featureCollection) =>{
+            if (error){
+                this._loaderService.hideLoader();
+                let toast: Toast = {
+                    type: 'warning',
+                    title: 'Error',
+                    body: error.message + '. Please try again.'
+                };
+                this._nssService.showToast(toast);          
+            } else {
+                if (featureCollection.features.length > 0) {
+                    this._loaderService.hideLoader();
+                    console.log(featureCollection);
+                    let popupContent = '';
+                    Object.keys(featureCollection.features[0].properties).forEach((key,index) => {
+                        if (key == "grid_name" || key == "state_reg" || key == "GRIDCODE")
+                            popupContent += '<strong>' + key + ': </strong>' + featureCollection.features[0].properties[key] + '</br>'
+                    });
+		    		let popup = L.popup({maxHeight: 200})
+                        .setLatLng(e.latlng)
+                        .setContent(popupContent)
+                        .openOn(this.map);
+                } else 
+                    this._loaderService.hideLoader();
+            }
+        });
+    }*/
 
     //round all parameters and statistic values to 3 significant figures
     public sigFigures(n) {

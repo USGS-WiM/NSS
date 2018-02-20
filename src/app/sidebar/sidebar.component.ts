@@ -9,6 +9,7 @@ import { Regressionregion }        from '../shared/interfaces/regressionregion';
 import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/angular-2-dropdown-multiselect';
 import { ToasterContainerComponent, ToasterService } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
+import { MapService } from '../mainview/map.service';
 
 @Component({
   selector: 'wim-sidebar',
@@ -21,12 +22,14 @@ export class SidebarComponent implements OnInit {
   public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; //Hydrograph, Frequency Plot
   public selectedPlot: string; //which chart type they selected
   //regions
-  public get selectedRegion():Region {return this._nssService.selectedRegion;};
+  //public get selectedRegion():Region {return this._nssService.selectedRegion;};
+  public selectedRegion:Region;
   public regions: Array<Region>;
 
   //regression regions
   private selectedRegRegionIDs: Array<number>; //multiselect populates this with those selected
-  public get selectedRegRegion(): Array<Regressionregion> { return this._nssService.selectedRegRegions; };
+  //public get selectedRegRegion(): Array<Regressionregion> { return this._nssService.selectedRegRegions; };
+  public selectedRegressionRegions: Array<Regressionregion>;
   public regressionRegions: Array<Regressionregion>; 
   private myRRSettings: IMultiSelectSettings;
   private myMSTexts: IMultiSelectTexts;
@@ -46,13 +49,18 @@ export class SidebarComponent implements OnInit {
   //scenario
   public scenarios: Array<Scenario>;
 
-  constructor(private _nssService:NSSService) { }
+  constructor(private _nssService:NSSService, private _mapService: MapService) { }
 
   ngOnInit() {
     this.doShow=true;
     this.selectedPlot = "";
+    this.selectedRegressionRegions = [];
     //subscribe to regions
     this._nssService.regions.subscribe((regions:Array<Region>)=> {this.regions = regions;});
+    //subscribe to selected regression regions
+    this._nssService.selectedRegRegions.subscribe((rr:Array<Regressionregion>)=> {
+        this.selectedRegressionRegions = rr;
+    });
     //subscribe to regressionRegions
     this._nssService.regressionRegions.subscribe((rr:Array<Regressionregion>)=>{
         this.regressionRegions = rr;
@@ -153,7 +161,8 @@ export class SidebarComponent implements OnInit {
    //select Region. get regressionRegions, regressionTypes, StatisticGroups
   public onRegSelect(r:Region){
     this.selectedRegRegionIDs = []; this.selectedStatGrpIDs = []; this.selectedRegTypeIDs = [];
-    this._nssService.selectedRegion = r;      
+    this._nssService.setSelectedRegion(r);     
+    this._mapService.updateMapLayer(r.Code); 
   }
 
   //select of regression region. set the selectedRegRegions
@@ -163,7 +172,7 @@ export class SidebarComponent implements OnInit {
           //for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
           selectedRegRegions.push(this.regressionRegions.filter(function (rr) { return rr.ID == srr; })[0]);
       }); 
-      this._nssService.selectedRegRegions = selectedRegRegions;                  
+      this._nssService.setSelectedRegRegions(selectedRegRegions); 
   }
 
   //select of statisticgrp. update regressionregions and regressiontypes and scenario for mainView

@@ -57,6 +57,9 @@ export class SidebarComponent implements OnInit {
     this.selectedRegressionRegions = [];
     //subscribe to regions
     this._nssService.regions.subscribe((regions:Array<Region>)=> {this.regions = regions;});
+    this._nssService.selectedRegion.subscribe((r:Region)=> {
+        this.selectedRegion = r;
+    });
     //subscribe to selected regression regions
     this._nssService.selectedRegRegions.subscribe((rr:Array<Regressionregion>)=> {
         this.selectedRegressionRegions = rr;

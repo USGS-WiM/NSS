@@ -94,31 +94,45 @@ export class MainviewComponent implements OnInit {
         this.selectedRegressionRegion = [];
         this._nssService.selectedRegion.subscribe((reg:Region) => {
             this.selectedRegion = reg;
-            // only show this region on the map
+            // only show this region on the map (if this is changing, clear out any layerDefs if present)
             if (this.selectedRegion) {
                 this.activeLayerID = this._mapService.updateMapLayer(this.selectedRegion.Code);
                 // update map with just this region showing
                 this.mapServer.setLayers([this.activeLayerID]);
+                this.mapServer.options.layerDefs = { };
             }
         });
+        // this is based on a behaviorSubject, so it gets an initial notification of [].
         this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) =>{
             this.selectedRegressionRegion = regRegions;
-            if (regRegions.length>0) {
-                // only show these on the map                
-                let queryObj: object = {};
-                let queryString: string = "";
-                this.selectedRegressionRegion.forEach(rr=>{
-                    queryString += "GRIDCODE = '" + rr.Code.toLowerCase() + "' OR ";
+            let queryObj: object = {}; // needed as the object needed in .setLayerDefs()
+            let queryString: string = "";
+            // if we have regRegions here, update map, else clear it
+            if (regRegions.length > 0) {                
+                // build query string
+                this.selectedRegressionRegion.forEach(rr => {
+                    queryString += "GRIDCODE LIKE '%" + rr.Code.toLowerCase() + "%' OR ";
                 });
-                if (queryString != "")  {
-                    queryString = queryString.slice(0, -4); // remove the last ' OR'
-                    queryObj = { [this.activeLayerID]: queryString };                
+                
+            }
+            if (queryString != "")  {                
+                queryString = queryString.slice(0, -4); // remove the last ')R'
+                
+                queryObj = { [this.activeLayerID]: queryString };                
+                this.mapServer.setLayerDefs(queryObj);
+            } else {
+                // clear the layerDefs
+                if (this.mapServer) {
+                    queryObj = { [this.activeLayerID]: '1=1' };  
                     this.mapServer.setLayerDefs(queryObj);
                 }
-            } else {
-                if (this.activeLayerID) 
-                    this.mapServer.setLayerDefs({[this.activeLayerID]: '1=1'})
-            }
+            } 
+            /*else {
+                if (this.mapServer)
+                    this.mapServer.setLayers([this.activeLayerID]);
+                //if (this.activeLayerID && (typeof this.activeLayerID) != 'string') 
+                //    this.mapServer.setLayerDefs({[this.activeLayerID]: '1=1'})
+            }*/
         });
         //subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
@@ -1007,7 +1021,7 @@ export class MainviewComponent implements OnInit {
             }
             #print-content * {
                 visibility: visible;
-            }
+            }            
             h3 {
                 text-align: center;
             }

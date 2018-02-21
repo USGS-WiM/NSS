@@ -1,7 +1,0 @@
-{
-   "baseURL": "https://test.streamstats.usgs.gov/nssservices/",
-    "regionURL": "Regions",
-    "regRegionURL": "RegressionRegions",
-    "citationURL": "Citations",    
-    "statisticGrpURL": "StatisticGroups"
-}

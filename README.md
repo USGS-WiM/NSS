@@ -27,11 +27,11 @@ Clone the repo and navigate to folder.
 ```
 
 ```
-npm install to install all dependencies.
+'npm install' to install all dependencies.
 ```
 
 ```
-ng serve to build and run the application.
+'ng serve' to build and run the application.
 ```
 
 ## Building and testing

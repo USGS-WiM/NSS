@@ -16,7 +16,7 @@
       ]
     },
 
-    "homepageURL": "https://wim.usgs.gov",
+    "homepageURL": "http://test.streamstats.usgs.gov.s3-website-us-east-1.amazonaws.com/nss/",
     "downloadURL": "https://github.com/USGS-WiM/NSS/archive/master.zip",
     "disclaimerURL": "https://github.com/USGS-WiM/NSS/blob/master/DISCLAIMER.md",
     "repositoryUrl": "https://github.com/USGS-WiM/NSS",

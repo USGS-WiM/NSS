@@ -42,7 +42,7 @@
                     <div class="col-xs-12" *ngIf="sc.RegressionRegions?.length > 0">
                         <table class="table">
                             <tr *ngFor="let rr of sc.RegressionRegions;let rInd = index">
-                                <td style="vertical-align:middle;">{{rr.Name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_ID: {{rr.ID}})</span></td>
+                                <td style="vertical-align:middle;">{{rr.Name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_Code: {{rr.Code}})</span></td>
                                 <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
                                 <td *ngIf="showWeights" class="col-xs-2">
                                     <input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.PercentWeight">

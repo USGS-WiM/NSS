@@ -123,7 +123,7 @@ export class MainviewComponent implements OnInit {
                 else this.multipleRegRegions = false;
 
                 s.RegressionRegions.forEach((rr, index) => {
-                    regID = "(RG_ID: " + rr.ID + ")"; //need to show the regID for each limit so they know which one they are out of range on
+                    regID = "(RG_Code: " + rr.Code + ")"; //need to show the regID for each limit so they know which one they are out of range on
                     if (rr.Results) {
                         if (rr.Results[0].Errors) { this.resultsErrorLength = rr.Results[0].Errors.length; };
                         let eqResult: Equationresults = { Name: "", Formulas: [] };

@@ -19,7 +19,6 @@ import { ToasterContainerComponent, ToasterService } from 'angular2-toaster/angu
 import { Toast } from 'angular2-toaster/src/toast';
 import { PageScrollService, PageScrollInstance } from 'ng2-page-scroll';
 import * as Highcharts from 'highcharts';
-import { MapService } from './map.service';
 import { LoaderService } from '../shared/components/loader.service';
 declare var L: any;
 import * as esri from 'esri-leaflet';
@@ -61,9 +60,9 @@ export class MainviewComponent implements OnInit {
     public selectedPlot: string;                    //which plot are they asking for ("Hydrograph" or "Frequency Plot")
     public charts: Array<any>;                      //chart instance for hydroChartsArray
     public freqChart: any;                           //chart instance for frequency plot
-    public uniqueParameters: Array<Parameter>       //holds unique list of parameters
-    public uniqueUnitTypes: Array<Unittype>         //holds unique list of unit types for parameters to show in appendix
-    public multipleRegRegions: boolean              //if multiple regRegions, set this to true
+    public uniqueParameters: Array<Parameter>;       //holds unique list of parameters
+    public uniqueUnitTypes: Array<Unittype>;         //holds unique list of unit types for parameters to show in appendix
+    public multipleRegRegions: boolean;              //if multiple regRegions, set this to true
     private DIMLESS_ARRAY = [
         [0.25, 0.12], [0.3, 0.16], [0.35, 0.21], [0.4, 0.26], [0.45, 0.33], [0.5, 0.4], [0.55, 0.49], [0.6, 0.58], [0.65, 0.67], [0.7, 0.76],
         [0.75, 0.84], [0.8, 0.9], [0.85, 0.95], [0.9, 0.98], [0.95, 1.00], [1.00, 0.99], [1.05, 0.96], [1.1, 0.92], [1.15, 0.86], [1.2, 0.8],
@@ -74,11 +73,9 @@ export class MainviewComponent implements OnInit {
     public showExtraFREQSettings: boolean;            //showhide flag for additional settings on frequency plot
     public resultsErrorLength: number;
     public appendixEquationsforExport: Array<string>;
-    public map: any;
-    public mapServer: esri.dynamicMapLayer;
     private activeLayerID: number;
 
-    constructor(private _nssService: NSSService, private _mapService: MapService, 
+    constructor(private _nssService: NSSService, 
         private _loaderService:LoaderService, private _toasterService: ToasterService,
         @Inject(DOCUMENT) private _document: any, private _pageScrollService: PageScrollService) { }
 
@@ -92,16 +89,6 @@ export class MainviewComponent implements OnInit {
         this.multipleRegRegions = false;
         this.resultsErrorLength = 0; //used for colspan on Errors <th>
         this.selectedRegressionRegion = [];
-        this._nssService.selectedRegion.subscribe((reg:Region) => {
-            this.selectedRegion = reg;
-            // only show this region on the map (if this is changing, clear out any layerDefs if present)
-            if (this.selectedRegion) {
-                this.activeLayerID = this._mapService.updateMapLayer(this.selectedRegion.Code);
-                // update map with just this region showing
-                this.mapServer.setLayers([this.activeLayerID]);
-                this.mapServer.options.layerDefs = { };
-            }
-        });
         // this is based on a behaviorSubject, so it gets an initial notification of [].
         this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) =>{
             this.selectedRegressionRegion = regRegions;
@@ -118,21 +105,11 @@ export class MainviewComponent implements OnInit {
             if (queryString != "")  {                
                 queryString = queryString.slice(0, -4); // remove the last ')R'
                 
-                queryObj = { [this.activeLayerID]: queryString };                
-                this.mapServer.setLayerDefs(queryObj);
+                queryObj = { [this.activeLayerID]: queryString }; 
             } else {
-                // clear the layerDefs
-                if (this.mapServer) {
-                    queryObj = { [this.activeLayerID]: '1=1' };  
-                    this.mapServer.setLayerDefs(queryObj);
-                }
+                // clear the layerDefs14.
+                queryObj = { [this.activeLayerID]: '1=1' };  
             } 
-            /*else {
-                if (this.mapServer)
-                    this.mapServer.setLayers([this.activeLayerID]);
-                //if (this.activeLayerID && (typeof this.activeLayerID) != 'string') 
-                //    this.mapServer.setLayerDefs({[this.activeLayerID]: '1=1'})
-            }*/
         });
         //subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
@@ -434,78 +411,8 @@ export class MainviewComponent implements OnInit {
                 this.hydrographs = [];
             }
         });
-        this.map = L.map("map", {
-            center: L.latLng(44.55, -104.02),
-            zoom: 3,
-            minZoom: 2,
-            maxZoom: 19,            
-            attributionControl: false,
-            layers: [this._mapService.baseMaps.Topo]
-        });
-        this.mapServer = esri.dynamicMapLayer(this._mapService.mapServerDetails);
-        this.mapServer.on('loading', (event) => {
-            this._loaderService.showLoader();
-        });
-        this.mapServer.on('load', (event) => {
-            this._loaderService.hideLoader();
-        });
-        /*this.map.on('click', (e) =>{
-            this.mapClickQuery(e);
-        });*/
         
-        this.map.addLayer(this.mapServer);
-        this.mapServer.bindPopup((error, featureCollection) => {
-            this._loaderService.showLoader();
-            if(error || featureCollection.features.length === 0) {     
-                this._loaderService.hideLoader();           
-                let toast: Toast = {
-                    type: 'warning',
-                    title: 'Error',
-                    body: error.message + '. Please try again.'
-                };
-                this._nssService.showToast(toast);    
-              return false;
-            } else {
-                this._loaderService.hideLoader();
-                let popupContent = '';
-                Object.keys(featureCollection.features[0].properties).forEach((key,index) => {
-                    if (key == "grid_name" || key == "state_reg" || key == "GRIDCODE")
-                        popupContent += '<strong>' + key + ': </strong>' + featureCollection.features[0].properties[key] + '</br>'
-                });
-                return popupContent;
-            }
-        });
     }// end ngOnInit()
-    
-    /*private mapClickQuery(e){
-        this._loaderService.showLoader();
-        this.mapServer.identify().on(this.map).at(e.latlng).run((error, featureCollection) =>{
-            if (error){
-                this._loaderService.hideLoader();
-                let toast: Toast = {
-                    type: 'warning',
-                    title: 'Error',
-                    body: error.message + '. Please try again.'
-                };
-                this._nssService.showToast(toast);          
-            } else {
-                if (featureCollection.features.length > 0) {
-                    this._loaderService.hideLoader();
-                    console.log(featureCollection);
-                    let popupContent = '';
-                    Object.keys(featureCollection.features[0].properties).forEach((key,index) => {
-                        if (key == "grid_name" || key == "state_reg" || key == "GRIDCODE")
-                            popupContent += '<strong>' + key + ': </strong>' + featureCollection.features[0].properties[key] + '</br>'
-                    });
-		    		let popup = L.popup({maxHeight: 200})
-                        .setLatLng(e.latlng)
-                        .setContent(popupContent)
-                        .openOn(this.map);
-                } else 
-                    this._loaderService.hideLoader();
-            }
-        });
-    }*/
 
     //round all parameters and statistic values to 3 significant figures
     public sigFigures(n) {

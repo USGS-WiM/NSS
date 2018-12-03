@@ -7,8 +7,7 @@
 // purpose:     Service for updating boolean subjects that are subscribed to for show/hiding the loading div
 
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import { BehaviorSubject } from 'rxjs';
+import { Subject ,  BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class LoaderService {

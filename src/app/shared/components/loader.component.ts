@@ -8,7 +8,7 @@
 //              Is a loading div that covers the whole page until the geojson is displayed on the map.
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { LoaderService } from './loader.service';
 
 @Component({

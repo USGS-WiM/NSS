@@ -9,7 +9,6 @@ import { Regressionregion }        from '../shared/interfaces/regressionregion';
 import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/angular-2-dropdown-multiselect';
 import { ToasterContainerComponent, ToasterService } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
-import { MapService } from '../mainview/map.service';
 
 @Component({
   selector: 'wim-sidebar',
@@ -49,7 +48,7 @@ export class SidebarComponent implements OnInit {
   //scenario
   public scenarios: Array<Scenario>;
 
-  constructor(private _nssService:NSSService, private _mapService: MapService) { }
+  constructor(private _nssService:NSSService) { }
 
   ngOnInit() {
     this.doShow=true;
@@ -164,8 +163,7 @@ export class SidebarComponent implements OnInit {
    //select Region. get regressionRegions, regressionTypes, StatisticGroups
   public onRegSelect(r:Region){
     this.selectedRegRegionIDs = []; this.selectedStatGrpIDs = []; this.selectedRegTypeIDs = [];
-    this._nssService.setSelectedRegion(r);     
-    this._mapService.updateMapLayer(r.Code); 
+    this._nssService.setSelectedRegion(r);
   }
 
   //select of regression region. set the selectedRegRegions

@@ -1,8 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { APP_INITIALIZER } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { MultiselectDropdownModule } from '../../node_modules/angular-2-dropdown-multiselect';
 import { ToasterModule } from 'angular2-toaster/angular2-toaster';
 
@@ -24,7 +23,6 @@ import { UniquePipe} from './mainview/unique.pipe';
 
 import { NSSService } from './app.service';
 import { ConfigService } from "./config.service";
-import { MapService } from './mainview/map.service';
 import { LoaderService } from './shared/components/loader.service';
 import { LoaderComponent } from './shared/components/loader.component';
 
@@ -52,7 +50,7 @@ export function highchartsFactory() {
     MultiselectDropdownModule, Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule,  NgbModule.forRoot(),
   ],
   providers: [NSSService,
-    { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService, MapService, LoaderService,
+    { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService, LoaderService,
         { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi:true}
   ],
   bootstrap: [AppComponent]

@@ -18,6 +18,8 @@ import { Hydrochart }          from './shared/interfaces/hydrochart';
 import { Config }              from './shared/interfaces/config';
 import { ConfigService }       from './config.service';
 import { Toast }               from 'angular2-toaster/src/toast';
+import { Unittype } from './shared/interfaces/unitType';
+import { Variabletype } from './shared/interfaces/variabletype';
 
 @Injectable()
 export class NSSService {
@@ -49,6 +51,29 @@ export class NSSService {
     //show the filter modal in the mainview
     public get showAboutModal():any{
         return this._showHideAboutModal.asObservable();
+    }
+
+    private _showHideCreateModal: Subject<boolean> = new Subject<boolean>();
+    public setCreateModal(val:any){
+        this._showHideCreateModal.next(val);
+    }
+    //show the filter modal in the mainview
+    public get showCreateModal():any{
+        return this._showHideCreateModal.asObservable();
+    }
+
+    private _showHideLoginModal: Subject<boolean> = new Subject<boolean>();
+    public setLoginModal(val:any){
+        this._showHideLoginModal.next(val);
+    }
+    //show the filter modal in the mainview
+    public get showLoginModal():any{
+        return this._showHideLoginModal.asObservable();
+    }
+
+    public get loginType():any{
+        //this will return the login type (manager v. admin)
+        return '';
     }
 
     // -+-+-+-+-+-+-+-+-+ hydrograph  getter/setter  -+-+-+-+-+-+-+-+-+
@@ -116,12 +141,12 @@ export class NSSService {
         return this._selectedRegion.asObservable();
     };
     //get all regions
-    private getRegions():void {
-    let options = new RequestOptions({headers: this.jsonHeader});
-    this._http.get(this.configSettings.baseURL + this.configSettings.regionURL, options)
-        .map(res=> <Array<Region>>res.json())
-        .catch(this.handleError)
-        .subscribe( r => { this._regionSubject.next(r); });          
+    public getRegions():void {
+        let options = new RequestOptions({headers: this.jsonHeader});
+        this._http.get(this.configSettings.baseURL + this.configSettings.regionURL, options)
+            .map(res=> <Array<Region>>res.json())
+            .catch(this.handleError)
+            .subscribe( r => { this._regionSubject.next(r); });          
     }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
@@ -435,8 +460,20 @@ export class NSSService {
         scenarioParams.set('unitsystems', '2');
         this.getRegionScenario(this._selectedRegion.getValue().ID, scenarioParams); //get scenarios
     }
-
     // -+-+-+-+-+-+-+-+-+-+-+-+ http GETs -+-+-+-+-+-+-+-+-+-+-+-+
+    // get unit types
+    public getUnitTypes(searchArgs?: URLSearchParams) {
+        let options = new RequestOptions({ headers: this.jsonHeader, search:searchArgs });
+         return this._http.get(this.configSettings.baseURL + '/units', options)
+            .map(res => <Array<Unittype>>res.json());
+    }
+
+    // get variable types
+    public getVariableTypes(searchArgs?: URLSearchParams) {
+        let options = new RequestOptions({ headers: this.jsonHeader, search:searchArgs });
+         return this._http.get(this.configSettings.baseURL + '/variabletypes', options)
+            .map(res => <Array<Variabletype>>res.json());
+    }
     //get regressionRegions by region
     private getRegionRegressionRegions(id: number, searchArgs?: URLSearchParams) {
         let options = new RequestOptions({ headers: this.jsonHeader, search:searchArgs });

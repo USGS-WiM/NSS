@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NSSService } from 'app/app.service';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'wim-navbar',
@@ -8,7 +9,7 @@ import { NSSService } from 'app/app.service';
 })
 export class NavbarComponent implements OnInit {
   public title:string;
-  constructor(private _nssService: NSSService) { }
+  constructor(private _nssService: NSSService, private router: Router) { }
 
   ngOnInit() {
     this.title = "National Stream Flow Statistics";
@@ -24,5 +25,19 @@ export class NavbarComponent implements OnInit {
   }
   public showAbout(){
     this._nssService.setAboutModal(true);
+  }
+  public showCreate(){
+    this._nssService.setCreateModal(true);
+  }
+  public showLogin(){
+    this._nssService.setLoginModal(true);
+  }
+
+  public goToSettings() {
+    this.router.navigate(['/settings']);
+  }
+
+  public goToMain() {
+    this.router.navigate([""]);
   }
 }

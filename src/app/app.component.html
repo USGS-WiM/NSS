@@ -1,4 +1,35 @@
 <aboutModal></aboutModal>
-<wim-navbar></wim-navbar>
-<wim-sidebar></wim-sidebar>
-<wim-mainview></wim-mainview>    
+<loginModal></loginModal>
+<nav class="wim-nav">
+        <div class="container" style="width: 100%;">
+            <button class="mobile-nav-toggle" (click)="toggleSidebar()"></button>
+            <a href="https://usgs.gov" class="nav-branding">
+                <img src="https://wim.usgs.gov/website-assets/usgs-logo.png" />
+            </a>
+            <span class="nav-title">
+                {{title}}
+            </span>
+            <div class="nav-links">
+                <a (click)="goToMain()" router-link="/" routerLinkActive="active">Home</a>
+                <a (click)="goToSettings()" router-link="['/settings']" routerLinkActive="active">
+                        <span class="nav-link-text">Settings</span>
+                </a>
+                <a (click)="showAbout()">
+                    <span>
+                        <i class="ion-information-circled"></i>
+                        <span class="nav-link-text">About</span>
+                    </span>
+                </a>
+                <a (click)="showLogin()">
+                    <span>
+                        <span class="nav-link-text">Login</span>
+                    </span>
+                </a>
+                <!--<a href="/#/"><span><i class="ion-plus-round"></i> New Site</span></a>
+                <a href="/#/"><span><i class="ion-ios-book"></i> Guide</span></a>
+                <a href="/#/"><span><i class="ion-help"></i> FAQ</span></a>-->
+            </div>
+        </div>
+    </nav>
+<wim-sidebar *ngIf="router.url.indexOf('/settings') === -1"></wim-sidebar>
+<router-outlet></router-outlet>

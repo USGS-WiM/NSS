@@ -1,0 +1,83 @@
+<div>
+    <legend style="margin-bottom:25px;margin-top:0;">Variable Types</legend>
+</div>
+
+<form #VariableTypeForm="ngForm">
+    <div class="form-group" *ngIf="variableTypes">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-xs-1"></th>
+                    <th class="col-xs-4">Name</th>
+                    <th>Description</th>
+                    <th class="col-xs-1">Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let v of variableTypes; let i = index">
+                    <td>
+                        <div class="data-controls">
+                            <i *ngIf="!v.isEditing" title="Edit Variable Type" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                            <i *ngIf="!v.isEditing" title="Delete Variable Type" (click)="deleteVariable(v.id)"
+                                class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="v.isEditing" title="Save Variable Type" (click)="saveVariable(v,i)" class="fa fa-floppy-o"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.Name }}</span>
+                        <span *ngIf="v.isEditing"><input type="text" name="name" [(ngModel)]="v.Name" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.Description }}</span>
+                        <span *ngIf="v.isEditing"><textarea rows="3" [(ngModel)]="v.description" name="description"></textarea></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.Code }}</span>
+                        <span *ngIf="v.isEditing"><input type="text" name="code" [(ngModel)]="v.Code" required></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<br />
+<button *ngIf="!showNewVarForm" type="button" class="btn-blue" (click)="showNewVariableForm()"><i class="fa fa-plus"
+        aria-hidden="tru"></i> Add New Variable Type</button>
+
+<!-- new variable type form -->
+<div *ngIf="showNewVarForm">
+    <h3 class="modal-title">New Variable Type</h3>
+    <form [formGroup]="newVarForm">
+        <!-- Variable Type Name* -->
+        <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('Name').valid && newVarForm.get('name').dirty}">
+            <label class="req" for="Name">Name:</label>
+            <input class="form-control" type="text" formControlName="Name" required>
+            <div class="input-invalid-warning" *ngIf="!newVarForm.get('Name').valid && newVarForm.get('Name').dirty">Variable
+                Name is required</div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label for="Description">Description:</label>
+            <textarea class="form-control" rows="3" placeholder="" formControlName="Description"></textarea>
+        </div>
+
+        <!-- Short Name -->
+        <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('Code').valid && newVarForm.get('Code').dirty}">
+            <label class="req" for="Code">Code:</label>
+            <input class="form-control" type="text" formControlName="Code">
+            <div class="input-invalid-warning" *ngIf="!newVarForm.get('Code').valid && newVarForm.get('Code').dirty">Code
+                is required</div>
+        </div>
+
+    </form>
+
+    <div class="modal-footer">
+        <button type="button" (click)="cancelCreateVariableType()" class="btn-black">Cancel</button>
+        <button type="button" (click)="createNewVariableType()" [disabled]="!newVarForm.valid" class="btn-blue">Create</button>
+    </div>
+</div>

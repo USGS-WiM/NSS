@@ -1,0 +1,20 @@
+<!--<toaster-container></toaster-container>-->
+
+<div class="page-padding">
+    <div id="resource-list">
+        <div id="sidebar-wrapper">
+            <h1>Lookups</h1>
+            <ul class="sidebar-list-links">
+                <li><a [routerLink]="['statisticgroups']" routerLinkActive="active">Statistic Groups</a></li>
+                <li><a [routerLink]="['regressionregions']" routerLinkActive="active">Regression Regions</a></li>
+                <li><a [routerLink]="['regressiontypes']" routerLinkActive="active">Regression Types (Statistics)</a></li>
+                <li><a [routerLink]="['variabletypes']"  routerLinkActive="active">Variable Types</a></li>
+                <li><a [routerLink]="['unittypes']" routerLinkActive="active">Unit Types</a></li>
+            </ul>
+        </div>
+    
+        <div id="page-content-wrapper" class="pull-right">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

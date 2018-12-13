@@ -1,0 +1,13 @@
+<ng-template #login let-c="close" let-d="dismiss">
+  <div class="modal-header">
+      <div class="col-xs-12">
+          <h4 class="modal-title pull-left">Login</h4>  
+          <button class="close pull-right" (click)="d('closed')">x</button>                
+      </div>  
+  </div>
+  <div class="modal-body">
+      Username:<input type="text">
+      Password:<input type="password">
+      <button>Submit</button>
+  </div>
+</ng-template>

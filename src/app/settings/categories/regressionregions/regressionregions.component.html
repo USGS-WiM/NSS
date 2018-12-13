@@ -1,0 +1,88 @@
+<div class="regSelect">Choose Region:
+    <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
+        <option [ngValue]="i" *ngFor="let i of regions">{{i.Name}}</option>
+    </select>
+</div>
+<div>
+    <legend style="margin-bottom:25px;margin-top:0;">Regression Regions</legend>
+</div>
+
+<form #RegressionForm="ngForm">
+    <div class="form-group" *ngIf="regressionRegions">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-xs-1"></th>
+                    <th class="col-xs-4">Name</th>
+                    <th>Description</th>
+                    <th class="col-xs-1">Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let r of regressionRegions; let i = index">
+                    <td>
+                        <div class="data-controls">
+                            <i *ngIf="!r.isEditing" title="Edit Regression Region" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                            <i *ngIf="!r.isEditing" title="Delete Regression Region" (click)="deleteRegression(r.id)"
+                                class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="r.isEditing" title="Save Regression Region" (click)="saveRegression(r,i)" class="fa fa-floppy-o"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <span *ngIf="!r.isEditing">{{ r.name }}</span>
+                        <span *ngIf="r.isEditing"><input type="text" name="name" [(ngModel)]="r.name" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!r.isEditing">{{ r.Description }}</span>
+                        <span *ngIf="r.isEditing"><textarea rows="3" [(ngModel)]="r.description" name="description"></textarea></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!r.isEditing">{{ r.Code }}</span>
+                        <span *ngIf="r.isEditing"><input type="text" name="code" [(ngModel)]="r.Code" required></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<br />
+<button *ngIf="!showNewRegRegForm" type="button" class="btn-blue" (click)="showNewRegressionRegionForm()"><i class="fa fa-plus"
+        aria-hidden="tru"></i> Add New Regression Region</button>
+
+<!-- new regression type form -->
+<div *ngIf="showNewRegRegForm">
+    <h3 class="modal-title">New Regression Region</h3>
+    <form [formGroup]="newRegRegForm">
+        <!-- Regression Type Name* -->
+        <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('name').valid && newRegRegForm.get('name').dirty}">
+            <label class="req" for="name">Name:</label>
+            <input class="form-control" type="text" formControlName="name" required>
+            <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('name').valid && newRegRegForm.get('name').dirty">Regression
+                Name is required</div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label for="Description">Description:</label>
+            <textarea class="form-control" rows="3" placeholder="" formControlName="Description"></textarea>
+        </div>
+
+        <!-- Short Name -->
+        <div class="form-group required" [ngClass]="{'form-invalid': !newRegForm.get('Code').valid && newRegForm.get('Code').dirty}">
+            <label class="req" for="code">Code:</label>
+            <input class="form-control" type="text" formControlName="Code">
+            <div class="input-invalid-warning" *ngIf="!newRegForm.get('Code').valid && newRegForm.get('Code').dirty">Code
+                is required</div>
+        </div>
+
+    </form>
+
+    <div class="modal-footer">
+        <button type="button" (click)="cancelCreateRegression()" class="btn-black">Cancel</button>
+        <button type="button" (click)="createNewRegression()" [disabled]="!newRegForm.valid" class="btn-blue">Create</button>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+<div>
+    <legend style="margin-bottom:25px;margin-top:0;">Unit Types</legend>
+</div>
+
+<form #UnitTypeForm="ngForm">
+    <div class="form-group" *ngIf="unitTypes">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-xs-1"></th>
+                    <th>Name</th>
+                    <th class="col-xs-4">Abbreviation</th>
+                    <th class="col-xs-4">Unit System Type ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let u of unitTypes; let i = index">
+                    <td>
+                        <div class="data-controls">
+                            <i *ngIf="!u.isEditing" title="Edit Unit Type" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                            <i *ngIf="!u.isEditing" title="Delete Unit Type" (click)="deleteUnit(u.id)"
+                                class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="u.isEditing" title="Save Unit Type" (click)="saveUnit(u,i)" class="fa fa-floppy-o"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="u.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <span *ngIf="!u.isEditing">{{ u.Unit }}</span>
+                        <span *ngIf="u.isEditing"><input type="text" name="unit" [(ngModel)]="u.unit" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!u.isEditing">{{ u.Abbr }}</span>
+                        <span *ngIf="u.isEditing"><textarea rows="3" [(ngModel)]="u.Abbr" name="abbr"></textarea></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!u.isEditing">{{ u.UnitSystemTypeID }}</span>
+                        <span *ngIf="u.isEditing"><input type="text" name="id" [(ngModel)]="u.UnitSystemTypeID" required></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<br />
+<button *ngIf="!showNewUnitForm" type="button" class="btn-blue" (click)="showNewUnitTypeForm()"><i class="fa fa-plus"
+        aria-hidden="tru"></i> Add New Unit Type</button>
+
+<!-- new unit type form -->
+<div *ngIf="showNewUnitForm">
+    <h3 class="modal-title">New Unit Type</h3>
+    <form [formGroup]="newUnitForm">
+        <!-- Unit Type Name* -->
+        <div class="form-group required" [ngClass]="{'form-invalid': !newUnitForm.get('name').valid && newUnitForm.get('name').dirty}">
+            <label class="req" for="name">Name:</label>
+            <input class="form-control" type="text" formControlName="name" required>
+            <div class="input-invalid-warning" *ngIf="!newUnitForm.get('name').valid && newUnitForm.get('name').dirty">Unit
+                Name is required</div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
+        </div>
+
+        <!-- Short Name -->
+        <div class="form-group required" [ngClass]="{'form-invalid': !newUnitForm.get('code').valid && newUnitForm.get('code').dirty}">
+            <label class="req" for="code">Code:</label>
+            <input class="form-control" type="text" formControlName="code">
+            <div class="input-invalid-warning" *ngIf="!newUnitForm.get('code').valid && newUnitForm.get('code').dirty">Code
+                is required</div>
+        </div>
+
+    </form>
+
+    <div class="modal-footer">
+        <button type="button" (click)="cancelCreateUnit()" class="btn-black">Cancel</button>
+        <button type="button" (click)="createNewUnit()" [disabled]="!newUnitForm.valid" class="btn-blue">Create</button>
+    </div>
+</div>

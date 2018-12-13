@@ -1,0 +1,33 @@
+ .page-padding { 
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 55px;
+    padding-top: 75px;
+ }
+
+ #resource-list #sidebar-wrapper {
+    display: inline-block;
+    width: 20%;
+    width: calc(0px + 200px);
+    vertical-align: top;
+    left: 0;
+    margin: 0 auto;
+    background-color: transparent;
+    background: none;
+    background-image: none;
+    position: relative !important;
+}
+
+#resource-list #page-content-wrapper {
+    width: 80%;
+    width: calc(100% - 200px);
+    display: inline-block;
+    vertical-align: top;
+    padding: 20px;
+    position: relative;
+}
+
+h1 {
+    font-size: 2.5rem !important;
+}

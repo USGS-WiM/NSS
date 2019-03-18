@@ -1,6 +1,7 @@
 export interface Unittype {
-    ID: number;
-    Unit: string;
-    Abbr: string;
-    UnitSystemTypeID: number;
+    id: number;
+    name: string;
+    abbreviation: string;
+    unitSystemTypeID: number;
+    isEditing?: boolean;
 }

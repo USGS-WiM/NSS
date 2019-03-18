@@ -1,0 +1,123 @@
+<div>
+    <legend style="margin-bottom:25px;margin-top:0;">Users</legend>
+</div>
+
+<form #User TypeForm="ngForm">
+    <div class="form-group" *ngIf="managers">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-xs-1"></th>
+                    <th class="col-xs-4">Username</th>
+                    <th class="col-xs-4">Email</th>
+                    <th class="col-xs-4">First name</th>
+                    <th class="col-xs-4">Last Name</th>
+                    <th class="col-xs-1">Role ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let m of managers; let i = index">
+                    <td>
+                        <div class="data-controls">
+                            <i *ngIf="!m.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                            <i *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.id)" class="fa fa-times"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="m.isEditing" title="Save Manager" (click)="saveManager(m,i)" class="fa fa-floppy-o"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="m.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{ m.username }}</span>
+                        <span *ngIf="m.isEditing"><input type="text" name="name" [(ngModel)]="m.username" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{ m.email }}</span>
+                        <span *ngIf="m.isEditing"><input type="text" name="name" [(ngModel)]="m.email" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{ m.firstName }}</span>
+                        <span *ngIf="m.isEditing"><input type="text" name="code" [(ngModel)]="m.firstName" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{ m.lastName }}</span>
+                        <span *ngIf="m.isEditing"><input type="text" name="name" [(ngModel)]="m.lastName" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{ m.roleID }}</span>
+                        <span *ngIf="m.isEditing"><input type="text" name="code" [(ngModel)]="m.roleID" required></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<br />
+
+<button type="button" class="btn-blue" (click)="showNewUserForm()"><i class="fa fa-plus"
+    aria-hidden="tru"></i> Add New User</button>
+
+<!-- new user form -->
+<ng-template #add let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="col-xs-12">
+            <h4 class="modal-title pull-left">New User </h4>
+            <button class="close pull-right" (click)="d('closed')">x</button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <h3 class="modal-title">New User</h3>
+        <form [formGroup]="newUserForm">
+            <!-- UserName* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('username').valid && newUserForm.get('username').dirty}">
+                <label class="req" for="username">Username:</label>
+                <input class="form-control" type="text" formControlName="username" required>
+                <div class="input-invalid-warning" *ngIf="!newUserForm.get('username').valid && newUserForm.get('username').dirty">Username 
+                    is required</div>
+            </div>
+
+            <!-- Password* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('password').valid && newUserForm.get('password').dirty}">
+                <label class="req" for="password">Password:</label>
+                <input class="form-control" type="password" formControlName="password">
+                <div class="input-invalid-warning" *ngIf="!newUserForm.get('password').valid && newUserForm.get('password').dirty">Password
+                    is required</div>
+            </div>
+
+            <!-- First Name* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('firstName').valid && newUserForm.get('firstName').dirty}">
+                <label class="req" for="firstName">First Name:</label>
+                <input class="form-control" type="text" formControlName="firstName" required>
+                <div class="input-invalid-warning" *ngIf="!newUserForm.get('firstName').valid && newUserForm.get('firstName').dirty">First
+                    Name is required</div>
+            </div>
+
+            <!-- Last Name* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('lastName').valid && newUserForm.get('lastName').dirty}">
+                <label class="req" for="lastName">Last Name:</label>
+                <input class="form-control" type="text" formControlName="lastName">
+                <div class="input-invalid-warning" *ngIf="!newUserForm.get('lastName').valid && newUserForm.get('lastName').dirty">Last Name
+                    is required</div>
+            </div>
+
+            <!-- Role ID* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('roleID').valid && newUserForm.get('roleID').dirty}">
+                <label class="req" for="roleID">Role:</label>
+                <select class="form-control" formControlName="code">
+                    <option value="0">Admin (check ID)</option>
+                    <option value="1">Manager (check ID)</option>
+                </select>
+                <div class="input-invalid-warning" *ngIf="!newUserForm.get('roleID').valid && newUserForm.get('roleID').dirty">Role ID
+                    is required</div>
+            </div>
+
+        </form>
+
+        <div class="modal-footer">
+            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+            <button type="button" (click)="createNewUser()" [disabled]="!newUserForm.valid" class="btn-blue">Create</button>
+        </div>
+    </div>
+</ng-template>

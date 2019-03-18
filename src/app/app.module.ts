@@ -8,16 +8,15 @@ import { MultiselectDropdownModule } from '../../node_modules/angular-2-dropdown
 import { ToasterModule } from 'angular2-toaster/angular2-toaster';
 
 import { MathjaxDirective } from './mainview/mathjax/mathjax.directive';
-import { Ng2PageScrollModule } from 'ng2-page-scroll'; 
-import { ChartModule} from "angular2-highcharts";
+import { Ng2PageScrollModule } from 'ng2-page-scroll';
+import { ChartModule } from 'angular2-highcharts';
 import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
-import { ColorPickerModule} from 'ngx-color-picker';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ColorPickerModule } from 'ngx-color-picker';
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { MainviewComponent } from './mainview/mainview.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { NavbarComponent } from './navbar/navbar.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AboutModal } from './shared/about/about.component';
 
@@ -26,36 +25,47 @@ import { RegressionTypesComponent } from './settings/categories/regressiontypes/
 import { UnitTypesComponent } from './settings/categories/unittypes/unittypes.component';
 import { VariableTypesComponent } from './settings/categories/variabletypes/variabletypes.component';
 import { RegressionRegionsComponent } from './settings/categories/regressionregions/regressionregions.component';
+import { ScenariosComponent } from './settings/categories/scenarios/scenarios.component';
+import { ManagersComponent } from './settings/categories/managers/managers.component';
 
 import { environment } from '../environments/environment';
-import { UniquePipe} from './mainview/unique.pipe';
+import { UniquePipe } from './mainview/unique.pipe';
 
-import { NSSService } from './app.service';
-import { ConfigService } from "./config.service";
+import { NSSService } from './shared/services/app.service';
+import { ConfigService } from './config.service';
+import { LoginService } from './shared/services/login.service';
 import { LoaderService } from './shared/components/loader.service';
 import { LoaderComponent } from './shared/components/loader.component';
 import { LoginModal } from './shared/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { variable } from '@angular/compiler/src/output/output_ast';
+import { AuthService } from './shared/services/auth.service';
+import { SettingsService } from './settings/settings.service';
 
-declare let require : any;
+declare const require: any;
 
 const appRoutes: Routes = [
-  { path: 'settings', component: SettingsComponent,
-    children:  [
-      { path: 'statisticgroups', component: StatisticGroupsComponent},
-      { path: 'regressionregions', component: RegressionRegionsComponent},
-      { path: 'regressiontypes', component: RegressionTypesComponent},
-      { path: 'unittypes', component: UnitTypesComponent},
-      { path: 'variabletypes', component: VariableTypesComponent}
-    ]
+  {
+    path: 'settings',
+    component: SettingsComponent,
+    children: [
+      { path: 'statisticgroups', component: StatisticGroupsComponent },
+      { path: 'regressionregions', component: RegressionRegionsComponent },
+      { path: 'regressiontypes', component: RegressionTypesComponent },
+      { path: 'unittypes', component: UnitTypesComponent },
+      { path: 'variabletypes', component: VariableTypesComponent },
+      { path: 'scenarios', component: ScenariosComponent },
+      { path: 'managers', component: ManagersComponent }
+    ],
+    runGuardsAndResolvers: 'always'
   },
-  { path: '', component: MainviewComponent, pathMatch: 'full'}
+  {path: 'login', component: LoginModal },
+  { path: '', component: MainviewComponent, pathMatch: 'full' }
 ];
 
 export function ConfigLoader(configService: ConfigService) {
-  //Note: this factory needs to return a function (that returns a promise)  
-	return () => configService.load(environment.configFile);
+  // Note: this factory needs to return a function (that returns a promise)
+  return () => configService.load(environment.configFile);
 }
 
 export function highchartsFactory() {
@@ -68,20 +78,49 @@ export function highchartsFactory() {
 
 @NgModule({
   declarations: [
-    AppComponent, MainviewComponent, SidebarComponent, NavbarComponent, SettingsComponent, AboutModal, LoaderComponent, 
-    UniquePipe, MathjaxDirective, LoginModal, StatisticGroupsComponent, RegressionTypesComponent, UnitTypesComponent, VariableTypesComponent, RegressionRegionsComponent
+    AppComponent,
+    MainviewComponent,
+    SidebarComponent,
+    SettingsComponent,
+    AboutModal,
+    LoaderComponent,
+    UniquePipe,
+    MathjaxDirective,
+    LoginModal,
+    StatisticGroupsComponent,
+    RegressionTypesComponent,
+    UnitTypesComponent,
+    VariableTypesComponent,
+    RegressionRegionsComponent,
+    ScenariosComponent,
+    ManagersComponent
   ],
   imports: [
-    BrowserModule, FormsModule, HttpModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule,
-    MultiselectDropdownModule, Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule,  NgbModule.forRoot(), RouterModule.forRoot(appRoutes)
+    BrowserModule,
+    FormsModule,
+    HttpModule,
+    ToasterModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    MultiselectDropdownModule,
+    Ng2PageScrollModule.forRoot(),
+    ChartModule,
+    ColorPickerModule,
+    NgbModule.forRoot(),
+    RouterModule.forRoot(appRoutes, {onSameUrlNavigation: 'reload'})
   ],
-  providers: [NSSService,
-    { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService, LoaderService,
-        { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi:true},
-        {provide: APP_BASE_HREF, useValue: '/'}
+  providers: [
+    NSSService,
+    { provide: HighchartsStatic, useFactory: highchartsFactory },
+    ConfigService,
+    LoaderService,
+    { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
+    { provide: APP_BASE_HREF, useValue: '/' },
+    LoginService,
+    AuthService,
+    SettingsService
   ],
   bootstrap: [AppComponent],
   exports: [RouterModule]
-}) 
-
-export class AppModule { }
+})
+export class AppModule {}

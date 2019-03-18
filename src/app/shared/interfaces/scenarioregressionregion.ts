@@ -3,11 +3,11 @@ import {Parameter} from './parameter';
 import {Result} from './result';
 
 export interface Scenarioregressionregion {
-    Links: Link[];
-    ID: number;   
-    Code: string;
-    Name: string;
-    Parameters: Parameter[];
-    Results?: Result[];
-    PercentWeight?: number;
+    links: Link[];
+    id: number;
+    code: string;
+    name: string;
+    parameters: Parameter[];
+    results?: Result[];
+    percentWeight?: number;
 }

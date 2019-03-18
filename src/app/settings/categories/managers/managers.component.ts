@@ -6,10 +6,10 @@
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
 // purpose: regions crud in admin settings page
 
-import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { NSSService } from '../../../shared/services/app.service';
@@ -18,17 +18,20 @@ import { Scenario } from '../../../shared/interfaces/scenario';
 import { Statisticgroup } from '../../../shared/interfaces/statisticgroup';
 import { Regressiontype } from '../../../shared/interfaces/regressiontype';
 import { Regressionregion } from '../../../shared/interfaces/regressionregion';
+import { Unittype } from '../../../shared/interfaces/unittype';
+import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { Manager } from 'app/shared/interfaces/manager';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 
 @Component({
     moduleId: module.id,
-    templateUrl: 'regressionregions.component.html'
+    templateUrl: 'managers.component.html'
 })
-export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class ManagersComponent implements OnInit, AfterViewChecked {
     @ViewChild('add')
     public addRef: TemplateRef<any>;
     public selectedRegion;
@@ -36,16 +39,12 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     public selectedRegRegionIDs;
     public selectedStatGroupIDs;
     public selectedRegTypeIDs;
-    public regressionRegions: Array<Regressionregion>;
-    public newRegRegForm: FormGroup;
-    public showNewRegRegForm: boolean;
-    private modalElement: any;
-    public CloseResult: any;
-    private modalRef: any;
-    private navigationSubscription;
+    public newUserForm: FormGroup;
+    public showUserForm: boolean;
+    public managers: Array<Manager>;
     private loggedInRole;
+    private CloseResult;
     private configSettings: Config;
-
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -53,40 +52,32 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
         private _fb: FormBuilder,
         private _modalService: NgbModal,
         private _cdr: ChangeDetectorRef,
-        private router: Router,
         private _configService: ConfigService
     ) {
-        this.newRegRegForm = _fb.group({
+        this.newUserForm = _fb.group({
             id: new FormControl(null),
-            name: new FormControl(null, Validators.required),
-            description: new FormControl(null),
-            code: new FormControl(null, Validators.required)
-        });
-        this.navigationSubscription = this.router.events.subscribe((e: any) => {
-            if (e instanceof NavigationEnd) {
-                this.getLoggedInRole();
-            }
+            username: new FormControl(null, Validators.required),
+            password: new FormControl(null, Validators.required),
+            firstName: new FormControl(null, Validators.required),
+            lastName: new FormControl(null, Validators.required),
+            roleID: new FormControl(null, Validators.required)
         });
         this.configSettings = this._configService.getConfiguration();
     }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(regions => {
-            this.regions = regions;
+        this._settingsservice.getEntities(this.configSettings.managersURL).subscribe(managers => {
+            this.managers = managers;
         });
     }
 
-    public onRegSelect(r: Region) {
-        this._settingsservice.getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.regRegionURL).subscribe(regs => {
-            this.regressionRegions = regs;
-        });
-    }
-
-    showNewRegressionRegionForm() {
-        this.newRegRegForm.controls['name'].setValue(null);
-        this.newRegRegForm.controls['description'].setValue(null);
-        this.showNewRegRegForm = true;
-        this.newRegRegForm.controls['code'].setValue(null);
+    showNewUserForm() {
+        this.newUserForm.controls['username'].setValue(null);
+        this.newUserForm.controls['password'].setValue(null);
+        this.newUserForm.controls['firstName'].setValue(null);
+        this.newUserForm.controls['lastName'].setValue(null);
+        this.newUserForm.controls['roleID'].setValue(null);
+        this.showUserForm = true;
         this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
@@ -95,13 +86,13 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
                 }
                 this.CloseResult = `Closed with: ${result}`;
                 if (this.CloseResult) {
-                    this.cancelCreateRegression();
+                    this.cancelCreateUser();
                 }
             },
             reason => {
                 this.CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
                 if (this.CloseResult) {
-                    this.cancelCreateRegression();
+                    this.cancelCreateUser();
                 }
             }
         );
@@ -117,12 +108,12 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
         }
     }
 
-    private cancelCreateRegression() {
-        this.showNewRegRegForm = false;
-        this.newRegRegForm.reset();
+    private cancelCreateUser() {
+        this.showUserForm = false;
+        this.newUserForm.reset();
     }
 
-    private createNewRegression() {
+    private createNewUser() {
         alert('this will push to nssdb eventually');
         // from wateruse
         /*let category = this.newCatForm.value;
@@ -153,7 +144,7 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     }
 
     // edits made, save clicked
-    public saveRegression(c: Regressionregion, i: number) {
+    public saveUser(c: Manager, i: number) {
         /*if (c.name == undefined || c.name == "" || c.code == undefined || c.code == "") {
             //don't save it 
             let infoMessage = "Category Type Name and Code are both required."
@@ -174,7 +165,7 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     }
 
     // delete category type
-    public deleteRegression(catID: number) {
+    public deleteUser(catID: number) {
         // show are you sure modal
         /*
         this.areYouSure.showSureModal('Are you sure you want to delete this Category Type?'); // listener is AreYouSureDialogResponse()
@@ -198,7 +189,7 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     }
 
     // get index in regionList based on region.id value
-    private getRegressionIndex(cID: number): number {
+    private getUserIndex(cID: number): number {
         return 0;
         /*let ind: number = -1
         this.categoryTypes.some((ct, index, _ary) => {
@@ -210,13 +201,5 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
 
     ngAfterViewChecked() {
         this._cdr.detectChanges();
-    }
-
-    private getLoggedInRole() {
-        this.loggedInRole = localStorage.getItem('loggedInRole');
-    }
-
-    ngOnDestroy() {
-        this.navigationSubscription.unsubscribe();
     }
 }

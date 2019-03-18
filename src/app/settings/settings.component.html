@@ -10,6 +10,8 @@
                 <li><a [routerLink]="['regressiontypes']" routerLinkActive="active">Regression Types (Statistics)</a></li>
                 <li><a [routerLink]="['variabletypes']"  routerLinkActive="active">Variable Types</a></li>
                 <li><a [routerLink]="['unittypes']" routerLinkActive="active">Unit Types</a></li>
+                <li><a [routerLink]="['scenarios']" routerLinkActive="active">Scenarios</a></li>
+                <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['managers']" routerLinkActive="active">Managers</a></li>
             </ul>
         </div>
     

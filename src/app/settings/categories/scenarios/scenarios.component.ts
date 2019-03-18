@@ -8,40 +8,45 @@
 
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from '../../../../../node_modules/angular-2-dropdown-multiselect';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { NSSService } from '../../../shared/services/app.service';
+import { SettingsComponent } from '../../settings.component';
 import { Region } from '../../../shared/interfaces/region';
 import { Scenario } from '../../../shared/interfaces/scenario';
 import { Statisticgroup } from '../../../shared/interfaces/statisticgroup';
 import { Regressiontype } from '../../../shared/interfaces/regressiontype';
 import { Regressionregion } from '../../../shared/interfaces/regressionregion';
 import { SettingsService } from '../../settings.service';
-
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 
+import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+
 @Component({
     moduleId: module.id,
-    templateUrl: 'regressionregions.component.html'
+    templateUrl: 'scenarios.component.html'
 })
-export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
     @ViewChild('add')
     public addRef: TemplateRef<any>;
     public selectedRegion;
     public regions;
-    public selectedRegRegionIDs;
     public selectedStatGroupIDs;
     public selectedRegTypeIDs;
     public regressionRegions: Array<Regressionregion>;
-    public newRegRegForm: FormGroup;
-    public showNewRegRegForm: boolean;
-    private modalElement: any;
+    public statisticGroups;
+    public newScenarioForm: FormGroup;
+    public showNewScenForm: boolean;
     public CloseResult: any;
-    private modalRef: any;
+    public scenarios: Array<Scenario>;
+    public regRegionsText: string;
+    public myRTSettings: IMultiSelectSettings;
+    public myMSTexts: IMultiSelectTexts;
+    private selectedRegRegionIDs: Array<number>;
     private navigationSubscription;
     private loggedInRole;
     private configSettings: Config;
@@ -56,11 +61,11 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
         private router: Router,
         private _configService: ConfigService
     ) {
-        this.newRegRegForm = _fb.group({
+        this.newScenarioForm = _fb.group({
             id: new FormControl(null),
-            name: new FormControl(null, Validators.required),
-            description: new FormControl(null),
-            code: new FormControl(null, Validators.required)
+            StatisticGroupName: new FormControl(null, Validators.required),
+            RegressionRegions: new FormControl(null),
+            Code: new FormControl(null, Validators.required)
         });
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
             if (e instanceof NavigationEnd) {
@@ -71,22 +76,71 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(regions => {
-            this.regions = regions;
+        this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(reg => {
+            this.regions = reg;
         });
+        this.myRTSettings = {
+            pullRight: false,
+            enableSearch: false,
+            checkedStyle: 'glyphicon',
+            buttonClasses: 'btn btn-default',
+            selectionLimit: 0,
+            closeOnSelect: false,
+            showCheckAll: true,
+            showUncheckAll: true,
+            dynamicTitleMaxItems: 2,
+            maxHeight: '300px'
+        };
+        this.myMSTexts = {
+            checkAll: 'Check all',
+            uncheckAll: 'Uncheck all',
+            checked: 'checked',
+            checkedPlural: 'checked',
+            defaultTitle: 'Select'
+        };
     }
 
     public onRegSelect(r: Region) {
-        this._settingsservice.getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.regRegionURL).subscribe(regs => {
-            this.regressionRegions = regs;
+        this.regressionRegions = []; this.selectedRegRegionIDs = [];
+        this.selectedStatGroupIDs = []; this.selectedRegTypeIDs = [];
+        this._settingsservice.getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.scenariosURL).subscribe(scen => {
+            this.scenarios = scen;
+            for (const scenario of scen) {
+                const regNames = [];
+                for (const regReg of scenario.regressionRegions) {
+                    regReg.Name = regReg.name; regReg.ID = regReg.id;
+                    regNames.push(regReg.name);
+                    if (this.regressionRegions.indexOf(regReg) === -1) {
+                        this.regressionRegions.push(regReg);
+                    }
+                }
+                scenario.regNames = regNames.join(',\n');
+            }
         });
     }
 
-    showNewRegressionRegionForm() {
-        this.newRegRegForm.controls['name'].setValue(null);
-        this.newRegRegForm.controls['description'].setValue(null);
-        this.showNewRegRegForm = true;
-        this.newRegRegForm.controls['code'].setValue(null);
+    public onRegRegSelect(reg) {
+        this.selectedRegRegionIDs = [];
+        this.selectedStatGroupIDs = [];
+        this.selectedRegTypeIDs = [];
+        const selectedRegRegions: Array<Regressionregion> = new Array<Regressionregion>();
+        this.selectedRegRegionIDs = reg;
+        this.selectedRegRegionIDs.forEach(srr => {
+            // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
+            selectedRegRegions.push(
+                this.regressionRegions.filter(function(rr) {
+                    return rr.ID === srr;
+                })[0]
+            );
+        });
+    }
+
+    public showNewScenarioForm() {
+        // still needs changes
+        this.newScenarioForm.controls['StatisticGroupName'].setValue(null);
+        this.newScenarioForm.controls['RegressionRegions'].setValue(null);
+        this.showNewScenForm = true;
+        this.newScenarioForm.controls['Code'].setValue(null);
         this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
@@ -95,13 +149,13 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
                 }
                 this.CloseResult = `Closed with: ${result}`;
                 if (this.CloseResult) {
-                    this.cancelCreateRegression();
+                    this.cancelCreateScenario();
                 }
             },
             reason => {
                 this.CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
                 if (this.CloseResult) {
-                    this.cancelCreateRegression();
+                    this.cancelCreateScenario();
                 }
             }
         );
@@ -117,12 +171,12 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
         }
     }
 
-    private cancelCreateRegression() {
-        this.showNewRegRegForm = false;
-        this.newRegRegForm.reset();
+    private cancelCreateScenario() {
+        this.showNewScenForm = false;
+        this.newScenarioForm.reset();
     }
 
-    private createNewRegression() {
+    private createNewScenario() {
         alert('this will push to nssdb eventually');
         // from wateruse
         /*let category = this.newCatForm.value;
@@ -153,7 +207,7 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     }
 
     // edits made, save clicked
-    public saveRegression(c: Regressionregion, i: number) {
+    public saveScenario(c: Scenario, i: number) {
         /*if (c.name == undefined || c.name == "" || c.code == undefined || c.code == "") {
             //don't save it 
             let infoMessage = "Category Type Name and Code are both required."
@@ -174,7 +228,7 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     }
 
     // delete category type
-    public deleteRegression(catID: number) {
+    public deleteScenario(catID: number) {
         // show are you sure modal
         /*
         this.areYouSure.showSureModal('Are you sure you want to delete this Category Type?'); // listener is AreYouSureDialogResponse()
@@ -198,7 +252,7 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     }
 
     // get index in regionList based on region.id value
-    private getRegressionIndex(cID: number): number {
+    private getScenarioIndex(cID: number): number {
         return 0;
         /*let ind: number = -1
         this.categoryTypes.some((ct, index, _ary) => {

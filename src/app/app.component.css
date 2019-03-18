@@ -1,0 +1,7 @@
+.form-invalid input {
+    margin-bottom: 12px !important;
+}
+
+.hidden {
+    display: none;
+}

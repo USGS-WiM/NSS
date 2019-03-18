@@ -1,0 +1,106 @@
+<div class="regSelect">Choose Region:
+    <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
+        <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
+    </select>
+</div>
+
+<div *ngIf="regressionRegions">Limit by Regression Group:
+    <div class="settingsMultSelect">
+        <ss-multiselect-dropdown id="regRegSelect" [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedRegRegionIDs"
+            [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegRegSelect($event);">
+        </ss-multiselect-dropdown>
+    </div>
+</div>
+
+
+<form #ScenarioForm="ngForm">
+    <div class="form-group" *ngIf="scenarios">
+        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Scenarios</legend>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-xs-1"></th>
+                    <th class="col-xs-4">Statistic Group ID</th>
+                    <th>Statistic Group Name</th>
+                    <th class="col-xs-1">Regression Regions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let s of scenarios; let i = index">
+                    <td>
+                        <div class="data-controls">
+                            <i *ngIf="!s.isEditing" title="Edit Scenario" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                            <i *ngIf="!s.isEditing" title="Delete Scenario" (click)="deleteScenario(s.id)" class="fa fa-times"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="s.isEditing" title="Save Scenario" (click)="saveScenario(s,i)" class="fa fa-floppy-o"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="s.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <span *ngIf="!s.isEditing">{{ s.statisticGroupID }}</span>
+                        <span *ngIf="s.isEditing"><input type="text" name="statisticGroupID" [(ngModel)]="s.statisticGroupID"
+                                required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!s.isEditing">{{ s.statisticGroupName }}</span>
+                        <span *ngIf="s.isEditing"><textarea rows="3" [(ngModel)]="s.statisticGroupName" name="statisticGroupName"></textarea></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!s.isEditing">{{ s.regNames }}</span>
+                        <span *ngIf="s.isEditing"><input type="text" name="regressionRegions" [(ngModel)]="s.regressionRegions"
+                                required></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<br />
+<button [hidden]="loggedInRole !== 'Administrator'" *ngIf="regressionRegions" type="button" class="btn-blue" (click)="showNewScenarioForm()"><i
+        class="fa fa-plus" aria-hidden="tru"></i> Add New Scenario</button>
+
+<!-- new scenario form -->
+<ng-template #add let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="col-xs-12">
+            <h4 class="modal-title pull-left">New Scenario </h4>
+            <button class="close pull-right" (click)="d('closed')">x</button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <h3 class="modal-title">New Scenario</h3>
+        <form [formGroup]="newScenarioForm">
+            <!-- Scenario Name* -->
+            <label class="req" for="StatisticGroupName">StatisticGroupName:</label>
+            <select formControlName="StatisticGroupName">
+                <option [ngValue]="s" *ngFor="let s of statisticGroups">{{s.name}}</option>
+            </select>
+
+            <!-- Description -->
+            <label class="req" for="RegressionRegions">RegressionRegions:</label>
+            <div class="settingsMultSelect">
+                <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRTSettings"
+                    formControlName="RegressionRegions">
+                </ss-multiselect-dropdown>
+            </div>
+
+            <!-- Short Name -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newScenarioForm.get('Code').valid && newScenarioForm.get('Code').dirty}">
+                <label class="req" for="code">Code:</label>
+                <input class="form-control" type="text" formControlName="Code">
+                <div class="input-invalid-warning" *ngIf="!newScenarioForm.get('Code').valid && newScenarioForm.get('Code').dirty">Code
+                    is required</div>
+            </div>
+
+        </form>
+
+
+        <div class="modal-footer">
+            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+            <button type="button" (click)="createNewScneario()" [disabled]="!newScenarioForm.valid" class="btn-blue">Create</button>
+        </div>
+    </div>
+</ng-template>

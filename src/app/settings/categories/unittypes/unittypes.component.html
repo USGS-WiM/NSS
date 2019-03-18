@@ -1,6 +1,8 @@
 <div>
     <legend style="margin-bottom:25px;margin-top:0;">Unit Types</legend>
 </div>
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewUnitTypeForm()"><i class="fa fa-plus"
+    aria-hidden="tru"></i> Add New Unit Type</button>
 
 <form #UnitTypeForm="ngForm">
     <div class="form-group" *ngIf="unitTypes">
@@ -19,8 +21,8 @@
                         <div class="data-controls">
                             <i *ngIf="!u.isEditing" title="Edit Unit Type" (click)="EditRowClicked(i)" class="fa fa-pencil"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                            <i *ngIf="!u.isEditing" title="Delete Unit Type" (click)="deleteUnit(u.id)"
-                                class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="!u.isEditing" title="Delete Unit Type" (click)="deleteUnit(u.id)" class="fa fa-times"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                             <i *ngIf="u.isEditing" title="Save Unit Type" (click)="saveUnit(u,i)" class="fa fa-floppy-o"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                             <i *ngIf="u.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
@@ -28,16 +30,17 @@
                         </div>
                     </td>
                     <td>
-                        <span *ngIf="!u.isEditing">{{ u.Unit }}</span>
-                        <span *ngIf="u.isEditing"><input type="text" name="unit" [(ngModel)]="u.unit" required></span>
+                        <span *ngIf="!u.isEditing">{{ u.name }}</span>
+                        <span *ngIf="u.isEditing"><input type="text" name="name" [(ngModel)]="u.name" required></span>
                     </td>
                     <td>
-                        <span *ngIf="!u.isEditing">{{ u.Abbr }}</span>
-                        <span *ngIf="u.isEditing"><textarea rows="3" [(ngModel)]="u.Abbr" name="abbr"></textarea></span>
+                        <span *ngIf="!u.isEditing">{{ u.abbreviation }}</span>
+                        <span *ngIf="u.isEditing"><textarea rows="3" [(ngModel)]="u.abbr" name="abbr"></textarea></span>
                     </td>
                     <td>
-                        <span *ngIf="!u.isEditing">{{ u.UnitSystemTypeID }}</span>
-                        <span *ngIf="u.isEditing"><input type="text" name="id" [(ngModel)]="u.UnitSystemTypeID" required></span>
+                        <span *ngIf="!u.isEditing">{{ u.unitSystemTypeID }}</span>
+                        <span *ngIf="u.isEditing"><input type="text" name="id" [(ngModel)]="u.unitSystemTypeID"
+                                required></span>
                     </td>
                 </tr>
             </tbody>
@@ -45,39 +48,49 @@
     </div>
 </form>
 <br />
-<button *ngIf="!showNewUnitForm" type="button" class="btn-blue" (click)="showNewUnitTypeForm()"><i class="fa fa-plus"
-        aria-hidden="tru"></i> Add New Unit Type</button>
 
 <!-- new unit type form -->
-<div *ngIf="showNewUnitForm">
-    <h3 class="modal-title">New Unit Type</h3>
-    <form [formGroup]="newUnitForm">
-        <!-- Unit Type Name* -->
-        <div class="form-group required" [ngClass]="{'form-invalid': !newUnitForm.get('name').valid && newUnitForm.get('name').dirty}">
-            <label class="req" for="name">Name:</label>
-            <input class="form-control" type="text" formControlName="name" required>
-            <div class="input-invalid-warning" *ngIf="!newUnitForm.get('name').valid && newUnitForm.get('name').dirty">Unit
-                Name is required</div>
+<ng-template #add let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="col-xs-12">
+            <h4 class="modal-title pull-left">New Unit Type </h4>
+            <button class="close pull-right" (click)="d('closed')">x</button>
         </div>
-
-        <!-- Description -->
-        <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
-        </div>
-
-        <!-- Short Name -->
-        <div class="form-group required" [ngClass]="{'form-invalid': !newUnitForm.get('code').valid && newUnitForm.get('code').dirty}">
-            <label class="req" for="code">Code:</label>
-            <input class="form-control" type="text" formControlName="code">
-            <div class="input-invalid-warning" *ngIf="!newUnitForm.get('code').valid && newUnitForm.get('code').dirty">Code
-                is required</div>
-        </div>
-
-    </form>
-
-    <div class="modal-footer">
-        <button type="button" (click)="cancelCreateUnit()" class="btn-black">Cancel</button>
-        <button type="button" (click)="createNewUnit()" [disabled]="!newUnitForm.valid" class="btn-blue">Create</button>
     </div>
-</div>
+    <div class="modal-body">
+        <h3 class="modal-title">New Unit Type</h3>
+        <form [formGroup]="newUnitForm">
+            <!-- Unit Type Name* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUnitForm.get('name').valid && newUnitForm.get('name').dirty}">
+                <label class="req" for="name">Name:</label>
+                <input class="form-control" type="text" formControlName="name" required>
+                <div class="input-invalid-warning" *ngIf="!newUnitForm.get('name').valid && newUnitForm.get('name').dirty">Unit
+                    Name is required</div>
+            </div>
+
+            <!-- Abbreviation* -->
+            <div class="form-group">
+                <label class="req" for="abbreviation">Abbr:</label>
+                <input class="form-control" type="text" formControlName="abbreviation">
+                <div class="input-invalid-warning" *ngIf="!newUnitForm.get('abbreviation').valid && newUnitForm.get('abbreviation').dirty">Abbreviation
+                    is required</div>
+            </div>
+
+            <!-- Unit System Type ID -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUnitForm.get('unitSystemTypeID').valid && newUnitForm.get('unitSystemTypeID').dirty}">
+                <label class="req" for="unitSystemTypeID">Unit System Type ID:</label>
+                <select class="form-control" formControlName="unitSystemTypeID">
+                    <option *ngFor="let usys of unitSystems" [value]="usys.id">{{usys.unitSystem}}</option>
+                </select>
+                <div class="input-invalid-warning" *ngIf="!newUnitForm.get('unitSystemTypeID').valid && newUnitForm.get('unitSystemTypeID').dirty">Code
+                    is required</div>
+            </div>
+
+        </form>
+
+        <div class="modal-footer">
+            <button type="button" (click)="d('clicked')" class="btn-black">Cancel</button>
+            <button type="button" (click)="createNewUnit()" [disabled]="!newUnitForm.valid" class="btn-blue">Create</button>
+        </div>
+    </div>
+</ng-template>

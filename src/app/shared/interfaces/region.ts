@@ -1,5 +1,5 @@
 export interface Region {
-    ID: number;
-    Name: string;
-    Code: string;
+    id: number;
+    name: string;
+    code: string;
 }

@@ -6,5 +6,5 @@ export interface Statisticgroup {
     id: number; //for multiselect
     Name: string;
     name: string; //for multiselect
-    Code: string;
+    code: string;
 }

@@ -8,7 +8,7 @@
 
 import { Component, ViewChild, Output, EventEmitter } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { NSSService } from '../../app.service';
+import { NSSService } from '../../shared/services/app.service';
 
 @Component({
   selector: 'aboutModal',

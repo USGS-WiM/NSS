@@ -3,9 +3,10 @@ import {Citation} from './citation';
 import { Scenarioregressionregion} from './scenarioRegressionRegion';
 
 export interface Scenario {
-    StatisticGroupID: number;
-    StatisticGroupName: string;
-    RegressionRegions: Scenarioregressionregion[];
-    Links: Link[];
-    Citations?: Citation[];    
+    statisticGroupID: number;
+    statisticGroupName: string;
+    regressionRegions: Scenarioregressionregion[];
+    links: Link[];
+    citations?: Citation[];
+    regNames: string;
 }

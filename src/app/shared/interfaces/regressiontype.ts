@@ -3,6 +3,6 @@ export interface Regressiontype {
     id: number; //for multiselect
     Name: string;
     name: string; //for multiselect
-    Code: string;
-    Description: string;
+    code: string;
+    description: string;
 }

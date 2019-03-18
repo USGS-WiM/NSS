@@ -3,48 +3,49 @@
     <div class="sidebar-item">
         <label>Choose Region:</label>
         <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
-            <option [ngValue]="i" *ngFor="let i of regions">{{i.Name}}</option>
+            <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
         </select>
-    </div>  <!-- end sidebar-item-->
+    </div> <!-- end sidebar-item-->
 
 
     <div class="sidebar-item" *ngIf="statisticGroups">
         <label>Limit by Statistic Group(s):</label>
         <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedStatGrpIDs"
-                [(ngModel)]="selectedStatGrpIDs" (ngModelChange)="onStatGrpSelect($event)">
+            [(ngModel)]="selectedStatGrpIDs" (ngModelChange)="onStatGrpSelect($event)">
         </ss-multiselect-dropdown>
-    </div>  <!-- end sidebar-item-->
+    </div> <!-- end sidebar-item-->
 
 
-    <div class="sidebar-item" *ngIf="regressionRegions">
+    <div class="sidebar-item" *ngIf="regressionRegions"> 
         <label>Limit by Regression Group(s):</label>
         <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"
-                    [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)">
+            [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)">
         </ss-multiselect-dropdown>
-    </div>   <!-- end sidebar-item-->
+    </div> <!-- end sidebar-item-->
 
 
     <div class="sidebar-item" *ngIf="regressionTypes">
         <label>Limit by Statistic:</label>
         <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="mySGSettings" name="selectedRegTypeIDs"
-                    [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
+            [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
         </ss-multiselect-dropdown>
-    </div>  <!-- end sidebar-item-->
+    </div> <!-- end sidebar-item-->
 
 
     <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0">
         <label>Calculate Statistic:</label>
-        <button style="margin-top: 6px" [disabled]="scenarios[0].RegressionRegions[0].Results != undefined" type="button" class="btn-black" (click)="CalculateScenario()">Compute</button>
-    </div>  <!-- end sidebar-item-->
+        <button style="margin-top: 6px" [disabled]="scenarios[0].RegressionRegions[0].Results != undefined" type="button"
+            class="btn-black" (click)="CalculateScenario()">Compute</button>
+    </div> <!-- end sidebar-item-->
 
     <div class="sidebar-item" *ngIf="showChart">
         <label>Chart:</label>
         <ul style="padding: 0px !important;">
             <div *ngFor="let pt of plotTypes" (click)="selectChart(pt)">
-              <li style="list-style: none; cursor: pointer" class="simple-btn">{{pt}}</li>
+                <li style="list-style: none; cursor: pointer" class="simple-btn">{{pt}}</li>
             </div>
         </ul>
-    </div>   <!-- end sidebar-item-->
+    </div> <!-- end sidebar-item-->
 
     <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0 && scenarios[0].RegressionRegions[0].Results != undefined">
         <label>Go To:</label>
@@ -53,12 +54,13 @@
             <li *ngIf="showChart" style="list-style:none"><a pageScroll href="#chart" class="simple-btn-link">Charts</a></li>
             <li style="list-style:none"><a pageScroll href="#appendix" class="simple-btn-link">Appendix</a></li>
         </ul>
-    </div>    <!-- end sidebar-item-->
+    </div> <!-- end sidebar-item-->
 
     <div class="footer-links">
         <div class="identification">Powered by <a href="https://wim.usgs.gov/" target="_blank">WiM</a></div>
-   <!--     <div class="identification pull-right">powered by <a href="https://wim.usgs.gov/" target="_blank">WiM</a></div>-->
-        <a href="https://usgs.gov" target="_blank">USGS Home</a><a href="https://answers.usgs.gov" target="_blank">Contact USGS</a>
+        <!--     <div class="identification pull-right">powered by <a href="https://wim.usgs.gov/" target="_blank">WiM</a></div>-->
+        <a href="https://usgs.gov" target="_blank">USGS Home</a><a href="https://answers.usgs.gov" target="_blank">Contact
+            USGS</a>
         <a href="https://search.usgs.gov" target="_blank">Search USGS</a>
         <a href="https://www2.usgs.gov/laws/accessibility.html" target="_blank">Accessibility</a>
         <a href="https://www2.usgs.gov/foia/" target="_blank">FOIA</a>

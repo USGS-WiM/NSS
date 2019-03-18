@@ -1,6 +1,6 @@
 export interface Variabletype {
-    ID: number;
-    Name: string;
-    Desc: string;
-    Code: string;
+    id: number;
+    name: string;
+    description: string;
+    code: string;
 }

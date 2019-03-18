@@ -8,8 +8,17 @@
 
 export interface Config {
     baseURL: string;
+    citationURL: string;
+    errorsURL: string;
+    loginURL: string;
+    managersURL: string;
     regionURL: string;
     regRegionURL: string;
-    citationURL: string;
+    regTypeURL: string;
+    rolesURL: string;
+    scenariosURL: string;
     statisticGrpURL: string;
+    unitsURL: string;
+    unitSystemsURL: string;
+    variablesURL: string;
 }

@@ -1,5 +1,6 @@
 <div class="regSelect">Choose Region:
     <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
+        <option value="none">None</option>
         <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
     </select>
 </div>
@@ -24,7 +25,7 @@
                         <div class="data-controls">
                             <i *ngIf="!r.isEditing" title="Edit Regression Type" (click)="EditRowClicked(i)" class="fa fa-pencil"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                            <i *ngIf="!r.isEditing" title="Delete Regression Type" (click)="deleteRegression(c.id)"
+                            <i *ngIf="!r.isEditing" title="Delete Regression Type" (click)="deleteRegression(r.id)"
                                 class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                             <i *ngIf="r.isEditing" title="Save Regression Type" (click)="saveRegression(r,i)" class="fa fa-floppy-o"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
@@ -38,11 +39,11 @@
                     </td>
                     <td>
                         <span *ngIf="!r.isEditing">{{ r.description }}</span>
-                        <span *ngIf="r.isEditing"><textarea rows="3" [(ngModel)]="r.Description" name="description"></textarea></span>
+                        <span *ngIf="r.isEditing"><textarea rows="3" [(ngModel)]="r.description" name="description"></textarea></span>
                     </td>
                     <td>
                         <span *ngIf="!r.isEditing">{{ r.code }}</span>
-                        <span *ngIf="r.isEditing"><input type="text" name="code" [(ngModel)]="r.Code" required></span>
+                        <span *ngIf="r.isEditing"><input type="text" name="code" [(ngModel)]="r.code" required></span>
                     </td>
                 </tr>
             </tbody>

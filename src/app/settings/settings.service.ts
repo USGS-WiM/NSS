@@ -20,14 +20,18 @@ import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Scenario } from 'app/shared/interfaces/scenario';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Unittype } from 'app/shared/interfaces/unittype';
-import { Scenarioregressionregion } from 'app/shared/interfaces/scenarioregressionregion';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+import { Manager } from 'app/shared/interfaces/manager';
+import { UnitSystem } from 'app/shared/interfaces/unitsystems';
+import { Citation } from 'app/shared/interfaces/citation';
+import { map, catchError } from 'rxjs/operators';
+import { Error } from 'app/shared/interfaces/error';
+import { Role } from 'app/shared/interfaces/role';
 
 @Injectable()
 export class SettingsService {
     public authHeader: Headers = new Headers({
-        Accept: 'application/json',
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('credentials')
     });
@@ -40,6 +44,11 @@ export class SettingsService {
     private _scenarioSubject: BehaviorSubject<Array<Scenario>> = <BehaviorSubject<Scenario[]>>new BehaviorSubject([]);
     private _variableTypeSubject: BehaviorSubject<Array<Variabletype>> = <BehaviorSubject<Variabletype[]>>new BehaviorSubject([]);
     private _unitTypeSubject: BehaviorSubject<Array<Unittype>> = <BehaviorSubject<Unittype[]>>new BehaviorSubject([]);
+    private _unitSystemSubject: BehaviorSubject<Array<UnitSystem>> = <BehaviorSubject<UnitSystem[]>>new BehaviorSubject([]);
+    private _managersSubject: BehaviorSubject<Array<Manager>> = <BehaviorSubject<Manager[]>>new BehaviorSubject([]);
+    private _citationsSubject: BehaviorSubject<Array<Citation>> = <BehaviorSubject<Citation[]>>new BehaviorSubject([]);
+    private _errorsSubject: BehaviorSubject<Array<Error>> = <BehaviorSubject<Error[]>>new BehaviorSubject([]);
+    private _rolesSubject: BehaviorSubject<Array<Role>> = <BehaviorSubject<Role[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: Http, private _configService: ConfigService) {
@@ -68,6 +77,21 @@ export class SettingsService {
     public units(): Observable<Array<Unittype>> {
         return this._unitTypeSubject.asObservable();
     }
+    public unitSystems(): Observable<Array<UnitSystem>> {
+        return this._unitSystemSubject.asObservable();
+    }
+    public managers(): Observable<Array<Manager>> {
+        return this._managersSubject.asObservable();
+    }
+    public citations(): Observable<Array<Citation>> {
+        return this._citationsSubject.asObservable();
+    }
+    public errors(): Observable<Array<Error>> {
+        return this._errorsSubject.asObservable();
+    }
+    public roles(): Observable<Array<Role>> {
+        return this._rolesSubject.asObservable();
+    }
 
     // HTTP REQUESTS ////////////////////////////////////
 
@@ -76,7 +100,7 @@ export class SettingsService {
         const options = new RequestOptions({ headers: this.authHeader });
         return this._http
             .get(this.configSettings.baseURL + url, options)
-            .map(response => <Array<any>>response.json())
+            .map(res => { if (res) {return <Array<any>>res.json(); }})
             .catch(this.errorHandler);
     }
 
@@ -84,7 +108,7 @@ export class SettingsService {
     public postEntity(entity: object, url: string) {
         const options = new RequestOptions({ headers: this.authHeader });
         return this._http
-            .post(this.configSettings.baseURL + this.configSettings[url], entity, options)
+            .post(this.configSettings.baseURL + url, entity, options)
             .map(res => <any>res.json())
             .catch(this.errorHandler);
     }
@@ -93,7 +117,7 @@ export class SettingsService {
     public putEntity(id: number, entity: any, url: string) {
         const options = new RequestOptions({ headers: this.authHeader });
         return this._http
-            .put(this.configSettings.baseURL + this.configSettings[url] + '/' + id, entity, options)
+            .put(this.configSettings.baseURL + url + '/' + id, entity, options)
             .map(res => <any>res.json())
             .catch(this.errorHandler);
     }
@@ -101,11 +125,12 @@ export class SettingsService {
     // ------------ DELETES ------------------------------
     public deleteEntity(id: number, url: string) {
         const options = new RequestOptions({ headers: this.authHeader });
-        return this._http.delete(this.configSettings.baseURL + this.configSettings[url] + '/' + id, options).catch(this.errorHandler);
+        return this._http.delete(this.configSettings.baseURL + url + '/' + id, options)
+            .catch(this.errorHandler);
     }
 
     private errorHandler(error: Response | any) {
-        if (error._body !== '') error._body = JSON.parse(error._body);
+        if (error._body !== '') {error._body = JSON.parse(error._body); }
 
         return Observable.throw(error);
     }
@@ -113,23 +138,38 @@ export class SettingsService {
     public setRegions(r: Array<Region>) {
         this._regionSubject.next(r);
     }
-    public setStatGroups(c: Array<Statisticgroup>) {
-        this._statisticGroupSubject.next(c);
+    public setStatGroups(s: Array<Statisticgroup>) {
+        this._statisticGroupSubject.next(s);
     }
-    public setRegRegions(u: Array<Regressionregion>) {
-        this._regRegionSubject.next(u);
+    public setRegRegions(r: Array<Regressionregion>) {
+        this._regRegionSubject.next(r);
     }
-    public setRegTypes(s: Array<Regressiontype>) {
-        this._regTypeSubject.next(s);
+    public setRegTypes(r: Array<Regressiontype>) {
+        this._regTypeSubject.next(r);
     }
-    public setScenarios(r: Array<Scenario>) {
-        this._scenarioSubject.next(r);
+    public setScenarios(s: Array<Scenario>) {
+        this._scenarioSubject.next(s);
     }
-    public setVariables(u: Array<Variabletype>) {
-        this._variableTypeSubject.next(u);
+    public setVariables(v: Array<Variabletype>) {
+        this._variableTypeSubject.next(v);
     }
-    public setUnits(s: Array<Unittype>) {
-        this._unitTypeSubject.next(s);
+    public setUnits(u: Array<Unittype>) {
+        this._unitTypeSubject.next(u);
+    }
+    public setUnitSystems(u: Array<UnitSystem>) {
+        this._unitSystemSubject.next(u);
+    }
+    public setManagers(m: Array<Manager>) {
+        this._managersSubject.next(m);
+    }
+    public setCitations(c: Array<Citation>) {
+        this._citationsSubject.next(c);
+    }
+    public setErrors(e: Array<Error>) {
+        this._errorsSubject.next(e);
+    }
+    public setRoles(r: Array<Role>) {
+        this._rolesSubject.next(r);
     }
 
 }

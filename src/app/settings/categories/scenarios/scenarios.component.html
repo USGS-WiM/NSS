@@ -4,6 +4,14 @@
     </select>
 </div>
 
+<div *ngIf="statisticGroups">Limit by Statistic Group:
+        <div class="settingsMultSelect">
+            <ss-multiselect-dropdown id="statGroupSelect" [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedStatGroupIDs"
+                [(ngModel)]="selectedStatGroupIDs" (ngModelChange)="onStatGroupSelect();">
+            </ss-multiselect-dropdown>
+        </div>
+    </div>
+
 <div *ngIf="regressionRegions">Limit by Regression Group:
     <div class="settingsMultSelect">
         <ss-multiselect-dropdown id="regRegSelect" [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedRegRegionIDs"
@@ -11,6 +19,14 @@
         </ss-multiselect-dropdown>
     </div>
 </div>
+
+<!--<div *ngIf="regressionTypes">Limit by Statistic:
+    <div class="settingsMultSelect">
+        <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedRegTypeIDs"
+            [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
+        </ss-multiselect-dropdown>
+    </div>
+</div> -->
 
 
 <form #ScenarioForm="ngForm">

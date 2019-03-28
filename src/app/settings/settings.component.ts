@@ -47,7 +47,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
         });
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        if (localStorage.getItem('credentials') === undefined) {
+            this.router.navigate(['']);
+        }
+    }
 
     public getServices(): void {
         const options = new RequestOptions({ headers: this.jsonHeader });

@@ -1,0 +1,108 @@
+<div>
+    <legend style="margin-bottom:25px;margin-top:0;">Citations</legend>
+</div>
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewCitationForm()"><i class="fa fa-plus"
+    aria-hidden="tru"></i> Add New Citation</button>
+
+<form #CitationForm="ngForm">
+    <div class="form-group" *ngIf="citations">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-xs-1"></th>
+                    <th class="col-xs-4">Title</th>
+                    <th>Author</th>
+                    <th class="col-xs-1">Citation URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let v of citations; let i = index">
+                    <td>
+                        <div class="data-controls">
+                            <i *ngIf="!v.isEditing" title="Edit Citation" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                            <i *ngIf="v.isEditing" title="Save Citation" (click)="saveCitation(v,i)" class="fa fa-floppy-o"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.title }}</span>
+                        <span *ngIf="v.isEditing"><textarea rows="3" [(ngModel)]="v.title" name="title"></textarea></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.author }}</span>
+                        <span *ngIf="v.isEditing"><input type="text" name="author" [(ngModel)]="v.author" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.citationURL }}</span>
+                        <span *ngIf="v.isEditing"><input type="text" name="citationURL" [(ngModel)]="v.citationURL" required></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<br />
+
+<!-- new citation form -->
+<ng-template #add let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="col-xs-12">
+            <h4 class="modal-title pull-left">New Citation </h4>
+            <button class="close pull-right" (click)="d('closed')">x</button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <h3 class="modal-title">New Citation</h3>
+        <form [formGroup]="newCitForm">
+            <!-- Title -->
+            <div class="form-group required">
+                <label for="title">Title:</label>
+                <textarea class="form-control" rows="3" placeholder="" formControlName="title"></textarea>
+                <div class="input-invalid-warning" *ngIf="!newCitForm.get('title').valid && newCitForm.get('title').dirty">Author
+                        is required</div>
+            </div>
+            <!-- Author* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('author').valid && newCitForm.get('author').dirty}">
+                <label class="req" for="name">author:</label>
+                <input class="form-control" type="text" formControlName="author" required>
+                <div class="input-invalid-warning" *ngIf="!newCitForm.get('author').valid && newCitForm.get('author').dirty">Author
+                    is required</div>
+            </div>
+
+            <!-- Short Name -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty}">
+                <label class="req" for="citationURL">Citation URL:</label>
+                <input class="form-control" type="text" formControlName="citationURL">
+                <div class="input-invalid-warning" *ngIf="!newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty">URL
+                    is required</div>
+            </div>
+
+            <!-- Region -->
+            <div class="form-group" [ngClass]="{'form-invalid': !newCitForm.get('region').valid && newCitForm.get('region').dirty}">
+                    <label class="req" for="region">Region (optional):</label>
+                    <select class="form-control" formControlName="region">
+                        <option *ngFor="let r of regions" [value]="r.id">{{r.name}}</option>
+                    </select>
+                </div>
+
+            <!-- Reg Region* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('regRegion').valid && newCitForm.get('regRegion').dirty}">
+                <label class="req" for="regRegion">Regression Region:</label>
+                <select class="form-control" formControlName="regRegion">
+                    <option *ngFor="let rr of regressionRegions" [value]="rr.id">{{rr.name}}</option>
+                </select>
+                <div class="input-invalid-warning" *ngIf="!newCitForm.get('regRegion').valid && newCitForm.get('regRegion').dirty">Role ID
+                    is required</div>
+            </div>
+
+        </form>
+
+        <div class="modal-footer">
+            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+            <button type="button" (click)="createNewCitation()" [disabled]="!newCitForm.valid" class="btn-blue">Create</button>
+        </div>
+    </div>
+</ng-template>

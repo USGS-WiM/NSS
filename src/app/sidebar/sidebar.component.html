@@ -19,7 +19,7 @@
     <div class="sidebar-item" *ngIf="regressionRegions"> 
         <label>Limit by Regression Group(s):</label>
         <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"
-            [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)">
+            [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)"> 
         </ss-multiselect-dropdown>
     </div> <!-- end sidebar-item-->
 
@@ -32,9 +32,9 @@
     </div> <!-- end sidebar-item-->
 
 
-    <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0">
+    <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].regressionRegions.length > 0">
         <label>Calculate Statistic:</label>
-        <button style="margin-top: 6px" [disabled]="scenarios[0].RegressionRegions[0].Results != undefined" type="button"
+        <button style="margin-top: 6px" [disabled]="scenarios[0].regressionRegions[0].Results != undefined" type="button"
             class="btn-black" (click)="CalculateScenario()">Compute</button>
     </div> <!-- end sidebar-item-->
 
@@ -47,7 +47,7 @@
         </ul>
     </div> <!-- end sidebar-item-->
 
-    <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].RegressionRegions.length > 0 && scenarios[0].RegressionRegions[0].Results != undefined">
+    <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].regressionRegions.length > 0 && scenarios[0].regressionRegions[0].Results != undefined">
         <label>Go To:</label>
         <ul style="padding: 0 !important;">
             <li style="list-style:none"><a pageScroll href="#citations" class="simple-btn-link">Citations</a></li>

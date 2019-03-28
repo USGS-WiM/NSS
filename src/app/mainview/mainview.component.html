@@ -9,14 +9,14 @@
     <div class="col-md-6">
         <div *ngIf="selectedRegion">
             <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Region:</label>
-            <div style="font-weight: bolder !important; font-size: 18px !important;">{{selectedRegion.Name}}</div>
+            <div style="font-weight: bolder !important; font-size: 18px !important;">{{selectedRegion.name}}</div>
         </div>
 
         <br/>
         <div *ngIf="selectedStatisticGrp?.length>0">
             <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Statistic Group(s):</label>
             <div>
-                <span *ngFor="let st of selectedStatisticGrp;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{st.Name}}{{isLast ? "" : ", "}}</span>
+                <span *ngFor="let st of selectedStatisticGrp;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{st.name}}{{isLast ? "" : ", "}}</span>
             </div>
         </div>
 
@@ -24,7 +24,7 @@
         <div *ngIf="selectedRegressionRegion?.length>0">
             <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Regression Group(s):</label>
             <div>
-                <span *ngFor="let rr of selectedRegressionRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.Name}}{{isLast ? "" : ", "}}</span>
+                <span *ngFor="let rr of selectedRegressionRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.name}}{{isLast ? "" : ", "}}</span>
             </div>
         </div>
     </div>
@@ -39,10 +39,10 @@
             <div class="row">
                 <div class="col-xs-12" *ngFor="let sc of scenarios;let sInd = index">
                     <h3>{{sc.StatisticGroupName}}</h3>
-                    <div class="col-xs-12" *ngIf="sc.RegressionRegions?.length > 0">
+                    <div class="col-xs-12" *ngIf="sc.regressionRegions?.length > 0">
                         <table class="table">
-                            <tr *ngFor="let rr of sc.RegressionRegions;let rInd = index">
-                                <td style="vertical-align:middle;">{{rr.Name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_Code: {{rr.Code}})</span></td>
+                            <tr *ngFor="let rr of sc.regressionRegions;let rInd = index">
+                                <td style="vertical-align:middle;">{{rr.name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_Code: {{rr.code}})</span></td>
                                 <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
                                 <td *ngIf="showWeights" class="col-xs-2">
                                     <input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.PercentWeight">
@@ -50,10 +50,10 @@
                             </tr>
                         </table>
                     </div><!-- end length > 0-->
-                    <div *ngIf="sc.RegressionRegions.length == 0"><h3>There are no Results for your selection. Please try another .... </h3></div>
+                    <div *ngIf="sc.regressionRegions.length == 0"><h3>There are no Results for your selection. Please try another .... </h3></div>
                 </div>  <!-- end ngFor scenarios -->
             </div>
-            <table *ngIf="scenarios[0].RegressionRegions.length > 0" style="border:solid 1px gray" class="table">
+            <table *ngIf="scenarios[0].regressionRegions.length > 0" style="border:solid 1px gray" class="table">
                 <thead>
                     <tr>
                         <th class="col-xs-5">Parameter</th>
@@ -66,40 +66,40 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let p of uniqueParameters;let pInd=index ">
-                        <td>{{p.Name}} <a (click)="showDescription(p, pInd)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>
+                        <td>{{p.name}} <a (click)="showDescription(p, pInd)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>
                             <!-- description span -->
                             <br *ngIf="p.seeDescription"/>
-                            <span style="font-size:small;" *ngIf="p.seeDescription">{{p.Description}}</span>
+                            <span style="font-size:small;" *ngIf="p.seeDescription">{{p.description}}</span>
                             <!-- outOfRange span -->
-                            <br *ngIf="p.OutOfRange"/>
-                            <span *ngIf="p.OutOfRange" class="warning-text">Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors</span>
+                            <br *ngIf="p.outOfRange"/>
+                            <span *ngIf="p.outOfRange" class="warning-text">Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors</span>
                         </td>
-                        <td>{{p.Code}}</td>
+                        <td>{{p.code}}</td>
                         <td>
                             <div class="col-xs-10" style="margin-left:0;padding-left:0;">
                                 <input class="form-control" style="display:inline" [ngClass]="{'reqError':p.missingVal}" type="text"
-                                        (keypress)="_keyPress($event)" (blur)="compareValue(p)" [(ngModel)]="p.Value" name="Value-{{pInd}}" required>
-                                (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)" style="display:inline;"></span>)
+                                        (keypress)="_keyPress($event)" (blur)="compareValue(p)" [(ngModel)]="p.value" name="Value-{{pInd}}" required>
+                                (<span [innerHTML]="setSuperScript(p.unitType.abbr)" style="display:inline;"></span>)
                             </div>
                         </td>
                         <td *ngIf="multipleRegRegions">
-                            <span *ngFor="let l of p.LimitArray">
-                                <span  class="pull-right" style="white-space:nowrap;" *ngIf="l != undefined" [ngClass]="{'redFont':l.OutOfRange}">
+                            <span *ngFor="let l of p.limitArray">
+                                <span  class="pull-right" style="white-space:nowrap;" *ngIf="l != undefined" [ngClass]="{'redFont':l.outOfRange}">
                                     <span style="font-size: x-small">{{l != undefined ? l.rrID : ''}}</span><br />
                                 </span>
                             </span>
                         </td>
                         <td>
-                            <span *ngFor="let l of p.LimitArray">
-                            <span *ngIf="l!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? sigFigures(l.Min): "--"}}
-                                (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)
+                            <span *ngFor="let l of p.limitArray">
+                            <span *ngIf="l!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.outOfRange}">{{l != undefined ? sigFigures(l.min): "--"}}
+                                (<span [innerHTML]="setSuperScript(p.unitType.abbr)"></span>)
                                 <br/>
                             </span>
                         </span></td>
                         <td>
-                            <span *ngFor="let l of p.LimitArray">
-                                <span *ngIf="l!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? sigFigures(l.Max) : "--"}} (
-                                    <span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)
+                            <span *ngFor="let l of p.limitArray">
+                                <span *ngIf="l!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.outOfRange}">{{l != undefined ? sigFigures(l.max) : "--"}} (
+                                    <span [innerHTML]="setSuperScript(p.unitType.abbr)"></span>)
                                     <br/>
                                 </span>
                             </span>
@@ -110,7 +110,7 @@
 
             <h2 style="margin:0;padding:0">Citations</h2>
             <div *ngFor="let sc of scenarios">
-                <label *ngIf="sc.Citations">{{sc.StatisticGroupName}} Citations</label>
+                <label *ngIf="sc.Citations">{{sc.statisticGroupName}} Citations</label>
                 <div *ngFor="let l of sc.Citations">
                     <a [href]="l.CitationURL" [target]="_blank">
                         <div>{{l.Author}}</div>
@@ -126,16 +126,16 @@
     <div *ngIf="resultsBack">
         <button type="button" class="btn-wim-primary hidden-print" style="margin-bottom: 15px;" (click)="editScenario()">Edit Scenario Parameters</button>
         <div *ngFor="let s of scenarios">
-            <h3>{{s.StatisticGroupName}}</h3>
+            <h3>{{s.statisticGroupName}}</h3>
             <div *ngFor="let rr of s.RegressionRegions;let r = index">
                 <div><!-- *ngIf="rr.ID > 0">  -->
                     <div class="row">
                         <div class="col-xs-12">
                             <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
                             <table #inputsTable>
-                                <tr><td>{{rr.Name}} Region</td></tr>
+                                <tr><td>{{rr.name}} Region</td></tr>
                                 <tr *ngIf="rr.PercentWeight"><td>{{rr.PercentWeight}}% Weighted</td></tr>
-                                <tr *ngFor="let p of rr.Parameters"><td>{{p.Name}} = {{p.Value}} (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)</td></tr>
+                                <tr *ngFor="let p of rr.Parameters"><td>{{p.name}} = {{p.value}} (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)</td></tr>
                             </table>
                         </div>
                     </div>
@@ -147,7 +147,7 @@
                             <table #resultsTable style="border:solid 1px gray" class="table">
                                 <thead>
                                     <tr style="border-bottom: white solid;">
-                                        <th class="col-xs-6">{{rr.Name}} Region</th>
+                                        <th class="col-xs-6">{{rr.name}} Region</th>
                                         <th>Value</th>
                                         <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Prediction Interval</th>
                                         <th *ngIf="rr.Results[0].Errors && rr.Results[0].Errors.length > 0" [attr.colspan]="rr.Results[0].Errors.length">Errors (%)</th>
@@ -158,17 +158,17 @@
                                         <th>(<span [innerHTML]="setSuperScript(rr.Results[0].Unit.Abbr)"></span>)</th>
                                         <th *ngIf="rr.Results[0].IntervalBounds">Low</th>
                                         <th *ngIf="rr.Results[0].IntervalBounds">High</th>
-                                        <th *ngFor="let e of rr.Results[0]?.Errors">{{e.Code}}</th>
+                                        <th *ngFor="let e of rr.Results[0]?.Errors">{{e.code}}</th>
                                         <th *ngIf="rr.Results[0].EquivalentYears>0"></th><!--space for if Equivalent Yrs-->
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let result of rr.Results">
-                                        <td>{{result.Description}} ({{result.code}})</td>
-                                        <td>{{sigFigures(result.Value)}}</td>
+                                        <td>{{result.description}} ({{result.code}})</td>
+                                        <td>{{sigFigures(result.value)}}</td>
                                         <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Lower != "NaN" ? sigFigures(result.IntervalBounds.Lower) : '---'}}</td>
                                         <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Upper != "NaN" ? sigFigures(result.IntervalBounds.Upper) : '---'}}</td>
-                                        <td *ngFor="let e of result?.Errors">{{e.Value}}</td>
+                                        <td *ngFor="let e of result?.Errors">{{e.value}}</td>
                                         <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears > 0 && result.EquivalentYears !== 999 ? result.EquivalentYears : 'N/A'}}</td>
                                     </tr>
                                 </tbody>
@@ -583,8 +583,8 @@
             <table style="border:solid 1px gray" class="table">
                     <tr><td colspan="2">{{e.Name}}</td><tr>
                     <tr *ngFor="let c of e.Formulas">
-                        <td>{{c.Code}} = </td>
-                        <td><span [MathJax]="c.Equation">{{c.Equation}}</span></td>
+                        <td>{{c.code}} = </td>
+                        <td><span [MathJax]="c.Equation">{{c.equation}}</span></td>
                     </tr>
             </table>
             </div><!--End equations-->
@@ -604,9 +604,9 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let p of uniqueParameters">
-                            <td>{{p.Name}}</td>
-                            <td>{{p.Code}}</td>
-                            <td>{{p.Description}}</td>
+                            <td>{{p.name}}</td>
+                            <td>{{p.code}}</td>
+                            <td>{{p.description}}</td>
                         </tr>
                     </tbody>
             </table>
@@ -624,8 +624,8 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let u of uniqueUnitTypes">
-                            <td>(<span [innerHTML]="setSuperScript(u.Abbr)"></span>)</td>
-                            <td>{{u.Unit}}</td>
+                            <td>(<span [innerHTML]="setSuperScript(u.abbr)"></span>)</td>
+                            <td>{{u.unit}}</td>
                         </tr>
                     </tbody>
                 </table>

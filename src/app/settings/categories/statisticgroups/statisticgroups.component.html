@@ -1,6 +1,7 @@
-<div class="regSelect">Choose Region:
+<div class="regSelect">
+    Choose Region:
     <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
-        <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
+        <option [ngValue]="i" *ngFor="let i of regions">{{ i.name }}</option>
     </select>
 </div>
 <div>
@@ -21,23 +22,48 @@
                 <tr *ngFor="let r of statisticGroups; let i = index">
                     <td>
                         <div class="data-controls">
-                            <i *ngIf="!r.isEditing" title="Edit Statistic Group" (click)="EditRowClicked(i)" class="fa fa-pencil"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                            <i *ngIf="!r.isEditing" title="Delete Statistic Group" (click)="deleteStatGroup(r.id)"
-                                class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="r.isEditing" title="Save Statistic Group" (click)="saveStatGroup(r,i)" class="fa fa-floppy-o"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i
+                                *ngIf="!r.isEditing"
+                                title="Edit Statistic Group"
+                                (click)="EditRowClicked(i)"
+                                class="fa fa-pencil"
+                                aria-hidden="true"
+                                style="cursor:pointer;padding:5px;"
+                            ></i
+                            >&nbsp;
+                            <i
+                                *ngIf="!r.isEditing"
+                                title="Delete Statistic Group"
+                                (click)="deleteStatGroup(r.id)"
+                                class="fa fa-times"
+                                aria-hidden="true"
+                                style="cursor:pointer;padding:5px;"
+                            ></i>
+                            <i
+                                *ngIf="r.isEditing"
+                                title="Save Statistic Group"
+                                (click)="saveStatGroup(r, i)"
+                                class="fa fa-floppy-o"
+                                aria-hidden="true"
+                                style="cursor:pointer;padding:5px;"
+                            ></i>
+                            <i
+                                *ngIf="r.isEditing"
+                                title="Cancel Edit"
+                                (click)="CancelEditRowClicked(i)"
+                                class="fa fa-history"
+                                aria-hidden="true"
+                                style="cursor:pointer;padding:5px;"
+                            ></i>
                         </div>
                     </td>
                     <td>
                         <span *ngIf="!r.isEditing">{{ r.name }}</span>
-                        <span *ngIf="r.isEditing"><input type="text" name="name" [(ngModel)]="r.name" required></span>
+                        <span *ngIf="r.isEditing"><input type="text" name="name" [(ngModel)]="r.name" required/></span>
                     </td>
                     <td>
                         <span *ngIf="!r.isEditing">{{ r.code }}</span>
-                        <span *ngIf="r.isEditing"><input type="text" name="code" [(ngModel)]="r.code" required></span>
+                        <span *ngIf="r.isEditing"><input type="text" name="code" [(ngModel)]="r.code" required/></span>
                     </td>
                 </tr>
             </tbody>
@@ -45,14 +71,18 @@
     </div>
 </form>
 <br />
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewStatGroupForm()"><i class="fa fa-plus"
-        aria-hidden="tru"></i> Add New Statistic Group</button>
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewStatGroupForm()">
+    <i class="fa fa-plus" aria-hidden="tru"></i> Add New Statistic Group
+</button>
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showStateStatGroupForm()">
+    <i class="fa fa-plus" aria-hidden="tru"></i> Add Statistic Group to Region
+</button>
 
 <!-- new statistic group form -->
 <ng-template #add let-c="close" let-d="dismiss">
     <div class="modal-header">
         <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Statistic Group </h4>
+            <h4 class="modal-title pull-left">New Statistic Group</h4>
             <button class="close pull-right" (click)="d('closed')">x</button>
         </div>
     </div>
@@ -60,26 +90,74 @@
         <h3 class="modal-title">New Statistic Group</h3>
         <form [formGroup]="newStatGroupForm">
             <!-- Statistic Group Name* -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newStatGroupForm.get('name').valid && newStatGroupForm.get('name').dirty}">
+            <div
+                class="form-group required"
+                [ngClass]="{ 'form-invalid': !newStatGroupForm.get('name').valid && newStatGroupForm.get('name').dirty }"
+            >
                 <label class="req" for="name">Name:</label>
-                <input class="form-control" type="text" formControlName="name" required>
-                <div class="input-invalid-warning" *ngIf="!newStatGroupForm.get('name').valid && newStatGroupForm.get('name').dirty">Statistic
-                    Group Name is required</div>
+                <input class="form-control" type="text" formControlName="name" required />
+                <div class="input-invalid-warning" *ngIf="!newStatGroupForm.get('name').valid && newStatGroupForm.get('name').dirty">
+                    Statistic Group Name is required
+                </div>
             </div>
 
             <!-- Short Name -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newStatGroupForm.get('code').valid && newStatGroupForm.get('code').dirty}">
+            <div
+                class="form-group required"
+                [ngClass]="{ 'form-invalid': !newStatGroupForm.get('code').valid && newStatGroupForm.get('code').dirty }"
+            >
                 <label class="req" for="code">Code:</label>
-                <input class="form-control" type="text" formControlName="code">
-                <div class="input-invalid-warning" *ngIf="!newStatGroupForm.get('code').valid && newStatGroupForm.get('code').dirty">Code
-                    is required</div>
+                <input class="form-control" type="text" formControlName="code" />
+                <div class="input-invalid-warning" *ngIf="!newStatGroupForm.get('code').valid && newStatGroupForm.get('code').dirty">
+                    Code is required
+                </div>
             </div>
-
         </form>
 
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
             <button type="button" (click)="createNewStatGroup()" [disabled]="!newStatGroupForm.valid" class="btn-blue">Create</button>
+        </div>
+    </div>
+</ng-template>
+
+<!-- add stat group to region form -->
+<ng-template #toRegion let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="col-xs-12">
+            <h4 class="modal-title pull-left">Add Statistic Group to Region</h4>
+            <button class="close pull-right" (click)="d('closed')">x</button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <h3 class="modal-title">Add Statistic Group to Region</h3>
+        <form [formGroup]="stateStatGroupForm">
+            <!-- Statistic Group* -->
+            <div class="form-group required" [ngClass]="{ 'form-invalid': !stateStatGroupForm.get('statGroup').valid && stateStatGroupForm.get('statGroup').dirty }">
+                <label class="req" for="statGroup">Statistic Group:</label>
+                <select class="form-control" formControlName="statGroup">
+                    <option *ngFor="let sg of allStatGroups" [value]="sg.id">{{ sg.name }}</option>
+                </select>
+                <div class="input-invalid-warning" *ngIf="!stateStatGroupForm.get('statGroup').valid && stateStatGroupForm.get('statGroup').dirty">
+                    Statistic Group is required
+                </div>
+            </div>
+
+            <!-- State* -->
+            <div class="form-group required" [ngClass]="{ 'form-invalid': !stateStatGroupForm.get('state').valid && stateStatGroupForm.get('state').dirty }">
+                <label class="req" for="state">Region:</label>
+                <select class="form-control" formControlName="state">
+                    <option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</option>
+                </select>
+                <div class="input-invalid-warning" *ngIf="!stateStatGroupForm.get('state').valid && stateStatGroupForm.get('state').dirty">
+                    Region is required
+                </div>
+            </div>
+        </form>
+
+        <div class="modal-footer">
+            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+            <button type="button" (click)="addStatGrouptoState()" [disabled]="!stateStatGroupForm.valid" class="btn-blue">Create</button>
         </div>
     </div>
 </ng-template>

@@ -9,4 +9,5 @@ export interface Manager{
     secondaryPhone?: string;
     username: string;
     password?: string;
+    isEditing?: boolean;
 }

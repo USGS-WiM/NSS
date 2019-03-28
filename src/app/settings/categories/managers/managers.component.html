@@ -8,10 +8,10 @@
             <thead>
                 <tr>
                     <th class="col-xs-1"></th>
-                    <th class="col-xs-4">Username</th>
-                    <th class="col-xs-4">Email</th>
-                    <th class="col-xs-4">First name</th>
-                    <th class="col-xs-4">Last Name</th>
+                    <th class="col-xs-2">Username</th>
+                    <th class="col-xs-2">Email</th>
+                    <th class="col-xs-2">First name</th>
+                    <th class="col-xs-2">Last Name</th>
                     <th class="col-xs-1">Role ID</th>
                 </tr>
             </thead>
@@ -31,23 +31,26 @@
                     </td>
                     <td>
                         <span *ngIf="!m.isEditing">{{ m.username }}</span>
-                        <span *ngIf="m.isEditing"><input type="text" name="name" [(ngModel)]="m.username" required></span>
+                        <span *ngIf="m.isEditing"><input type="text" name="username" [(ngModel)]="m.username" required></span>
                     </td>
                     <td>
                         <span *ngIf="!m.isEditing">{{ m.email }}</span>
-                        <span *ngIf="m.isEditing"><input type="text" name="name" [(ngModel)]="m.email" required></span>
+                        <span *ngIf="m.isEditing"><input type="text" name="email" [(ngModel)]="m.email" required></span>
                     </td>
                     <td>
                         <span *ngIf="!m.isEditing">{{ m.firstName }}</span>
-                        <span *ngIf="m.isEditing"><input type="text" name="code" [(ngModel)]="m.firstName" required></span>
+                        <span *ngIf="m.isEditing"><input type="text" name="firstName" [(ngModel)]="m.firstName" required></span>
                     </td>
                     <td>
                         <span *ngIf="!m.isEditing">{{ m.lastName }}</span>
-                        <span *ngIf="m.isEditing"><input type="text" name="name" [(ngModel)]="m.lastName" required></span>
+                        <span *ngIf="m.isEditing"><input type="text" name="lastName" [(ngModel)]="m.lastName" required></span>
                     </td>
                     <td>
                         <span *ngIf="!m.isEditing">{{ m.roleID }}</span>
-                        <span *ngIf="m.isEditing"><input type="text" name="code" [(ngModel)]="m.roleID" required></span>
+                        <span *ngIf="m.isEditing">
+                            <select [(ngModel)]="m.roleID" name="roleID">
+                                <option *ngFor="let role of roles" [value]="role.id">{{role.name}}</option>
+                            </select></span>
                     </td>
                 </tr>
             </tbody>
@@ -78,12 +81,18 @@
                     is required</div>
             </div>
 
-            <!-- Password* -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('password').valid && newUserForm.get('password').dirty}">
+            <!-- Email* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('email').valid && newUserForm.get('email').dirty}">
+                    <label class="req" for="email">Email:</label>
+                    <input class="form-control" type="text" formControlName="email">
+                    <div class="input-invalid-warning" *ngIf="!newUserForm.get('email').valid && newUserForm.get('email').dirty">Email
+                        is required</div>
+                </div>
+
+            <!-- Password -->
+            <div class="form-group" [ngClass]="{'form-invalid': !newUserForm.get('password').valid && newUserForm.get('password').dirty}">
                 <label class="req" for="password">Password:</label>
                 <input class="form-control" type="password" formControlName="password">
-                <div class="input-invalid-warning" *ngIf="!newUserForm.get('password').valid && newUserForm.get('password').dirty">Password
-                    is required</div>
             </div>
 
             <!-- First Name* -->
@@ -105,9 +114,8 @@
             <!-- Role ID* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('roleID').valid && newUserForm.get('roleID').dirty}">
                 <label class="req" for="roleID">Role:</label>
-                <select class="form-control" formControlName="code">
-                    <option value="0">Admin (check ID)</option>
-                    <option value="1">Manager (check ID)</option>
+                <select class="form-control" formControlName="roleID">
+                    <option *ngFor="let role of roles" [value]="role.id">{{role.name}}</option>
                 </select>
                 <div class="input-invalid-warning" *ngIf="!newUserForm.get('roleID').valid && newUserForm.get('roleID').dirty">Role ID
                     is required</div>

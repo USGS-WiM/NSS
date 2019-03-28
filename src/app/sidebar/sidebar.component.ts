@@ -192,7 +192,7 @@ export class SidebarComponent implements OnInit {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedRegRegions.push(
                 this.regressionRegions.filter(function(rr) {
-                    return rr.ID === srr;
+                    return rr.id === srr;
                 })[0]
             );
         });
@@ -206,7 +206,7 @@ export class SidebarComponent implements OnInit {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedStatGroups.push(
                 this.statisticGroups.filter(function(rr) {
-                    return rr.ID === ssg;
+                    return rr.id === ssg;
                 })[0]
             );
         });
@@ -220,7 +220,7 @@ export class SidebarComponent implements OnInit {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedRegTypes.push(
                 this.regressionTypes.filter(function(rr) {
-                    return rr.ID == srt;
+                    return rr.id == srt;
                 })[0]
             );
         });

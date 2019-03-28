@@ -1,29 +1,28 @@
 <div>
-    <legend style="margin-bottom:25px;margin-top:0;">Variable Types</legend>
+    <legend style="margin-bottom:25px;margin-top:0;">Regions</legend>
 </div>
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewVariableForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New Variable Type</button>
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewRegionForm()"><i class="fa fa-plus"
+    aria-hidden="tru"></i> Add New Region</button>
 
-<form #VariableTypeForm="ngForm">
-    <div class="form-group" *ngIf="variableTypes">
+<form #RegionForm="ngForm">
+    <div class="form-group" *ngIf="regions">
         <table class="table">
             <thead>
                 <tr>
                     <th class="col-xs-1"></th>
                     <th class="col-xs-4">Name</th>
-                    <th>Description</th>
                     <th class="col-xs-1">Code</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let v of variableTypes; let i = index">
+                <tr *ngFor="let v of regions; let i = index">
                     <td>
                         <div class="data-controls">
-                            <i *ngIf="!v.isEditing" title="Edit Variable Type" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                            <i *ngIf="!v.isEditing" title="Edit Region" (click)="EditRowClicked(i)" class="fa fa-pencil"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                            <i *ngIf="!v.isEditing" title="Delete Variable Type" (click)="deleteVariable(v.id)" class="fa fa-times"
+                            <i *ngIf="!v.isEditing" title="Delete Region" (click)="deleteRegion(v.id)" class="fa fa-times"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="v.isEditing" title="Save Variable Type" (click)="saveVariable(v,i)" class="fa fa-floppy-o"
+                            <i *ngIf="v.isEditing" title="Save Region" (click)="saveRegion(v,i)" class="fa fa-floppy-o"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                             <i *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
@@ -32,10 +31,6 @@
                     <td>
                         <span *ngIf="!v.isEditing">{{ v.name }}</span>
                         <span *ngIf="v.isEditing"><input type="text" name="name" [(ngModel)]="v.name" required></span>
-                    </td>
-                    <td>
-                        <span *ngIf="!v.isEditing">{{ v.description }}</span>
-                        <span *ngIf="v.isEditing"><textarea rows="3" [(ngModel)]="v.description" name="description"></textarea></span>
                     </td>
                     <td>
                         <span *ngIf="!v.isEditing">{{ v.code }}</span>
@@ -48,36 +43,30 @@
 </form>
 <br />
 
-<!-- new variable type form -->
+<!-- new region form -->
 <ng-template #add let-c="close" let-d="dismiss">
     <div class="modal-header">
         <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Variable Type </h4>
+            <h4 class="modal-title pull-left">New Region </h4>
             <button class="close pull-right" (click)="d('closed')">x</button>
         </div>
     </div>
     <div class="modal-body">
-        <h3 class="modal-title">New Variable Type</h3>
-        <form [formGroup]="newVarForm">
-            <!-- Variable Type Name* -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('name').valid && newVarForm.get('name').dirty}">
+        <h3 class="modal-title">New Region</h3>
+        <form [formGroup]="newRegForm">
+            <!-- Region Name* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newRegForm.get('name').valid && newRegForm.get('name').dirty}">
                 <label class="req" for="name">Name:</label>
                 <input class="form-control" type="text" formControlName="name" required>
-                <div class="input-invalid-warning" *ngIf="!newVarForm.get('name').valid && newVarForm.get('name').dirty">Variable
+                <div class="input-invalid-warning" *ngIf="!newRegForm.get('name').valid && newRegForm.get('name').dirty">Region
                     Name is required</div>
             </div>
 
-            <!-- Description -->
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
-            </div>
-
             <!-- Short Name -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('code').valid && newVarForm.get('code').dirty}">
+            <div class="form-group required" [ngClass]="{'form-invalid': !newRegForm.get('code').valid && newRegForm.get('code').dirty}">
                 <label class="req" for="code">Code:</label>
                 <input class="form-control" type="text" formControlName="code">
-                <div class="input-invalid-warning" *ngIf="!newVarForm.get('code').valid && newVarForm.get('code').dirty">Code
+                <div class="input-invalid-warning" *ngIf="!newRegForm.get('code').valid && newRegForm.get('code').dirty">Code
                     is required</div>
             </div>
 
@@ -85,7 +74,7 @@
 
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewVariableType()" [disabled]="!newVarForm.valid" class="btn-blue">Create</button>
+            <button type="button" (click)="createNewRegion()" [disabled]="!newRegForm.valid" class="btn-blue">Create</button>
         </div>
     </div>
 </ng-template>

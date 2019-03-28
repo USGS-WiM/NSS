@@ -35,12 +35,13 @@
                     </td>
                     <td>
                         <span *ngIf="!u.isEditing">{{ u.abbreviation }}</span>
-                        <span *ngIf="u.isEditing"><textarea rows="3" [(ngModel)]="u.abbr" name="abbr"></textarea></span>
+                        <span *ngIf="u.isEditing"><input type="text" rows="3" [(ngModel)]="u.abbreviation" name="abbreviation"></span>
                     </td>
                     <td>
                         <span *ngIf="!u.isEditing">{{ u.unitSystemTypeID }}</span>
-                        <span *ngIf="u.isEditing"><input type="text" name="id" [(ngModel)]="u.unitSystemTypeID"
-                                required></span>
+                        <span *ngIf="u.isEditing"><select class="form-control" name="unitSystemTypeID" [(ngModel)]="u.unitSystemTypeID">
+                                <option *ngFor="let usys of unitSystems" [value]="usys.id">{{usys.unitSystem}}</option>
+                            </select></span>
                     </td>
                 </tr>
             </tbody>

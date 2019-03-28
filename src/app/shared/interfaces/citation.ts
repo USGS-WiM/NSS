@@ -1,6 +1,7 @@
 export interface Citation {
-    ID: number;
-    Title: string;
-    Author: string;
-    CitationURL: string;
+    id: number;
+    title: string;
+    author: string;
+    citationURL: string;
+    isEditing?: boolean;
 }

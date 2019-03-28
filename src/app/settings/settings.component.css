@@ -35,3 +35,7 @@ h1 {
 .hidden {
     display: none;
 }
+
+.btn-blue {
+    margin-right: 5px;
+}

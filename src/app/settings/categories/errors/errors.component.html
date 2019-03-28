@@ -1,0 +1,79 @@
+<div>
+    <legend style="margin-bottom:25px;margin-top:0;">Errors</legend>
+</div>
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewErrorForm()"><i class="fa fa-plus"
+    aria-hidden="tru"></i> Add New Error</button>
+
+<form #ErrorForm="ngForm">
+    <div class="form-group" *ngIf="errors">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-xs-1"></th>
+                    <th class="col-xs-4">Name</th>
+                    <th>Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let v of errors; let i = index">
+                    <td>
+                        <div class="data-controls">
+                            <i *ngIf="!v.isEditing" title="Edit Error" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                            <i *ngIf="!v.isEditing" title="Delete Error" (click)="deleteError(v.id)" class="fa fa-times"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="v.isEditing" title="Save Error" (click)="saveError(v,i)" class="fa fa-floppy-o"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                            <i *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.name }}</span>
+                        <span *ngIf="v.isEditing"><textarea rows="3" [(ngModel)]="v.name" name="name"></textarea></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.code }}</span>
+                        <span *ngIf="v.isEditing"><input type="text" name="code" [(ngModel)]="v.code" required></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<br />
+
+<!-- new error form -->
+<ng-template #add let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="col-xs-12">
+            <h4 class="modal-title pull-left">New Error </h4>
+            <button class="close pull-right" (click)="d('closed')">x</button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <h3 class="modal-title">New Error</h3>
+        <form [formGroup]="newErrForm">
+            <!-- Name -->
+            <div class="form-group required">
+                <label for="name">Name:</label>
+                <textarea class="form-control" rows="3" placeholder="" formControlName="name"></textarea>
+                <div class="input-invalid-warning" *ngIf="!newErrForm.get('name').valid && newErrForm.get('name').dirty">Author
+                        is required</div>
+            </div>
+            <!-- Code* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newErrForm.get('code').valid && newErrForm.get('code').dirty}">
+                <label class="req" for="name">Code:</label>
+                <input class="form-control" type="text" formControlName="code" required>
+                <div class="input-invalid-warning" *ngIf="!newErrForm.get('code').valid && newErrForm.get('code').dirty">Author
+                    is required</div>
+            </div>
+
+        </form>
+
+        <div class="modal-footer">
+            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+            <button type="button" (click)="createNewError()" [disabled]="!newErrForm.valid" class="btn-blue">Create</button>
+        </div>
+    </div>
+</ng-template>

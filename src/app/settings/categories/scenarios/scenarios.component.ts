@@ -37,8 +37,14 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
     public regions;
     public selectedStatGroupIDs;
     public selectedRegTypeIDs;
+
     public regressionRegions: Array<Regressionregion>;
-    public statisticGroups;
+    public statisticGroups: Array<Statisticgroup>;
+    public regressionTypes: Array<Regressiontype>;
+
+    public allRegRegions: Array<Regressionregion>;
+    public allStatGroups: Array<Statisticgroup>;
+
     public newScenarioForm: FormGroup;
     public showNewScenForm: boolean;
     public CloseResult: any;
@@ -62,10 +68,10 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
         private _configService: ConfigService
     ) {
         this.newScenarioForm = _fb.group({
-            id: new FormControl(null),
-            StatisticGroupName: new FormControl(null, Validators.required),
-            RegressionRegions: new FormControl(null),
-            Code: new FormControl(null, Validators.required)
+            statisticGroupId: new FormControl(null, Validators.required),
+            statisticGroupName: new FormControl(null, Validators.required),
+            regressionRegions: new FormControl(null),
+            state: new FormControl(null, Validators.required)
         });
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
             if (e instanceof NavigationEnd) {
@@ -98,41 +104,75 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
             checkedPlural: 'checked',
             defaultTitle: 'Select'
         };
-    }
-
-    public onRegSelect(r: Region) {
-        this.regressionRegions = []; this.selectedRegRegionIDs = [];
-        this.selectedStatGroupIDs = []; this.selectedRegTypeIDs = [];
-        this._settingsservice.getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.scenariosURL).subscribe(scen => {
+        this._nssService.regressionRegions.subscribe(res => {
+            this.regressionRegions = res;
+        });
+        this._nssService.statisticGroups.subscribe(res => {
+            this.statisticGroups = res;
+        });
+        this._nssService.regressionTypes.subscribe(res => {
+            this.regressionTypes = res;
+        });
+        this._nssService.scenarios.subscribe(scen => {
             this.scenarios = scen;
             for (const scenario of scen) {
                 const regNames = [];
                 for (const regReg of scenario.regressionRegions) {
                     regReg.Name = regReg.name; regReg.ID = regReg.id;
                     regNames.push(regReg.name);
-                    if (this.regressionRegions.indexOf(regReg) === -1) {
-                        this.regressionRegions.push(regReg);
-                    }
                 }
                 scenario.regNames = regNames.join(',\n');
             }
         });
+        // get all stat groups/regression regions when we add new scenarios
     }
 
+    public onRegSelect(r: Region) {
+        this.regressionRegions = []; this.selectedRegRegionIDs = [];
+        this.selectedStatGroupIDs = []; this.selectedRegTypeIDs = [];
+        this._nssService.setSelectedRegion(r);
+    }
+
+
     public onRegRegSelect(reg) {
-        this.selectedRegRegionIDs = [];
-        this.selectedStatGroupIDs = [];
-        this.selectedRegTypeIDs = [];
         const selectedRegRegions: Array<Regressionregion> = new Array<Regressionregion>();
         this.selectedRegRegionIDs = reg;
         this.selectedRegRegionIDs.forEach(srr => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedRegRegions.push(
                 this.regressionRegions.filter(function(rr) {
-                    return rr.ID === srr;
+                    return rr.id === srr;
                 })[0]
             );
         });
+        this._nssService.setSelectedRegRegions(selectedRegRegions);
+    }
+
+    public onStatGroupSelect() {
+        const selectedStatGroups: Array<Statisticgroup> = new Array<Statisticgroup>();
+        this.selectedStatGroupIDs.forEach(rsg => {
+            // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
+            selectedStatGroups.push(
+                this.statisticGroups.filter(function(sg) {
+                    return sg.id === rsg;
+                })[0]
+            );
+        });
+        this._nssService.selectedStatGroups = selectedStatGroups;
+    }
+
+    public onRegTypeSelect(): void {
+        // do we need this? may need to have reg types shown too???
+        const selectedRegTypes: Array<Regressiontype> = new Array<Regressiontype>();
+        this.selectedRegTypeIDs.forEach(srt => {
+            // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
+            selectedRegTypes.push(
+                this.regressionTypes.filter(function(rr) {
+                    return rr.id == srt;
+                })[0]
+            );
+        });
+        this._nssService.selectedRegressionTypes = selectedRegTypes;
     }
 
     public showNewScenarioForm() {

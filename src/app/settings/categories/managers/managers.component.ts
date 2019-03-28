@@ -26,6 +26,7 @@ import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@ang
 import { Manager } from 'app/shared/interfaces/manager';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+import { Role } from 'app/shared/interfaces/role';
 
 @Component({
     moduleId: module.id,
@@ -34,6 +35,7 @@ import { ConfigService } from 'app/config.service';
 export class ManagersComponent implements OnInit, AfterViewChecked {
     @ViewChild('add')
     public addRef: TemplateRef<any>;
+    @ViewChild('User') userForm;
     public selectedRegion;
     public regions;
     public selectedRegRegionIDs;
@@ -45,6 +47,11 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
     private loggedInRole;
     private CloseResult;
     private configSettings: Config;
+    private roles: Array<Role>;
+    public isEditing: boolean;
+    public maxID: number;
+    public rowBeingEdited: number;
+    public tempData;
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -55,9 +62,9 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
         private _configService: ConfigService
     ) {
         this.newUserForm = _fb.group({
-            id: new FormControl(null),
             username: new FormControl(null, Validators.required),
-            password: new FormControl(null, Validators.required),
+            password: new FormControl(null),
+            email: new FormControl(null, Validators.required),
             firstName: new FormControl(null, Validators.required),
             lastName: new FormControl(null, Validators.required),
             roleID: new FormControl(null, Validators.required)
@@ -69,6 +76,9 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
         this._settingsservice.getEntities(this.configSettings.managersURL).subscribe(managers => {
             this.managers = managers;
         });
+        this._settingsservice.getEntities(this.configSettings.rolesURL).subscribe(roles => {
+            this.roles = roles;
+        });
     }
 
     showNewUserForm() {
@@ -77,6 +87,7 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
         this.newUserForm.controls['firstName'].setValue(null);
         this.newUserForm.controls['lastName'].setValue(null);
         this.newUserForm.controls['roleID'].setValue(null);
+        this.newUserForm.controls['email'].setValue(null);
         this.showUserForm = true;
         this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
             result => {
@@ -114,89 +125,71 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
     }
 
     private createNewUser() {
-        alert('this will push to nssdb eventually');
-        // from wateruse
-        /*let category = this.newCatForm.value;
-        this._settingsService.postEntity(category, 'categoryTypeURL')
-            .subscribe((response: ICategoryType) => {
+        const newUser = this.newUserForm.value;
+        this._settingsservice.postEntity(newUser, this.configSettings.managersURL).subscribe(
+            (response: Manager) => {
                 response.isEditing = false;
-                this.categoryTypes.push(response);
-                this._settingsService.setCategories(this.categoryTypes);
-                this._toastService.pop('success', 'Success', 'Category Type was created.'); 
-                this.cancelCreateCategory();
-            }, error => this._toastService.pop('error', 'Error creating Category Type', error._body.message || error.statusText)); */
+                this.managers.push(response);
+                this._settingsservice.setManagers(this.managers);
+                alert('Sucess! \nManager was created.');
+                this.cancelCreateUser();
+                // }, error => this._toastService.pop('error', 'Error creating Category Type', error._body.message || error.statusText));
+            },
+            error => alert('Error creating Manager \n' + error._body.message)
+        );
     }
 
     private EditRowClicked(i: number) {
-        // from wateruse
-        /*this.rowBeingEdited = i;
-		this.tempData = Object.assign({}, this.categoryTypes[i]); // make a copy in case they cancel
-		this.categoryTypes[i].isEditing = true;
-		this.isEditing = true; // set to true so create new is disabled*/
+        this.rowBeingEdited = i;
+        this.tempData = Object.assign({}, this.managers[i]); // make a copy in case they cancel
+        this.managers[i].isEditing = true;
+        this.isEditing = true; // set to true so create new is disabled
     }
 
     public CancelEditRowClicked(i: number) {
-        /*this.categoryTypes[i] = Object.assign({}, this.tempData);
-		this.categoryTypes[i].isEditing = false;
-		this.rowBeingEdited = -1;
-		this.isEditing = false; // set to true so create new is disabled
-		if (this.categoryForm.form.dirty) this.categoryForm.reset();*/
+        this.managers[i] = Object.assign({}, this.tempData);
+        this.managers[i].isEditing = false;
+        this.rowBeingEdited = -1;
+        this.isEditing = false; // set to true so create new is disabled
+        if (this.userForm.form.dirty) {
+            this.userForm.reset();
+        }
     }
 
     // edits made, save clicked
-    public saveUser(c: Manager, i: number) {
-        /*if (c.name == undefined || c.name == "" || c.code == undefined || c.code == "") {
-            //don't save it 
-            let infoMessage = "Category Type Name and Code are both required."
-            this.infomodal.showInfoModal(infoMessage);
-		} else {
-            delete c.isEditing;
-            this._settingsService.putEntity(c.id, c, 'categoryTypeURL')
-                .subscribe((resp: ICategoryType) => {
-                    this._toastService.pop('success', 'Success', 'Category Type was updated')
-                    c.isEditing = false;
-                    this.categoryTypes[i] = c;
-                    this._settingsService.setCategories(this.categoryTypes);
+    public saveManager(u: Manager, i: number) {
+        if (u.username === undefined || u.email === undefined || u.firstName === undefined || u.lastName === undefined || u.roleID === undefined) {
+            // don't save it
+            alert('First name, last name, username, email and role ID are required.');
+        } else {
+            delete u.isEditing;
+            this._settingsservice.putEntity(u.id, u, this.configSettings.managersURL).subscribe(
+                (resp: Manager) => {
+                    alert('Success! \n Manager was updated');
+                    u.isEditing = false;
+                    this.managers[i] = u;
+                    this._settingsservice.setManagers(this.managers);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
-                    if (this.categoryForm.form.dirty) this.categoryForm.reset();
-                }, error => this._toastService.pop("error", "Error updating Category Type", error._body.message || error.statusText));
-		}*/
+                    if (this.userForm.form.dirty) { this.userForm.reset(); }
+                }, error => alert('Error updating Manager: \n' + error._body.message)
+            );
+        }
     }
 
     // delete category type
-    public deleteUser(catID: number) {
-        // show are you sure modal
-        /*
-        this.areYouSure.showSureModal('Are you sure you want to delete this Category Type?'); // listener is AreYouSureDialogResponse()
-        this.deleteID = catID;*/
-    }
-    // output emitter function when areYouSure is closed
-    public AreYouSureDialogResponse(val: boolean) {
-        // if they clicked Yes
-        /*if (val) {
-            //delete the category type
-            // get the index to be deleted by the id
-            let ind: number = this.getCategoryIndex(this.deleteID);
-            //delete it
-            this._settingsService.deleteEntity(this.deleteID, 'categoryTypeURL')
-                .subscribe(result => {         
-                    this._toastService.pop('success', 'Success', 'Category Type deleted.');           
-                    this.categoryTypes.splice(ind, 1); //delete from array
-                    this._settingsService.setCategories(this.categoryTypes); // update service
-                }, error => this._toastService.pop('error', 'Error Deleting Category Type', error._body.message || error.statusText));
-        }*/
-    }
-
-    // get index in regionList based on region.id value
-    private getUserIndex(cID: number): number {
-        return 0;
-        /*let ind: number = -1
-        this.categoryTypes.some((ct, index, _ary) => {
-            if (ct.id === cID) ind = index;
-            return ct.id === cID;
-        });
-        return ind;*/
+    public deleteManager(deleteID: number) {
+        const check = confirm('Are you sure you want to delete this Manager?');
+        if (confirm) {
+            // delete it
+            const index = this.managers.findIndex(item => item.id === deleteID);
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.managersURL)
+                .subscribe(result => {
+                    alert('Success~\n Manager deleted.');
+                    this.managers.splice(index, 1);
+                    this._settingsservice.setManagers(this.managers); // update service
+                }, error => alert('Error Deleting Manager: \n' + error._body.message));
+        }
     }
 
     ngAfterViewChecked() {

@@ -5,4 +5,5 @@ export interface Regressiontype {
     name: string; //for multiselect
     code: string;
     description: string;
+    isEditing?: boolean;
 }

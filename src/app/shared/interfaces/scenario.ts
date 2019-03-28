@@ -1,11 +1,11 @@
 import {Link} from './link';
 import {Citation} from './citation';
-import { Scenarioregressionregion} from './scenarioRegressionRegion';
+import { Regressionregion } from './regressionregion';
 
 export interface Scenario {
     statisticGroupID: number;
     statisticGroupName: string;
-    regressionRegions: Scenarioregressionregion[];
+    regressionRegions: Regressionregion[];
     links: Link[];
     citations?: Citation[];
     regNames: string;

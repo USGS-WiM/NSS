@@ -1,4 +1,6 @@
 export interface Error {
-    Name: string;
-    Value: number;
+    id: number;
+    name: string;
+    code: string;
+    isEditing?: boolean;
 }

@@ -29,21 +29,20 @@ import { UnitSystem } from 'app/shared/interfaces/unitsystems';
 
 @Component({
     moduleId: module.id,
-    templateUrl: 'unittypes.component.html'
+    templateUrl: 'unitsystems.component.html'
 })
-export class UnitTypesComponent implements OnInit, OnDestroy {
+export class UnitSystemsComponent implements OnInit, OnDestroy {
     @ViewChild('add')
     public addRef: TemplateRef<any>;
-    @ViewChild('UnitTypeForm') unitForm;
+    @ViewChild('UnitSystemForm') usForm;
     public selectedRegion;
     public regions;
     public selectedRegRegionIDs;
     public selectedStatGroupIDs;
     public selectedRegTypeIDs;
     public regressionTypes: Array<Regressiontype>;
-    public newUnitForm: FormGroup;
-    public showNewUnitForm: boolean;
-    public unitTypes: Array<Unittype>;
+    public newUnitSystemForm: FormGroup;
+    public showNewUnitSystemForm: boolean;
     public CloseResult;
     private navigationSubscription;
     private loggedInRole;
@@ -62,11 +61,9 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         private router: Router,
         private _configService: ConfigService
     ) {
-        this.newUnitForm = _fb.group({
+        this.newUnitSystemForm = _fb.group({
             id: new FormControl(null),
-            name: new FormControl(null, Validators.required),
-            abbreviation: new FormControl(null),
-            unitSystemTypeID: new FormControl(null, Validators.required)
+            unitSystem: new FormControl(null, Validators.required)
         });
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
             if (e instanceof NavigationEnd) {
@@ -78,25 +75,30 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.isEditing = false;
-        this._settingsservice.getEntities(this.configSettings.unitsURL).subscribe(res => {
-            this.unitTypes = res;
+        this._settingsservice.getEntities(this.configSettings.unitSystemsURL).subscribe(res => {
+            this.unitSystems = res;
             const ids = [];
             for (const item of res) {
                 ids.push(item.id);
             }
-            this.maxID = ids.reduce((a, b ) => Math.max(a, b));
-        });
-        this._settingsservice.getEntities(this.configSettings.unitSystemsURL).subscribe(usys => {
-            this.unitSystems = usys;
+            if (ids.length > 1) {
+                this.maxID = ids.reduce((a, b) => Math.max(a, b));
+            } else if (ids.length === 1) {
+                this.maxID = ids[0];
+            } else {
+                this.maxID = 0;
+            }
         });
 
         // get new units when new one posted/edited
-        this._settingsservice.units().subscribe(res => {
-            this.unitTypes = res;
+        this._settingsservice.unitSystems().subscribe(res => {
+            this.unitSystems = res;
             const ids = [];
-            for (const item of res) { ids.push(item.id); }
+            for (const item of res) {
+                ids.push(item.id);
+            }
             if (ids.length > 1) {
-                this.maxID = ids.reduce((a, b ) => Math.max(a, b));
+                this.maxID = ids.reduce((a, b) => Math.max(a, b));
             } else if (ids.length === 1) {
                 this.maxID = ids[0];
             } else {
@@ -105,12 +107,10 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         });
     }
 
-    showNewUnitTypeForm() {
-        this.newUnitForm.controls['id'].setValue(this.maxID + 1);
-        this.newUnitForm.controls['name'].setValue(null);
-        this.newUnitForm.controls['abbreviation'].setValue(null);
-        this.newUnitForm.controls['unitSystemTypeID'].setValue(null);
-        this.showNewUnitForm = true;
+    showNewForm() {
+        this.newUnitSystemForm.controls['unitSystem'].setValue(null);
+        this.newUnitSystemForm.controls['id'].setValue(this.maxID + 1);
+        this.showNewUnitSystemForm = true;
         this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
@@ -142,74 +142,76 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
     }
 
     private cancelCreateUnit() {
-        this.showNewUnitForm = false;
-        this.newUnitForm.reset();
+        this.showNewUnitSystemForm = false;
+        this.newUnitSystemForm.reset();
     }
 
     private createNewUnit() {
-        const newUnit = this.newUnitForm.value;
-        this._settingsservice.postEntity(newUnit, this.configSettings.unitsURL)
-            .subscribe((response: Unittype) => {
+        const newUnit = this.newUnitSystemForm.value;
+        this._settingsservice.postEntity(newUnit, this.configSettings.unitSystemsURL).subscribe(
+            (response: UnitSystem) => {
                 response.isEditing = false;
-                this.unitTypes.push(response);
-                this._settingsservice.setUnits(this.unitTypes);
-                alert('Sucess! \n Unit Type was created.');
+                this.unitSystems.push(response);
+                this._settingsservice.setUnitSystems(this.unitSystems);
+                alert('Sucess! \n Unit System was created.');
                 this.cancelCreateUnit();
-            // }, error => this._toastService.pop('error', 'Error creating Category Type', error._body.message || error.statusText));
-        }, error => alert('Error creating Unit Type \n' + error._body.message));
+                // }, error => this._toastService.pop('error', 'Error creating Category Type', error._body.message || error.statusText));
+            },
+            error => alert('Error creating Unit System \n' + error._body.message)
+        );
     }
 
     private EditRowClicked(i: number) {
-       // from wateruse
-       this.rowBeingEdited = i;
-       this.tempData = Object.assign({}, this.unitTypes[i]); // make a copy in case they cancel
-       this.unitTypes[i].isEditing = true;
-       this.isEditing = true; // set to true so create new is disabled
+        // from wateruse
+        this.rowBeingEdited = i;
+        this.tempData = Object.assign({}, this.unitSystems[i]); // make a copy in case they cancel
+        this.unitSystems[i].isEditing = true;
+        this.isEditing = true; // set to true so create new is disabled
     }
 
     public CancelEditRowClicked(i: number) {
-        this.unitTypes[i] = Object.assign({}, this.tempData);
-        this.unitTypes[i].isEditing = false;
+        this.unitSystems[i] = Object.assign({}, this.tempData);
+        this.unitSystems[i].isEditing = false;
         this.rowBeingEdited = -1;
         this.isEditing = false; // set to true so create new is disabled
-        if (this.unitForm.form.dirty) {
-            this.unitForm.reset();
+        if (this.usForm.form.dirty) {
+            this.usForm.reset();
         }
     }
 
     // edits made, save clicked
-    public saveUnit(u: Unittype, i: number) {
-        if (u.name === undefined || u.abbreviation === undefined || u.unitSystemTypeID === undefined) {
+    public saveUnitSystem(u: UnitSystem, i: number) {
+        if (u.unitSystem === undefined) {
             // don't save it
-            alert('Name, abbreviation and unit system ID are required.');
+            alert('Unit System Name is required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.unitsURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.unitSystemsURL).subscribe(
                 (resp: UnitSystem) => {
-                    alert('Success! \n Unit Type was updated');
+                    alert('Success! \n Unit System was updated');
                     u.isEditing = false;
-                    this.unitTypes[i] = u;
-                    this._settingsservice.setUnits(this.unitTypes);
+                    this.unitSystems[i] = u;
+                    this._settingsservice.setUnitSystems(this.unitSystems);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
-                    if (this.unitForm.form.dirty) { this.unitForm.reset(); }
-                }, error => alert('Error updating Unit Type: \n' + error._body.message)
+                    if (this.usForm.form.dirty) { this.usForm.reset(); }
+                }, error => alert('Error updating Unit System: \n' + error._body.message)
             );
         }
     }
 
     // delete category type
     public deleteUnit(deleteID: number) {
-        const check = confirm('Are you sure you want to delete this Unit Type?');
+        const check = confirm('Are you sure you want to delete this Unit System?');
         if (confirm) {
             // delete it
-            const index = this.unitTypes.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.unitsURL)
+            const index = this.unitSystems.findIndex(item => item.id === deleteID);
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.unitSystemsURL)
                 .subscribe(result => {
-                    alert('Success~\n Unit Type deleted.');
-                    this.unitTypes.splice(index, 1);
-                    this._settingsservice.setUnits(this.unitTypes); // update service
-                }, error => alert('Error Deleting Unit: \n' + error._body.message));
+                    alert('Success~\n Unit System deleted.');
+                    this.unitSystems.splice(index, 1);
+                    this._settingsservice.setUnitSystems(this.unitSystems); // update service
+                }, error => alert('Error Deleting Unit System: \n' + error._body.message));
         }
     }
 

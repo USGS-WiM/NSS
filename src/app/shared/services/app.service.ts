@@ -277,7 +277,7 @@ export class NSSService {
             this._selectedStatGroups = v;
             const ssg: Array<number> = [];
             this._selectedStatGroups.forEach(ss => {
-                ssg.push(ss.ID);
+                ssg.push(ss.id);
             });
             // now update regressionRegions, regressionTypes if there are selectedStatisticGroups
             this._statGrpIdParams = ssg.length >= 0 ? ssg.join(',') : '';
@@ -553,17 +553,17 @@ export class NSSService {
     private getRegionScenario(id: number, searchArgs?: URLSearchParams) {
         const options = new RequestOptions({ headers: this.jsonHeader, search: searchArgs });
         return this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL + id + '/' + this.configSettings.statisticGrpURL, options)
+            .get(this.configSettings.baseURL + this.configSettings.regionURL + id + '/' + this.configSettings.scenariosURL, options)
             .map(res => <Scenario[]>res.json())
             .subscribe(
                 s => {
                     s.forEach(scen => {
                         // get citations
-                        let i = scen.links[0].Href.indexOf('?');
+                        /*let i = scen.links[0].Href.indexOf('?');
                         let param = scen.links[0].Href.substring(i + 1);
                         this.getCitations(new URLSearchParams(param)).subscribe(c => {
                             scen.citations = c;
-                        });
+                        });*/ // no links on these?
                         // clear Parameter.'Value'
                         scen.regressionRegions.forEach(rr => {
                             rr.parameters.forEach(p => {

@@ -1,5 +1,5 @@
-import {Unittype} from './unitType';
 import {Limit } from './limit';
+import { Unittype } from './unitType';
 
 export interface Parameter {
     id: number;
@@ -9,8 +9,9 @@ export interface Parameter {
     unitType: Unittype;
     value: number;
     limits: Limit;
-    limitArray?:Array<Limit>;
+    rrid?: number;
+    limitArray?: Array<Limit>;
     outOfRange?: boolean;
     missingVal?: boolean;
-    seeDescription?: boolean;   
+    seeDescription?: boolean;
 }

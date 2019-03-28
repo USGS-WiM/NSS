@@ -4,7 +4,6 @@ import { DOCUMENT } from '@angular/platform-browser';
 import { Region } from '../shared/interfaces/region';
 import { Regressionregion } from '../shared/interfaces/regressionregion';
 import { Regressiontype } from '../shared/interfaces/regressiontype';
-import { Scenarioregressionregion } from '../shared/interfaces/scenarioregressionregion';
 import { Statisticgroup } from '../shared/interfaces/statisticgroup';
 import { Scenario } from '../shared/interfaces/scenario';
 import { Parameter } from '../shared/interfaces/parameter';
@@ -106,7 +105,7 @@ export class MainviewComponent implements OnInit {
             if (regRegions.length > 0) {
                 // build query string
                 this.selectedRegressionRegion.forEach(rr => {
-                    queryString += "GRIDCODE LIKE '%" + rr.Code.toLowerCase() + "%' OR ";
+                    queryString += "GRIDCODE LIKE '%" + rr.code.toLowerCase() + "%' OR ";
                 });
             }
             if (queryString != '') {
@@ -140,7 +139,7 @@ export class MainviewComponent implements OnInit {
                         if (rr.results[0].Errors) {
                             this.resultsErrorLength = rr.results[0].Errors.length;
                         }
-                        let eqResult: Equationresults = { Name: '', Formulas: [] };
+                        let eqResult: Equationresults = { name: '', formulas: [] };
                         let equationString: string = '';
                         if (index < 1) {
                             // first time thru
@@ -150,11 +149,11 @@ export class MainviewComponent implements OnInit {
                             equationString = '\r\n' + name;
                         }
                         // only care if average result
-                        if (rr.id > 0) eqResult.Name = rr.name;
+                        if (rr.id > 0) eqResult.name = rr.name;
                         this.resultsBack = true;
                         rr.results.forEach(R => {
-                            if (eqResult.Name != '') {
-                                eqResult.Formulas.push({ Code: R.code, Equation: this.buildEquation(rr.parameters, R.Equation) });
+                            if (eqResult.name != '') {
+                                eqResult.formulas.push({ Code: R.code, Equation: this.buildEquation(rr.parameters, R.Equation) });
                                 equationString += R.code + '= ,' + R.Equation + '\r\n';
                             }
                         });
@@ -186,9 +185,9 @@ export class MainviewComponent implements OnInit {
                             // is this unitType already in the array list?
                             let uIndex = this.uniqueUnitTypes
                                 .map(function(unit) {
-                                    return unit.abbreviation;
+                                    return unit.abbr;
                                 })
-                                .indexOf(p.unitType.abbreviation);
+                                .indexOf(p.unitType.abbr);
                             if (uIndex < 0) {
                                 // not in there yet
                                 this.uniqueUnitTypes.push(p.unitType);
@@ -583,7 +582,7 @@ export class MainviewComponent implements OnInit {
         u_str += '\r\n' + 'Unit Types' + '\r\n';
         u_str += 'Abbrev,Unit' + '\r\n';
         for (var u = 0; u < unitTable.length; u++) {
-            u_str += '(' + unitTable[u].abbreviation + '),' + unitTable[u].name + '\r\n';
+            u_str += '(' + unitTable[u].abbr + '),' + unitTable[u].unit + '\r\n';
         }
         u_str += '\r\n';
         let equa_str = this.appendixEquationsforExport.join(',');

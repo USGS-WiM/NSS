@@ -4,4 +4,6 @@ export interface Unittype {
     abbreviation: string;
     unitSystemTypeID: number;
     isEditing?: boolean;
+    unit?: string; // for parameter units
+    abbr?: string; // for paramter units
 }

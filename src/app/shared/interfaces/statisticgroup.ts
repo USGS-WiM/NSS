@@ -7,4 +7,5 @@ export interface Statisticgroup {
     Name: string;
     name: string; //for multiselect
     code: string;
+    isEditing?: boolean;
 }

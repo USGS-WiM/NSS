@@ -3,4 +3,5 @@ export interface Variabletype {
     name: string;
     description: string;
     code: string;
+    isEditing?: boolean;
 }

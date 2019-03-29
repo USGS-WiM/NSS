@@ -8,13 +8,11 @@
 
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from '../../../../../node_modules/angular-2-dropdown-multiselect';
+import { IMultiSelectSettings, IMultiSelectTexts } from '../../../../../node_modules/angular-2-dropdown-multiselect';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { NSSService } from '../../../shared/services/app.service';
-import { SettingsComponent } from '../../settings.component';
 import { Region } from '../../../shared/interfaces/region';
 import { Scenario } from '../../../shared/interfaces/scenario';
 import { Statisticgroup } from '../../../shared/interfaces/statisticgroup';
@@ -54,7 +52,7 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
     public myMSTexts: IMultiSelectTexts;
     private selectedRegRegionIDs: Array<number>;
     private navigationSubscription;
-    private loggedInRole;
+    public loggedInRole;
     private configSettings: Config;
 
     constructor(

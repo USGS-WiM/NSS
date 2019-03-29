@@ -10,16 +10,8 @@ import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, Temp
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { NSSService } from '../../../shared/services/app.service';
-import { SettingsComponent } from '../../settings.component';
-import { Region } from '../../../shared/interfaces/region';
-import { Scenario } from '../../../shared/interfaces/scenario';
-import { Statisticgroup } from '../../../shared/interfaces/statisticgroup';
-import { Regressiontype } from '../../../shared/interfaces/regressiontype';
-import { Regressionregion } from '../../../shared/interfaces/regressionregion';
-import { Unittype } from '../../../shared/interfaces/unittype';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -46,7 +38,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public variableTypes: Array<Variabletype>;
     private CloseResult;
     private navigationSubscription;
-    private loggedInRole;
+    public loggedInRole;
     private configSettings: Config;
     public isEditing: boolean;
     public maxID: number;

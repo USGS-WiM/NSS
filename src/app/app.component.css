@@ -5,3 +5,15 @@
 .hidden {
     display: none;
 }
+
+.modal-content{
+    height: 400px;
+    top: calc(50% - 200px) !important;
+    max-width: 40% !important;
+}
+
+#loginError {
+    color: red;
+    margin-bottom: 5px;
+}
+

@@ -186,7 +186,7 @@ export class SidebarComponent implements OnInit {
     }
 
     // select of regression region. set the selectedRegRegions
-    public onRegressionRegSelect(): void {
+    public onRegressionRegSelect(): void { 
         let selectedRegRegions: Array<Regressionregion> = new Array<Regressionregion>();
         this.selectedRegRegionIDs.forEach(srr => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main

@@ -8,10 +8,9 @@
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
-import { Http, Response, Headers, RequestOptions, URLSearchParams } from '@angular/http';
-import { throwError as observableThrowError, Observable, Subject, BehaviorSubject } from 'rxjs';
+import { Router, NavigationEnd } from '@angular/router';
+import { Http, Headers, RequestOptions } from '@angular/http';
+import { throwError as observableThrowError, } from 'rxjs';
 
 import { NSSService } from '../shared/services/app.service';
 import { Region } from '../shared/interfaces/region';
@@ -49,8 +48,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         if (localStorage.getItem('credentials') === undefined) {
-            this.router.navigate(['']);
+            this.router.navigate(['/']);
         }
+        this.getLoggedInRole();
     }
 
     public getServices(): void {

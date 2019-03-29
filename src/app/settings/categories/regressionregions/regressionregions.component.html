@@ -52,9 +52,9 @@
 <br />
 <button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewRegressionRegionForm()"><i class="fa fa-plus"
         aria-hidden="tru"></i> Add New Regression Region</button>
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showStateRegRegForm()">
+<!-- <button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showStateRegRegForm()">
         <i class="fa fa-plus" aria-hidden="tru"></i> Add Regression Region to Region
-    </button>
+    </button> -->
 
 <!-- new regression type form -->
 <ng-template #add let-c="close" let-d="dismiss">
@@ -110,7 +110,7 @@
 </ng-template>
 
 <!-- add regression region to region form -->
-<ng-template #toRegion let-c="close" let-d="dismiss">
+<!-- <ng-template #toRegion let-c="close" let-d="dismiss">
         <div class="modal-header">
             <div class="col-xs-12">
                 <h4 class="modal-title pull-left">Add Regression Region to Region</h4>
@@ -119,9 +119,9 @@
         </div>
         <div class="modal-body">
             <h3 class="modal-title">Add Regression Region to Region</h3>
-            <form [formGroup]="stateRegRegForm">
+            <form [formGroup]="stateRegRegForm"> -->
                 <!-- Regression Region* -->
-                <div class="form-group required" [ngClass]="{ 'form-invalid': !stateRegRegForm.get('regReg').valid && stateRegRegForm.get('regReg').dirty }">
+                <!-- <div class="form-group required" [ngClass]="{ 'form-invalid': !stateRegRegForm.get('regReg').valid && stateRegRegForm.get('regReg').dirty }">
                     <label class="req" for="regReg">Statistic Group:</label>
                     <select class="form-control" formControlName="regReg">
                         <option *ngFor="let rr of allRegressionRegions" [value]="rr.id">{{ rr.name }}</option>
@@ -129,10 +129,10 @@
                     <div class="input-invalid-warning" *ngIf="!stateRegRegForm.get('regReg').valid && stateRegRegForm.get('regReg').dirty">
                         Statistic Group is required
                     </div>
-                </div>
+                </div> -->
     
                 <!-- State* -->
-                <div class="form-group required" [ngClass]="{ 'form-invalid': !stateRegRegForm.get('state').valid && stateRegRegForm.get('state').dirty }">
+                <!-- <div class="form-group required" [ngClass]="{ 'form-invalid': !stateRegRegForm.get('state').valid && stateRegRegForm.get('state').dirty }">
                     <label class="req" for="state">Region:</label>
                     <select class="form-control" formControlName="state">
                         <option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</option>
@@ -148,4 +148,4 @@
                 <button type="button" (click)="addRegRegtoState()" [disabled]="!stateRegRegForm.valid" class="btn-blue">Create</button>
             </div>
         </div>
-    </ng-template>
+    </ng-template> -->

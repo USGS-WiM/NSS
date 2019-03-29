@@ -12,17 +12,23 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { AuthService } from 'app/shared/services/auth.service';
 import { ConfigService } from 'app/config.service';
 import { Config } from 'app/shared/interfaces/config';
 
 @Injectable()
 export class LoginService {
-    public isLoggedIn = false;
     private configSettings: Config;
+
+    public _loggedInSubject: BehaviorSubject<boolean> = <BehaviorSubject<boolean>>new BehaviorSubject(false);
 
     constructor(private http: Http, private _authService: AuthService, private _configService: ConfigService) {
         this.configSettings = this._configService.getConfiguration();
+    }
+
+    public isLoggedIn(): Observable<boolean> {
+        return this._loggedInSubject.asObservable();
     }
 
     // log in
@@ -38,7 +44,7 @@ export class LoginService {
                 // login successful if there's a jwt token in the response
                 const user = response.json();
                 if (user) {
-                    this.isLoggedIn = true;
+                    this._loggedInSubject.next(true);
                     // store user creds in localStorage and details in service for retrieval
                     localStorage.setItem('credentials', creds);
                     this._authService.storeUserInfo(user);
@@ -48,7 +54,7 @@ export class LoginService {
     }
     // log out and clear everything
     public logout() {
-        this.isLoggedIn = false;
+        this._loggedInSubject.next(false);
         localStorage.clear();
         this._authService.removeUserInfo();
     }

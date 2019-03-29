@@ -32,13 +32,13 @@
 
      <!-- scenarios && !resultsBack-->
     <div class="hidden-print" *ngIf="scenarios && !resultsBack">
-        <label>Equation Variables</label>
+        <label>Equation Variables</label> 
         <br/>
         <div *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</div>
         <form #scenarioForm="ngForm">
             <div class="row">
                 <div class="col-xs-12" *ngFor="let sc of scenarios;let sInd = index">
-                    <h3>{{sc.StatisticGroupName}}</h3>
+                    <h3>{{sc.statisticGroupName}}</h3>
                     <div class="col-xs-12" *ngIf="sc.regressionRegions?.length > 0">
                         <table class="table">
                             <tr *ngFor="let rr of sc.regressionRegions;let rInd = index">
@@ -110,7 +110,7 @@
 
             <h2 style="margin:0;padding:0">Citations</h2>
             <div *ngFor="let sc of scenarios">
-                <label *ngIf="sc.Citations">{{sc.statisticGroupName}} Citations</label>
+                <label *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</label>
                 <div *ngFor="let l of sc.Citations">
                     <a [href]="l.CitationURL" [target]="_blank">
                         <div>{{l.Author}}</div>
@@ -636,3 +636,4 @@
         <br/><br/><br/>
     </div><!-- end results back -->
 </div>
+<router-outlet></router-outlet>

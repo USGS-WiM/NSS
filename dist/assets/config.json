@@ -1,7 +1,16 @@
 {
-   "baseURL": "https://test.streamstats.usgs.gov/nssservices/",
-    "regionURL": "Regions",
+   "baseURL": "https://test.streamstats.usgs.gov/nssservicesv2/",
+    "citationURL": "Citations",
+    "errorsURL": "Errors",
+    "loginURL": "login",
+    "managersURL": "Managers",
+    "regionURL": "Regions/",
     "regRegionURL": "RegressionRegions",
-    "citationURL": "Citations",    
-    "statisticGrpURL": "StatisticGroups"
+    "regTypeURL": "RegressionTypes",
+    "rolesURL": "Roles",
+    "scenariosURL": "Scenarios",
+    "statisticGrpURL": "StatisticGroups",
+    "unitsURL": "Units",
+    "unitSystemsURL": "UnitsSystems",
+    "variablesURL": "Variables"
 }

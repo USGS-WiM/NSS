@@ -10,15 +10,9 @@ import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/c
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { NSSService } from '../../../shared/services/app.service';
-import { SettingsComponent } from '../../settings.component';
-import { Region } from '../../../shared/interfaces/region';
-import { Scenario } from '../../../shared/interfaces/scenario';
-import { Statisticgroup } from '../../../shared/interfaces/statisticgroup';
 import { Regressiontype } from '../../../shared/interfaces/regressiontype';
-import { Regressionregion } from '../../../shared/interfaces/regressionregion';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -44,7 +38,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public showNewRegForm: boolean;
     private CloseResult;
     private navigationSubscription;
-    private loggedInRole;
+    public loggedInRole;
     private configSettings: Config;
     public maxID: number;
     public rowBeingEdited: number;

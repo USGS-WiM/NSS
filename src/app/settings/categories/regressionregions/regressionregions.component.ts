@@ -14,9 +14,6 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { NSSService } from '../../../shared/services/app.service';
 import { Region } from '../../../shared/interfaces/region';
-import { Scenario } from '../../../shared/interfaces/scenario';
-import { Statisticgroup } from '../../../shared/interfaces/statisticgroup';
-import { Regressiontype } from '../../../shared/interfaces/regressiontype';
 import { Regressionregion } from '../../../shared/interfaces/regressionregion';
 import { SettingsService } from '../../settings.service';
 
@@ -49,7 +46,7 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     public CloseResult: any;
     private modalRef: any;
     private navigationSubscription;
-    private loggedInRole;
+    public loggedInRole;
     private configSettings: Config;
     public rowBeingEdited: number;
     public tempData;

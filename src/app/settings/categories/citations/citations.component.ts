@@ -10,7 +10,6 @@ import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, Temp
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { NSSService } from '../../../shared/services/app.service';
 import { SettingsService } from 'app/settings/settings.service';
@@ -38,7 +37,7 @@ export class CitationsComponent implements OnInit, OnDestroy {
     public regressionRegions: Array<Regressionregion>;
     private CloseResult;
     private navigationSubscription;
-    private loggedInRole;
+    public loggedInRole;
     private configSettings: Config;
     public isEditing: boolean;
     public maxID: number;

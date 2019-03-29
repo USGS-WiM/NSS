@@ -10,16 +10,8 @@ import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, Temp
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute } from '@angular/router';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { NSSService } from '../../../shared/services/app.service';
-import { Region } from '../../../shared/interfaces/region';
-import { Scenario } from '../../../shared/interfaces/scenario';
-import { Statisticgroup } from '../../../shared/interfaces/statisticgroup';
-import { Regressiontype } from '../../../shared/interfaces/regressiontype';
-import { Regressionregion } from '../../../shared/interfaces/regressionregion';
-import { Unittype } from '../../../shared/interfaces/unittype';
-import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -44,7 +36,7 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
     public newUserForm: FormGroup;
     public showUserForm: boolean;
     public managers: Array<Manager>;
-    private loggedInRole;
+    public loggedInRole;
     private CloseResult;
     private configSettings: Config;
     private roles: Array<Role>;

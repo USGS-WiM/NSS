@@ -10,10 +10,8 @@ import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, Temp
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { NSSService } from '../../../shared/services/app.service';
-import { SettingsComponent } from '../../settings.component';
 import { Region } from '../../../shared/interfaces/region';
 import { Statisticgroup } from '../../../shared/interfaces/statisticgroup';
 import { SettingsService } from '../../settings.service';
@@ -47,7 +45,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     public showStateStatForm: boolean;
     private CloseResult;
     private navigationSubscription;
-    private loggedInRole;
+    public loggedInRole;
     private configSettings: Config;
     private maxStatID: number;
     public allStatGroups: Array<Statisticgroup>;
@@ -126,7 +124,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         });
     }
 
-    private showNewStatGroupForm() {
+    public showNewStatGroupForm() {
         this.newStatGroupForm.controls['id'].setValue(this.maxStatID + 1);
         this.newStatGroupForm.controls['name'].setValue(null);
         this.newStatGroupForm.controls['code'].setValue(null);
@@ -144,7 +142,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         });
     }
 
-    private showStateStatGroupForm() {
+    public showStateStatGroupForm() {
         this.stateStatGroupForm.controls['statGroup'].setValue(null);
         this.stateStatGroupForm.controls['state'].setValue(this.selectedRegion.id);
         this.showNewStatForm = true;

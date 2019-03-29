@@ -39,12 +39,13 @@ import { ConfigService } from './config.service';
 import { LoginService } from './shared/services/login.service';
 import { LoaderService } from './shared/components/loader.service';
 import { LoaderComponent } from './shared/components/loader.component';
-import { LoginModal } from './shared/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthService } from './shared/services/auth.service';
 import { SettingsService } from './settings/settings.service';
 import { RegionsComponent } from './settings/categories/regions/regions.component';
 import { RolesComponent } from './settings/categories/roles/roles.component';
+import { AuthGuard } from './shared/guards/auth.guard';
+import { AdminGuard } from './shared/guards/admin.guard';
 
 declare const require: any;
 
@@ -52,23 +53,24 @@ const appRoutes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
       { path: 'statisticgroups', component: StatisticGroupsComponent },
-      { path: 'regions', component: RegionsComponent},
+      { path: 'regions', component: RegionsComponent, canActivate: [AdminGuard]},
       { path: 'regressionregions', component: RegressionRegionsComponent },
       { path: 'regressiontypes', component: RegressionTypesComponent },
       { path: 'unittypes', component: UnitTypesComponent },
       { path: 'unitsystems', component: UnitSystemsComponent },
       { path: 'variabletypes', component: VariableTypesComponent },
       { path: 'scenarios', component: ScenariosComponent },
-      { path: 'managers', component: ManagersComponent },
+      { path: 'managers', component: ManagersComponent, canActivate: [AdminGuard] },
       { path: 'citations', component: CitationsComponent},
-      { path: 'errors', component: ErrorsComponent},
-      { path: 'roles', component: RolesComponent}
+      { path: 'errors', component: ErrorsComponent, canActivate: [AdminGuard]},
+      { path: 'roles', component: RolesComponent, canActivate: [AdminGuard]}
     ],
     runGuardsAndResolvers: 'always'
   },
-  {path: 'login', component: LoginModal },
   { path: '', component: MainviewComponent, pathMatch: 'full' }
 ];
 
@@ -79,8 +81,8 @@ export function ConfigLoader(configService: ConfigService) {
 
 export function highchartsFactory() {
   // need this to be able to do exporting of charts
-  let hc = require('highcharts');
-  let exp = require('highcharts/modules/exporting');
+  const hc = require('highcharts');
+  const exp = require('highcharts/modules/exporting');
   exp(hc);
   return hc;
 }
@@ -88,7 +90,7 @@ export function highchartsFactory() {
 @NgModule({
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, LoaderComponent, UniquePipe, MathjaxDirective,
-    LoginModal, StatisticGroupsComponent, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent,
+    StatisticGroupsComponent, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent,
     RegressionRegionsComponent, ScenariosComponent, ManagersComponent, CitationsComponent, ErrorsComponent, RegionsComponent, RolesComponent
   ],
   imports: [
@@ -99,8 +101,7 @@ export function highchartsFactory() {
   providers: [
     NSSService, { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService, LoaderService,
     { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
-    { provide: APP_BASE_HREF, useValue: '/' },
-    LoginService, AuthService, SettingsService
+    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard
   ],
   bootstrap: [AppComponent],
   exports: [RouterModule]

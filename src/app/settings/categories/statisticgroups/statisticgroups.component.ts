@@ -11,9 +11,9 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
-import { Region } from '../../../shared/interfaces/region';
-import { Statisticgroup } from '../../../shared/interfaces/statisticgroup';
+import { NSSService } from 'app/shared/services/app.service';
+import { Region } from 'app/shared/interfaces/region';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -29,25 +29,20 @@ import { ConfigService } from 'app/config.service';
 export class StatisticGroupsComponent implements OnInit, OnDestroy {
     @ViewChild('add')
     public addRef: TemplateRef<any>;
-    @ViewChild('toRegion')
-    public toRegionRef: TemplateRef<any>;
     @ViewChild('StatGroupForm') statGroupForm;
     public regressionTypes;
-    public selectedRegion: Region;
+    public selectedRegion;
     public regions;
     public selectedRegRegionIDs;
     public selectedStatGroupIDs;
     public selectedRegTypeIDs;
     public statisticGroups: Array<Statisticgroup>;
     public newStatGroupForm: FormGroup;
-    public stateStatGroupForm: FormGroup;
     public showNewStatForm: boolean;
-    public showStateStatForm: boolean;
     private CloseResult;
     private navigationSubscription;
     public loggedInRole;
     private configSettings: Config;
-    private maxStatID: number;
     public allStatGroups: Array<Statisticgroup>;
     public rowBeingEdited: number;
     public tempData;
@@ -57,13 +52,8 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router,
         private _configService: ConfigService) {
             this.newStatGroupForm = _fb.group({
-                'id': new FormControl(null),
                 'name': new FormControl(null, Validators.required),
                 'code': new FormControl(null, Validators.required)
-            });
-            this.stateStatGroupForm = _fb.group({
-                'state': new FormControl(null, Validators.required),
-                'statGroup': new FormControl(null, Validators.required)
             });
             this.navigationSubscription = this.router.events.subscribe((e: any) => {
                 if (e instanceof NavigationEnd) {
@@ -77,20 +67,9 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(regions => {
             this.regions = regions;
         });
+        this.selectedRegion = 'none';
         this.getAllStatGroups();
 
-        /*this._nssService.statisticGroups.subscribe((st: Array<Statisticgroup>) => {
-            this.statisticGroups = st;
-            // remove from selectedRegType if not in response
-            if (this.selectedRegTypeIDs !== undefined) {
-                if (st.length > 0) {
-                    for (let rti = this.selectedRegTypeIDs.length; rti--; ) {
-                        const RTind = st.map(function (eachrt) { return eachrt.ID; }).indexOf(this.selectedRegTypeIDs[rti]);
-                        if (RTind < 0) {this.selectedRegTypeIDs.splice(rti, 1); }
-                    };
-                } else {this.selectedRegTypeIDs = []; }
-            }
-        });*/
         this._settingsservice.statisticGroups().subscribe(sg => {
             this.statisticGroups = sg;
         });
@@ -98,16 +77,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     public getAllStatGroups() {
         this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
             this.allStatGroups = res;
-            if (!this.selectedRegion) {this.statisticGroups = res; }
-            const ids = [];
-            for (const item of res) { ids.push(item.id); }
-            if (ids.length > 1) {
-                this.maxStatID = ids.reduce((a, b ) => Math.max(a, b));
-            } else if (ids.length === 1) {
-                this.maxStatID = ids[0];
-            } else {
-                this.maxStatID = 0;
-            }
+            if (this.selectedRegion === 'none') {this.statisticGroups = res; }
         });
     }
 
@@ -125,28 +95,10 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     }
 
     public showNewStatGroupForm() {
-        this.newStatGroupForm.controls['id'].setValue(this.maxStatID + 1);
         this.newStatGroupForm.controls['name'].setValue(null);
         this.newStatGroupForm.controls['code'].setValue(null);
         this.showNewStatForm = true;
         this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then((result) => {
-            // this is the solution for the first modal losing scrollability
-            if (document.querySelector('body > .modal')) {
-                document.body.classList.add('modal-open');
-            }
-            this.CloseResult = `Closed with: ${result}`;
-            if (this.CloseResult) {this.cancelCreateStatGroup(); }
-        }, (reason) => {
-            this.CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
-            if (this.CloseResult) {this.cancelCreateStatGroup(); }
-        });
-    }
-
-    public showStateStatGroupForm() {
-        this.stateStatGroupForm.controls['statGroup'].setValue(null);
-        this.stateStatGroupForm.controls['state'].setValue(this.selectedRegion.id);
-        this.showNewStatForm = true;
-        this._modalService.open(this.toRegionRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then((result) => {
             // this is the solution for the first modal losing scrollability
             if (document.querySelector('body > .modal')) {
                 document.body.classList.add('modal-open');
@@ -172,42 +124,16 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         this.newStatGroupForm.reset();
     }
 
-    private cancelStateStatGroup() {
-        this.showStateStatForm = false;
-        this.stateStatGroupForm.reset();
-    }
-
     private createNewStatGroup() {
         const newStatGroup = this.newStatGroupForm.value;
         this._settingsservice.postEntity(newStatGroup, this.configSettings.statisticGrpURL)
-            .subscribe((response: Statisticgroup) => { 
+            .subscribe((response: Statisticgroup) => {
                 response.isEditing = false;
                 this.cancelCreateStatGroup();
                 alert('Sucess! \nStatistic Group was created.');
                 this.getAllStatGroups();
                 this.cancelCreateStatGroup();
         }, error => alert('Error creating Statistic Group \n' + error._body.message));
-    }
-
-    private addStatGrouptoState() {
-        const statGroup = this.allStatGroups.filter(sg => {
-            return sg.id === +this.stateStatGroupForm.value.statGroup;
-        });
-        this._settingsservice.postEntity(statGroup, this.configSettings.regionURL + this.stateStatGroupForm.value.state + '/' +
-            this.configSettings.statisticGrpURL)
-            .subscribe((response: Statisticgroup) => {
-                response.isEditing = false;
-                if (this.newStatGroupForm.value.id === this.selectedRegion.id) {
-                    this.statisticGroups.push(response);
-                    this._settingsservice.setStatGroups(this.statisticGroups);
-                } else {
-                    this.getStatGroups(this.selectedRegion);
-                }
-                alert('Sucess! \nStatistic Group was created.');
-                this.cancelCreateStatGroup();
-            // }, error => this._toastService.pop('error', 'Error creating Category Type', error._body.message || error.statusText));
-        }, error => alert('Error creating Statistic Group \n' + error._body.message));
-
     }
 
     private EditRowClicked(i: number) {
@@ -256,7 +182,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
             const index = this.statisticGroups.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.statisticGrpURL)
                 .subscribe(result => {
-                    alert('Success~\n Statistic Group deleted.');
+                    alert('Success!\n Statistic Group deleted.');
                     this.statisticGroups.splice(index, 1);
                     this._settingsservice.setStatGroups(this.statisticGroups); // update service
                 }, error => alert('Error Deleting Statistic Group: \n' + error._body.message));

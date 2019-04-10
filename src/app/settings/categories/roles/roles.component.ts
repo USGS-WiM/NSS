@@ -11,8 +11,8 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
-import { Role } from '../../../shared/interfaces/role';
+import { NSSService } from 'app/shared/services/app.service';
+import { Role } from 'app/shared/interfaces/role';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -40,13 +40,11 @@ export class RolesComponent implements OnInit, OnDestroy {
     public loggedInRole;
     private configSettings: Config;
     public isEditing: boolean;
-    public maxID: number;
     public rowBeingEdited: number;
     public tempData;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService) {
             this.newRoleForm = _fb.group({
-                'id': new FormControl(null),
                 'name': new FormControl(null, Validators.required),
                 'description': new FormControl(null, Validators.required)
             });
@@ -61,29 +59,14 @@ export class RolesComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this._settingsservice.getEntities(this.configSettings.rolesURL).subscribe(res => {
             this.roles = res;
-            const ids = [];
-            for (const item of res) {
-                ids.push(item.id);
-            }
-            this.maxID = ids.reduce((a, b ) => Math.max(a, b));
         });
 
         this._settingsservice.roles().subscribe(res => {
             this.roles = res;
-            const ids = [];
-            for (const item of res) { ids.push(item.id); }
-            if (ids.length > 1) {
-                this.maxID = ids.reduce((a, b ) => Math.max(a, b));
-            } else if (ids.length === 1) {
-                this.maxID = ids[0];
-            } else {
-                this.maxID = 0;
-            }
         });
     }
 
     showNewRoleForm() {
-        this.newRoleForm.controls['id'].setValue(this.maxID + 1);
         this.newRoleForm.controls['name'].setValue(null);
         this.newRoleForm.controls['description'].setValue(null);
         this.showNewRolForm = true;
@@ -171,7 +154,7 @@ export class RolesComponent implements OnInit, OnDestroy {
             const index = this.roles.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.rolesURL)
                 .subscribe(result => {
-                    alert('Success~\n Role deleted.');
+                    alert('Success!\n Role deleted.');
                     this.roles.splice(index, 1);
                     this._settingsservice.setRoles(this.roles); // update service
                 }, error => alert('Error Deleting Role: \n' + error._body.message));

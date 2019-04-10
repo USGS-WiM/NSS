@@ -12,9 +12,9 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
-import { NSSService } from '../../../shared/services/app.service';
-import { Region } from '../../../shared/interfaces/region';
-import { Regressionregion } from '../../../shared/interfaces/regressionregion';
+import { NSSService } from 'app/shared/services/app.service';
+import { Region } from 'app/shared/interfaces/region';
+import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -50,7 +50,6 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     private configSettings: Config;
     public rowBeingEdited: number;
     public tempData;
-    public allRegressionRegions: Array<Regressionregion>;
     private isEditing = false;
 
     constructor(
@@ -81,15 +80,17 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
         this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(regions => {
             this.regions = regions;
         });
+        this.selectedRegion = 'none';
         this.getAllRegRegions();
     }
 
-    public onRegSelect(r: Region) {
-        this.selectedRegRegionIDs = [];
-        this.selectedStatGroupIDs = [];
-        this.selectedRegTypeIDs = [];
+    public onRegSelect(r) {
         this.selectedRegion = r;
-        this.getRegRegions(r);
+        if (r === 'none') {
+            this.getAllRegRegions();
+        } else {
+            this.getRegRegions(r);
+        }
     }
 
     public getRegRegions(r) {
@@ -99,8 +100,8 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     }
 
     public getAllRegRegions() {
-        this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
-            this.allRegressionRegions = res;
+        this._settingsservice.getEntities(this.configSettings.regRegionURL).subscribe(res => {
+            this.regressionRegions = res;
         });
     }
 
@@ -130,23 +131,6 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
         );
     }
 
-    /*private showStateRegRegForm() {
-        this.stateRegRegForm.controls['regReg'].setValue(null);
-        this.stateRegRegForm.controls['state'].setValue(this.selectedRegion.id);
-        this.showNewRegRegForm = true;
-        this._modalService.open(this.toRegionRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then((result) => {
-            // this is the solution for the first modal losing scrollability
-            if (document.querySelector('body > .modal')) {
-                document.body.classList.add('modal-open');
-            }
-            this.CloseResult = `Closed with: ${result}`;
-            if (this.CloseResult) {this.cancelStateRegReg(); }
-        }, (reason) => {
-            this.CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
-            if (this.CloseResult) {this.cancelStateRegReg(); }
-        });
-    }*/
-
     private getDismissReason(reason: any): string {
         if (reason === ModalDismissReasons.ESC) {
             return 'by pressing ESC';
@@ -160,11 +144,6 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     private cancelCreateRegression() {
         this.showNewRegRegForm = false;
         this.newRegRegForm.reset();
-    }
-
-    private cancelStateRegReg() {
-        this.showStateRegForm = false;
-        this.stateRegRegForm.reset();
     }
 
     private createNewRegression() {
@@ -234,7 +213,7 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
             const index = this.regressionRegions.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regRegionURL)
                 .subscribe(result => {
-                    alert('Success~\n Regression Region deleted.');
+                    alert('Success!\n Regression Region deleted.');
                     this.regressionRegions.splice(index, 1);
                     this._settingsservice.setRegRegions(this.regressionRegions); // update service
                 }, error => alert('Error Deleting Regression Region: \n' + error._body.message));

@@ -11,8 +11,8 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
-import { Region } from '../../../shared/interfaces/region';
+import { NSSService } from 'app/shared/services/app.service';
+import { Region } from 'app/shared/interfaces/region';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -40,13 +40,11 @@ export class RegionsComponent implements OnInit, OnDestroy {
     public loggedInRole;
     private configSettings: Config;
     public isEditing: boolean;
-    public maxID: number;
     public rowBeingEdited: number;
     public tempData;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService) {
             this.newRegForm = _fb.group({
-                'id': new FormControl(null),
                 'name': new FormControl(null, Validators.required),
                 'code': new FormControl(null, Validators.required)
             });
@@ -61,29 +59,14 @@ export class RegionsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(res => {
             this.regions = res;
-            const ids = [];
-            for (const item of res) {
-                ids.push(item.id);
-            }
-            this.maxID = ids.reduce((a, b ) => Math.max(a, b));
         });
 
         this._settingsservice.regions().subscribe(res => {
             this.regions = res;
-            const ids = [];
-            for (const item of res) { ids.push(item.id); }
-            if (ids.length > 1) {
-                this.maxID = ids.reduce((a, b ) => Math.max(a, b));
-            } else if (ids.length === 1) {
-                this.maxID = ids[0];
-            } else {
-                this.maxID = 0;
-            }
         });
     }
 
     showNewRegionForm() {
-        this.newRegForm.controls['id'].setValue(this.maxID + 1);
         this.newRegForm.controls['name'].setValue(null);
         this.newRegForm.controls['code'].setValue(null);
         this.showNewRegForm = true;
@@ -171,7 +154,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
             const index = this.regions.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regionURL)
                 .subscribe(result => {
-                    alert('Success~\n Region deleted.');
+                    alert('Success!\n Region deleted.');
                     this.regions.splice(index, 1);
                     this._settingsservice.setRegions(this.regions); // update service
                 }, error => alert('Error Deleting Region: \n' + error._body.message));

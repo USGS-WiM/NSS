@@ -47,7 +47,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "baseHref": "/nss/"
+              "baseHref": "/nss-dev/"
             }
           }
         },

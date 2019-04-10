@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { APP_BASE_HREF } from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { MultiselectDropdownModule } from '../../node_modules/angular-2-dropdown-multiselect';

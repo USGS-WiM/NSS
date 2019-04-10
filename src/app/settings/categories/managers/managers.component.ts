@@ -11,7 +11,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
+import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -41,7 +41,6 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
     private configSettings: Config;
     private roles: Array<Role>;
     public isEditing: boolean;
-    public maxID: number;
     public rowBeingEdited: number;
     public tempData;
     constructor(
@@ -177,7 +176,7 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
             const index = this.managers.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.managersURL)
                 .subscribe(result => {
-                    alert('Success~\n Manager deleted.');
+                    alert('Success!\n Manager deleted.');
                     this.managers.splice(index, 1);
                     this._settingsservice.setManagers(this.managers); // update service
                 }, error => alert('Error Deleting Manager: \n' + error._body.message));

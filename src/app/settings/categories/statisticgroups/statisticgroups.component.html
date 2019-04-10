@@ -1,12 +1,18 @@
 <div class="regSelect">
     Choose Region:
     <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
+        <option value="none">None</option>
         <option [ngValue]="i" *ngFor="let i of regions">{{ i.name }}</option>
     </select>
 </div>
+
 <div>
     <legend style="margin-bottom:25px;margin-top:0;">Statistic Groups</legend>
 </div>
+
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewStatGroupForm()">
+    <i class="fa fa-plus" aria-hidden="tru"></i> Add New Statistic Group
+</button>
 
 <form #StatGroupForm="ngForm">
     <div class="form-group" *ngIf="statisticGroups">
@@ -71,12 +77,6 @@
     </div>
 </form>
 <br />
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewStatGroupForm()">
-    <i class="fa fa-plus" aria-hidden="tru"></i> Add New Statistic Group
-</button>
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showStateStatGroupForm()">
-    <i class="fa fa-plus" aria-hidden="tru"></i> Add Statistic Group to Region
-</button>
 
 <!-- new statistic group form -->
 <ng-template #add let-c="close" let-d="dismiss">
@@ -117,47 +117,6 @@
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
             <button type="button" (click)="createNewStatGroup()" [disabled]="!newStatGroupForm.valid" class="btn-blue">Create</button>
-        </div>
-    </div>
-</ng-template>
-
-<!-- add stat group to region form -->
-<ng-template #toRegion let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">Add Statistic Group to Region</h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
-    </div>
-    <div class="modal-body">
-        <h3 class="modal-title">Add Statistic Group to Region</h3>
-        <form [formGroup]="stateStatGroupForm">
-            <!-- Statistic Group* -->
-            <div class="form-group required" [ngClass]="{ 'form-invalid': !stateStatGroupForm.get('statGroup').valid && stateStatGroupForm.get('statGroup').dirty }">
-                <label class="req" for="statGroup">Statistic Group:</label>
-                <select class="form-control" formControlName="statGroup">
-                    <option *ngFor="let sg of allStatGroups" [value]="sg.id">{{ sg.name }}</option>
-                </select>
-                <div class="input-invalid-warning" *ngIf="!stateStatGroupForm.get('statGroup').valid && stateStatGroupForm.get('statGroup').dirty">
-                    Statistic Group is required
-                </div>
-            </div>
-
-            <!-- State* -->
-            <div class="form-group required" [ngClass]="{ 'form-invalid': !stateStatGroupForm.get('state').valid && stateStatGroupForm.get('state').dirty }">
-                <label class="req" for="state">Region:</label>
-                <select class="form-control" formControlName="state">
-                    <option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</option>
-                </select>
-                <div class="input-invalid-warning" *ngIf="!stateStatGroupForm.get('state').valid && stateStatGroupForm.get('state').dirty">
-                    Region is required
-                </div>
-            </div>
-        </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="addStatGrouptoState()" [disabled]="!stateStatGroupForm.valid" class="btn-blue">Create</button>
         </div>
     </div>
 </ng-template>

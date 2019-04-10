@@ -2,6 +2,9 @@
     <legend style="margin-bottom:25px;margin-top:0;">Users</legend>
 </div>
 
+<button type="button" class="btn-blue" (click)="showNewUserForm()"><i class="fa fa-plus"
+    aria-hidden="tru"></i> Add New User</button>
+
 <form #User TypeForm="ngForm">
     <div class="form-group" *ngIf="managers">
         <table class="table">
@@ -58,9 +61,6 @@
     </div>
 </form>
 <br />
-
-<button type="button" class="btn-blue" (click)="showNewUserForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New User</button>
 
 <!-- new user form -->
 <ng-template #add let-c="close" let-d="dismiss">

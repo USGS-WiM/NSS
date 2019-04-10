@@ -11,7 +11,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
+import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -41,13 +41,11 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public loggedInRole;
     private configSettings: Config;
     public isEditing: boolean;
-    public maxID: number;
     public rowBeingEdited: number;
     public tempData;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService) {
             this.newVarForm = _fb.group({
-                'id': new FormControl(null),
                 'name': new FormControl(null, Validators.required),
                 'description': new FormControl(null),
                 'code': new FormControl(null, Validators.required)
@@ -63,29 +61,14 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this._settingsservice.getEntities(this.configSettings.variablesURL).subscribe(res => {
             this.variableTypes = res;
-            const ids = [];
-            for (const item of res) {
-                ids.push(item.id);
-            }
-            this.maxID = ids.reduce((a, b ) => Math.max(a, b));
         });
 
         this._settingsservice.variables().subscribe(res => {
             this.variableTypes = res;
-            const ids = [];
-            for (const item of res) { ids.push(item.id); }
-            if (ids.length > 1) {
-                this.maxID = ids.reduce((a, b ) => Math.max(a, b));
-            } else if (ids.length === 1) {
-                this.maxID = ids[0];
-            } else {
-                this.maxID = 0;
-            }
         });
     }
 
     showNewVariableForm() {
-        this.newVarForm.controls['id'].setValue(this.maxID + 1);
         this.newVarForm.controls['name'].setValue(null);
         this.newVarForm.controls['description'].setValue(null);
         this.newVarForm.controls['code'].setValue(null);
@@ -174,7 +157,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
             const index = this.variableTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.variablesURL)
                 .subscribe(result => {
-                    alert('Success~\n Variable deleted.');
+                    alert('Success!\n Variable deleted.');
                     this.variableTypes.splice(index, 1);
                     this._settingsservice.setVariables(this.variableTypes); // update service
                 }, error => alert('Error Deleting Variable: \n' + error._body.message));

@@ -11,8 +11,8 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
-import { Regressiontype } from '../../../shared/interfaces/regressiontype';
+import { NSSService } from 'app/shared/services/app.service';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -40,7 +40,6 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     private navigationSubscription;
     public loggedInRole;
     private configSettings: Config;
-    public maxID: number;
     public rowBeingEdited: number;
     public tempData;
     public isEditing = false;
@@ -91,22 +90,10 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public getAllRegTypes() {
         this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
             this.regressionTypes = res;
-            const ids = [];
-            for (const item of res) {
-                ids.push(item.id);
-            }
-            if (ids.length > 1) {
-                this.maxID = ids.reduce((a, b) => Math.max(a, b));
-            } else if (ids.length === 1) {
-                this.maxID = ids[0];
-            } else {
-                this.maxID = 0;
-            }
         });
     }
 
     showNewRegressionForm() {
-        this.newRegForm.controls['id'].setValue(this.maxID + 1);
         this.newRegForm.controls['name'].setValue(null);
         this.newRegForm.controls['description'].setValue(null);
         this.showNewRegForm = true;
@@ -209,7 +196,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
             const index = this.regressionTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regTypeURL)
                 .subscribe(result => {
-                    alert('Success~\n Regression Type deleted.');
+                    alert('Success!\n Regression Type deleted.');
                     this.regressionTypes.splice(index, 1);
                     this._settingsservice.setRegTypes(this.regressionTypes); // update service
                 }, error => alert('Error Deleting Regression Type: \n' + error._body.message));

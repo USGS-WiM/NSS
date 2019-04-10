@@ -4,8 +4,8 @@ import { MainviewComponent } from './mainview/mainview.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { PageScrollConfig } from 'ng2-page-scroll';
 import { environment } from '../environments/environment';
-import { NSSService } from '../app/shared/services/app.service';
-import { AuthService } from '../app/shared/services/auth.service';
+import { NSSService } from './shared/services/app.service';
+import { AuthService } from './shared/services/auth.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 import { LoginService } from './shared/services/login.service';
@@ -84,7 +84,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     public goToSettings() {
-        this.router.navigate(['/settings']);
+        this.router.navigate(['settings']);
     }
 
     public goToMain() {

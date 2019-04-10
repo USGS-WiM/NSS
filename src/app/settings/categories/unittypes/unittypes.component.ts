@@ -11,9 +11,9 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
-import { Regressiontype } from '../../../shared/interfaces/regressiontype';
-import { Unittype } from '../../../shared/interfaces/unittype';
+import { NSSService } from 'app/shared/services/app.service';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
+import { Unittype } from 'app/shared/interfaces/unittype';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
@@ -44,7 +44,6 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
     private configSettings: Config;
     public unitSystems: Array<UnitSystem>;
     public isEditing: boolean;
-    public maxID: number;
     public rowBeingEdited: number;
     public tempData;
     constructor(
@@ -74,11 +73,6 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         this.isEditing = false;
         this._settingsservice.getEntities(this.configSettings.unitsURL).subscribe(res => {
             this.unitTypes = res;
-            const ids = [];
-            for (const item of res) {
-                ids.push(item.id);
-            }
-            this.maxID = ids.reduce((a, b ) => Math.max(a, b));
         });
         this._settingsservice.getEntities(this.configSettings.unitSystemsURL).subscribe(usys => {
             this.unitSystems = usys;
@@ -87,20 +81,10 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         // get new units when new one posted/edited
         this._settingsservice.units().subscribe(res => {
             this.unitTypes = res;
-            const ids = [];
-            for (const item of res) { ids.push(item.id); }
-            if (ids.length > 1) {
-                this.maxID = ids.reduce((a, b ) => Math.max(a, b));
-            } else if (ids.length === 1) {
-                this.maxID = ids[0];
-            } else {
-                this.maxID = 0;
-            }
         });
     }
 
     showNewUnitTypeForm() {
-        this.newUnitForm.controls['id'].setValue(this.maxID + 1);
         this.newUnitForm.controls['name'].setValue(null);
         this.newUnitForm.controls['abbreviation'].setValue(null);
         this.newUnitForm.controls['unitSystemTypeID'].setValue(null);
@@ -200,7 +184,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
             const index = this.unitTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.unitsURL)
                 .subscribe(result => {
-                    alert('Success~\n Unit Type deleted.');
+                    alert('Success!\n Unit Type deleted.');
                     this.unitTypes.splice(index, 1);
                     this._settingsservice.setUnits(this.unitTypes); // update service
                 }, error => alert('Error Deleting Unit: \n' + error._body.message));

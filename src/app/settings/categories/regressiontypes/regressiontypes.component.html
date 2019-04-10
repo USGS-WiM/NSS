@@ -8,6 +8,9 @@
     <legend style="margin-bottom:25px;margin-top:0;">Regression Types</legend>
 </div>
 
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewRegressionForm()"><i class="fa fa-plus"
+    aria-hidden="tru"></i> Add New Regression Type</button>
+
 <form #RegressionForm="ngForm">
     <div class="form-group" *ngIf="regressionTypes">
         <table class="table">
@@ -51,8 +54,6 @@
     </div>
 </form>
 <br />
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewRegressionForm()"><i class="fa fa-plus"
-        aria-hidden="tru"></i> Add New Regression Type</button>
 
 <!-- new regression type form -->
 <ng-template #add let-c="close" let-d="dismiss">

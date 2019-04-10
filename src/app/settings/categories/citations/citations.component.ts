@@ -11,7 +11,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
+import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from 'app/settings/settings.service';
 import { Citation } from 'app/shared/interfaces/citation';
 
@@ -40,7 +40,6 @@ export class CitationsComponent implements OnInit, OnDestroy {
     public loggedInRole;
     private configSettings: Config;
     public isEditing: boolean;
-    public maxID: number;
     public rowBeingEdited: number;
     public tempData;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
@@ -92,7 +91,6 @@ export class CitationsComponent implements OnInit, OnDestroy {
     }
 
     showNewCitationForm() {
-        // this.newVarForm.controls['id'].setValue(this.maxID + 1);
         this.newCitForm.controls['title'].setValue(null);
         this.newCitForm.controls['author'].setValue(null);
         this.newCitForm.controls['citationURL'].setValue(null);
@@ -186,7 +184,7 @@ export class CitationsComponent implements OnInit, OnDestroy {
             const index = this.citations.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.citationURL)
                 .subscribe(result => {
-                    alert('Success~\n Citation deleted.');
+                    alert('Success!\n Citation deleted.');
                     this.citations.splice(index, 1);
                     this._settingsservice.setCitations(this.citations); // update service
                 }, error => alert('Error Deleting Citation: \n' + error._body.message));

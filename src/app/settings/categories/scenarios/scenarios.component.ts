@@ -8,16 +8,17 @@
 
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { IMultiSelectSettings, IMultiSelectTexts } from '../../../../../node_modules/angular-2-dropdown-multiselect';
+import { IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect';
+
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
-import { Region } from '../../../shared/interfaces/region';
-import { Scenario } from '../../../shared/interfaces/scenario';
-import { Statisticgroup } from '../../../shared/interfaces/statisticgroup';
-import { Regressiontype } from '../../../shared/interfaces/regressiontype';
-import { Regressionregion } from '../../../shared/interfaces/regressionregion';
+import { NSSService } from 'app/shared/services/app.service';
+import { Region } from 'app/shared/interfaces/region';
+import { Scenario } from 'app/shared/interfaces/scenario';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
+import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { SettingsService } from '../../settings.service';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -66,10 +67,9 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
         private _configService: ConfigService
     ) {
         this.newScenarioForm = _fb.group({
-            statisticGroupId: new FormControl(null, Validators.required),
-            statisticGroupName: new FormControl(null, Validators.required),
+            statisticGroup: new FormControl(null, Validators.required),
             regressionRegions: new FormControl(null),
-            state: new FormControl(null, Validators.required)
+            region: new FormControl(null, Validators.required)
         });
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
             if (e instanceof NavigationEnd) {
@@ -116,7 +116,8 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
             for (const scenario of scen) {
                 const regNames = [];
                 for (const regReg of scenario.regressionRegions) {
-                    regReg.Name = regReg.name; regReg.ID = regReg.id;
+                    regReg.Name = regReg.name;
+                    regReg.ID = regReg.id;
                     regNames.push(regReg.name);
                 }
                 scenario.regNames = regNames.join(',\n');
@@ -126,11 +127,13 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     public onRegSelect(r: Region) {
-        this.regressionRegions = []; this.selectedRegRegionIDs = [];
-        this.selectedStatGroupIDs = []; this.selectedRegTypeIDs = [];
+        this.regressionRegions = [];
+        this.selectedRegRegionIDs = [];
+        this.selectedStatGroupIDs = [];
+        this.selectedRegTypeIDs = [];
+        this.selectedRegion = r;
         this._nssService.setSelectedRegion(r);
     }
-
 
     public onRegRegSelect(reg) {
         const selectedRegRegions: Array<Regressionregion> = new Array<Regressionregion>();
@@ -166,7 +169,7 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedRegTypes.push(
                 this.regressionTypes.filter(function(rr) {
-                    return rr.id == srt;
+                    return rr.id === srt;
                 })[0]
             );
         });
@@ -175,10 +178,10 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     public showNewScenarioForm() {
         // still needs changes
-        this.newScenarioForm.controls['StatisticGroupName'].setValue(null);
-        this.newScenarioForm.controls['RegressionRegions'].setValue(null);
+        this.newScenarioForm.controls['statisticGroup'].setValue(null);
+        this.newScenarioForm.controls['regressionRegions'].setValue(null);
+        this.newScenarioForm.controls['region'].setValue(this.selectedRegion);
         this.showNewScenForm = true;
-        this.newScenarioForm.controls['Code'].setValue(null);
         this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
@@ -216,16 +219,24 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     private createNewScenario() {
         alert('this will push to nssdb eventually');
-        // from wateruse
-        /*let category = this.newCatForm.value;
-        this._settingsService.postEntity(category, 'categoryTypeURL')
-            .subscribe((response: ICategoryType) => {
+        const scenario = this.newScenarioForm.value;
+        scenario.statisticGroupID = scenario.statisticGroup.id;
+        scenario.statisticGroupName = scenario.statisticGroup.name;
+        const region = scenario.region;
+        delete scenario.region;
+        delete scenario.statisticGroup;
+
+        this._settingsservice.postEntity(scenario, this.configSettings.regionURL + region + '/' + this.configSettings.scenariosURL)
+            .subscribe(
+            (response: Scenario) => {
                 response.isEditing = false;
-                this.categoryTypes.push(response);
-                this._settingsService.setCategories(this.categoryTypes);
-                this._toastService.pop('success', 'Success', 'Category Type was created.'); 
-                this.cancelCreateCategory();
-            }, error => this._toastService.pop('error', 'Error creating Category Type', error._body.message || error.statusText)); */
+                this.cancelCreateScenario();
+                alert('Sucess! \nScenario was created.');
+                this.onRegSelect(region);
+                this.cancelCreateScenario();
+            },
+            error => alert('Error creating Scneario \n' + error._body.message)
+        );
     }
 
     private EditRowClicked(i: number) {

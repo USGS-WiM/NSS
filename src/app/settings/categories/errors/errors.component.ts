@@ -11,7 +11,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
+import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from 'app/settings/settings.service';
 import { Error } from 'app/shared/interfaces/error';
 
@@ -36,13 +36,11 @@ export class ErrorsComponent implements OnInit, OnDestroy {
     public loggedInRole;
     private configSettings: Config;
     public isEditing: boolean;
-    public maxID: number;
     public rowBeingEdited: number;
     public tempData;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService) {
             this.newErrForm = _fb.group({
-                'id': new FormControl(null),
                 'name': new FormControl(null, Validators.required),
                 'code': new FormControl(null, Validators.required)
             });
@@ -57,25 +55,14 @@ export class ErrorsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this._settingsservice.getEntities(this.configSettings.errorsURL).subscribe(res => {
             this.errors = res;
-            const ids = [];
-            for (const item of res) {
-                ids.push(item.id);
-            }
-            this.maxID = ids.reduce((a, b ) => Math.max(a, b));
         });
 
         this._settingsservice.errors().subscribe(res => {
             this.errors = res;
-            const ids = [];
-            for (const item of res) {
-                ids.push(item.id);
-            }
-            if (ids.length > 0) { this.maxID = ids.reduce((a, b ) => Math.max(a, b)); }
         });
     }
 
     showNewErrorForm() {
-        this.newErrForm.controls['id'].setValue(this.maxID + 1);
         this.newErrForm.controls['name'].setValue(null);
         this.newErrForm.controls['code'].setValue(null);
         this.showNewErrForm = true;
@@ -172,7 +159,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
             const index = this.errors.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.errorsURL)
                 .subscribe(result => {
-                    alert('Success~\n Error deleted.');
+                    alert('Success!\n Error deleted.');
                     this.errors.splice(index, 1);
                     this._settingsservice.setErrors(this.errors); // update service
                 }, error => {

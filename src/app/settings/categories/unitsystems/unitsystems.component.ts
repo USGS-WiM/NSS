@@ -11,8 +11,8 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
-import { NSSService } from '../../../shared/services/app.service';
-import { Regressiontype } from '../../../shared/interfaces/regressiontype';
+import { NSSService } from 'app/shared/services/app.service';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { SettingsService } from '../../settings.service';
 
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -42,7 +42,6 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
     private configSettings: Config;
     public unitSystems: Array<UnitSystem>;
     public isEditing: boolean;
-    public maxID: number;
     public rowBeingEdited: number;
     public tempData;
     constructor(
@@ -55,7 +54,6 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
         private _configService: ConfigService
     ) {
         this.newUnitSystemForm = _fb.group({
-            id: new FormControl(null),
             unitSystem: new FormControl(null, Validators.required)
         });
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -70,39 +68,16 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
         this.isEditing = false;
         this._settingsservice.getEntities(this.configSettings.unitSystemsURL).subscribe(res => {
             this.unitSystems = res;
-            const ids = [];
-            for (const item of res) {
-                ids.push(item.id);
-            }
-            if (ids.length > 1) {
-                this.maxID = ids.reduce((a, b) => Math.max(a, b));
-            } else if (ids.length === 1) {
-                this.maxID = ids[0];
-            } else {
-                this.maxID = 0;
-            }
         });
 
         // get new units when new one posted/edited
         this._settingsservice.unitSystems().subscribe(res => {
             this.unitSystems = res;
-            const ids = [];
-            for (const item of res) {
-                ids.push(item.id);
-            }
-            if (ids.length > 1) {
-                this.maxID = ids.reduce((a, b) => Math.max(a, b));
-            } else if (ids.length === 1) {
-                this.maxID = ids[0];
-            } else {
-                this.maxID = 0;
-            }
         });
     }
 
     showNewForm() {
         this.newUnitSystemForm.controls['unitSystem'].setValue(null);
-        this.newUnitSystemForm.controls['id'].setValue(this.maxID + 1);
         this.showNewUnitSystemForm = true;
         this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
             result => {
@@ -201,7 +176,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
             const index = this.unitSystems.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.unitSystemsURL)
                 .subscribe(result => {
-                    alert('Success~\n Unit System deleted.');
+                    alert('Success!\n Unit System deleted.');
                     this.unitSystems.splice(index, 1);
                     this._settingsservice.setUnitSystems(this.unitSystems); // update service
                 }, error => alert('Error Deleting Unit System: \n' + error._body.message));

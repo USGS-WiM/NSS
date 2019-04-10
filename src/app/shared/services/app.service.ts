@@ -7,18 +7,18 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
 // interfaces
-import { Region } from '../../shared/interfaces/region';
-import { Regressionregion } from '../../shared/interfaces/regressionregion';
-import { Statisticgroup } from '../../shared/interfaces/statisticgroup';
-import { Regressiontype } from '../../shared/interfaces/regressiontype';
-import { Scenario } from '../../shared/interfaces/scenario';
-import { Citation } from '../../shared/interfaces/citation';
-import { Hydrochart } from '../../shared/interfaces/hydrochart';
-import { Config } from '../../shared/interfaces/config';
+import { Region } from 'app/shared/interfaces/region';
+import { Regressionregion } from 'app/shared/interfaces/regressionregion';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
+import { Scenario } from 'app/shared/interfaces/scenario';
+import { Citation } from 'app/shared/interfaces/citation';
+import { Hydrochart } from 'app/shared/interfaces/hydrochart';
+import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from '../../config.service';
 import { Toast } from 'angular2-toaster/src/toast';
-import { Unittype } from '../../shared/interfaces/unitType';
-import { Variabletype } from '../../shared/interfaces/variabletype';
+import { Unittype } from 'app/shared/interfaces/unitType';
+import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Manager } from '../interfaces/manager';
 import { Role } from '../interfaces/role';
 

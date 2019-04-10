@@ -20,13 +20,13 @@
     </div>
 </div>
 
-<!--<div *ngIf="regressionTypes">Limit by Statistic:
+<div *ngIf="regressionTypes">Limit by Statistic:
     <div class="settingsMultSelect">
         <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedRegTypeIDs"
             [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
         </ss-multiselect-dropdown>
     </div>
-</div> -->
+</div>
 
 
 <form #ScenarioForm="ngForm">
@@ -89,34 +89,32 @@
     <div class="modal-body">
         <h3 class="modal-title">New Scenario</h3>
         <form [formGroup]="newScenarioForm">
-            <!-- Scenario Name* -->
-            <label class="req" for="StatisticGroupName">StatisticGroupName:</label>
-            <select formControlName="StatisticGroupName">
+            <!-- Statistic Group* -->
+            <label class="req" for="statisticGroup">StatisticGroup:</label>
+            <select formControlName="statisticGroup">
                 <option [ngValue]="s" *ngFor="let s of statisticGroups">{{s.name}}</option>
             </select>
 
-            <!-- Description -->
-            <label class="req" for="RegressionRegions">RegressionRegions:</label>
+            <!-- Regression Regions* -->
+            <label class="req" for="regressionRegions">RegressionRegions:</label>
             <div class="settingsMultSelect">
                 <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRTSettings"
-                    formControlName="RegressionRegions">
+                    formControlName="regressionRegions">
                 </ss-multiselect-dropdown>
             </div>
 
-            <!-- Short Name -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newScenarioForm.get('Code').valid && newScenarioForm.get('Code').dirty}">
-                <label class="req" for="code">Code:</label>
-                <input class="form-control" type="text" formControlName="Code">
-                <div class="input-invalid-warning" *ngIf="!newScenarioForm.get('Code').valid && newScenarioForm.get('Code').dirty">Code
-                    is required</div>
-            </div>
+            <!-- Region* -->
+            <label class="req" for="region">Region:</label>
+            <select formControlName="region">
+                <option [ngValue]="r" *ngFor="let r of regions">{{r.name}}</option>
+            </select>
 
         </form>
 
 
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewScneario()" [disabled]="!newScenarioForm.valid" class="btn-blue">Create</button>
+            <button type="button" (click)="createNewScenario()" [disabled]="!newScenarioForm.valid" class="btn-blue">Create</button>
         </div>
     </div>
 </ng-template>

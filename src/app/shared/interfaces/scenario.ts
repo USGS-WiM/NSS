@@ -9,4 +9,5 @@ export interface Scenario {
     links: Link[];
     citations?: Citation[];
     regNames: string;
+    isEditing?: boolean;
 }

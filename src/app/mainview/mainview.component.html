@@ -45,7 +45,7 @@
                                 <td style="vertical-align:middle;">{{rr.name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_Code: {{rr.code}})</span></td>
                                 <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
                                 <td *ngIf="showWeights" class="col-xs-2">
-                                    <input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.PercentWeight">
+                                    <input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.percentWeight">
                                 </td>
                             </tr>
                         </table>
@@ -111,10 +111,10 @@
             <h2 style="margin:0;padding:0">Citations</h2>
             <div *ngFor="let sc of scenarios">
                 <label *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</label>
-                <div *ngFor="let l of sc.Citations">
-                    <a [href]="l.CitationURL" [target]="_blank">
-                        <div>{{l.Author}}</div>
-                        <div>{{l.Title}}</div>
+                <div *ngFor="let l of sc.citations">
+                    <a [href]="l.citationURL" [target]="_blank">
+                        <div>{{l.author}}</div>
+                        <div>{{l.title}}</div>
                     </a>
                     <br />
                 </div>
@@ -127,15 +127,15 @@
         <button type="button" class="btn-wim-primary hidden-print" style="margin-bottom: 15px;" (click)="editScenario()">Edit Scenario Parameters</button>
         <div *ngFor="let s of scenarios">
             <h3>{{s.statisticGroupName}}</h3>
-            <div *ngFor="let rr of s.RegressionRegions;let r = index">
+            <div *ngFor="let rr of s.regressionRegions;let r = index">
                 <div><!-- *ngIf="rr.ID > 0">  -->
                     <div class="row">
                         <div class="col-xs-12">
                             <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
                             <table #inputsTable>
                                 <tr><td>{{rr.name}} Region</td></tr>
-                                <tr *ngIf="rr.PercentWeight"><td>{{rr.PercentWeight}}% Weighted</td></tr>
-                                <tr *ngFor="let p of rr.Parameters"><td>{{p.name}} = {{p.value}} (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)</td></tr>
+                                <tr *ngIf="rr.percentWeight"><td>{{rr.percentWeight}}% Weighted</td></tr>
+                                <tr *ngFor="let p of rr.parameters"><td>{{p.name}} = {{p.value}} (<span [innerHTML]="setSuperScript(p.unitType.abbr)"></span>)</td></tr>
                             </table>
                         </div>
                     </div>
@@ -149,39 +149,39 @@
                                     <tr style="border-bottom: white solid;">
                                         <th class="col-xs-6">{{rr.name}} Region</th>
                                         <th>Value</th>
-                                        <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Prediction Interval</th>
-                                        <th *ngIf="rr.Results[0].Errors && rr.Results[0].Errors.length > 0" [attr.colspan]="rr.Results[0].Errors.length">Errors (%)</th>
-                                        <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent Yrs.</th>
+                                        <th *ngIf="rr.results[0].intervalBounds" colspan="2">Prediction Interval</th>
+                                        <th *ngIf="rr.results[0].errors && rr.results[0].errors.length > 0" [attr.colspan]="rr.results[0].errors.length">Errors (%)</th>
+                                        <th *ngIf="rr.results[0].equivalentYears>0">Equivalent Yrs.</th>
                                     </tr>
                                     <tr>
                                         <th class="col-xs-6">Description</th>
-                                        <th>(<span [innerHTML]="setSuperScript(rr.Results[0].Unit.Abbr)"></span>)</th>
-                                        <th *ngIf="rr.Results[0].IntervalBounds">Low</th>
-                                        <th *ngIf="rr.Results[0].IntervalBounds">High</th>
-                                        <th *ngFor="let e of rr.Results[0]?.Errors">{{e.code}}</th>
-                                        <th *ngIf="rr.Results[0].EquivalentYears>0"></th><!--space for if Equivalent Yrs-->
+                                        <th>(<span [innerHTML]="setSuperScript(rr.results[0].unit.abbr)"></span>)</th>
+                                        <th *ngIf="rr.results[0].intervalBounds">Low</th>
+                                        <th *ngIf="rr.results[0].intervalBounds">High</th>
+                                        <th *ngFor="let e of rr.results[0]?.errors">{{e.code}}</th>
+                                        <th *ngIf="rr.results[0].equivalentYears>0"></th><!--space for if Equivalent Yrs-->
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let result of rr.Results">
+                                    <tr *ngFor="let result of rr.results">
                                         <td>{{result.description}} ({{result.code}})</td>
                                         <td>{{sigFigures(result.value)}}</td>
-                                        <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Lower != "NaN" ? sigFigures(result.IntervalBounds.Lower) : '---'}}</td>
-                                        <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Upper != "NaN" ? sigFigures(result.IntervalBounds.Upper) : '---'}}</td>
-                                        <td *ngFor="let e of result?.Errors">{{e.value}}</td>
-                                        <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears > 0 && result.EquivalentYears !== 999 ? result.EquivalentYears : 'N/A'}}</td>
+                                        <td *ngIf="rr.results[0].intervalBounds">{{result.intervalBounds != undefined && result.intervalBounds.lower != "NaN" ? sigFigures(result.intervalBounds.lower) : '---'}}</td>
+                                        <td *ngIf="rr.results[0].intervalBounds">{{result.intervalBounds != undefined && result.intervalBounds.upper != "NaN" ? sigFigures(result.intervalBounds.upper) : '---'}}</td>
+                                        <td *ngFor="let e of result?.errors">{{e.value}}</td>
+                                        <td *ngIf="rr.results[0].equivalentYears>0">{{result.equivalentYears > 0 && result.equivalentYears !== 999 ? result.equivalentYears : 'N/A'}}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div><!-- END rr.ID > 0
-                <div *ngIf="rr.ID == 0">
+                </div><!-- END rr.id > 0
+                <div *ngIf="rr.id == 0">
                     <div class="row">
                         <div class="col-xs-12">
                             <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
                             <table #inputsTable>
-                                <tr><td>{{rr.Name}}</td></tr>
+                                <tr><td>{{rr.name}}</td></tr>
                             </table>
                         </div>
                     </div>
@@ -194,14 +194,14 @@
                                     <tr>
                                         <th class="col-xs-6">Description</th>
                                         <th>Value</th>
-                                        <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent<br/>Years</th>
+                                        <th *ngIf="rr.results[0].equivalentYears>0">Equivalent<br/>Years</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let result of rr.Results">
-                                        <td>{{result.Description}} ({{result.code}})</td>
-                                        <td>{{sigFigures(result.Value)}}</td>
-                                        <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears}}</td>
+                                    <tr *ngFor="let result of rr.results">
+                                        <td>{{result.description}} ({{result.code}})</td>
+                                        <td>{{sigFigures(result.value)}}</td>
+                                        <td *ngIf="rr.results[0].equivalentYears>0">{{result.equivalentYears}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -214,10 +214,10 @@
         <!-- Citations -->
         <h2 id="citations" style="margin:0;padding:0">Citations</h2>
         <div *ngFor="let sc of scenarios">
-            <div *ngFor="let c of sc.Citations"><!--" | unique">-->
-            <a [href]="c.CitationURL" [target]="_blank">
-                <div>{{c.Author}}</div>
-                <div>{{c.Title}}</div>
+            <div *ngFor="let c of sc.citations"><!--" | unique">-->
+            <a [href]="c.citationURL" [target]="_blank">
+                <div>{{c.author}}</div>
+                <div>{{c.title}}</div>
             </a>
             <br />
         </div>
@@ -227,7 +227,7 @@
         <!-- charts-->
         <div id="chart">
             <div class="row">
-                <div class="col-xs-12" *ngIf="hydroChartsArray.length >0" style="padding-left: 0 !important; padding-bottom: 25px !important;">
+                <div class="col-xs-12" *ngIf="hydroChartsArray.length >0" style="padding-bottom: 25px !important;">
                     <h2 class="charts-header">Charts</h2>
                     <button class="hidden-print" style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
                 </div>
@@ -581,10 +581,10 @@
         <div class="row">
             <div *ngFor="let e of equationResults" class="col-xs-10">
             <table style="border:solid 1px gray" class="table">
-                    <tr><td colspan="2">{{e.Name}}</td><tr>
-                    <tr *ngFor="let c of e.Formulas">
-                        <td>{{c.code}} = </td>
-                        <td><span [MathJax]="c.Equation">{{c.equation}}</span></td>
+                    <tr><td colspan="2">{{e.name}}</td><tr>
+                    <tr *ngFor="let c of e.formulas">
+                        <td>{{c.Code}} = </td>
+                        <td><span [MathJax]="c.Equation">{{c.Equation}}</span></td>
                     </tr>
             </table>
             </div><!--End equations-->

@@ -183,14 +183,13 @@ input[type="radio"]{
   margin-bottom: 0 !important;
   position: relative;
   top: 8px;
-  margin-right: 10px;
 }
 
 .chart-wrapper{
   border: 1px solid rgba(0,0,0,0.3);
   display:inline-block;
   margin-bottom:65px !important;
-  max-height: 450px !important;
+  max-height: 460px !important;
   padding: 0 !important;
 }
 

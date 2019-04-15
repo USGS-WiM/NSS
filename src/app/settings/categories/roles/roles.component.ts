@@ -8,6 +8,7 @@
 
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
@@ -43,7 +44,8 @@ export class RolesComponent implements OnInit, OnDestroy {
     public rowBeingEdited: number;
     public tempData;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
-        private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService) {
+        private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _toasterService: ToasterService,
+        private _configService: ConfigService) {
             this.newRoleForm = _fb.group({
                 'name': new FormControl(null, Validators.required),
                 'description': new FormControl(null, Validators.required)
@@ -103,9 +105,10 @@ export class RolesComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.roles.push(response);
                 this._settingsservice.setRoles(this.roles);
-                alert('Sucess! \nRole was created.');
+                this._toasterService.pop('success', 'Success', 'Role was created');
                 this.cancelCreateRole();
-        }, error => alert('Error creating role \n' + error._body.message));
+            }, error => { this._toasterService.pop('error', 'Error creating Role', error._body.message || error.statusText); }
+        );
     }
 
     private EditRowClicked(i: number) {
@@ -129,19 +132,19 @@ export class RolesComponent implements OnInit, OnDestroy {
     public saveRole(r: Role, i: number) {
         if (r.name === undefined || r.description === undefined) {
             // don't save it
-            alert('Name and Description are required.');
+            this._toasterService.pop('error', 'Error updating Error', 'Name and Description are required.');
         } else {
             delete r.isEditing;
             this._settingsservice.putEntity(r.id, r, this.configSettings.rolesURL).subscribe(
                 (resp: Role) => {
-                    alert('Success! \n Role was updated');
+                    this._toasterService.pop('success', 'Success', 'Role was updated');
                     r.isEditing = false;
                     this.roles[i] = r;
                     this._settingsservice.setRoles(this.roles);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.roleForm.form.dirty) { this.roleForm.reset(); }
-                }, error => alert('Error updating Role: \n' + error._body.message)
+                }, error => { this._toasterService.pop('error', 'Error updating Role', error._body.message || error.statusText); }
             );
         }
     }
@@ -154,10 +157,11 @@ export class RolesComponent implements OnInit, OnDestroy {
             const index = this.roles.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.rolesURL)
                 .subscribe(result => {
-                    alert('Success!\n Role deleted.');
+                    this._toasterService.pop('success', 'Success', 'Role was deleted');
                     this.roles.splice(index, 1);
                     this._settingsservice.setRoles(this.roles); // update service
-                }, error => alert('Error Deleting Role: \n' + error._body.message));
+                }, error => { this._toasterService.pop('error', 'Error deleting Role', error._body.message || error.statusText); }
+            );
         }
     }
 

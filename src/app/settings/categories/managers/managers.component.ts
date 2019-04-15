@@ -8,6 +8,7 @@
 
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { ActivatedRoute } from '@angular/router';
 
@@ -50,6 +51,7 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
         private _fb: FormBuilder,
         private _modalService: NgbModal,
         private _cdr: ChangeDetectorRef,
+        private _toasterService: ToasterService,
         private _configService: ConfigService
     ) {
         this.newUserForm = _fb.group({
@@ -122,11 +124,9 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
                 response.isEditing = false;
                 this.managers.push(response);
                 this._settingsservice.setManagers(this.managers);
-                alert('Sucess! \nManager was created.');
+                this._toasterService.pop('success', 'Success', 'Manager was created');
                 this.cancelCreateUser();
-                // }, error => this._toastService.pop('error', 'Error creating Category Type', error._body.message || error.statusText));
-            },
-            error => alert('Error creating Manager \n' + error._body.message)
+            }, error => { this._toasterService.pop('error', 'Error creating Manager', error._body.message || error.statusText); }
         );
     }
 
@@ -142,7 +142,7 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
         this.managers[i].isEditing = false;
         this.rowBeingEdited = -1;
         this.isEditing = false; // set to true so create new is disabled
-        if (this.userForm.form.dirty) {
+        if (this.userForm.nativeElement.dirty) {
             this.userForm.reset();
         }
     }
@@ -151,19 +151,19 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
     public saveManager(u: Manager, i: number) {
         if (u.username === undefined || u.email === undefined || u.firstName === undefined || u.lastName === undefined || u.roleID === undefined) {
             // don't save it
-            alert('First name, last name, username, email and role ID are required.');
+            this._toasterService.pop('error', 'Error updating Error', 'First name, last name, username, email and role ID are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.managersURL).subscribe(
                 (resp: Manager) => {
-                    alert('Success! \n Manager was updated');
+                    this._toasterService.pop('success', 'Success', 'Manager was updated');
                     u.isEditing = false;
                     this.managers[i] = u;
                     this._settingsservice.setManagers(this.managers);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.userForm.form.dirty) { this.userForm.reset(); }
-                }, error => alert('Error updating Manager: \n' + error._body.message)
+                }, error => { this._toasterService.pop('error', 'Error updating Manager', error._body.message || error.statusText); }
             );
         }
     }
@@ -176,10 +176,11 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
             const index = this.managers.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.managersURL)
                 .subscribe(result => {
-                    alert('Success!\n Manager deleted.');
+                    this._toasterService.pop('success', 'Success', 'Manager was deleted');
                     this.managers.splice(index, 1);
                     this._settingsservice.setManagers(this.managers); // update service
-                }, error => alert('Error Deleting Manager: \n' + error._body.message));
+                }, error => {this._toasterService.pop('error', 'Error deleting Manager', error._body.message || error.statusText); }
+            );
         }
     }
 

@@ -8,6 +8,7 @@
 
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
@@ -44,7 +45,8 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public rowBeingEdited: number;
     public tempData;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
-        private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService) {
+        private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _toasterService: ToasterService,
+        private _configService: ConfigService) {
             this.newVarForm = _fb.group({
                 'name': new FormControl(null, Validators.required),
                 'description': new FormControl(null),
@@ -106,9 +108,10 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.variableTypes.push(response);
                 this._settingsservice.setVariables(this.variableTypes);
-                alert('Sucess! \nVariable Type was created.');
+                this._toasterService.pop('success', 'Success', 'Variable was created');
                 this.cancelCreateVariableType();
-        }, error => alert('Error creating variable Type \n' + error._body.message));
+            }, error => { this._toasterService.pop('error', 'Error creating Variable', error._body.message || error.statusText); }
+        );
     }
 
     private EditRowClicked(i: number) {
@@ -132,19 +135,19 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public saveVariable(u: Variabletype, i: number) {
         if (u.name === undefined || u.description === undefined || u.code === undefined) {
             // don't save it
-            alert('Name, description and Code are required.');
+            this._toasterService.pop('error', 'Error updating Statistic Group', 'Name, description and Code are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.variablesURL).subscribe(
                 (resp: Variabletype) => {
-                    alert('Success! \n Variable Type was updated');
+                    this._toasterService.pop('success', 'Success', 'Variable was updated');
                     u.isEditing = false;
                     this.variableTypes[i] = u;
                     this._settingsservice.setVariables(this.variableTypes);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.varForm.form.dirty) { this.varForm.reset(); }
-                }, error => alert('Error updating Variable Type: \n' + error._body.message)
+                }, error => { this._toasterService.pop('error', 'Error updating Variable', error._body.message || error.statusText); }
             );
         }
     }
@@ -157,10 +160,11 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
             const index = this.variableTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.variablesURL)
                 .subscribe(result => {
-                    alert('Success!\n Variable deleted.');
+                    this._toasterService.pop('success', 'Success', 'Variable was deleted');
                     this.variableTypes.splice(index, 1);
                     this._settingsservice.setVariables(this.variableTypes); // update service
-                }, error => alert('Error Deleting Variable: \n' + error._body.message));
+                }, error => { this._toasterService.pop('error', 'Error deleting Variable', error._body.message || error.statusText); }
+            );
         }
     }
 

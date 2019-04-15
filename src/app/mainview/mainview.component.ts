@@ -19,8 +19,6 @@ import { Toast } from 'angular2-toaster/src/toast';
 import { PageScrollService, PageScrollInstance } from 'ng2-page-scroll';
 import * as Highcharts from 'highcharts';
 import { LoaderService } from '../shared/components/loader.service';
-declare var L: any;
-import * as esri from 'esri-leaflet';
 
 declare var MathJax: {
     Hub: { Queue: (param: Object[]) => void };
@@ -136,8 +134,8 @@ export class MainviewComponent implements OnInit {
                 s.regressionRegions.forEach((rr, index) => {
                     regID = '(RG_Code: ' + rr.code + ')'; // need to show the regID for each limit so they know which one they are out of range on
                     if (rr.results) {
-                        if (rr.results[0].Errors) {
-                            this.resultsErrorLength = rr.results[0].Errors.length;
+                        if (rr.results[0].errors) {
+                            this.resultsErrorLength = rr.results[0].errors.length;
                         }
                         let eqResult: Equationresults = { name: '', formulas: [] };
                         let equationString: string = '';
@@ -153,8 +151,8 @@ export class MainviewComponent implements OnInit {
                         this.resultsBack = true;
                         rr.results.forEach(R => {
                             if (eqResult.name != '') {
-                                eqResult.formulas.push({ Code: R.code, Equation: this.buildEquation(rr.parameters, R.Equation) });
-                                equationString += R.code + '= ,' + R.Equation + '\r\n';
+                                eqResult.formulas.push({ Code: R.code, Equation: this.buildEquation(rr.parameters, R.equation) });
+                                equationString += R.code + '= ,' + R.equation + '\r\n';
                             }
                         });
                         if (rr.id > 0) this.equationResults.push(eqResult);
@@ -253,7 +251,7 @@ export class MainviewComponent implements OnInit {
                                     this.hChartXAxisValues.push(R.code);
                                 });
                                 // use constant array to populate chart [][]
-                                rec = rr.results.filter(r => r.code == this.hChartXAxisValues[0])[0].Value;
+                                rec = rr.results.filter(r => r.code == this.hChartXAxisValues[0])[0].value;
                             }
                         });
                     } else {
@@ -263,7 +261,7 @@ export class MainviewComponent implements OnInit {
                                 this.hChartXAxisValues.push(R.code);
                             });
                             // use constant array to populate chart [][]
-                            rec = rr.results.filter(r => r.code == this.hChartXAxisValues[0])[0].Value;
+                            rec = rr.results.filter(r => r.code == this.hChartXAxisValues[0])[0].value;
                         });
                     }
                 }); // end foreach scenario
@@ -385,16 +383,16 @@ export class MainviewComponent implements OnInit {
                                     F_areaAveraged = true; // area averaged, add title to chart stating
                                     this.frequencyPlotChart.curveLabel = 'PK25 (Area-weighted average)';
                                     rr.results.forEach(R => {
-                                        let x: number = +R.Name.substring(0, R.Name.indexOf(' '));
-                                        freqDataArray.push([x, this.sigFigures(R.Value)]);
+                                        let x: number = +R.name.substring(0, R.name.indexOf(' '));
+                                        freqDataArray.push([x, this.sigFigures(R.value)]);
                                     });
                                 }
                             });
                         } else {
                             s.regressionRegions.forEach(rr => {
                                 rr.results.forEach(R => {
-                                    let x: number = +R.Name.substring(0, R.Name.indexOf(' '));
-                                    freqDataArray.push([x, this.sigFigures(R.Value)]);
+                                    let x: number = +R.name.substring(0, R.name.indexOf(' '));
+                                    freqDataArray.push([x, this.sigFigures(R.value)]);
                                 });
                             });
                         }
@@ -787,7 +785,7 @@ export class MainviewComponent implements OnInit {
         let recValue: number;
         this.scenarios.forEach(s => {
             s.regressionRegions.forEach(rr => {
-                if (rr.results) recValue = rr.results.filter(r => r.code == this.hydrographs[i].recurrence)[0].Value;
+                if (rr.results) recValue = rr.results.filter(r => r.code == this.hydrographs[i].recurrence)[0].value;
             });
         });
         this.charts[i].series[0].setData(
@@ -823,8 +821,8 @@ export class MainviewComponent implements OnInit {
                 s.regressionRegions.forEach(rr => {
                     if (rr.results) {
                         rr.results.forEach(R => {
-                            let x: number = +R.Name.substring(0, R.Name.indexOf(' '));
-                            freqDataArray.push([(1 / x) * 100, R.Value]);
+                            let x: number = +R.name.substring(0, R.name.indexOf(' '));
+                            freqDataArray.push([(1 / x) * 100, R.value]);
                         });
                     }
                 });
@@ -844,8 +842,8 @@ export class MainviewComponent implements OnInit {
                 s.regressionRegions.forEach(rr => {
                     if (rr.results) {
                         rr.results.forEach(R => {
-                            let x: number = +R.Name.substring(0, R.Name.indexOf(' '));
-                            freqDataArray.push([1 / x, R.Value]);
+                            let x: number = +R.name.substring(0, R.name.indexOf(' '));
+                            freqDataArray.push([1 / x, R.value]);
                         });
                     }
                 });
@@ -865,8 +863,8 @@ export class MainviewComponent implements OnInit {
                 s.regressionRegions.forEach(rr => {
                     if (rr.results) {
                         rr.results.forEach(R => {
-                            let x: number = +R.Name.substring(0, R.Name.indexOf(' '));
-                            freqDataArray.push([x, R.Value]);
+                            let x: number = +R.name.substring(0, R.name.indexOf(' '));
+                            freqDataArray.push([x, R.value]);
                         });
                     }
                 });

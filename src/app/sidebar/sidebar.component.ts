@@ -7,7 +7,6 @@ import { Statisticgroup } from '../shared/interfaces/statisticgroup';
 import { Regressiontype } from '../shared/interfaces/regressiontype';
 import { Regressionregion } from '../shared/interfaces/regressionregion';
 import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/angular-2-dropdown-multiselect';
-import { ToasterContainerComponent, ToasterService } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
 
 @Component({

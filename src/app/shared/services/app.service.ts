@@ -46,7 +46,7 @@ export class NSSService {
     }
     // -+-+-+-+-+-+-+-+-+ about modal -+-+-+-+-+-+-+-+
     private _showHideAboutModal: Subject<boolean> = new Subject<boolean>();
-    public setAboutModal(val: any) {
+    public setAboutModal(val: any) { 
         this._showHideAboutModal.next(val);
     }
     // show the filter modal in the mainview
@@ -559,11 +559,11 @@ export class NSSService {
                 s => {
                     s.forEach(scen => {
                         // get citations
-                        /*let i = scen.links[0].Href.indexOf('?');
-                        let param = scen.links[0].Href.substring(i + 1);
+                        let i = scen.links[0].href.indexOf('?');
+                        let param = scen.links[0].href.substring(i + 1);
                         this.getCitations(new URLSearchParams(param)).subscribe(c => {
                             scen.citations = c;
-                        });*/ // no links on these?
+                        });
                         // clear Parameter.'Value'
                         scen.regressionRegions.forEach(rr => {
                             rr.parameters.forEach(p => {
@@ -579,7 +579,7 @@ export class NSSService {
 
     // calculate Scenarios (POST)
     postScenarios(id: number, s: Scenario[], searchArgs?: URLSearchParams) {
-        // let body = JSON.stringify(s);
+        // let body = JSON.stringify(s); 
         let options = new RequestOptions({ headers: this.jsonHeader, search: searchArgs });
 
         return this._http
@@ -590,8 +590,8 @@ export class NSSService {
                     sResult.forEach(scen => {
                         if (scen.regressionRegions.length > 0) {
                             // get citations
-                            let i = scen.links[0].Href.indexOf('?');
-                            let param = scen.links[0].Href.substring(i + 1);
+                            let i = scen.links[0].href.indexOf('?');
+                            let param = scen.links[0].href.substring(i + 1);
                             this.getCitations(new URLSearchParams(param)).subscribe(
                                 c => {
                                     scen.citations = c;

@@ -9,8 +9,10 @@
             {{title}}
         </span>
         <div class="nav-links">
-            <a (click)="goToMain()" router-link="/" routerLinkActive="active">Home</a>
-            <a [class.hidden]="!isLoggedIn" (click)="goToSettings()" router-link="['/settings']" routerLinkActive="active">
+            <a routerLink="" routerLinkActive="active">
+                <span class="nav-link-text">Home</span>
+            </a>
+            <a [class.hidden]="!isLoggedIn" routerLink="settings" routerLinkActive="active">
                 <span class="nav-link-text">Settings</span>
             </a>
             <a (click)="showAbout()">

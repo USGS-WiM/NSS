@@ -3,13 +3,13 @@ import { Error } from './error';
 import { Intervalbound} from './intervalBound';
 
 export interface Result {
-    Description: string;
-    Equation: string;
-    EquivalentYears: number;
-    Name: string;
-    Value: number;
+    description: string;
+    equation: string;
+    equivalentYears: number;
+    name: string;
+    value: number;
     code: string;
-    Errors: Error[];
-    IntervalBounds: Intervalbound;
-    Unit: Unittype;
+    errors: Error[];
+    intervalBounds: Intervalbound;
+    unit: Unittype;
 }

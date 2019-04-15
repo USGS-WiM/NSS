@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@ang
 import { LoginService } from './shared/services/login.service';
 import { Manager } from './shared/interfaces/manager';
 import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 @Component({
     selector: 'app-root',
@@ -39,6 +40,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private _authService: AuthService,
         private _loginService: LoginService,
         private _fb: FormBuilder,
+        private _toasterService: ToasterService,
         private _modalService: NgbModal
     ) {
         PageScrollConfig.defaultScrollOffset = 85;
@@ -61,14 +63,16 @@ export class AppComponent implements OnInit, OnDestroy {
         });
 
         this.loggedInRole = localStorage.getItem('loggedInRole');
-        if (this.loggedInRole !== null) {
+        if (this.loggedInRole !== null && !this.checkSetupTime()) {
             this._loginService._loggedInSubject.next(true);
+        } else {
+            this.logout();
         }
 
         this.manager = { username: '', password: '' };
 
         // get return url from route parameters or default to '/'
-        this.returnUrl = '/';
+        this.returnUrl = '';
 
         this.modalElement = this.loginModal;
         this.loginError = false;
@@ -83,14 +87,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this._nssService.setCreateModal(true);
     }
 
-    public goToSettings() {
-        this.router.navigate(['settings']);
-    }
-
-    public goToMain() {
-        this.router.navigate([this.returnUrl]);
-    }
-
     public showLoginModal(): void {
         this.LoginForm.controls['username'].setValue(null);
         this.LoginForm.controls['password'].setValue(null);
@@ -103,13 +99,13 @@ export class AppComponent implements OnInit, OnDestroy {
                 }
                 this.closeResult = `Closed with: ${result}`;
                 if (this.closeResult) {
-                    this.router.navigate(['/']);
+                    this.router.navigate(['']);
                 }
             },
             reason => {
                 this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
                 if (this.closeResult) {
-                    this.router.navigate(['/']);
+                    this.router.navigate(['']);
                 }
             }
         );
@@ -142,11 +138,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.modalRef.close();
             },
             error => {
-                if (error._body.message) {
-                    alert('Error: ' + error._body.message);
-                } else {
-                    this.loginError = true;
-                }
+                this._toasterService.pop('error', 'Error logging in', error._body.message || error.statusText);
                 this.loading = false;
             }
         );
@@ -154,10 +146,25 @@ export class AppComponent implements OnInit, OnDestroy {
 
     public logout() {
         this._loginService.logout();
-        this.router.navigate([this.returnUrl]);
+        this.router.navigate(['']);
     }
 
     ngOnDestroy() {
         this.modalSubscript.unsubscribe();
     }
+
+    private checkSetupTime(): boolean {
+        let tooOld = false;
+
+        const twentyFourHours: number = 12 * 60 * 60 * 1000;
+        const now: number = new Date().getTime();
+        const setupTime: number = Number(localStorage.getItem('setupTime'));
+        if (now - setupTime > twentyFourHours) {
+          // is it greater than 12 hours
+          tooOld = true;
+          localStorage.clear();
+        }
+
+        return tooOld;
+      }
 }

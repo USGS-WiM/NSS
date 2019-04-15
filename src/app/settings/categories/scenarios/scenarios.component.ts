@@ -9,7 +9,7 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect';
-
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
@@ -64,6 +64,7 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
         private _modalService: NgbModal,
         private _cdr: ChangeDetectorRef,
         private router: Router,
+        private _toasterService: ToasterService,
         private _configService: ConfigService
     ) {
         this.newScenarioForm = _fb.group({
@@ -218,7 +219,6 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     private createNewScenario() {
-        alert('this will push to nssdb eventually');
         const scenario = this.newScenarioForm.value;
         scenario.statisticGroupID = scenario.statisticGroup.id;
         scenario.statisticGroupName = scenario.statisticGroup.name;
@@ -231,11 +231,10 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
             (response: Scenario) => {
                 response.isEditing = false;
                 this.cancelCreateScenario();
-                alert('Sucess! \nScenario was created.');
+                this._toasterService.pop('success', 'Success', 'Scenario was created');
                 this.onRegSelect(region);
                 this.cancelCreateScenario();
-            },
-            error => alert('Error creating Scneario \n' + error._body.message)
+            }, error => { this._toasterService.pop('error', 'Error creating Scenario', error._body.message || error.statusText); }
         );
     }
 

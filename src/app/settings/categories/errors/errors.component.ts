@@ -8,6 +8,7 @@
 
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
@@ -39,7 +40,8 @@ export class ErrorsComponent implements OnInit, OnDestroy {
     public rowBeingEdited: number;
     public tempData;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
-        private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService) {
+        private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService,
+        private _toasterService: ToasterService) {
             this.newErrForm = _fb.group({
                 'name': new FormControl(null, Validators.required),
                 'code': new FormControl(null, Validators.required)
@@ -99,12 +101,10 @@ export class ErrorsComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.errors.push(response);
                 this._settingsservice.setErrors(this.errors);
-                alert('Sucess! \nError was created.');
+                this._toasterService.pop('success', 'Success', 'Error was created');
                 this.cancelCreateError();
             }, error => {
-                if (error._body.message) {alert('Error Creating Error: \n' + error._body.message);
-                } else if (error.statusText !== '') {alert('Error Creating Error: \n' + error.statusText);
-                } else {alert('Error Creating Error'); }
+                this._toasterService.pop('error', 'Error creating Error', error._body.message || error.statusText);
             }
         );
     }
@@ -130,12 +130,12 @@ export class ErrorsComponent implements OnInit, OnDestroy {
     public saveError(u: Error, i: number) {
         if (u.name === undefined || u.code === undefined) {
             // don't save it
-            alert('Name and Code are required.');
+            this._toasterService.pop('error', 'Error updating Error', 'Name and Code are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.errorsURL).subscribe(
                 (resp: Error) => {
-                    alert('Success! \n Error was updated');
+                    this._toasterService.pop('success', 'Success', 'Error was updated');
                     u.isEditing = false;
                     this.errors[i] = u;
                     this._settingsservice.setErrors(this.errors);
@@ -143,9 +143,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.errorForm.form.dirty) { this.errorForm.reset(); }
                 }, error => {
-                    if (error._body && error._body.message) {alert('Error updating Error: \n' + error._body.message);
-                    } else if (error.statusText !== '') {alert('Error updating Error: \n' + error.statusText)
-                    } else {alert('Error updating Error'); }
+                    this._toasterService.pop('error', 'Error updating Error', error._body.message || error.statusText);
                 }
             );
         }
@@ -159,13 +157,11 @@ export class ErrorsComponent implements OnInit, OnDestroy {
             const index = this.errors.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.errorsURL)
                 .subscribe(result => {
-                    alert('Success!\n Error deleted.');
+                    this._toasterService.pop('success', 'Success', 'Error was deleted');
                     this.errors.splice(index, 1);
                     this._settingsservice.setErrors(this.errors); // update service
                 }, error => {
-                    if (error._body.message) {alert('Error Deleting Error: \n' + error._body.message);
-                    } else if (error.statusText !== '') {alert('Error Deleting Error: \n' + error.statusText)
-                    } else {alert('Error Deleting Error'); }
+                    this._toasterService.pop('error', 'Error deleting Error', error._body.message || error.statusText);
                 }
             );
         }

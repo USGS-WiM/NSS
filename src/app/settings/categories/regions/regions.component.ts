@@ -8,6 +8,7 @@
 
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
@@ -43,7 +44,8 @@ export class RegionsComponent implements OnInit, OnDestroy {
     public rowBeingEdited: number;
     public tempData;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
-        private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService) {
+        private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _toasterService: ToasterService,
+        private _configService: ConfigService) {
             this.newRegForm = _fb.group({
                 'name': new FormControl(null, Validators.required),
                 'code': new FormControl(null, Validators.required)
@@ -103,9 +105,10 @@ export class RegionsComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.regions.push(response);
                 this._settingsservice.setRegions(this.regions);
-                alert('Sucess! \nRegion was created.');
+                this._toasterService.pop('success', 'Success', 'Region was created');
                 this.cancelCreateRegion();
-        }, error => alert('Error creating region \n' + error._body.message));
+            }, error => { this._toasterService.pop('error', 'Error creating Region', error._body.message || error.statusText); }
+        );
     }
 
     private EditRowClicked(i: number) {
@@ -129,19 +132,19 @@ export class RegionsComponent implements OnInit, OnDestroy {
     public saveRegion(r: Region, i: number) {
         if (r.name === undefined || r.code === undefined) {
             // don't save it
-            alert('Name and Code are required.');
+            this._toasterService.pop('error', 'Error updating Error', 'Name and Code are required.');
         } else {
             delete r.isEditing;
             this._settingsservice.putEntity(r.id, r, this.configSettings.regionURL).subscribe(
                 (resp: Region) => {
-                    alert('Success! \n Region was updated');
+                    this._toasterService.pop('success', 'Success', 'Region was updated');
                     r.isEditing = false;
                     this.regions[i] = r;
                     this._settingsservice.setRegions(this.regions);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.regForm.form.dirty) { this.regForm.reset(); }
-                }, error => alert('Error updating Region: \n' + error._body.message)
+                }, error => {this._toasterService.pop('error', 'Error updating Region', error._body.message || error.statusText); }
             );
         }
     }
@@ -154,10 +157,11 @@ export class RegionsComponent implements OnInit, OnDestroy {
             const index = this.regions.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regionURL)
                 .subscribe(result => {
-                    alert('Success!\n Region deleted.');
+                    this._toasterService.pop('success', 'Success', 'Region was deleted');
                     this.regions.splice(index, 1);
                     this._settingsservice.setRegions(this.regions); // update service
-                }, error => alert('Error Deleting Region: \n' + error._body.message));
+                }, error => { this._toasterService.pop('error', 'Error deleting Region', error._body.message || error.statusText); }
+            );
         }
     }
 

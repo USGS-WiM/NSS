@@ -8,6 +8,7 @@
 
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
@@ -51,6 +52,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
         private _fb: FormBuilder,
         private _modalService: NgbModal,
         private router: Router,
+        private _toasterService: ToasterService,
         private _configService: ConfigService
     ) {
         this.newUnitSystemForm = _fb.group({
@@ -121,11 +123,9 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.unitSystems.push(response);
                 this._settingsservice.setUnitSystems(this.unitSystems);
-                alert('Sucess! \n Unit System was created.');
+                this._toasterService.pop('success', 'Success', 'Unit System was created');
                 this.cancelCreateUnit();
-                // }, error => this._toastService.pop('error', 'Error creating Category Type', error._body.message || error.statusText));
-            },
-            error => alert('Error creating Unit System \n' + error._body.message)
+            }, error => { this._toasterService.pop('error', 'Error creating Unit System', error._body.message || error.statusText); }
         );
     }
 
@@ -151,19 +151,19 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
     public saveUnitSystem(u: UnitSystem, i: number) {
         if (u.unitSystem === undefined) {
             // don't save it
-            alert('Unit System Name is required.');
+            this._toasterService.pop('error', 'Error updating Statistic Group', 'Unit System Name is required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.unitSystemsURL).subscribe(
                 (resp: UnitSystem) => {
-                    alert('Success! \n Unit System was updated');
+                    this._toasterService.pop('success', 'Success', 'Unit System was updated');
                     u.isEditing = false;
                     this.unitSystems[i] = u;
                     this._settingsservice.setUnitSystems(this.unitSystems);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.usForm.form.dirty) { this.usForm.reset(); }
-                }, error => alert('Error updating Unit System: \n' + error._body.message)
+                }, error => { this._toasterService.pop('error', 'Error updating Unit System', error._body.message || error.statusText); }
             );
         }
     }
@@ -176,10 +176,11 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
             const index = this.unitSystems.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.unitSystemsURL)
                 .subscribe(result => {
-                    alert('Success!\n Unit System deleted.');
+                    this._toasterService.pop('success', 'Success', 'Unit System was deleted');
                     this.unitSystems.splice(index, 1);
                     this._settingsservice.setUnitSystems(this.unitSystems); // update service
-                }, error => alert('Error Deleting Unit System: \n' + error._body.message));
+                }, error => { this._toasterService.pop('error', 'Error deleting Unit', error._body.message || error.statusText); }
+            );
         }
     }
 

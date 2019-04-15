@@ -11,6 +11,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { throwError as observableThrowError, } from 'rxjs';
+import { ToasterContainerComponent, ToasterService } from 'angular2-toaster/angular2-toaster';
+import { Toast } from 'angular2-toaster/src/toast';
 
 import { NSSService } from '../shared/services/app.service';
 import { Region } from '../shared/interfaces/region';
@@ -31,11 +33,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
     public loggedInRole: string;
     private navigationSubscription;
     private jsonHeader: Headers = new Headers({ Accept: 'application/json', 'Content-Type': 'application/json' });
+    public toast: Toast;
     constructor(
         public _nssService: NSSService,
         private _http: Http,
         private _configService: ConfigService,
         private _authService: AuthService,
+        private _toasterService: ToasterService,
         private router: Router
     ) {
         this.configSettings = this._configService.getConfiguration();
@@ -51,6 +55,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
             this.router.navigate(['/']);
         }
         this.getLoggedInRole();
+        // subscribe to getToast
+        this._nssService.getToast().subscribe((t: Toast) => {
+            this.toast = t;
+            this._toasterService.pop(this.toast);
+        });
     }
 
     public getServices(): void {

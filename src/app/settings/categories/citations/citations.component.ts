@@ -8,6 +8,7 @@
 
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
@@ -43,7 +44,8 @@ export class CitationsComponent implements OnInit, OnDestroy {
     public rowBeingEdited: number;
     public tempData;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
-        private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService) {
+        private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService,
+        private _toasterService: ToasterService) {
             this.newCitForm = _fb.group({
                 'title': new FormControl(null, Validators.required),
                 'author': new FormControl(null, Validators.required),
@@ -133,9 +135,12 @@ export class CitationsComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.citations.push(response);
                 this._settingsservice.setCitations(this.citations);
-                alert('Sucess! \nCitations was created.');
+                this._toasterService.pop('success', 'Success', 'Citation was created');
                 this.cancelCreateCitation();
-        }, error => alert('Error creating Citations \n' + error._body.message));
+            }, error => {
+                this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
+            }
+        );
     }
 
     private EditRowClicked(i: number) {
@@ -159,24 +164,26 @@ export class CitationsComponent implements OnInit, OnDestroy {
     public saveCitation(u: Citation, i: number) {
         if (u.title === undefined || u.author === undefined || u.citationURL === undefined) {
             // don't save it
-            alert('Title, Author and Citation URL are required.');
+            this._toasterService.pop('error', 'Error updating Citation', 'Title, Author and Citation URL are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.citationURL).subscribe(
                 (resp: Citation) => {
-                    alert('Success! \n Citation was updated');
+                    this._toasterService.pop('success', 'Success', 'Citation was updated');
                     u.isEditing = false;
                     this.citations[i] = u;
                     this._settingsservice.setCitations(this.citations);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.citationForm.form.dirty) { this.citationForm.reset(); }
-                }, error => alert('Error updating Citation: \n' + error._body.message)
+                }, error => {
+                    this._toasterService.pop('error', 'Error updating Citation', error._body.message || error.statusText);
+                }
             );
         }
     }
 
-    // delete category type
+    // delete citation
     public deleteCitation(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Citation?');
         if (confirm) {
@@ -184,10 +191,13 @@ export class CitationsComponent implements OnInit, OnDestroy {
             const index = this.citations.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.citationURL)
                 .subscribe(result => {
-                    alert('Success!\n Citation deleted.');
+                    this._toasterService.pop('success', 'Success', 'Citation was deleted');
                     this.citations.splice(index, 1);
                     this._settingsservice.setCitations(this.citations); // update service
-                }, error => alert('Error Deleting Citation: \n' + error._body.message));
+                }, error => {
+                    this._toasterService.pop('error', 'Error deleting Citation', error._body.message || error.statusText);
+                }
+            );
         }
     }
 

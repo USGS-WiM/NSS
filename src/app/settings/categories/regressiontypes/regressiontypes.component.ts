@@ -8,6 +8,7 @@
 
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
@@ -50,6 +51,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         private _fb: FormBuilder,
         private _modalService: NgbModal,
         private router: Router,
+        private _toasterService: ToasterService,
         private _configService: ConfigService
     ) {
         this.newRegForm = _fb.group({
@@ -138,15 +140,14 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this._settingsservice.postEntity(newReg, this.configSettings.regTypeURL).subscribe(
             (response: Regressiontype) => {
                 response.isEditing = false;
-                alert('Sucess! \nRegression Type was created.');
+                this._toasterService.pop('success', 'Success', 'Regression type was created');
                 if (this.selectedRegion === 'none') {
                     this.getAllRegTypes();
                 } else {
                     this.onRegSelect(this.selectedRegion);
                 }
                 this.cancelCreateRegression();
-            },
-            error => alert('Error creating Regression Type \n' + error._body.message)
+            }, error => { this._toasterService.pop('error', 'Error creating Regression Type', error._body.message || error.statusText); }
         );
     }
 
@@ -171,19 +172,19 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public saveRegression(u: Regressiontype, i: number) {
         if (u.name === undefined || u.description === undefined || u.code === undefined) {
             // don't save it
-            alert('Name, description and Code are required.');
+            this._toasterService.pop('error', 'Error updating Error', 'Name, description and Code are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.regTypeURL).subscribe(
                 (resp: Regressiontype) => {
-                    alert('Success! \n Regression Type was updated');
+                    this._toasterService.pop('success', 'Success', 'Regression Type was updated');
                     u.isEditing = false;
                     this.regressionTypes[i] = u;
                     this._settingsservice.setRegTypes(this.regressionTypes);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.regressionForm.form.dirty) { this.regressionForm.reset(); }
-                }, error => alert('Error updating Regression Type: \n' + error._body.message)
+                }, error => { this._toasterService.pop('error', 'Error updating Regression Type', error._body.message || error.statusText); }
             );
         }
     }
@@ -196,10 +197,11 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
             const index = this.regressionTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regTypeURL)
                 .subscribe(result => {
-                    alert('Success!\n Regression Type deleted.');
+                    this._toasterService.pop('success', 'Success', 'Regression Type was deleted');
                     this.regressionTypes.splice(index, 1);
                     this._settingsservice.setRegTypes(this.regressionTypes); // update service
-                }, error => alert('Error Deleting Regression Type: \n' + error._body.message));
+                }, error => { this._toasterService.pop('error', 'Error deleting Regression Type', error._body.message || error.statusText); }
+            );
         }
     }
 

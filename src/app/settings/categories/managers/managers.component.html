@@ -1,9 +1,9 @@
 <div>
-    <legend style="margin-bottom:25px;margin-top:0;">Users</legend>
+    <legend style="margin-bottom:25px;margin-top:0;">Managers</legend>
 </div>
 
 <button type="button" class="btn-blue" (click)="showNewUserForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New User</button>
+    aria-hidden="tru"></i> Add New Manager</button>
 
 <form #User TypeForm="ngForm">
     <div class="form-group" *ngIf="managers">
@@ -66,12 +66,12 @@
 <ng-template #add let-c="close" let-d="dismiss">
     <div class="modal-header">
         <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New User </h4>
+            <h4 class="modal-title pull-left">New Manager </h4>
             <button class="close pull-right" (click)="d('closed')">x</button>
         </div>
     </div>
     <div class="modal-body">
-        <h3 class="modal-title">New User</h3>
+        <h3 class="modal-title">New Manager</h3>
         <form [formGroup]="newUserForm">
             <!-- UserName* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('username').valid && newUserForm.get('username').dirty}">

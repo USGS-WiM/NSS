@@ -60,6 +60,7 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
         private _modalService: NgbModal,
         private _cdr: ChangeDetectorRef,
         private router: Router,
+        private _toasterService: ToasterService,
         private _configService: ConfigService
     ) {
         this.newRegRegForm = _fb.group({
@@ -155,15 +156,10 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
             .subscribe(
                 (response: Regressionregion) => {
                     response.isEditing = false;
-                    /*this.regressionRegions.push(response);
-                this._settingsservice.setRegRegions(this.regressionRegions);*/
-                    alert('Sucess! \nRegression Region was created.');
-                    this.getAllRegRegions();
+                    this._toasterService.pop('success', 'Success', 'Regression Region was created');
                     this.getRegRegions(this.selectedRegion);
                     this.cancelCreateRegression();
-                    // }, error => this._toastService.pop('error', 'Error creating Category Type', error._body.message || error.statusText));
-                },
-                error => alert('Error creating Regression Region \n' + error._body.message)
+                }, error => { this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText); }
             );
     }
 
@@ -188,19 +184,19 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     public saveRegression(u: Regressionregion, i: number) {
         if (u.name === undefined || u.code === undefined) {
             // don't save it
-            alert('Name and Code are required.');
+            this._toasterService.pop('error', 'Error updating Error', 'Name and Code are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.regRegionURL).subscribe(
                 (resp: Regressionregion) => {
-                    alert('Success! \n Regression Region was updated');
+                    this._toasterService.pop('success', 'Success', 'Regression Region was updated');
                     u.isEditing = false;
                     this.regressionRegions[i] = u;
                     this._settingsservice.setRegRegions(this.regressionRegions);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.regressionForm.form.dirty) { this.regressionForm.reset(); }
-                }, error => alert('Error updating Regression Region: \n' + error._body.message)
+                }, error => { this._toasterService.pop('error', 'Error updating Regression Region', error._body.message || error.statusText); }
             );
         }
     }
@@ -213,10 +209,11 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
             const index = this.regressionRegions.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regRegionURL)
                 .subscribe(result => {
-                    alert('Success!\n Regression Region deleted.');
+                    this._toasterService.pop('success', 'Success', 'Regression Region was deleted');
                     this.regressionRegions.splice(index, 1);
                     this._settingsservice.setRegRegions(this.regressionRegions); // update service
-                }, error => alert('Error Deleting Regression Region: \n' + error._body.message));
+                }, error => { this._toasterService.pop('error', 'Error deleting Regression Region', error._body.message || error.statusText); }
+            );
         }
     }
 

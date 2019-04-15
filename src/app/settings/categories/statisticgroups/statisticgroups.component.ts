@@ -8,6 +8,7 @@
 
 import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
@@ -50,7 +51,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
 
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router,
-        private _configService: ConfigService) {
+        private _toasterService: ToasterService, private _configService: ConfigService) {
             this.newStatGroupForm = _fb.group({
                 'name': new FormControl(null, Validators.required),
                 'code': new FormControl(null, Validators.required)
@@ -130,10 +131,11 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
             .subscribe((response: Statisticgroup) => {
                 response.isEditing = false;
                 this.cancelCreateStatGroup();
-                alert('Sucess! \nStatistic Group was created.');
+                this._toasterService.pop('success', 'Success', 'Statistic Group was created');
                 this.getAllStatGroups();
                 this.cancelCreateStatGroup();
-        }, error => alert('Error creating Statistic Group \n' + error._body.message));
+            }, error => { this._toasterService.pop('error', 'Error creating Statistic Group', error._body.message || error.statusText); }
+        );
     }
 
     private EditRowClicked(i: number) {
@@ -157,19 +159,19 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     public saveStatGroup(u: Statisticgroup, i: number) {
         if (u.name === undefined || u.code === undefined) {
             // don't save it
-            alert('Name and Code are required.');
+            this._toasterService.pop('error', 'Error updating Statistic Group', 'Name and Code are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.statisticGrpURL).subscribe(
                 (resp: Statisticgroup) => {
-                    alert('Success! \n Statistic Group was updated');
+                    this._toasterService.pop('success', 'Success', 'Statistic Group was updated');
                     u.isEditing = false;
                     this.statisticGroups[i] = u;
                     this._settingsservice.setStatGroups(this.statisticGroups);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.statGroupForm.form.dirty) { this.statGroupForm.reset(); }
-                }, error => alert('Error updating Statistic Group: \n' + error._body.message)
+                }, error => { this._toasterService.pop('error', 'Error updating Statistic Group', error._body.message || error.statusText); }
             );
         }
     }
@@ -182,10 +184,11 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
             const index = this.statisticGroups.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.statisticGrpURL)
                 .subscribe(result => {
-                    alert('Success!\n Statistic Group deleted.');
+                    this._toasterService.pop('success', 'Success', 'Statistic Group was deleted');
                     this.statisticGroups.splice(index, 1);
                     this._settingsservice.setStatGroups(this.statisticGroups); // update service
-                }, error => alert('Error Deleting Statistic Group: \n' + error._body.message));
+                }, error => { this._toasterService.pop('error', 'Error deleting Statistic Group', error._body.message || error.statusText); }
+            );
         }
     }
 

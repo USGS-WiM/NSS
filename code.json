@@ -4,7 +4,7 @@
     "organization": "U.S. Geological Survey",
     "description": "National Stream Flow Statistics public access to Regions, Statistic Groups, Regression Regions, Charts and Citations",
     "version": "v1.0.0",
-    "status": "Development",
+    "status": "Production",
 
     "permissions": {
       "usageType": "openSource",

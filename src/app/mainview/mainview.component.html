@@ -27,6 +27,7 @@
                 <span *ngFor="let rr of selectedRegressionRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.name}}{{isLast ? "" : ", "}}</span>
             </div>
         </div>
+        <button *ngIf="selectedRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0" type="button" class="btn-wim-primary" style="margin-bottom: 15px;" (click)="showAddScenarioModal()">Add Scenario</button>
     </div>
     <br clear="all"/>
 
@@ -128,7 +129,7 @@
         <div *ngFor="let s of scenarios">
             <h3>{{s.statisticGroupName}}</h3>
             <div *ngFor="let rr of s.regressionRegions;let r = index">
-                <div><!-- *ngIf="rr.ID > 0">  -->
+                <div><!-- *ngIf="rr.id > 0">  -->
                     <div class="row">
                         <div class="col-xs-12">
                             <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>

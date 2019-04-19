@@ -161,7 +161,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
     public saveUnit(u: Unittype, i: number) {
         if (u.name === undefined || u.abbreviation === undefined || u.unitSystemTypeID === undefined) {
             // don't save it
-            this._toasterService.pop('error', 'Error updating Statistic Group', 'Name, abbreviation and unit system ID are required.');
+            this._toasterService.pop('error', 'Error updating Unit', 'Name, abbreviation and unit system ID are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.unitsURL).subscribe(

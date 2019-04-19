@@ -4,10 +4,8 @@ import { Result } from './result';
 
 export interface Regressionregion {
     Links: Link[];
-    ID: number;
-    id: number; // for multiselect
-    Name: string;
-    name: string; // for multiselect
+    id: number;
+    name: string;
     code: string;
     citationID?: number;
     isEditing?: boolean;

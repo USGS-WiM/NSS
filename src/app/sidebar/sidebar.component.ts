@@ -6,7 +6,7 @@ import { Scenario } from '../shared/interfaces/scenario';
 import { Statisticgroup } from '../shared/interfaces/statisticgroup';
 import { Regressiontype } from '../shared/interfaces/regressiontype';
 import { Regressionregion } from '../shared/interfaces/regressionregion';
-import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/angular-2-dropdown-multiselect';
+import { IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/angular-2-dropdown-multiselect';
 import { Toast } from 'angular2-toaster/src/toast';
 
 @Component({
@@ -16,23 +16,23 @@ import { Toast } from 'angular2-toaster/src/toast';
 })
 export class SidebarComponent implements OnInit {
     public doShow: boolean;
-    public showChart: boolean; //show the Chart: Sidebar option
-    public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; //Hydrograph, Frequency Plot
-    public selectedPlot: string; //which chart type they selected
-    //regions
-    //public get selectedRegion():Region {return this._nssService.selectedRegion;};
+    public showChart: boolean; // show the Chart: Sidebar option
+    public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; // Hydrograph, Frequency Plot
+    public selectedPlot: string; // which chart type they selected
+    // regions
+    // public get selectedRegion():Region {return this._nssService.selectedRegion;};
     public selectedRegion: Region;
     public regions: Array<Region>;
 
-    //regression regions
-    private selectedRegRegionIDs: Array<number>; //multiselect populates this with those selected
-    //public get selectedRegRegion(): Array<Regressionregion> { return this._nssService.selectedRegRegions; };
+    // regression regions
+    private selectedRegRegionIDs: Array<number>; // multiselect populates this with those selected
+    // public get selectedRegRegion(): Array<Regressionregion> { return this._nssService.selectedRegRegions; };
     public selectedRegressionRegions: Array<Regressionregion>;
     public regressionRegions: Array<Regressionregion>;
     private myRRSettings: IMultiSelectSettings;
     private myMSTexts: IMultiSelectTexts;
 
-    //regression types
+    // regression types
     private selectedRegTypeIDs: Array<number>;
     public get selectedRegType(): Array<Regressiontype> {
         return this._nssService.selectedRegressionTypes;
@@ -40,7 +40,7 @@ export class SidebarComponent implements OnInit {
     public regressionTypes: Array<Regressiontype>;
     private myRTSettings: IMultiSelectSettings;
 
-    //statisticGrps
+    // statisticGrps
     private selectedStatGrpIDs: Array<number>;
     public get selectedStatGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
@@ -48,7 +48,7 @@ export class SidebarComponent implements OnInit {
     public statisticGroups: Array<Statisticgroup>;
     private mySGSettings: IMultiSelectSettings;
 
-    //scenario
+    // scenario
     public scenarios: Array<Scenario>;
 
     constructor(private _nssService: NSSService) {}
@@ -57,7 +57,7 @@ export class SidebarComponent implements OnInit {
         this.doShow = true;
         this.selectedPlot = '';
         this.selectedRegressionRegions = [];
-        //subscribe to regions
+        // subscribe to regions
         this._nssService.getRegions();
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
@@ -65,76 +65,76 @@ export class SidebarComponent implements OnInit {
         this._nssService.selectedRegion.subscribe((r: Region) => {
             this.selectedRegion = r;
         });
-        //subscribe to selected regression regions
+        // subscribe to selected regression regions
         this._nssService.selectedRegRegions.subscribe((rr: Array<Regressionregion>) => {
             this.selectedRegressionRegions = rr;
         });
-        //subscribe to regressionRegions
+        // subscribe to regressionRegions
         this._nssService.regressionRegions.subscribe((rr: Array<Regressionregion>) => {
             this.regressionRegions = rr;
-            //remove from selectedRegRegion if not in response.
-            if (this.selectedRegRegionIDs != undefined) {
+            // remove from selectedRegRegion if not in response.
+            if (this.selectedRegRegionIDs !== undefined) {
                 if (rr.length > 0) {
-                    for (var rri = this.selectedRegRegionIDs.length; rri--; ) {
-                        let RRind = rr
+                    for (let rri = this.selectedRegRegionIDs.length; rri--; ) {
+                        const RRind = rr
                             .map(function(eachrr) {
-                                return eachrr.ID;
+                                return eachrr.id;
                             })
                             .indexOf(this.selectedRegRegionIDs[rri]);
-                        if (RRind < 0) this.selectedRegRegionIDs.splice(rri, 1);
+                        if (RRind < 0) {this.selectedRegRegionIDs.splice(rri, 1); }
                     }
-                } else this.selectedRegRegionIDs = [];
+                } else { this.selectedRegRegionIDs = []; }
             }
         });
-        //subscribe to StatisticGroups
+        // subscribe to StatisticGroups
         this._nssService.statisticGroups.subscribe((sg: Array<Statisticgroup>) => {
             this.statisticGroups = sg;
-            //remove from selectedStatGrp if not in response.
-            if (this.selectedStatGrpIDs != undefined) {
+            // remove from selectedStatGrp if not in response.
+            if (this.selectedStatGrpIDs !== undefined) {
                 if (sg.length > 0) {
-                    for (var si = this.selectedStatGrpIDs.length; si--; ) {
-                        let SSind = sg
+                    for (let si = this.selectedStatGrpIDs.length; si--; ) {
+                        const SSind = sg
                             .map(function(eachsg) {
-                                return eachsg.ID;
+                                return eachsg.id;
                             })
                             .indexOf(this.selectedStatGrpIDs[si]);
-                        if (SSind < 0) this.selectedStatGrpIDs.splice(si, 1);
+                        if (SSind < 0) { this.selectedStatGrpIDs.splice(si, 1); }
                     }
-                } else this.selectedStatGrpIDs = [];
+                } else { this.selectedStatGrpIDs = []; }
             }
         });
-        //subscribe to regressionTypes
+        // subscribe to regressionTypes
         this._nssService.regressionTypes.subscribe((rt: Array<Regressiontype>) => {
             this.regressionTypes = rt;
-            //remove from selectedRegType if not in response
-            if (this.selectedRegTypeIDs != undefined) {
+            // remove from selectedRegType if not in response
+            if (this.selectedRegTypeIDs !== undefined) {
                 if (rt.length > 0) {
-                    for (var rti = this.selectedRegTypeIDs.length; rti--; ) {
-                        let RTind = rt
+                    for (let rti = this.selectedRegTypeIDs.length; rti--; ) {
+                        const RTind = rt
                             .map(function(eachrt) {
-                                return eachrt.ID;
+                                return eachrt.id;
                             })
                             .indexOf(this.selectedRegTypeIDs[rti]);
-                        if (RTind < 0) this.selectedRegTypeIDs.splice(rti, 1);
+                        if (RTind < 0) { this.selectedRegTypeIDs.splice(rti, 1); }
                     }
-                } else this.selectedRegTypeIDs = [];
+                } else { this.selectedRegTypeIDs = []; }
             }
         });
-        //subscribe to scenario
+        // subscribe to scenario
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
             this.scenarios = s;
-            this.scenarios.forEach(s => {
-                //if there are results, show the chart buttons
-                if (s.regressionRegions.length > 0 && s.regressionRegions[0].results && s.statisticGroupName.indexOf('Peak-Flow') > -1)
+            this.scenarios.forEach(sc => {
+                // if there are results, show the chart buttons
+                if (sc.regressionRegions.length > 0 && sc.regressionRegions[0].results && sc.statisticGroupName.indexOf('Peak-Flow') > -1) {
                     this.showChart = true;
-                else this.showChart = false;
+                } else { this.showChart = false; }
             });
         });
-        //settings for multiselect.. added max-width and font-size to the library's ts file directly
+        // settings for multiselect.. added max-width and font-size to the library's ts file directly
         this.myRRSettings = {
             pullRight: false,
             enableSearch: false,
-            checkedStyle: 'glyphicon', //'checkboxes',
+            checkedStyle: 'glyphicon', // 'checkboxes',
             buttonClasses: 'btn btn-default',
             selectionLimit: 0,
             closeOnSelect: false,
@@ -146,7 +146,7 @@ export class SidebarComponent implements OnInit {
         this.myRTSettings = {
             pullRight: false,
             enableSearch: false,
-            checkedStyle: 'glyphicon', //'checkboxes',
+            checkedStyle: 'glyphicon', // 'checkboxes',
             buttonClasses: 'btn btn-default',
             selectionLimit: 0,
             closeOnSelect: false,
@@ -158,7 +158,7 @@ export class SidebarComponent implements OnInit {
         this.mySGSettings = {
             pullRight: false,
             enableSearch: false,
-            checkedStyle: 'glyphicon', //'checkboxes',
+            checkedStyle: 'glyphicon', // 'checkboxes',
             buttonClasses: 'btn btn-default',
             selectionLimit: 0,
             closeOnSelect: false,
@@ -185,8 +185,8 @@ export class SidebarComponent implements OnInit {
     }
 
     // select of regression region. set the selectedRegRegions
-    public onRegressionRegSelect(): void { 
-        let selectedRegRegions: Array<Regressionregion> = new Array<Regressionregion>();
+    public onRegressionRegSelect(): void {
+        const selectedRegRegions: Array<Regressionregion> = new Array<Regressionregion>();
         this.selectedRegRegionIDs.forEach(srr => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedRegRegions.push(
@@ -200,7 +200,7 @@ export class SidebarComponent implements OnInit {
 
     // select of statisticgrp. update regressionregions and regressiontypes and scenario for mainView
     public onStatGrpSelect(): void {
-        let selectedStatGroups: Array<Statisticgroup> = new Array<Statisticgroup>();
+        const selectedStatGroups: Array<Statisticgroup> = new Array<Statisticgroup>();
         this.selectedStatGrpIDs.forEach(ssg => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedStatGroups.push(
@@ -214,12 +214,12 @@ export class SidebarComponent implements OnInit {
 
     // select of regression type. update statisticgrps and regressionregions
     public onRegTypeSelect(): void {
-        let selectedRegTypes: Array<Regressiontype> = new Array<Regressiontype>();
+        const selectedRegTypes: Array<Regressiontype> = new Array<Regressiontype>();
         this.selectedRegTypeIDs.forEach(srt => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedRegTypes.push(
                 this.regressionTypes.filter(function(rr) {
-                    return rr.id == srt;
+                    return rr.id === srt;
                 })[0]
             );
         });
@@ -228,38 +228,38 @@ export class SidebarComponent implements OnInit {
 
     // submit / Compute button click
     public CalculateScenario(): void {
-        let ValueRequired: boolean = false;
+        let ValueRequired = false;
         let totalWeight: number = Number(0);
         let numOfRegRegions: number = Number(0); // don't care about weights if only 1 regRegion
         // make sure all values are populated
         this.scenarios.forEach(s => {
             numOfRegRegions = s.regressionRegions.length;
             s.regressionRegions.forEach(rr => {
-                if (numOfRegRegions > 1) totalWeight += Number(rr.percentWeight);
+                if (numOfRegRegions > 1) { totalWeight += Number(rr.percentWeight); }
                 rr.parameters.forEach(p => {
                     if (!p.value) {
                         ValueRequired = true;
                         p.missingVal = true;
-                    } else p.missingVal = false;
+                    } else { p.missingVal = false; }
                 });
             });
         });
 
         if (ValueRequired) {
-            let toast: Toast = {
+            const toast: Toast = {
                 type: 'warning',
                 title: 'Error',
                 body: 'All values are required'
             };
             this._nssService.showToast(toast);
-        } else if (numOfRegRegions > 1 && (totalWeight < 100 || isNaN(totalWeight))) {
-            let weightToast: Toast = {
+        } /*else if (numOfRegRegions > 1 && (totalWeight < 100 || isNaN(totalWeight))) {
+            const weightToast: Toast = {
                 type: 'warning',
                 title: 'Error',
                 body: '% Weights must equal 100%'
             };
             this._nssService.showToast(weightToast);
-        } // end invalid
+        }*/ // end invalid
         else {
             // remove Citations, RegressionRegions.Parameters.OutOfRange and .missingVal props
             this.scenarios.forEach(s => {
@@ -273,10 +273,10 @@ export class SidebarComponent implements OnInit {
                 });
             });
             // now post the scenario to get the results to pass to mainview
-            let regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
-            let statGrpIDstring = this.selectedStatGrpIDs !== undefined ? this.selectedStatGrpIDs.join(',') : '';
-            let regRegionsIDstring = this.selectedRegRegionIDs !== undefined ? this.selectedRegRegionIDs.join(',') : '';
-            let sParams: URLSearchParams = new URLSearchParams();
+            const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
+            const statGrpIDstring = this.selectedStatGrpIDs !== undefined ? this.selectedStatGrpIDs.join(',') : '';
+            const regRegionsIDstring = this.selectedRegRegionIDs !== undefined ? this.selectedRegRegionIDs.join(',') : '';
+            const sParams: URLSearchParams = new URLSearchParams();
             sParams.set('regressionregions', regRegionsIDstring);
             sParams.set('regressiontypes', regTypesIDstring);
             sParams.set('statisticgroups', statGrpIDstring);
@@ -296,7 +296,7 @@ export class SidebarComponent implements OnInit {
     // number only allowed in Value
     _keyPress(event: any) {
         const pattern = /[0-9\+\-\.\ ]/;
-        let inputChar = String.fromCharCode(event.charCode);
+        const inputChar = String.fromCharCode(event.charCode);
         if (!pattern.test(inputChar)) {
             // invalid character, prevent input
             event.preventDefault();

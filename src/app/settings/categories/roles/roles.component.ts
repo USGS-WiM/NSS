@@ -6,7 +6,7 @@
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
 // purpose: roles crud in admin settings page
 
-import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
@@ -16,7 +16,7 @@ import { NSSService } from 'app/shared/services/app.service';
 import { Role } from 'app/shared/interfaces/role';
 import { SettingsService } from '../../settings.service';
 
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 
@@ -132,7 +132,7 @@ export class RolesComponent implements OnInit, OnDestroy {
     public saveRole(r: Role, i: number) {
         if (r.name === undefined || r.description === undefined) {
             // don't save it
-            this._toasterService.pop('error', 'Error updating Error', 'Name and Description are required.');
+            this._toasterService.pop('error', 'Error updating Role', 'Name and Description are required.');
         } else {
             delete r.isEditing;
             this._settingsservice.putEntity(r.id, r, this.configSettings.rolesURL).subscribe(

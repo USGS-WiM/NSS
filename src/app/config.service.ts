@@ -7,7 +7,7 @@
 // purpose: service to get configuration file
 
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions, Response, URLSearchParams } from '@angular/http';
+import { Http } from '@angular/http';
 import { Config } from 'app/shared/interfaces/config';
 
 @Injectable()

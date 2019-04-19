@@ -16,7 +16,7 @@ import { NSSService } from 'app/shared/services/app.service';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { SettingsService } from '../../settings.service';
 
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { UnitSystem } from 'app/shared/interfaces/unitsystems';
@@ -151,7 +151,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
     public saveUnitSystem(u: UnitSystem, i: number) {
         if (u.unitSystem === undefined) {
             // don't save it
-            this._toasterService.pop('error', 'Error updating Statistic Group', 'Unit System Name is required.');
+            this._toasterService.pop('error', 'Error updating Unit System', 'Unit System Name is required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.unitSystemsURL).subscribe(
@@ -179,7 +179,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
                     this._toasterService.pop('success', 'Success', 'Unit System was deleted');
                     this.unitSystems.splice(index, 1);
                     this._settingsservice.setUnitSystems(this.unitSystems); // update service
-                }, error => { this._toasterService.pop('error', 'Error deleting Unit', error._body.message || error.statusText); }
+                }, error => { this._toasterService.pop('error', 'Error deleting Unit System', error._body.message || error.statusText); }
             );
         }
     }

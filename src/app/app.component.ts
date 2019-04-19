@@ -7,10 +7,10 @@ import { environment } from '../environments/environment';
 import { NSSService } from './shared/services/app.service';
 import { AuthService } from './shared/services/auth.service';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { LoginService } from './shared/services/login.service';
 import { Manager } from './shared/interfaces/manager';
-import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 @Component({
@@ -145,6 +145,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     public logout() {
+        this.LoginForm.reset();
         this._loginService.logout();
         this.router.navigate(['']);
     }

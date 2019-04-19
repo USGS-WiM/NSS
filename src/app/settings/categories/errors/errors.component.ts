@@ -6,7 +6,7 @@
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
 // purpose: regions crud in admin settings page
 
-import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
@@ -16,7 +16,7 @@ import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from 'app/settings/settings.service';
 import { Error } from 'app/shared/interfaces/error';
 
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 

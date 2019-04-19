@@ -8,17 +8,16 @@ import { Statisticgroup } from '../shared/interfaces/statisticgroup';
 import { Scenario } from '../shared/interfaces/scenario';
 import { Parameter } from '../shared/interfaces/parameter';
 import { Unittype } from '../shared/interfaces/unittype';
-import { Limit } from '../shared/interfaces/limit';
 import { Equationresults } from '../shared/interfaces/equationresults';
 import { Hydrochart } from '../shared/interfaces/hydrochart';
 import { Freqchart } from '../shared/interfaces/freqchart';
 import { Chart } from '../shared/interfaces/chart';
 import { NSSService } from '../shared/services/app.service';
-import { ToasterContainerComponent, ToasterService } from 'angular2-toaster/angular2-toaster';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
 import { PageScrollService, PageScrollInstance } from 'ng2-page-scroll';
 import * as Highcharts from 'highcharts';
-import { LoaderService } from '../shared/components/loader.service';
+import { LoaderService } from '../shared/components/loader/loader.service';
 
 declare var MathJax: {
     Hub: { Queue: (param: Object[]) => void };
@@ -93,7 +92,10 @@ export class MainviewComponent implements OnInit {
         this.resultsBack = false;
         this.multipleRegRegions = false;
         this.resultsErrorLength = 0; // used for colspan on Errors <th>
-        this.selectedRegressionRegion = [];
+        this._nssService.clearSelected();
+        this._nssService.selectedRegion.subscribe(region => {
+            this.selectedRegion = region;
+        })
         // this is based on a behaviorSubject, so it gets an initial notification of [].
         this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
             this.selectedRegressionRegion = regRegions;
@@ -1052,5 +1054,9 @@ export class MainviewComponent implements OnInit {
     <body onload="window.print();window.close()">${printContents}</body>
       </html>`);
         popupWin.document.close();
+    }
+
+    public showAddScenarioModal() {
+        this._nssService.setAddScenarioModal(true);
     }
 } // end component

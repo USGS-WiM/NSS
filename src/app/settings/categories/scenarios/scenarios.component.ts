@@ -6,7 +6,7 @@
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
 // purpose: regions crud in admin settings page
 
-import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
@@ -23,13 +23,13 @@ import { SettingsService } from '../../settings.service';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
     moduleId: module.id,
     templateUrl: 'scenarios.component.html'
 })
-export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class ScenariosComponent implements OnInit, OnDestroy {
     @ViewChild('add')
     public addRef: TemplateRef<any>;
     public selectedRegion;
@@ -62,7 +62,6 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
         public _route: ActivatedRoute,
         private _fb: FormBuilder,
         private _modalService: NgbModal,
-        private _cdr: ChangeDetectorRef,
         private router: Router,
         private _toasterService: ToasterService,
         private _configService: ConfigService
@@ -117,8 +116,6 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
             for (const scenario of scen) {
                 const regNames = [];
                 for (const regReg of scenario.regressionRegions) {
-                    regReg.Name = regReg.name;
-                    regReg.ID = regReg.id;
                     regNames.push(regReg.name);
                 }
                 scenario.regNames = regNames.join(',\n');
@@ -308,10 +305,6 @@ export class ScenariosComponent implements OnInit, AfterViewChecked, OnDestroy {
             return ct.id === cID;
         });
         return ind;*/
-    }
-
-    ngAfterViewChecked() {
-        this._cdr.detectChanges();
     }
 
     private getLoggedInRole() {

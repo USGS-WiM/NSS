@@ -66,7 +66,7 @@
             </div>
             <!-- Author* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('author').valid && newCitForm.get('author').dirty}">
-                <label class="req" for="name">author:</label>
+                <label class="req" for="author">Author:</label>
                 <input class="form-control" type="text" formControlName="author" required>
                 <div class="input-invalid-warning" *ngIf="!newCitForm.get('author').valid && newCitForm.get('author').dirty">Author
                     is required</div>

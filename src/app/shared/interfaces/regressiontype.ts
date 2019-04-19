@@ -1,8 +1,6 @@
 export interface Regressiontype {
-    ID: number;
-    id: number; //for multiselect
-    Name: string;
-    name: string; //for multiselect
+    id: number;
+    name: string;
     code: string;
     description: string;
     isEditing?: boolean;

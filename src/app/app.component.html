@@ -1,4 +1,5 @@
 <aboutModal></aboutModal>
+<addScenarioModal></addScenarioModal>
 <nav class="wim-nav">
     <div class="container" style="width: 100%;">
         <button class="mobile-nav-toggle" (click)="toggleSidebar()"></button>
@@ -12,7 +13,7 @@
             <a routerLink="" routerLinkActive="active">
                 <span class="nav-link-text">Home</span>
             </a>
-            <a [class.hidden]="!isLoggedIn" routerLink="settings" routerLinkActive="active">
+            <a [class.hidden]="!isLoggedIn || loggedInRole !== 'Administrator'" routerLink="settings" routerLinkActive="active">
                 <span class="nav-link-text">Settings</span>
             </a>
             <a (click)="showAbout()">
@@ -26,18 +27,23 @@
                     <span class="nav-link-text">Login</span>
                 </span>
             </a>
-            <a (click)="logout()" [class.hidden]="!isLoggedIn">
-                <span>
-                    <span class="nav-link-text">Logout</span>
-                </span>
-            </a>
+            <div class="dropdown" [class.hidden]="!isLoggedIn">
+                <a class="dropbtn nav-link-text">
+                    <i class="ion-person"></i>
+                    <i class="ion-arrow-dropdown"></i>
+                </a>
+                <div class="dropdown-content">
+                    <a (click)="logout()">Logout</a>
+                    <a routerLink="profile" routerLinkActive="active">Profile</a>
+                </div>
+            </div>
             <!--<a href="/#/"><span><i class="ion-plus-round"></i> New Site</span></a>
                 <a href="/#/"><span><i class="ion-ios-book"></i> Guide</span></a>
                 <a href="/#/"><span><i class="ion-help"></i> FAQ</span></a>-->
         </div>
     </div>
 </nav>
-<wim-sidebar *ngIf="router.url.indexOf('/settings') === -1"></wim-sidebar>
+<wim-sidebar *ngIf="router.url.indexOf('/settings') === -1 && router.url.indexOf('/profile') === -1"></wim-sidebar>
 <ng-template #login let-c="close" let-d="dismiss">
     <div class="modal-header">
         <div class="col-xs-12">

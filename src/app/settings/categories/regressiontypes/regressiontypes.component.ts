@@ -16,7 +16,7 @@ import { NSSService } from 'app/shared/services/app.service';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { SettingsService } from '../../settings.service';
 
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 
@@ -172,7 +172,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public saveRegression(u: Regressiontype, i: number) {
         if (u.name === undefined || u.description === undefined || u.code === undefined) {
             // don't save it
-            this._toasterService.pop('error', 'Error updating Error', 'Name, description and Code are required.');
+            this._toasterService.pop('error', 'Error updating Regression Type', 'Name, description and Code are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.regTypeURL).subscribe(

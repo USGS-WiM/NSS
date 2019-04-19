@@ -1,0 +1,95 @@
+<!-- toaster directive -->
+<toaster-container></toaster-container>
+<!-- / toaster directive -->
+
+<div class="page-padding">
+    <h1>Profile</h1>
+    <form #UserInfo TypeForm="ngForm">
+        <div *ngIf="userInfo" class="userInfo">
+            <div>
+                <label>Username: </label>
+                <span *ngIf="!userInfo.isEditing">{{userInfo.username}}</span>
+                <span *ngIf="userInfo.isEditing"><input type="text" name="username" [(ngModel)]="userInfo.username" required></span>
+            </div>
+            <div>
+                <label>Email: </label>
+                <span *ngIf="!userInfo.isEditing">{{userInfo.email}}</span>
+                <span *ngIf="userInfo.isEditing"><input type="text" name="email" [(ngModel)]="userInfo.email" required></span>
+            </div>
+            <div>
+                <label>First Name: </label>
+                <span *ngIf="!userInfo.isEditing">{{userInfo.firstName}}</span>
+                <span *ngIf="userInfo.isEditing"><input type="text" name="firstName" [(ngModel)]="userInfo.firstName" required></span>
+            </div>
+            <div>
+                <label>Last Name: </label>
+                <span *ngIf="!userInfo.isEditing">{{userInfo.lastName}}</span>
+                <span *ngIf="userInfo.isEditing"><input type="text" name="lastName" [(ngModel)]="userInfo.lastName" required></span>
+            </div>
+            <div>
+                <label>Role: </label>
+                <span *ngIf="!userInfo.isEditing">{{userInfo.role}}</span>
+                <span *ngIf="userInfo.isEditing">
+                    <select [(ngModel)]="userInfo.roleID" name="roleID">
+                        <option *ngFor="let role of roles" [value]="role.id">{{role.name}}</option>
+                    </select>
+                </span>
+            </div>
+            <button *ngIf="!userInfo.isEditing" (click)="editUser()"><span><i class="fa fa-pencil"></i>Edit User Info</span></button>
+            <button *ngIf="userInfo.isEditing" (click)="saveUser()"><span><i class="fa fa-floppy-o"></i>Save</span></button>
+            <button *ngIf="userInfo.isEditing" (click)="cancelEdit()"><span><i class="fa fa-history"></i>Cancel</span></button>
+        </div>
+    </form>
+    <!--<table class="table">
+        <thead>
+            <tr>
+                <th class="col-xs-1"></th>
+                <th class="col-xs-2">Username</th>
+                <th class="col-xs-2">Email</th>
+                <th class="col-xs-2">First name</th>
+                <th class="col-xs-2">Last Name</th>
+                <th class="col-xs-1">Role ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="data-controls">
+                        <i *ngIf="!userInfo.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                            aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                        <i *ngIf="!userInfo.isEditing" title="Delete Manager" (click)="deleteManager(userInfo.id)" class="fa fa-times"
+                            aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        <i *ngIf="userInfo.isEditing" title="Save Manager" (click)="saveManager(m,i)" class="fa fa-floppy-o"
+                            aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        <i *ngIf="userInfo.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
+                            aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                    </div> 
+                </td>
+                <td>
+                    <span *ngIf="!userInfo.isEditing">{{ userInfo.username }}</span>
+                    <span *ngIf="userInfo.isEditing"><input type="text" name="username" [(ngModel)]="userInfo.username" required></span>
+                </td>
+                <td>
+                    <span *ngIf="!userInfo.isEditing">{{ userInfo.email }}</span>
+                    <span *ngIf="userInfo.isEditing"><input type="text" name="email" [(ngModel)]="userInfo.email" required></span>
+                </td>
+                <td>
+                    <span *ngIf="!userInfo.isEditing">{{ userInfo.firstName }}</span>
+                    <span *ngIf="userInfo.isEditing"><input type="text" name="firstName" [(ngModel)]="userInfo.firstName" required></span>
+                </td>
+                <td>
+                    <span *ngIf="!userInfo.isEditing">{{ userInfo.lastName }}</span>
+                    <span *ngIf="userInfo.isEditing"><input type="text" name="lastName" [(ngModel)]="userInfo.lastName" required></span>
+                </td>
+                <td>
+                    <span *ngIf="!userInfo.isEditing">{{ userInfo.roleID }}</span>
+                    <span *ngIf="userInfo.isEditing">
+                        <select [(ngModel)]="userInfo.roleID" name="roleID">
+                            <option *ngFor="let role of roles" [value]="role.id">{{role.name}}</option>
+                        </select></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>-->
+    <router-outlet></router-outlet>
+</div>

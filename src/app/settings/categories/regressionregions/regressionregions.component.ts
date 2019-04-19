@@ -6,18 +6,17 @@
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
 // purpose: regions crud in admin settings page
 
-import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
 import { NSSService } from 'app/shared/services/app.service';
-import { Region } from 'app/shared/interfaces/region';
 import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { SettingsService } from '../../settings.service';
 
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 
@@ -26,7 +25,7 @@ import { ConfigService } from 'app/config.service';
     templateUrl: 'regressionregions.component.html',
     styleUrls: ['../../settings.component.css']
 })
-export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class RegressionRegionsComponent implements OnInit, OnDestroy {
     @ViewChild('add')
     public addRef: TemplateRef<any>;
     @ViewChild('toRegion')
@@ -58,7 +57,6 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
         public _route: ActivatedRoute,
         private _fb: FormBuilder,
         private _modalService: NgbModal,
-        private _cdr: ChangeDetectorRef,
         private router: Router,
         private _toasterService: ToasterService,
         private _configService: ConfigService
@@ -184,7 +182,7 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
     public saveRegression(u: Regressionregion, i: number) {
         if (u.name === undefined || u.code === undefined) {
             // don't save it
-            this._toasterService.pop('error', 'Error updating Error', 'Name and Code are required.');
+            this._toasterService.pop('error', 'Error updating Regression region', 'Name and Code are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.regRegionURL).subscribe(
@@ -215,10 +213,6 @@ export class RegressionRegionsComponent implements OnInit, AfterViewChecked, OnD
                 }, error => { this._toasterService.pop('error', 'Error deleting Regression Region', error._body.message || error.statusText); }
             );
         }
-    }
-
-    ngAfterViewChecked() {
-        this._cdr.detectChanges();
     }
 
     private getLoggedInRole() {

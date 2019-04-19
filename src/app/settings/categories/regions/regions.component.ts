@@ -6,7 +6,7 @@
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
 // purpose: regions crud in admin settings page
 
-import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
@@ -16,7 +16,7 @@ import { NSSService } from 'app/shared/services/app.service';
 import { Region } from 'app/shared/interfaces/region';
 import { SettingsService } from '../../settings.service';
 
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 
@@ -132,7 +132,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
     public saveRegion(r: Region, i: number) {
         if (r.name === undefined || r.code === undefined) {
             // don't save it
-            this._toasterService.pop('error', 'Error updating Error', 'Name and Code are required.');
+            this._toasterService.pop('error', 'Error updating Region', 'Name and Code are required.');
         } else {
             delete r.isEditing;
             this._settingsservice.putEntity(r.id, r, this.configSettings.regionURL).subscribe(

@@ -6,7 +6,7 @@
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
 // purpose: regions crud in admin settings page
 
-import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
@@ -15,7 +15,7 @@ import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from '../../settings.service';
 
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -135,7 +135,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public saveVariable(u: Variabletype, i: number) {
         if (u.name === undefined || u.description === undefined || u.code === undefined) {
             // don't save it
-            this._toasterService.pop('error', 'Error updating Statistic Group', 'Name, description and Code are required.');
+            this._toasterService.pop('error', 'Error updating Variable', 'Name, description and Code are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.variablesURL).subscribe(

@@ -11,13 +11,13 @@ import { Ng2PageScrollModule } from 'ng2-page-scroll';
 import { ChartModule } from 'angular2-highcharts';
 import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
 import { ColorPickerModule } from 'ngx-color-picker';
-import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { MainviewComponent } from './mainview/mainview.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SettingsComponent } from './settings/settings.component';
-import { AboutModal } from './shared/about/about.component';
+import { AboutModal } from './shared/components/about/about.component';
 
 import { StatisticGroupsComponent } from './settings/categories/statisticgroups/statisticgroups.component';
 import { RegressionTypesComponent } from './settings/categories/regressiontypes/regressiontypes.component';
@@ -36,8 +36,8 @@ import { UniquePipe } from './mainview/unique.pipe';
 import { NSSService } from './shared/services/app.service';
 import { ConfigService } from './config.service';
 import { LoginService } from './shared/services/login.service';
-import { LoaderService } from './shared/components/loader.service';
-import { LoaderComponent } from './shared/components/loader.component';
+import { LoaderService } from './shared/components/loader/loader.service';
+import { LoaderComponent } from './shared/components/loader/loader.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthService } from './shared/services/auth.service';
 import { SettingsService } from './settings/settings.service';
@@ -45,6 +45,8 @@ import { RegionsComponent } from './settings/categories/regions/regions.componen
 import { RolesComponent } from './settings/categories/roles/roles.component';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { AdminGuard } from './shared/guards/admin.guard';
+import { ProfileComponent } from './shared/components/profile/profile.component';
+import { AddScenarioModal } from './shared/components/addscenario/addscenario.component';
 
 declare const require: any;
 
@@ -52,24 +54,24 @@ const appRoutes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    canActivate: [AdminGuard],
     children: [
       { path: 'statisticgroups', component: StatisticGroupsComponent },
-      { path: 'regions', component: RegionsComponent, canActivate: [AdminGuard]},
+      { path: 'regions', component: RegionsComponent},
       { path: 'regressionregions', component: RegressionRegionsComponent },
       { path: 'regressiontypes', component: RegressionTypesComponent },
       { path: 'unittypes', component: UnitTypesComponent },
       { path: 'unitsystems', component: UnitSystemsComponent },
       { path: 'variabletypes', component: VariableTypesComponent },
       { path: 'scenarios', component: ScenariosComponent },
-      { path: 'managers', component: ManagersComponent, canActivate: [AdminGuard] },
+      { path: 'managers', component: ManagersComponent },
       { path: 'citations', component: CitationsComponent},
-      { path: 'errors', component: ErrorsComponent, canActivate: [AdminGuard]},
-      { path: 'roles', component: RolesComponent, canActivate: [AdminGuard]}
+      { path: 'errors', component: ErrorsComponent},
+      { path: 'roles', component: RolesComponent}
     ],
     runGuardsAndResolvers: 'always'
   },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
   { path: '', component: MainviewComponent, pathMatch: 'full' }
 ];
 
@@ -88,9 +90,10 @@ export function highchartsFactory() {
 
 @NgModule({
   declarations: [
-    AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, LoaderComponent, UniquePipe, MathjaxDirective,
-    StatisticGroupsComponent, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent,
-    RegressionRegionsComponent, ScenariosComponent, ManagersComponent, CitationsComponent, ErrorsComponent, RegionsComponent, RolesComponent
+    AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, LoaderComponent, UniquePipe, StatisticGroupsComponent,
+    MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, CitationsComponent,
+    RegressionRegionsComponent, ScenariosComponent, ManagersComponent, ProfileComponent, ErrorsComponent, RegionsComponent, RolesComponent,
+    AddScenarioModal
   ],
   imports: [
     BrowserModule, FormsModule, HttpModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

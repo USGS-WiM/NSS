@@ -6,7 +6,7 @@
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
 // purpose: regions crud in admin settings page
 
-import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewChecked, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 
@@ -15,7 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from '../../settings.service';
 
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Manager } from 'app/shared/interfaces/manager';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -25,7 +25,7 @@ import { Role } from 'app/shared/interfaces/role';
     moduleId: module.id,
     templateUrl: 'managers.component.html'
 })
-export class ManagersComponent implements OnInit, AfterViewChecked {
+export class ManagersComponent implements OnInit {
     @ViewChild('add')
     public addRef: TemplateRef<any>;
     @ViewChild('User') userForm;
@@ -50,7 +50,6 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
         public _route: ActivatedRoute,
         private _fb: FormBuilder,
         private _modalService: NgbModal,
-        private _cdr: ChangeDetectorRef,
         private _toasterService: ToasterService,
         private _configService: ConfigService
     ) {
@@ -151,7 +150,7 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
     public saveManager(u: Manager, i: number) {
         if (u.username === undefined || u.email === undefined || u.firstName === undefined || u.lastName === undefined || u.roleID === undefined) {
             // don't save it
-            this._toasterService.pop('error', 'Error updating Error', 'First name, last name, username, email and role ID are required.');
+            this._toasterService.pop('error', 'Error updating Manager', 'First name, last name, username, email and role ID are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.managersURL).subscribe(
@@ -162,7 +161,7 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
                     this._settingsservice.setManagers(this.managers);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
-                    if (this.userForm.form.dirty) { this.userForm.reset(); }
+                    if (this.userForm.nativeElement.dirty) { this.userForm.reset(); }
                 }, error => { this._toasterService.pop('error', 'Error updating Manager', error._body.message || error.statusText); }
             );
         }
@@ -182,9 +181,5 @@ export class ManagersComponent implements OnInit, AfterViewChecked {
                 }, error => {this._toasterService.pop('error', 'Error deleting Manager', error._body.message || error.statusText); }
             );
         }
-    }
-
-    ngAfterViewChecked() {
-        this._cdr.detectChanges();
     }
 }

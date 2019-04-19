@@ -19,7 +19,7 @@ import { LoaderService } from './loader.service';
     styleUrls: ['loader.component.css']
 })
 
-export class LoaderComponent implements OnInit {
+export class LoaderComponent implements OnInit, OnDestroy {
     public show = true; //start it showing until the geojson comes back
     private subscription: Subscription;
 

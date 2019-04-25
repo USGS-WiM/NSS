@@ -6,13 +6,11 @@
 
     <div><h3 style="font-size: 32px !important; font-weight: bolder !important;">{{title}}</h3></div>
     <div style="margin-bottom: 5px; opacity: 0.5; letter-spacing: 0.6px;">{{timestamp | date:"MMMM d, y hh:mma"}}</div>
-    <div class="col-md-6">
+    <div class="col-md-6" style="padding: 0;">
         <div *ngIf="selectedRegion">
             <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Region:</label>
             <div style="font-weight: bolder !important; font-size: 18px !important;">{{selectedRegion.name}}</div>
         </div>
-
-        <br/>
         <div *ngIf="selectedStatisticGrp?.length>0">
             <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Statistic Group(s):</label>
             <div>

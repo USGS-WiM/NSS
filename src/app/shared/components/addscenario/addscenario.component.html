@@ -6,63 +6,101 @@
         </div>
     </div>
     <div class="modal-body">
-        <h3 class="modal-title">New Citation</h3>
-        <form [formGroup]="newCitForm">
+        <form [formGroup]="newScenForm">
             <!-- Regression Region -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('regressionregionID').valid && newCitForm.get('regressionregionID').dirty}">
+            <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionregionID').valid && newScenForm.get('regressionregionID').dirty}">
                 <label class="req" for="regressionregionID">Regression Region:</label>
                 <select class="form-control" formControlName="regressionregionID">
                     <option *ngFor="let rr of regressionRegions" [value]="rr.id">{{rr.name}}</option>
                 </select>
-                <div class="input-invalid-warning" *ngIf="!newCitForm.get('regressionregionID').valid && newCitForm.get('regressionregionID').dirty">Role ID
+                <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionregionID').valid && newScenForm.get('regressionregionID').dirty">Role ID
                     is required</div>
             </div>
 
             <!-- Statistic Group* -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('statisticGroupID').valid && newCitForm.get('statisticGroupID').dirty}">
-                <label class="req" for="statisticGroupID">Regression Region:</label>
+            <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty}">
+                <label class="req" for="statisticGroupID">Statistic Group:</label>
                 <select class="form-control" formControlName="statisticGroupID">
                     <option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}}</option>
                 </select>
-                <div class="input-invalid-warning" *ngIf="!newCitForm.get('statisticGroupID').valid && newCitForm.get('statisticGroupID').dirty">Role ID
+                <div class="input-invalid-warning" *ngIf="!newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty">Role ID
                     is required</div>
             </div>
 
             <!-- Regression Type/Statistic-->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('regressionTypeID').valid && newCitForm.get('regressionTypeID').dirty}">
-                <label class="req" for="regressionTypeID">Regression Type:</label>
-                <select class="form-control" formControlName="regressionTypeID">
-                    <option *ngFor="let rt of regressionTypes" [value]="rt.id">{{rt.name}}</option>
+            <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionType').valid && newScenForm.get('regressionType').dirty}">
+                <label class="req" for="regressionType">Regression Type:</label>
+                <select class="form-control" formControlName="regressionType">
+                    <option *ngFor="let rt of regressionTypes" [value]="rt">{{rt.name}}</option>
                 </select>
-                <div class="input-invalid-warning" *ngIf="!newCitForm.get('regressionTypeID').valid && newCitForm.get('regressionTypeID').dirty">Regression Type
+                <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionType').valid && newScenForm.get('regressionType').dirty">Regression Type
                     is required</div>
             </div>
 
             <!-- Expression* -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('expression').valid && newCitForm.get('expression').dirty}">
+            <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('expression').valid && newScenForm.get('expression').dirty}">
                 <label class="req" for="expression">Expression:</label>
-                <input class="form-control" type="text" formControlName="expression" required>
-                <div class="input-invalid-warning" *ngIf="!newCitForm.get('expression').valid && newCitForm.get('expression').dirty">Expression
+                <input class="form-control" type="text" formControlName="expression" required (ngModelChange)="showMathjax()">
+                <span id="mathjaxEq"></span>
+                <div class="input-invalid-warning" *ngIf="!newScenForm.get('expression').valid && newScenForm.get('expression').dirty">Expression
                     is required</div>
             </div>
 
             <!-- Variables-->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('variables').valid && newCitForm.get('variables').dirty}">
-                <label class="req" for="variables">Variables:</label>
-                <select class="form-control" formControlName="variables">
-                    <option *ngFor="let v of variables" [value]="v.id">{{v.name}}</option>
-                </select>
-                <div class="input-invalid-warning" *ngIf="!newCitForm.get('variables').valid && newCitForm.get('variables').dirty">Variables
-                    is required</div>
+            <button type="button" class="btn-blue" (click)="addVariable()">Add Variable</button>
+            <div formArrayName="variables">
+                <div *ngFor="let var of getVariables(newScenForm); let varIndex = index">
+                    <div class="varDropdown">
+                        <div (click)="removeVariable(index)"><i class="ion-close"></i></div>
+                        <div *ngIf="checkDiv(varIndex + 1)" class="showHideVar" (click)="hideVar(varIndex + 1)">Variable {{varIndex + 1}}
+                            <i class="ion-android-arrow-dropdown"></i></div>
+                        <div *ngIf="!checkDiv(varIndex + 1)" class="showHideVar" (click)="showVar(varIndex + 1)">Variable {{varIndex + 1}}<i class="ion-android-arrow-dropright"></i></div>
+                    </div>
+                    <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="varFormGroup">
+                        <!-- Variable ID-->
+                        <div class="form-group required">
+                            <label class="req" for="variableTypeID">Variable:</label>
+                            <select class="form-control" formControlName="variableTypeID">
+                                <option *ngFor="let v of variables" [value]="v.id">{{v.code}}</option>
+                            </select>
+                        </div>
+    
+                        <!-- Variable Max-->
+                        <div class="form-group required">
+                            <label class="req" for="max">Max:</label>
+                            <input class="form-control" type="text" formControlName="max" required>
+                        </div>
+    
+                        <!-- Variable Min-->
+                        <div class="form-group required">
+                            <label class="req" for="min">Min:</label>
+                            <input class="form-control" type="text" formControlName="min" required>
+                        </div>
+    
+                        <!-- Variable Unit Type ID-->
+                        <div class="form-group required">
+                            <label class="req" for="unitTypeID">Unit:</label>
+                            <select class="form-control" formControlName="unitTypeID">
+                                <option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}}</option>
+                            </select>
+                        </div>
+    
+                        <!-- Variable Comments-->
+                        <div class="form-group required">
+                            <label class="req" for="comments">Comments:</label>
+                            <textarea class="form-control" rows="3" placeholder="" formControlName="comments"></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Units-->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('unit').valid && newCitForm.get('unit').dirty}">
-                <label class="req" for="unit">Regression Type:</label>
+            <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('unit').valid && newScenForm.get('unit').dirty}">
+                <label class="req" for="unit">Unit Type:</label>
                 <select class="form-control" formControlName="unit">
                     <option *ngFor="let ut of unitTypes" [value]="ut.id">{{ut.name}}</option>
                 </select>
-                <div class="input-invalid-warning" *ngIf="!newCitForm.get('unit').valid && newCitForm.get('unit').dirty">Regression Type
+                <div class="input-invalid-warning" *ngIf="!newScenForm.get('unit').valid && newScenForm.get('unit').dirty">Unit Type
                     is required</div>
             </div>
 
@@ -70,7 +108,7 @@
 
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewCitation()" [disabled]="!newCitForm.valid" class="btn-blue">Create</button>
+            <button type="button" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="btn-blue">Create</button>
         </div>
     </div>
 </ng-template>

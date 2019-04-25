@@ -2,7 +2,7 @@
     padding-top: 15px;
 }
 .modal-title {
-    color: #6e7490;
+    color: #6f7697;
     padding-top: 0;
     font-size: 21px!important;
 }
@@ -10,4 +10,36 @@
     align-items: center;
     text-align: center;
     display: block;
+}
+
+.varFormGroup {
+    margin-left: 5px;
+}
+
+.varDropdown {
+    background-color: #eceef4;
+    padding: 5px;
+    font-size: 14px !important;
+    cursor: pointer;
+    border-radius: .25rem;
+    margin-bottom: 1px;
+}
+
+.showHideVar i {
+    float: right;
+    padding-right: 5px;
+    font-size: 20px !important; /*need to center vertically*/
+    bottom: 4px;
+    position: relative;
+}
+.ion-close {
+    float: left;
+    font-size: 10px !important;
+    position: relative;
+    padding: 5px;
+}
+
+.ion
+.btn-blue {
+    margin-bottom: 5px;
 }

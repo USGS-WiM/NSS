@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChildren, ViewContainerRef } from '@angular/core';
+import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
 
 import { Region } from '../shared/interfaces/region';
@@ -18,6 +18,12 @@ import { Toast } from 'angular2-toaster/src/toast';
 import { PageScrollService, PageScrollInstance } from 'ng2-page-scroll';
 import * as Highcharts from 'highcharts';
 import { LoaderService } from '../shared/components/loader/loader.service';
+import { AuthService } from 'app/shared/services/auth.service';
+import { Router, NavigationEnd, NavigationStart } from '@angular/router';
+import { SettingsService } from 'app/settings/settings.service';
+import { ConfigService } from 'app/config.service';
+import { Config } from 'app/shared/interfaces/config';
+import { Error } from 'app/shared/interfaces/error';
 
 declare var MathJax: {
     Hub: { Queue: (param: Object[]) => void };
@@ -31,14 +37,15 @@ declare var MathJax: {
 export class MainviewComponent implements OnInit {
     @ViewChildren('inputsTable', { read: ViewContainerRef }) inputTable;
     @ViewChildren('resultsTable', { read: ViewContainerRef }) resultTable;
-
+    @ViewChild('editScenarioForm') editScenarioForm;
     public title: string;
     public resultsBack: boolean; // flag that swaps content on mainpage from scenarios w/o results to those with results
     public equationResults: Equationresults[]; // used in Appendix
     public showWeights: boolean; // if more than 1 regRegion, then show input for weighted
     public timestamp: Date; // display a time stamp when they first get here.
     public toast: Toast; // notification when values are required
-    public selectedRegion: Region;
+    public selectedRegion;
+    private navigationSubscription;
     public selectedRegressionRegion: Array<Regressionregion>;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
@@ -74,15 +81,40 @@ export class MainviewComponent implements OnInit {
     public resultsErrorLength: number;
     public appendixEquationsforExport: Array<string>;
     private activeLayerID: number;
+    private loggedInRole;
+    public previousUrl;
+    private showRegion: boolean;
+    public editRegionScenario: boolean;
+    public configSettings: Config;
+    public units;
+    public errors;
+    public regTypes;
+    public tempData;
+    public itemBeingEdited;
 
     constructor(
         private _nssService: NSSService,
         private _loaderService: LoaderService,
         private _toasterService: ToasterService,
         @Inject(DOCUMENT) private _document: any,
-        private _pageScrollService: PageScrollService
-    ) {}
-
+        private _pageScrollService: PageScrollService,
+        private _authService: AuthService,
+        private router: Router,
+        private _settingsService: SettingsService,
+        private _configService: ConfigService
+    ) {
+        this.navigationSubscription = this.router.events.subscribe((e: any) => {
+            if (e instanceof NavigationStart) {
+                this.router.navigated = false;
+                if (this.previousUrl === '/settings') {
+                    this._nssService.setSelectedRegion(undefined);
+                    this.showRegion = false;
+                }
+                this.previousUrl = e.url;
+            }
+        });
+        this.configSettings = this._configService.getConfiguration();
+    }
     ngOnInit() {
         this.title = 'NSS Report';
         this.timestamp = new Date();
@@ -91,11 +123,13 @@ export class MainviewComponent implements OnInit {
         this.hydrographs = []; // instantiate
         this.resultsBack = false;
         this.multipleRegRegions = false;
+        this.showRegion = false; this.editRegionScenario = false;
         this.resultsErrorLength = 0; // used for colspan on Errors <th>
-        this._nssService.clearSelected();
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
-        })
+            if (region) { this.showRegion = true; }
+        });
+        this.loggedInRole = localStorage.getItem('loggedInRole');
         // this is based on a behaviorSubject, so it gets an initial notification of [].
         this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
             this.selectedRegressionRegion = regRegions;
@@ -116,6 +150,9 @@ export class MainviewComponent implements OnInit {
                 // clear the layerDefs14.
                 queryObj = { [this.activeLayerID]: '1=1' };
             }
+        });
+        this._authService.loggedInRole().subscribe(role => {
+            this.loggedInRole = role;
         });
         // subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
@@ -192,6 +229,7 @@ export class MainviewComponent implements OnInit {
                                 // not in there yet
                                 this.uniqueUnitTypes.push(p.unitType);
                             }
+                            p.isEditing = false;
                         });
                     }
                 }); // end s.regressionRegion.forEach
@@ -479,6 +517,19 @@ export class MainviewComponent implements OnInit {
                 this.fChartValues = undefined;
                 this.hydrographs = [];
             }
+        });
+        this._settingsService.getEntities(this.configSettings.unitsURL).subscribe(res => {
+            this.units = res;
+            for (const unit of this.units) {
+                unit.unit = unit.name;
+                unit.abbr = unit.abbreviation;
+            }
+        });
+        this._settingsService.getEntities(this.configSettings.errorsURL).subscribe(res => {
+            this.errors = res;
+        });
+        this._settingsService.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+            this.regTypes = res;
         });
     } // end ngOnInit()
 
@@ -1058,5 +1109,56 @@ export class MainviewComponent implements OnInit {
 
     public showAddScenarioModal() {
         this._nssService.setAddScenarioModal(true);
+    }
+
+    public editRegScenario() {
+        this.editRegionScenario = true;
+        this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.scenariosURL)
+            .subscribe(res => {
+                this.scenarios = res;
+            });
+    }
+
+    public cancelEditRegScenario() {
+        this.editRegionScenario = false;
+        this._nssService.setSelectedRegion(this.selectedRegion);
+    }
+
+    public saveRegression(r, rIndex, rrIndex, sgIndex) {
+        // add put request here
+        // check for error.value, if not there get from form
+        r.isEditing = false;
+        console.log(r);
+        console.log(this.scenarios[sgIndex].regressionRegions[rrIndex].regressions[rIndex]);
+    }
+
+    public editRowClicked(item) {
+        if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData) {
+            this.itemBeingEdited.isEditing = false;
+            this.itemBeingEdited = this.tempData;
+        } // if another item was being edited, cancel that
+        this.tempData = Object.assign({}, item); // make a copy in case they cancel
+        this.itemBeingEdited = item;
+        item.isEditing = true;
+    }
+
+    public CancelEditRowClicked(item) {
+        this.itemBeingEdited.isEditing = false;
+        this.itemBeingEdited = this.tempData;
+        item.isEditing = false;
+    }
+
+    public saveParameter(p, pIndex, rrIndex, sgIndex) {
+        console.log(this.editScenarioForm.value);
+        /*Object.keys(this.editScenarioForm.controls.regType.value).forEach((key, value) => {
+            p[key] = this.editScenarioForm.controls.regType.value[key];
+        });*/
+        console.log(p);
+        console.log(this.scenarios[sgIndex].regressionRegions[rrIndex].parameters[pIndex]);
+        p.isEditing = false;
+    }
+
+    public print(item) {
+        console.log(item);
     }
 } // end component

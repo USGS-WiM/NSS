@@ -7,16 +7,6 @@
     </div>
     <div class="modal-body">
         <form [formGroup]="newScenForm">
-            <!-- Regression Region -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionregionID').valid && newScenForm.get('regressionregionID').dirty}">
-                <label class="req" for="regressionregionID">Regression Region:</label>
-                <select class="form-control" formControlName="regressionregionID">
-                    <option *ngFor="let rr of regressionRegions" [value]="rr.id">{{rr.name}}</option>
-                </select>
-                <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionregionID').valid && newScenForm.get('regressionregionID').dirty">Role ID
-                    is required</div>
-            </div>
-
             <!-- Statistic Group* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty}">
                 <label class="req" for="statisticGroupID">Statistic Group:</label>
@@ -27,83 +17,206 @@
                     is required</div>
             </div>
 
-            <!-- Regression Type/Statistic-->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionType').valid && newScenForm.get('regressionType').dirty}">
-                <label class="req" for="regressionType">Regression Type:</label>
-                <select class="form-control" formControlName="regressionType">
-                    <option *ngFor="let rt of regressionTypes" [value]="rt">{{rt.name}}</option>
-                </select>
-                <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionType').valid && newScenForm.get('regressionType').dirty">Regression Type
-                    is required</div>
-            </div>
+            <!-- Regression Regions array -->
+            <div formArrayName="regressionRegions">
+                <!-- Regression Region -->
+                <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.ID').valid && newScenForm.get('regressionRegions.ID').dirty}">
+                    <label class="req" for="ID">Regression Region:</label>
+                    <select class="form-control" formControlName="ID">
+                        <option *ngFor="let rr of regressionRegions" [value]="rr.id">{{rr.name}}</option>
+                    </select>
+                </div>
 
-            <!-- Expression* -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('expression').valid && newScenForm.get('expression').dirty}">
-                <label class="req" for="expression">Expression:</label>
-                <input class="form-control" type="text" formControlName="expression" required (ngModelChange)="showMathjax()">
-                <span id="mathjaxEq"></span>
-                <div class="input-invalid-warning" *ngIf="!newScenForm.get('expression').valid && newScenForm.get('expression').dirty">Expression
-                    is required</div>
-            </div>
-
-            <!-- Variables-->
-            <button type="button" class="btn-blue" (click)="addVariable()">Add Variable</button>
-            <div formArrayName="variables">
-                <div *ngFor="let var of getVariables(newScenForm); let varIndex = index">
-                    <div class="varDropdown">
-                        <div (click)="removeVariable(index)"><i class="ion-close"></i></div>
-                        <div *ngIf="checkDiv(varIndex + 1)" class="showHideVar" (click)="hideVar(varIndex + 1)">Variable {{varIndex + 1}}
-                            <i class="ion-android-arrow-dropdown"></i></div>
-                        <div *ngIf="!checkDiv(varIndex + 1)" class="showHideVar" (click)="showVar(varIndex + 1)">Variable {{varIndex + 1}}<i class="ion-android-arrow-dropright"></i></div>
+                <div formArrayName="regressions">
+                    <!-- Regression Type/Statistic-->
+                    <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
+                        <label class="req" for="ID">Regression Type:</label>
+                        <select class="form-control" formControlName="ID">
+                            <option *ngFor="let rt of regressionTypes" [value]="rt.id">{{rt.name}}</option>
+                        </select>
+                        <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty">Regression Type
+                            is required</div>
                     </div>
-                    <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="varFormGroup">
-                        <!-- Variable ID-->
-                        <div class="form-group required">
-                            <label class="req" for="variableTypeID">Variable:</label>
-                            <select class="form-control" formControlName="variableTypeID">
-                                <option *ngFor="let v of variables" [value]="v.id">{{v.code}}</option>
-                            </select>
+
+                    <!-- Equation* -->
+                    <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.equation').valid && newScenForm.get('regressionRegions.regressions.equation').dirty}">
+                        <label class="req" for="equation">Equation:</label>
+                        <input class="form-control" type="text" formControlName="equation" required (ngModelChange)="showMathjax()">
+                        <span id="mathjaxEq"></span>
+                        <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.equation').valid && newScenForm.get('regressionRegions.regressions.equation').dirty">Expression
+                            is required</div>
+                    </div>
+
+                    <!-- Equivalent Years -->
+                    <div class="form-group">
+                        <label class="req" for="equivalentYears">Equivalent Years (optional):</label>
+                        <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="equivalentYears" >
+                    </div>
+
+                    <!-- Expected* -->
+                    <div formGroupName="expected">
+                        <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty}">
+                            <label class="req" for="expression">Expected value (based on given parameter values and equation):</label>
+                            <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="value" required>
+                            <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty">Expected value
+                                is required</div>
                         </div>
-    
-                        <!-- Variable Max-->
-                        <div class="form-group required">
-                            <label class="req" for="max">Max:</label>
-                            <input class="form-control" type="text" formControlName="max" required>
+                    </div>
+
+                    <!-- Units-->
+                    <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty}">
+                        <label class="req" for="unit">Unit Type:</label>
+                        <select class="form-control" formControlName="unit">
+                            <option *ngFor="let ut of unitTypes" [ngValue]="ut">{{ut.name}}</option>
+                        </select>
+                        <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty">Unit Type
+                            is required</div>
+                    </div>
+                </div>
+
+                <!-- Parameters-->
+                <div formArrayName="parameters">
+                    <div *ngFor="let var of newScenForm.get('regressionRegions.parameters').controls; let varIndex = index">
+                        <div class="scenDropdown">
+                            <div (click)="removeVariable(index)"><i class="ion-close"></i></div>
+                            <div *ngIf="checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="hideDiv('variable' + (varIndex + 1))">Variable {{varIndex + 1}}
+                                <i class="ion-android-arrow-dropdown"></i></div>
+                            <div *ngIf="!checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="showDiv('variable' + (varIndex + 1))">Variable {{varIndex + 1}}<i class="ion-android-arrow-dropright"></i></div>
                         </div>
+                        <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
+                            <!-- Variable ID-->
+                            <div class="form-group required">
+                                <label class="req" for="code">Variable:</label>
+                                <select class="form-control" formControlName="code">
+                                    <option *ngFor="let v of variables" [value]="v.code">{{v.code}}</option>
+                                </select>
+                            </div>
+                            
+                            <div formArrayName="limits">
+                                <!-- Variable Max-->
+                                <div class="form-group required col-md-6">
+                                    <label class="req" for="max">Variable Max:</label>
+                                    <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="max" required>
+                                </div>
+            
+                                <!-- Variable Min-->
+                                <div class="form-group required col-md-6">
+                                    <label class="req" for="min">Variable Min:</label>
+                                    <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="min" required>
+                                </div>
+                            </div>
+        
+                            <!-- Variable Unit Type-->
+                            <div class="form-group required">
+                                <label class="req" for="unitType">Variable Unit:</label>
+                                <select class="form-control" formControlName="unitType">
+                                    <option *ngFor="let u of unitTypes" [ngValue]="u">{{u.name}}</option>
+                                </select>
+                            </div>
+        
+                            <!-- Variable Comments-->
+                            <div class="form-group required">
+                                <label class="req" for="comments">Variable Comments:</label>
+                                <textarea class="form-control" rows="3" placeholder="" formControlName="comments"></textarea>
+                            </div>
     
-                        <!-- Variable Min-->
-                        <div class="form-group required">
-                            <label class="req" for="min">Min:</label>
-                            <input class="form-control" type="text" formControlName="min" required>
-                        </div>
-    
-                        <!-- Variable Unit Type ID-->
-                        <div class="form-group required">
-                            <label class="req" for="unitTypeID">Unit:</label>
-                            <select class="form-control" formControlName="unitTypeID">
-                                <option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}}</option>
-                            </select>
-                        </div>
-    
-                        <!-- Variable Comments-->
-                        <div class="form-group required">
-                            <label class="req" for="comments">Comments:</label>
-                            <textarea class="form-control" rows="3" placeholder="" formControlName="comments"></textarea>
+                            <!-- Variable Value* (moved to expected before posting)-->
+                            <div class="form-group required">
+                                <label class="req" for="value">Variable Value (used to confirm equation produces the expected value):</label>
+                                <input class="form-control" type="number" formControlName="value" required>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <button type="button" class="btn-blue" (click)="addVariable()">Add Variable</button>
 
-            <!-- Units-->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('unit').valid && newScenForm.get('unit').dirty}">
-                <label class="req" for="unit">Unit Type:</label>
-                <select class="form-control" formControlName="unit">
-                    <option *ngFor="let ut of unitTypes" [value]="ut.id">{{ut.name}}</option>
-                </select>
-                <div class="input-invalid-warning" *ngIf="!newScenForm.get('unit').valid && newScenForm.get('unit').dirty">Unit Type
-                    is required</div>
+                <div formArrayName="regressions">
+                    <!-- Errors-->
+                    <div formArrayName="errors">
+                        <div *ngFor="let err of newScenForm.get('regressionRegions.regressions.errors').controls; let errIndex = index">
+                            <div class="scenDropdown">
+                                <div (click)="removeError(errIndex)"><i class="ion-close"></i></div>
+                                <div *ngIf="checkDiv('error' + (errIndex + 1))" class="showHideScen" (click)="hideDiv('error' + (errIndex + 1))">Error {{errIndex + 1}}
+                                    <i class="ion-android-arrow-dropdown"></i></div>
+                                <div *ngIf="!checkDiv('error' + (errIndex + 1))" class="showHideScen" (click)="showDiv('error' + (errIndex + 1))">Error {{errIndex + 1}}<i class="ion-android-arrow-dropright"></i></div>
+                            </div>
+                            <div [id]="'error' + (errIndex + 1)" class="scenFormGroup">
+                                <!-- Error ID-->
+                                <div class="form-group required">
+                                    <label class="req" [for]="errIndex">Error:</label>
+                                    <select class="form-control" [formControlName]="errIndex">
+                                        <option *ngFor="let e of errors" [ngValue]="e">{{e.name}}</option>
+                                    </select>
+                                </div>
+            
+                                <!-- Error Value-->
+                                <div class="form-group required">
+                                    <label class="req">Value:</label>
+                                    <input [id]="'errValue' + errIndex" (keypress)="_keyPress($event)" type="number" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-blue" (click)="addError()">Add Error</button>
+                    
+                    <div *ngIf="addPredInt" class="scenDropdown">
+                        <div (click)="addPredInt = false"><i class="ion-close"></i></div>
+                        <div *ngIf="checkDiv('predInt')" class="showHideScen" (click)="hideDiv('predInt')">Prediction Interval
+                            <i class="ion-android-arrow-dropdown"></i></div>
+                        <div *ngIf="!checkDiv('predInt')" class="showHideScen" (click)="showDiv('predInt')">Prediction Interval<i class="ion-android-arrow-dropright"></i></div>
+                    </div>
+                    <div id="predInt" *ngIf="addPredInt">
+                        <div formGroupName="predictionInterval">
+                            <!-- Bias Correction Factor -->
+                            <div class="form-group">
+                                <label class="req" for="biasCorrectionFactor">Bias Correction Factor:</label>
+                                <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="biasCorrectionFactor" >
+                            </div>
+    
+                            <!-- Student T Statistic -->
+                            <div class="form-group">
+                                <label class="req" for="student_T_Statistic">Student T Statistic:</label>
+                                <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="student_T_Statistic" >
+                            </div>
+    
+                            <!-- Variance -->
+                            <div class="form-group">
+                                <label class="req" for="variance">Variance:</label>
+                                <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="variance" >
+                            </div>
+    
+                            <!-- XI Row Vector -->
+                            <div class="form-group">
+                                <label class="req" for="xiRowVector">XI Row Vector:</label>
+                                <input class="form-control" (keypress)="_keyPress($event)" type="text" formControlName="xiRowVector">
+                            </div>
+    
+                            <!-- Covariance Matrix -->
+                            <div class="form-group">
+                                <label class="req" for="covarianceMatrix">Covariance Matrix:</label>
+                                <input class="form-control" (keypress)="_keyPress($event)" type="text" formControlName="covarianceMatrix">
+                            </div>
+                        </div>
+                        <div formGroupName="expected">
+                            <div formGroupName="intervalBounds">
+                                <!-- Lower Interval Bound -->
+                                <div class="form-group col-md-6">
+                                    <label class="req" for="lower">Expected Lower Interval Bound:</label>
+                                    <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="lower" >
+                                </div>
+        
+                                <!-- Upper Interval Bound -->
+                                <div class="form-group col-md-6">
+                                    <label class="req" for="upper">Expected Upper Interval Bound:</label>
+                                    <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="upper" >
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    <button *ngIf="!addPredInt" type="button" class="btn-blue" (click)="addPredInt = true">Add Prediction Interval</button>
+                </div>
             </div>
-
         </form>
 
         <div class="modal-footer">

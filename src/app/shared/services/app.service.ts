@@ -5,6 +5,7 @@ import { Http, Headers, RequestOptions, URLSearchParams } from '@angular/http';
 import 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { EMPTY } from 'rxjs';
 
 // interfaces
 import { Region } from 'app/shared/interfaces/region';
@@ -19,6 +20,8 @@ import { ConfigService } from '../../config.service';
 import { Toast } from 'angular2-toaster/src/toast';
 import { Unittype } from 'app/shared/interfaces/unitType';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
+import { RegionsComponent } from 'app/settings/categories/regions/regions.component';
+import { ToasterService } from 'angular2-toaster';
 
 @Injectable()
 export class NSSService {
@@ -29,7 +32,7 @@ export class NSSService {
     private configSettings: Config;
     private jsonHeader: Headers = new Headers({ Accept: 'application/json', 'Content-Type': 'application/json' });
 
-    constructor(private _http: Http, private _configService: ConfigService) {
+    constructor(private _http: Http, private _configService: ConfigService, private _toasterService: ToasterService) {
         this.configSettings = this._configService.getConfiguration();
         this.getRegions();
     }
@@ -139,18 +142,18 @@ export class NSSService {
         this._selectedStatGroups = [];
         this._selectedRegressionTypes = [];
         this.chartBind.next('');
+        this._selectedRegion.next(null);
     }
 
     // setter (selectedRegion)
     public setSelectedRegion(v: Region) {
-        if (v === this._selectedRegion.getValue()) { return; }
         this._selectedRegion.next(v);
         this._selectedRegRegions.next([]);
         this._selectedStatGroups = [];
         this._selectedRegressionTypes = [];
         this.chartBind.next('');
         // go get all the other stuff (regressionregions, regressiontypes,statisticgroups and scenarios
-        this.initializeRegion();
+        if (v) { this.initializeRegion(); }
     }
     // getter (selectedRegion)
     public get selectedRegion(): Observable<Region> {
@@ -577,7 +580,9 @@ export class NSSService {
                         const i = scen.links[0].href.indexOf('?');
                         const param = scen.links[0].href.substring(i + 1);
                         this.getCitations(new URLSearchParams(param)).subscribe(c => {
-                            scen.citations = c;
+                            if (!(c.length === 1 && c[0] === null)) {
+                                scen.citations = c;
+                            }
                         });
                         // clear Parameter.'Value'
                         scen.regressionRegions.forEach(rr => {
@@ -602,11 +607,7 @@ export class NSSService {
             // .map(sResult => sResult.json())
             .subscribe(
                 res => {
-                    console.log(res);
-                    const headers = new Headers(res['headers']);
-                    console.log(headers);
-                    console.log(headers.get('X-usgswim-messages'));
-                    console.log(headers.get('date'));
+                    console.log(res.headers.get('x-usgswim-messages'));
                     const sResult = res.json();
                     sResult.forEach(scen => {
                         if (scen.regressionRegions.length > 0) {
@@ -637,6 +638,11 @@ export class NSSService {
     }
 
     private handleError(error: any) {
+        const wimMessages = JSON.parse(error.headers.get('x-usgswim-messages'));
+        for (const key of Object.keys(wimMessages)) {
+            this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), wimMessages[key]);
+        }
+
         const errMsg = error.message ? error.message : error.status ? `${error.status} - ${error.statusText}` : 'Server error';
         console.error(errMsg);
         return observableThrowError(errMsg);

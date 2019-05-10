@@ -12,11 +12,11 @@
     display: block;
 }
 
-.varFormGroup {
+.scenFormGroup {
     margin-left: 5px;
 }
 
-.varDropdown {
+.scenDropdown {
     background-color: #eceef4;
     padding: 5px;
     font-size: 14px !important;
@@ -25,7 +25,7 @@
     margin-bottom: 1px;
 }
 
-.showHideVar i {
+.showHideScen i {
     float: right;
     padding-right: 5px;
     font-size: 20px !important; /*need to center vertically*/
@@ -39,7 +39,10 @@
     padding: 5px;
 }
 
-.ion
 .btn-blue {
-    margin-bottom: 5px;
+    margin: 0px 5px 5px 0px;
+}
+
+.form-group.col-md-6 {
+    padding-left: 0;
 }

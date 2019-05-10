@@ -1,6 +1,7 @@
 import {Link} from './link';
 import { Parameter } from './parameter';
 import { Result } from './result';
+import { Regressiontype } from './regressiontype';
 
 export interface Regressionregion {
     Links: Link[];
@@ -13,4 +14,5 @@ export interface Regressionregion {
     extensions?: [];
     results?: Result[];
     percentWeight?: number;
+    regressions?: Array<Regressiontype>;
 }

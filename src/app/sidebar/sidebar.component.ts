@@ -21,7 +21,7 @@ export class SidebarComponent implements OnInit {
     public selectedPlot: string; // which chart type they selected
     // regions
     // public get selectedRegion():Region {return this._nssService.selectedRegion;};
-    public selectedRegion: Region;
+    public selectedRegion;
     public regions: Array<Region>;
 
     // regression regions
@@ -274,14 +274,16 @@ export class SidebarComponent implements OnInit {
             });
             // now post the scenario to get the results to pass to mainview
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
-            const statGrpIDstring = this.selectedStatGrpIDs !== undefined ? this.selectedStatGrpIDs.join(',') : '';
-            const regRegionsIDstring = this.selectedRegRegionIDs !== undefined ? this.selectedRegRegionIDs.join(',') : '';
             const sParams: URLSearchParams = new URLSearchParams();
-            sParams.set('regressionregions', regRegionsIDstring);
             sParams.set('regressiontypes', regTypesIDstring);
-            sParams.set('statisticgroups', statGrpIDstring);
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
         }
+    }
+
+    public clearSelections() {
+        this.selectedStatGrpIDs = [];
+        this.selectedRegRegionIDs = [];
+        this.selectedRegTypeIDs = [];
     }
 
     // want to see a chart (which one?) ---- may delete, trying it on (ngModelChange)=" of select

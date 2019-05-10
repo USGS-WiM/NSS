@@ -14,4 +14,5 @@ export interface Parameter {
     outOfRange?: boolean;
     missingVal?: boolean;
     seeDescription?: boolean;
+    isEditing?: boolean;
 }

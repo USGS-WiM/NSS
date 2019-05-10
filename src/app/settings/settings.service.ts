@@ -26,6 +26,7 @@ import { UnitSystem } from 'app/shared/interfaces/unitsystems';
 import { Citation } from 'app/shared/interfaces/citation';
 import { Error } from 'app/shared/interfaces/error';
 import { Role } from 'app/shared/interfaces/role';
+import { ToasterService } from 'angular2-toaster';
 
 @Injectable()
 export class SettingsService {
@@ -49,7 +50,7 @@ export class SettingsService {
     private _rolesSubject: BehaviorSubject<Array<Role>> = <BehaviorSubject<Role[]>>new BehaviorSubject([]);
 
 
-    constructor(private _http: Http, private _configService: ConfigService) {
+    constructor(private _http: Http, private _configService: ConfigService, private _toasterService: ToasterService) {
         this.configSettings = this._configService.getConfiguration();
     }
 

@@ -82,10 +82,11 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         });
     }
 
-    public onRegSelect(r: Region) {
+    public onRegSelect(r) {
         this.selectedRegRegionIDs = []; this.selectedStatGroupIDs = []; this.selectedRegTypeIDs = [];
         this.selectedRegion = r;
-        this.getStatGroups(r);
+        if (r === 'none') {this.getAllStatGroups();
+        } else { this.getStatGroups(r); }
     }
 
     private getStatGroups(r) {
@@ -140,9 +141,9 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
 
     private EditRowClicked(i: number) {
         this.rowBeingEdited = i;
-       this.tempData = Object.assign({}, this.statisticGroups[i]); // make a copy in case they cancel
-       this.statisticGroups[i].isEditing = true;
-       this.isEditing = true; // set to true so create new is disabled
+        this.tempData = Object.assign({}, this.statisticGroups[i]); // make a copy in case they cancel
+        this.statisticGroups[i].isEditing = true;
+        this.isEditing = true; // set to true so create new is disabled
     }
 
     public CancelEditRowClicked(i: number) {

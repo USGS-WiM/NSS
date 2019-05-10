@@ -89,7 +89,7 @@ export class AuthService {
         localStorage.setItem('setupTime', now.toString());
     }
     // get the loggedIn Role
-    private getLoggedInRole(roleId: number): string {
+    public getLoggedInRole(roleId: number): string {
         switch (roleId) {
             case 1:
                 return 'Administrator';

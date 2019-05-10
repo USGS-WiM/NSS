@@ -7,7 +7,7 @@
     <div><h3 style="font-size: 32px !important; font-weight: bolder !important;">{{title}}</h3></div>
     <div style="margin-bottom: 5px; opacity: 0.5; letter-spacing: 0.6px;">{{timestamp | date:"MMMM d, y hh:mma"}}</div>
     <div class="col-md-6" style="padding: 0;">
-        <div *ngIf="selectedRegion">
+        <div *ngIf="showRegion">
             <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Region:</label>
             <div style="font-weight: bolder !important; font-size: 18px !important;">{{selectedRegion.name}}</div>
         </div>
@@ -17,24 +17,24 @@
                 <span *ngFor="let st of selectedStatisticGrp;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{st.name}}{{isLast ? "" : ", "}}</span>
             </div>
         </div>
-
-        <br />
-        <div *ngIf="selectedRegressionRegion?.length>0">
+        <div *ngIf="selectedRegressionRegion?.length>0" style="padding: 0;">
             <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Regression Group(s):</label>
             <div>
                 <span *ngFor="let rr of selectedRegressionRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.name}}{{isLast ? "" : ", "}}</span>
             </div>
         </div>
-        <button *ngIf="selectedRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0" type="button" class="btn-wim-primary" style="margin-bottom: 15px;" (click)="showAddScenarioModal()">Add Scenario</button>
+        <button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showAddScenarioModal()">Add Scenario</button>
+        <button *ngIf="loggedInRole && showRegion && !editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="editRegScenario()">Edit Scenario</button>
+        <button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="cancelEditRegScenario()">Cancel Edit Scenario</button>
     </div>
     <br clear="all"/>
 
      <!-- scenarios && !resultsBack-->
-    <div class="hidden-print" *ngIf="scenarios && !resultsBack">
-        <label>Equation Variables</label> 
+    <div class="hidden-print" *ngIf="scenarios && !resultsBack && !editRegionScenario">
+        <label>Equation Variables</label>
         <br/>
         <div *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</div>
-        <form #scenarioForm="ngForm">
+        <form #scenarioForm="ngForm" *ngIf="scenarios.length > 0">
             <div class="row">
                 <div class="col-xs-12" *ngFor="let sc of scenarios;let sInd = index">
                     <h3>{{sc.statisticGroupName}}</h3>
@@ -44,7 +44,7 @@
                                 <td style="vertical-align:middle;">{{rr.name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_Code: {{rr.code}})</span></td>
                                 <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
                                 <td *ngIf="showWeights" class="col-xs-2">
-                                    <input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.percentWeight">
+                                    <input style="display:inline;" type="text" class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.percentWeight">
                                 </td>
                             </tr>
                         </table>
@@ -109,21 +109,23 @@
 
             <h2 style="margin:0;padding:0">Citations</h2>
             <div *ngFor="let sc of scenarios">
-                <label *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</label>
-                <div *ngFor="let l of sc.citations">
-                    <a [href]="l.citationURL" [target]="_blank">
-                        <div>{{l.author}}</div>
-                        <div>{{l.title}}</div>
-                    </a>
-                    <br />
+                <div *ngIf="sc.citations">
+                    <label *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</label>
+                    <div *ngFor="let l of sc.citations">
+                        <a [href]="l.citationURL" [target]="_blank">
+                            <div>{{l.author}}</div>
+                            <div>{{l.title}}</div>
+                        </a>
+                        <br />
+                    </div>
                 </div>
             </div><!--end foreach scenario (for citations) {{l != undefined ? l.rrID : ''}}-->
         </form>
     </div> <!--end if scenarios-->
 
      <!-- resultsBack-->
-    <div *ngIf="resultsBack">
-        <button type="button" class="btn-wim-primary hidden-print" style="margin-bottom: 15px;" (click)="editScenario()">Edit Scenario Parameters</button>
+    <div *ngIf="resultsBack && !editRegionScenario">
+        <button type="button" class="btn-wim-primary hidden-print" style="margin: 0px 0px 15px 0px;" (click)="editScenario()">Edit Scenario Parameters</button>
         <div *ngFor="let s of scenarios">
             <h3>{{s.statisticGroupName}}</h3>
             <div *ngFor="let rr of s.regressionRegions;let r = index">
@@ -634,5 +636,152 @@
         <button type="button" class="btn btn-wim-primary hidden-print" (click)="printPage()">Print Report</button>
         <br/><br/><br/>
     </div><!-- end results back -->
+    </div>
+    <div class="hidden-print" *ngIf="editRegionScenario">
+        <form #editScenarioForm="ngForm">
+            <div class="form-group">
+                <div *ngFor="let s of scenarios; let sgIndex = index;">
+                    <label style="font-size: 1rem !important;">{{s.statisticGroupName}}</label>
+                    <!--add option to switch statistic groups as well-->
+                    <div *ngFor="let rr of s.regressionRegions; let rrIndex = index;">
+                        <h3>{{rr.name}}</h3>
+                        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Parameters</legend>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="col-xs-1"></th>
+                                    <th class="col-xs-2">Name</th>
+                                    <th class="col-xs-1">Code</th>
+                                    <th class="col-xs-2">Unit</th>
+                                    <th class="col-xs-1">Min</th>
+                                    <th class="col-xs-1">Max</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let p of rr.parameters; let pIndex = index;">
+                                    <td>
+                                        <div class="data-controls">
+                                            <i *ngIf="!p.isEditing" title="Edit Scenario" (click)="editRowClicked(p)" class="fa fa-pencil"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                                            <!--<i *ngIf="!s.isEditing" title="Delete Scenario" (click)="deleteScenario(p)" class="fa fa-times"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>-->
+                                            <i *ngIf="p.isEditing" title="Save Scenario" (click)="saveParameter(p,pIndex, rrIndex, sgIndex)" class="fa fa-floppy-o"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                                            <i *ngIf="p.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(p)" class="fa fa-history"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span>{{ p.name }}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{ p.code }}</span>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!p.isEditing">{{ p.unitType.unit }}</span>
+                                        <span *ngIf="p.isEditing">
+                                            <select [(ngModel)]="p.unitType" name="unitType">
+                                                <option *ngFor="let unit of units" [ngValue]="unit" [selected]="unit.unit === p.unitType.unit">{{unit.unit}}</option>
+                                            </select>
+                                        </span>
+                                    </td>
+                                    <td ngModelGroup="limits">
+                                        <span *ngIf="!p.isEditing">{{ p.limits.min }}</span>
+                                        <span *ngIf="p.isEditing"><input type="number" name="min" [(ngModel)]="p.limits.min" required></span>
+                                    </td>
+                                    <td ngModelGroup="limits">
+                                        <span *ngIf="!p.isEditing">{{ p.limits.max }}</span>
+                                        <span *ngIf="p.isEditing"><input type="number" name="max" [(ngModel)]="p.limits.max" required></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Regressions</legend>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="col-xs-1"></th>
+                                    <th class="col-xs-1">Name (Code)</th>
+                                    <th class="col-xs-1">Unit</th>
+                                    <th class="col-xs-2">Errors</th>
+                                    <th class="col-xs-3">Equation</th>
+                                    <th class="col-xs-1">Equivalent Years</th>
+                                    <th class="col-xs-2">Prediction Interval</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let r of rr.regressions; let rIndex = index;" ngModelGroup="regressions">
+                                    <td>
+                                        <div class="data-controls">
+                                            <i *ngIf="!r.isEditing" title="Edit Scenario" (click)="editRowClicked(r)" class="fa fa-pencil"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                                            <!--<i *ngIf="!s.isEditing" title="Delete Scenario" (click)="deleteScenario(p)" class="fa fa-times"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>-->
+                                            <i *ngIf="r.isEditing" title="Save Scenario" (click)="saveRegression(r, rIndex, rrIndex, sgIndex)" class="fa fa-floppy-o"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                                            <i *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(r)" class="fa fa-history"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span>{{ r.name }} ({{r.code}})</span>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!r.isEditing">{{ r.unit.unit }}</span>
+                                        <span *ngIf="r.isEditing">
+                                            <select [(ngModel)]="r.unit" name="unit">
+                                                <option *ngFor="let unit of units" [ngValue]="unit" [selected]="unit.unit === r.unit.unit">{{unit.unit}}</option>
+                                            </select>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span *ngFor="let e of r.errors; let eIndex = index">
+                                            <span *ngIf="!r.isEditing">{{e.name}}, value: {{e.value}}</span>
+                                            <span *ngIf="r.isEditing">
+                                                <select [(ngModel)]="r.errors[eIndex]" name="e">
+                                                    <option *ngFor="let err of errors" [ngValue]="err">{{err.name}}</option>
+                                                </select>
+                                                <input type="number" name="value" [(ngModel)]="r.errors[eIndex].value" required>
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!r.isEditing">{{ r.equation }}</span>
+                                        <span *ngIf="r.isEditing"><input type="text" name="equation" [(ngModel)]="r.equation" required></span>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!r.isEditing">{{ r.equivalentYears }}</span>
+                                        <span *ngIf="r.isEditing"><input type="number" name="equivalentYears" [(ngModel)]="r.equivalentYears"></span>
+                                    </td>
+                                    <td ngModelGroup="predictionInterval">
+                                        <span *ngIf="!r.isEditing && r.predictionInterval">
+                                            Bias Correction Factor: {{r.predictionInterval.biasCorrectionFactor}}<br>
+                                            Student T Statistic: {{r.predictionInterval.student_T_Statistic}}<br>
+                                            Variance: {{r.predictionInterval.variance}}<br>
+                                            XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
+                                            Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}
+                                        </span>
+                                        <span *ngIf="!r.isEditing && !r.predictionInterval">None</span>
+                                        <span *ngIf="r.isEditing">
+                                            <label>Bias Correction Factor:</label>
+                                            <input type="number" name="biasCorrectionFactor" [ngModel]="r.predictionInterval.biasCorrectionFactor">
+                                            <label>Student T Statistic:</label>
+                                            <input type="number" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.student_T_Statistic">
+                                            <label>Variance:</label>
+                                            <input type="number" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.variance">
+                                            <label>XI Row Vector:</label>
+                                            <input type="text" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.xiRowVector">
+                                            <label>Covariance Matrix:</label>
+                                            <input type="text" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.covarianceMatrix">
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 <router-outlet></router-outlet>

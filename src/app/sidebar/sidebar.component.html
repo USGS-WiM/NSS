@@ -2,8 +2,7 @@
 
     <div class="sidebar-item">
         <label>Choose Region:</label>
-        <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
-            <option value="" selected disabled hidden></option>
+        <select id="regSelect" [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
             <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
         </select>
     </div> <!-- end sidebar-item-->
@@ -37,6 +36,12 @@
         <label>Calculate Statistic:</label>
         <button style="margin-top: 6px" [disabled]="scenarios[0].regressionRegions[0].Results != undefined" type="button"
             class="btn-black" (click)="CalculateScenario()">Compute</button>
+    </div> <!-- end sidebar-item-->
+
+    <div class="sidebar-item" *ngIf="(selectedRegRegionIDs && selectedRegRegionIDs.length > 0) || (selectedRegTypeIDs && selectedRegTypeIDs.length > 0)
+        || (selectedStatGrpIDs && selectedStatGrpIDs.length > 0)">
+        <button style="margin-top: 6px" type="button"
+            class="btn-wim-primary" (click)="clearSelections()">Reset Region Filters</button>
     </div> <!-- end sidebar-item-->
 
     <div class="sidebar-item" *ngIf="showChart">

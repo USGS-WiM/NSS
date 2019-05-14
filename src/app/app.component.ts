@@ -136,6 +136,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 this._nssService.setLoginModal(false);
                 this.loginError = false;
                 this.modalRef.close();
+                window.location.reload();
             },
             error => {
                 this._toasterService.pop('error', 'Error logging in', error._body.message || error.statusText);
@@ -144,10 +145,13 @@ export class AppComponent implements OnInit, OnDestroy {
         );
     }
 
-    public logout() {
+    public logout(click?: boolean) {
         this.LoginForm.reset();
         this._loginService.logout();
         this.router.navigate(['']);
+        if (click) {
+            window.location.reload();
+        }
     }
 
     ngOnDestroy() {

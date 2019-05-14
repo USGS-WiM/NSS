@@ -30,7 +30,8 @@ export class NSSService {
     private _regTypeIdParams: string;
     private _statGrpIdParams: string;
     private configSettings: Config;
-    private jsonHeader: Headers = new Headers({ Accept: 'application/json', 'Content-Type': 'application/json' });
+    private jsonHeader: Headers = new Headers({ Accept: 'application/json', 'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('credentials') });
 
     constructor(private _http: Http, private _configService: ConfigService, private _toasterService: ToasterService) {
         this.configSettings = this._configService.getConfiguration();

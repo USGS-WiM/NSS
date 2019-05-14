@@ -23,6 +23,7 @@
                 <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.ID').valid && newScenForm.get('regressionRegions.ID').dirty}">
                     <label class="req" for="ID">Regression Region:</label>
                     <select class="form-control" formControlName="ID">
+                        <option selected hidden value=""></option>
                         <option *ngFor="let rr of regressionRegions" [value]="rr.id">{{rr.name}}</option>
                     </select>
                 </div>
@@ -67,7 +68,7 @@
                     <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty}">
                         <label class="req" for="unit">Unit Type:</label>
                         <select class="form-control" formControlName="unit">
-                            <option *ngFor="let ut of unitTypes" [ngValue]="ut">{{ut.name}}</option>
+                            <option *ngFor="let ut of unitTypes" [ngValue]="ut">{{ut.name}} ({{ut.abbr}})</option>
                         </select>
                         <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty">Unit Type
                             is required</div>
@@ -88,7 +89,7 @@
                             <div class="form-group required">
                                 <label class="req" for="code">Variable:</label>
                                 <select class="form-control" formControlName="code">
-                                    <option *ngFor="let v of variables" [value]="v.code">{{v.code}}</option>
+                                    <option *ngFor="let v of variables" [value]="v.code">{{v.name}} ({{v.code}})</option>
                                 </select>
                             </div>
                             
@@ -110,7 +111,7 @@
                             <div class="form-group required">
                                 <label class="req" for="unitType">Variable Unit:</label>
                                 <select class="form-control" formControlName="unitType">
-                                    <option *ngFor="let u of unitTypes" [ngValue]="u">{{u.name}}</option>
+                                    <option *ngFor="let u of unitTypes" [ngValue]="u">{{u.name}} ({{u.abbr}})</option>
                                 </select>
                             </div>
         

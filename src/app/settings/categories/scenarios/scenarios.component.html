@@ -12,7 +12,7 @@
         </div>
     </div>
 
-<div *ngIf="regressionRegions">Limit by Regression Group:
+<div *ngIf="regressionRegions">Limit by Regression Region:
     <div class="settingsMultSelect">
         <ss-multiselect-dropdown id="regRegSelect" [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedRegRegionIDs"
             [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegRegSelect($event);">

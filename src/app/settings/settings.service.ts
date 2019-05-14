@@ -27,6 +27,7 @@ import { Citation } from 'app/shared/interfaces/citation';
 import { Error } from 'app/shared/interfaces/error';
 import { Role } from 'app/shared/interfaces/role';
 import { ToasterService } from 'angular2-toaster';
+import { URLSearchParams } from '@angular/http';
 
 @Injectable()
 export class SettingsService {
@@ -113,18 +114,20 @@ export class SettingsService {
     }
 
     // ------------ PUTS --------------------------------
-    public putEntity(id: number, entity: any, url: string) {
+    public putEntity(id, entity: any, url: string) {
         const options = new RequestOptions({ headers: this.authHeader });
+        if (id !== '') {url += '/' + id; }
         return this._http
-            .put(this.configSettings.baseURL + url + '/' + id, entity, options)
+            .put(this.configSettings.baseURL + url, entity, options)
             .map(res => <any>res.json())
             .catch(this.errorHandler);
     }
 
     // ------------ DELETES ------------------------------
-    public deleteEntity(id: number, url: string) {
-        const options = new RequestOptions({ headers: this.authHeader });
-        return this._http.delete(this.configSettings.baseURL + url + '/' + id, options)
+    public deleteEntity(id, url: string, searchArgs?: URLSearchParams) {
+        const options = new RequestOptions({ headers: this.authHeader, search: searchArgs });
+        if (id !== '') {url += '/' + id; }
+        return this._http.delete(this.configSettings.baseURL + url, options)
             .catch(this.errorHandler);
     }
 

@@ -25,7 +25,7 @@ export class SidebarComponent implements OnInit {
     public regions: Array<Region>;
 
     // regression regions
-    private selectedRegRegionIDs: Array<number>; // multiselect populates this with those selected
+    public selectedRegRegionIDs: Array<number>; // multiselect populates this with those selected
     // public get selectedRegRegion(): Array<Regressionregion> { return this._nssService.selectedRegRegions; };
     public selectedRegressionRegions: Array<Regressionregion>;
     public regressionRegions: Array<Regressionregion>;
@@ -33,7 +33,7 @@ export class SidebarComponent implements OnInit {
     private myMSTexts: IMultiSelectTexts;
 
     // regression types
-    private selectedRegTypeIDs: Array<number>;
+    public selectedRegTypeIDs: Array<number>;
     public get selectedRegType(): Array<Regressiontype> {
         return this._nssService.selectedRegressionTypes;
     }
@@ -41,7 +41,7 @@ export class SidebarComponent implements OnInit {
     private myRTSettings: IMultiSelectSettings;
 
     // statisticGrps
-    private selectedStatGrpIDs: Array<number>;
+    public selectedStatGrpIDs: Array<number>;
     public get selectedStatGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -64,6 +64,7 @@ export class SidebarComponent implements OnInit {
         });
         this._nssService.selectedRegion.subscribe((r: Region) => {
             this.selectedRegion = r;
+            // this.clearSelections();
         });
         // subscribe to selected regression regions
         this._nssService.selectedRegRegions.subscribe((rr: Array<Regressionregion>) => {

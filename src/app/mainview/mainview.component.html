@@ -18,7 +18,7 @@
             </div>
         </div>
         <div *ngIf="selectedRegressionRegion?.length>0" style="padding: 0;">
-            <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Regression Group(s):</label>
+            <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Regression Region(s):</label>
             <div>
                 <span *ngFor="let rr of selectedRegressionRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.name}}{{isLast ? "" : ", "}}</span>
             </div>
@@ -681,7 +681,8 @@
                                         <span *ngIf="!p.isEditing">{{ p.unitType.unit }}</span>
                                         <span *ngIf="p.isEditing">
                                             <select [(ngModel)]="p.unitType" name="unitType">
-                                                <option *ngFor="let unit of units" [ngValue]="unit" [selected]="unit.unit === p.unitType.unit">{{unit.unit}}</option>
+                                                <option selected hidden value="">{{p.unitType.unit}}</option>
+                                                <option *ngFor="let unit of units" [ngValue]="unit" [selected]="p.unitType.unit">{{unit.unit}}</option>
                                             </select>
                                         </span>
                                     </td>
@@ -715,8 +716,8 @@
                                         <div class="data-controls">
                                             <i *ngIf="!r.isEditing" title="Edit Scenario" (click)="editRowClicked(r)" class="fa fa-pencil"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                                            <!--<i *ngIf="!s.isEditing" title="Delete Scenario" (click)="deleteScenario(p)" class="fa fa-times"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>-->
+                                            <i *ngIf="!r.isEditing" title="Delete Scenario" (click)="deleteRegression(s.statisticGroupID, rr.id, r.id)" class="fa fa-times"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                                             <i *ngIf="r.isEditing" title="Save Scenario" (click)="saveRegression(r, rIndex, rrIndex, sgIndex)" class="fa fa-floppy-o"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                                             <i *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(r)" class="fa fa-history"
@@ -730,7 +731,8 @@
                                         <span *ngIf="!r.isEditing">{{ r.unit.unit }}</span>
                                         <span *ngIf="r.isEditing">
                                             <select [(ngModel)]="r.unit" name="unit">
-                                                <option *ngFor="let unit of units" [ngValue]="unit" [selected]="unit.unit === r.unit.unit">{{unit.unit}}</option>
+                                                <option selected hidden value="">{{r.unit.unit}}</option>
+                                                <option *ngFor="let unit of units" [ngValue]="unit">{{unit.unit}}</option>
                                             </select>
                                         </span>
                                     </td>
@@ -739,7 +741,7 @@
                                             <span *ngIf="!r.isEditing">{{e.name}}, value: {{e.value}}</span>
                                             <span *ngIf="r.isEditing">
                                                 <select [(ngModel)]="r.errors[eIndex]" name="e">
-                                                    <option *ngFor="let err of errors" [ngValue]="err">{{err.name}}</option>
+                                                    <option *ngFor="let err of errors" [ngValue]="err" [selected]="err.name === r.errors[eIndex].name">{{err.name}}</option>
                                                 </select>
                                                 <input type="number" name="value" [(ngModel)]="r.errors[eIndex].value" required>
                                             </span>
@@ -754,25 +756,27 @@
                                         <span *ngIf="r.isEditing"><input type="number" name="equivalentYears" [(ngModel)]="r.equivalentYears"></span>
                                     </td>
                                     <td ngModelGroup="predictionInterval">
-                                        <span *ngIf="!r.isEditing && r.predictionInterval">
+                                        <span *ngIf="!r.isEditing && (r.predictionInterval.biasCorrectionFactor || r.predictionInterval.student_T_Statistic || r.predictionInterval.variance 
+                                        || r.predictionInterval.xiRowVector || r.predictionInterval.covarianceMatrix)">
                                             Bias Correction Factor: {{r.predictionInterval.biasCorrectionFactor}}<br>
                                             Student T Statistic: {{r.predictionInterval.student_T_Statistic}}<br>
                                             Variance: {{r.predictionInterval.variance}}<br>
                                             XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
                                             Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}
                                         </span>
-                                        <span *ngIf="!r.isEditing && !r.predictionInterval">None</span>
-                                        <span *ngIf="r.isEditing">
+                                        <span *ngIf="!r.isEditing && !r.predictionInterval.biasCorrectionFactor && !r.predictionInterval.student_T_Statistic && !r.predictionInterval.variance 
+                                            && !r.predictionInterval.xiRowVector && !r.predictionInterval.covarianceMatrix">None</span>
+                                        <span *ngIf="r.isEditing && r.predictionInterval"> <!--need option to 'add prediction interval' if doens't exist-->
                                             <label>Bias Correction Factor:</label>
                                             <input type="number" name="biasCorrectionFactor" [ngModel]="r.predictionInterval.biasCorrectionFactor">
                                             <label>Student T Statistic:</label>
-                                            <input type="number" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.student_T_Statistic">
+                                            <input type="number" name="student_T_Statistic" [(ngModel)]="r.predictionInterval.student_T_Statistic">
                                             <label>Variance:</label>
-                                            <input type="number" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.variance">
+                                            <input type="number" name="variance" [(ngModel)]="r.predictionInterval.variance">
                                             <label>XI Row Vector:</label>
-                                            <input type="text" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.xiRowVector">
+                                            <input type="text" name="xiRowVector" [(ngModel)]="r.predictionInterval.xiRowVector">
                                             <label>Covariance Matrix:</label>
-                                            <input type="text" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.covarianceMatrix">
+                                            <input type="text" name="covarianceMatrix" [(ngModel)]="r.predictionInterval.covarianceMatrix">
                                         </span>
                                     </td>
                                 </tr>
@@ -784,4 +788,32 @@
         </form>
     </div>
 </div>
+<!--expected value inputs for editing scenarios-->
+<ng-template #values let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <div class="col-xs-12">
+                <h4 class="modal-title pull-left">Expected Values </h4>
+                <button class="close pull-right" (click)="d('closed')">x</button>
+            </div>
+        </div>
+        <div class="modal-body">
+            <h3 class="modal-title">Expected Values</h3>
+            <p>The equation is: {{editScen.regressionRegions[0].regressions[0].equation}}</p>
+            <form #expectedForm="ngForm" (ngSubmit)="onSubmit(expectedForm)">
+                <!-- Expected Value* -->
+                <label class="req" for="value">Expected Value:</label>
+                <input type="number" name="value" [(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.value" required>
+
+                <!--Parameter Values*-->
+                <span *ngFor="let param of paramsNeeded">
+                    <label class="req">{{param}}:</label>
+                    <input type="number" [name]="param" [(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.parameters[param]" required>
+                </span>
+                <div class="modal-footer">
+                    <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+                    <button type="submit" class="btn-blue">Create</button>
+                </div>
+            </form>
+        </div>
+    </ng-template>
 <router-outlet></router-outlet>

@@ -1,7 +1,8 @@
 export interface Predictioninterval {
-    biasCorrectFactor: number;
-    student_T_statistic: number;
+    biasCorrectionFactor: number;
+    student_T_Statistic: number;
     variance: number;
-    XIRowVector: string;
+    xiRowVector?: string;
+    XIRowVector?: string;
     covarianceMatrix: string;
 }

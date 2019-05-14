@@ -64,7 +64,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                     }),
                     'expected': this._fb.group({
                         'value': new FormControl(null, Validators.required),
-                        'parameters': new FormControl({}, Validators.required),
+                        'parameters': new FormControl({}),
                         'intervalBounds': this._fb.group({
                             'lower': new FormControl(null),
                             'upper': new FormControl(null)
@@ -96,7 +96,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             this.regressionTypes = res;
         });
         this._settingsService.getEntities(this.configSettings.variablesURL).subscribe(res => {
-            res.sort((a, b) => a.code.localeCompare(b.code));
+            res.sort((a, b) => a.name.localeCompare(b.name));
             this.variables = res;
         });
         this._settingsService.getEntities(this.configSettings.unitsURL).subscribe(res => {
@@ -134,10 +134,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
+        this.newScenForm.get('regressionRegions.ID').setValue('');
     }
 
     addVariable() {
-        const control = <FormArray>this.newScenForm.controls.regressionRegions.get('parameters');
+        const control = <FormArray>this.newScenForm.get('regressionRegions.parameters');
         control.push(this._fb.group({
             code: new FormControl(null, Validators.required),
             limits: this._fb.group({
@@ -151,7 +152,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     addError() {
-        const control = <FormArray>this.newScenForm.controls.regressionRegions.get('regressions').get('errors');
+        const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         control.push(new FormControl(null, Validators.required));
     }
 
@@ -179,7 +180,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     createNewScenario() {
-        const scen = Object.assign({}, this.newScenForm.value);
+        const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id.toString() === scen['statisticGroupID']);
         scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
@@ -200,10 +201,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             const paramIndex = this.variables.findIndex(item => item.code === parameter.code);
             parameter['name'] = this.variables[paramIndex].name;
             parameter['description'] = this.variables[paramIndex].description;
-            if (parameter.value > parameter.limits.max || parameter.value < parameter.limits.max) {
+            if (parameter.value > parameter.limits.max || parameter.value < parameter.limits.min) {
                 this._toasterService.pop('error', 'Error', parameter.name + ' value not within the given limits.');
                 return;
-            }
+            } // make sure given values are within the limits
         }
         for (let i = 0; i < regs.errors.length; i ++) {
             const value = (<HTMLInputElement>document.getElementById('errValue' + i)).value;
@@ -211,17 +212,18 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
 
         if (!this.addPredInt || (!regs.predictionInterval.biasCorrectionFactor && !regs.predictionInterval.student_T_Statistic &&
-            !regs.predictionInterval.variance && !regs.predictionInterval.XIRowVector && !regs.predictionInterval.covarianceMatrix)) {
+            !regs.predictionInterval.variance && !regs.predictionInterval.xiRowVector && !regs.predictionInterval.covarianceMatrix)) {
                 regs.predictionInterval = null; regs.expected.intervalBounds = null;
             }
-        scen['regressionRegions'].regressions = [regs];
+        scen['regressionRegions'].regressions = [regs]; // this is changing the form for some reason
         scen['regressionRegions'] = [regRegs];
         console.log(JSON.stringify(scen));
         this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
             .subscribe((response) => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
                 // clear form
-                const wimMessages = JSON.parse(response.headers.get('x-usgswim-messages'));
+                let wimMessages;
+                if (response.headers) {wimMessages = response.headers.get('x-usgswim-messages'); }
                 if (wimMessages) { this.outputWimMessages(wimMessages); }
                 this._toasterService.pop('success', 'Success', 'Scenario was created');
                 this.cancelCreateScenario();
@@ -239,6 +241,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     cancelCreateScenario() {
+        const params = <FormArray>this.newScenForm.get('regressionRegions.parameters');
+        while (params.length !== 0) { params.removeAt(0); }
+        const errors = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
+        while (errors.length !== 0) {errors.removeAt(0); }
         this.newScenForm.reset();
     }
 

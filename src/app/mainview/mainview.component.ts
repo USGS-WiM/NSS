@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild, TemplateRef } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
 
 import { Region } from '../shared/interfaces/region';
@@ -24,6 +24,10 @@ import { SettingsService } from 'app/settings/settings.service';
 import { ConfigService } from 'app/config.service';
 import { Config } from 'app/shared/interfaces/config';
 import { Error } from 'app/shared/interfaces/error';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { NgForm } from '@angular/forms';
+import { Predictioninterval } from 'app/shared/interfaces/predictioninterval';
+import { URLSearchParams } from '@angular/http';
 
 declare var MathJax: {
     Hub: { Queue: (param: Object[]) => void };
@@ -38,6 +42,7 @@ export class MainviewComponent implements OnInit {
     @ViewChildren('inputsTable', { read: ViewContainerRef }) inputTable;
     @ViewChildren('resultsTable', { read: ViewContainerRef }) resultTable;
     @ViewChild('editScenarioForm') editScenarioForm;
+    @ViewChild('values') public valuesRef: TemplateRef<any>;
     public title: string;
     public resultsBack: boolean; // flag that swaps content on mainpage from scenarios w/o results to those with results
     public equationResults: Equationresults[]; // used in Appendix
@@ -81,9 +86,9 @@ export class MainviewComponent implements OnInit {
     public resultsErrorLength: number;
     public appendixEquationsforExport: Array<string>;
     private activeLayerID: number;
-    private loggedInRole;
+    public loggedInRole;
     public previousUrl;
-    private showRegion: boolean;
+    public showRegion: boolean;
     public editRegionScenario: boolean;
     public configSettings: Config;
     public units;
@@ -91,6 +96,9 @@ export class MainviewComponent implements OnInit {
     public regTypes;
     public tempData;
     public itemBeingEdited;
+    public uniqueRegRegions;
+    public editScen;
+    public paramsNeeded;
 
     constructor(
         private _nssService: NSSService,
@@ -101,12 +109,13 @@ export class MainviewComponent implements OnInit {
         private _authService: AuthService,
         private router: Router,
         private _settingsService: SettingsService,
-        private _configService: ConfigService
+        private _configService: ConfigService,
+        private _modalService: NgbModal
     ) {
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
             if (e instanceof NavigationStart) {
                 this.router.navigated = false;
-                if (this.previousUrl === '/settings') {
+                if (this.previousUrl === '/settings' || this.previousUrl === '/profile') {
                     this._nssService.setSelectedRegion(undefined);
                     this.showRegion = false;
                 }
@@ -128,6 +137,7 @@ export class MainviewComponent implements OnInit {
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
             if (region) { this.showRegion = true; }
+            this.editRegionScenario = false;
         });
         this.loggedInRole = localStorage.getItem('loggedInRole');
         // this is based on a behaviorSubject, so it gets an initial notification of [].
@@ -159,16 +169,19 @@ export class MainviewComponent implements OnInit {
             this.scenarios = s;
             this.resultsBack = false;
             this.equationResults = [];
-            this.uniqueParameters = [];
-            this.uniqueUnitTypes = [];
+            this.uniqueParameters = []; this.uniqueUnitTypes = []; this.uniqueRegRegions = [];
             let regID: string = '';
-            this.multipleRegRegions = false;
+            this.showWeights = false; this.multipleRegRegions = false;
             this.scenarios.forEach(s => {
                 this.appendixEquationsforExport = [];
                 // show weight inputs if more than 1 regression region chosen
-                this.showWeights = s.regressionRegions.length > 1 ? true : false;
-                if (s.regressionRegions.length > 1) this.multipleRegRegions = true;
-                else this.multipleRegRegions = false;
+                const firstRegname = s.regressionRegions[0].name;
+                if (s.regressionRegions.length > 1) {
+                    this.showWeights = true;
+                    this.multipleRegRegions = true;
+                } else if (this.uniqueRegRegions.indexOf(firstRegname) === -1) { this.uniqueRegRegions.push(firstRegname); }
+
+                if (this.uniqueRegRegions.length > 1) { this.multipleRegRegions = true; }
 
                 s.regressionRegions.forEach((rr, index) => {
                     regID = '(RG_Code: ' + rr.code + ')'; // need to show the regID for each limit so they know which one they are out of range on
@@ -216,8 +229,12 @@ export class MainviewComponent implements OnInit {
                                 this.uniqueParameters.push(p);
                             } else {
                                 // already in here. find the matching one and add it's limits to the LimitArray
-                                if (p.limits != undefined) p.limits.rrID = regID;
-                                this.uniqueParameters[pIndex].limitArray.push(p.limits);
+                                const limArray = this.uniqueParameters[pIndex].limitArray;
+                                if (p.limits !== undefined) { p.limits.rrID = regID; }
+                                // check if limit array already in list (some duplicates due to statistic/regression groups)
+                                if (!this.containsObject(p.limits, limArray)) {
+                                    limArray.push(p.limits);
+                                }
                             }
                             // is this unitType already in the array list?
                             let uIndex = this.uniqueUnitTypes
@@ -232,6 +249,12 @@ export class MainviewComponent implements OnInit {
                             p.isEditing = false;
                         });
                     }
+                    rr.regressions.forEach((r) => {
+                        if (!r.predictionInterval) {
+                            r.predictionInterval = {biasCorrectionFactor: null, student_T_Statistic: null, variance: null,
+                                xiRowVector: null, covarianceMatrix: null} as Predictioninterval;
+                        }
+                    });
                 }); // end s.regressionRegion.forEach
             });
         });
@@ -532,6 +555,16 @@ export class MainviewComponent implements OnInit {
             this.regTypes = res;
         });
     } // end ngOnInit()
+
+    public containsObject(obj, list) {
+        for (const item of list) {
+            if (JSON.stringify(item) === JSON.stringify(obj)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     // round all parameters and statistic values to 3 significant figures
     public sigFigures(n) {
@@ -1113,10 +1146,21 @@ export class MainviewComponent implements OnInit {
 
     public editRegScenario() {
         this.editRegionScenario = true;
-        this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.scenariosURL)
+        /*this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.scenariosURL)
             .subscribe(res => {
                 this.scenarios = res;
-            });
+
+                for (const s of this.scenarios) {
+                    for (const rr of s.regressionRegions) {
+                        for (const r of rr.regressions) {
+                            if (!r.predictionInterval) {
+                                r.predictionInterval = {biasCorrectionFactor: null, student_T_Statistic: null, variance: null,
+                                    xiRowVector: null, covarianceMatrix: null} as Predictioninterval;
+                            }
+                        }
+                    }
+                }
+            });*/
     }
 
     public cancelEditRegScenario() {
@@ -1127,9 +1171,24 @@ export class MainviewComponent implements OnInit {
     public saveRegression(r, rIndex, rrIndex, sgIndex) {
         // add put request here
         // check for error.value, if not there get from form
+        this.editScen = JSON.parse(JSON.stringify(this.scenarios[sgIndex]));
+        this.editScen.regressionRegions = [this.editScen.regressionRegions[rrIndex]];
+        for (const reg of this.editScen.regressionRegions[0].regressions) {
+            if (reg.id === r.id) {
+                this.editScen.regressionRegions[0].regressions = [reg];
+                reg.expected = {value: '', parameters: {}, intervalBounds: null};
+                reg['predictionInterval'] = null;
+                this.paramsNeeded = [];
+                for (const param of this.editScen.regressionRegions[0]['parameters']) {
+                    if (reg.equation.indexOf(param.code) > -1) {
+                        this.paramsNeeded.push(param.name); // try doing just those in the equation???
+                    }
+                }
+            }
+        }
+        console.log(JSON.stringify(this.editScen));
         r.isEditing = false;
-        console.log(r);
-        console.log(this.scenarios[sgIndex].regressionRegions[rrIndex].regressions[rIndex]);
+        this.showInputModal();
     }
 
     public editRowClicked(item) {
@@ -1149,16 +1208,109 @@ export class MainviewComponent implements OnInit {
     }
 
     public saveParameter(p, pIndex, rrIndex, sgIndex) {
-        console.log(this.editScenarioForm.value);
-        /*Object.keys(this.editScenarioForm.controls.regType.value).forEach((key, value) => {
-            p[key] = this.editScenarioForm.controls.regType.value[key];
-        });*/
-        console.log(p);
-        console.log(this.scenarios[sgIndex].regressionRegions[rrIndex].parameters[pIndex]);
+        // console.log(this.editScenarioForm.value);
+        // console.log(p);
+        // console.log(this.scenarios[sgIndex].regressionRegions[rrIndex].parameters[pIndex]);
+        this.editScen = JSON.parse(JSON.stringify(this.scenarios[sgIndex]));
+        this.editScen.regressionRegions = [this.editScen.regressionRegions[rrIndex]];
+        for (const reg of this.editScen.regressionRegions[0].regressions) {
+            if (reg.equation.indexOf(p.code) > -1) {
+                this.editScen.regressionRegions[0].regressions = [reg];
+                reg.expected = {value: '', parameters: {}, intervalBounds: null};
+                if (!reg.predictionInterval.biasCorrectionFactor || !reg.predictionInterval.student_T_Statistic || !reg.predictionInterval.variance
+                    || !reg.predictionInterval.xiRowVector || !reg.predictionInterval.covarianceMatrix) {reg.predictionInterval = null; }
+                this.paramsNeeded = [];
+                for (const param of this.editScen.regressionRegions[0]['parameters']) {
+                    if (reg.equation.indexOf(param.code) > -1) {
+                        this.paramsNeeded.push(param.name); // try doing just those in the equation???
+                    }
+                }
+            }
+        }
+        console.log(JSON.stringify(this.editScen));
         p.isEditing = false;
+        this.showInputModal();
+    }
+
+    deleteRegression(sgID, rrID, rID) {
+        const sParams: URLSearchParams = new URLSearchParams();
+        sParams.set('statisticgroupID', sgID);
+        sParams.set('regressionregionID', rrID);
+        sParams.set('regressiontypeID', rID);
+        this._settingsService.deleteEntity('', this.configSettings.scenariosURL, sParams).subscribe(result => {
+            this._toasterService.pop('success', 'Success', 'Citation was deleted');
+            this.cancelEditRegScenario();
+        }, error => {
+            const wimMessages = JSON.parse(error.headers.get('x-usgswim-messages'));
+            if (wimMessages) { this.outputWimMessages(wimMessages);
+            } else {this._toasterService.pop('error', 'Error deleting Citation', error._body.message || error.statusText); }
+        }
+    );
+    }
+
+    showInputModal() {
+        let CloseResult;
+        this._modalService.open(this.valuesRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
+            result => {
+                // this is the solution for the first modal losing scrollability
+                if (document.querySelector('body > .modal')) {
+                    document.body.classList.add('modal-open');
+                }
+               CloseResult = `Closed with: ${result}`;
+                if (CloseResult) {
+                    // this.cancelEditRegScenario();
+                }
+            },
+            reason => {
+                CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
+                if (CloseResult) {
+                    // this.cancelEditRegScenario();
+                }
+            }
+        );
+    }
+
+    onSubmit(form: NgForm) {
+        console.log(form.value);
+        for (const param of this.paramsNeeded) {
+            this.editScen.regressionRegions[0].regressions[0].expected.parameters[param] = form.value[param];
+        }
+        this.editScen.regressionRegions[0].regressions[0].expected.value = form.value.value;
+        console.log(JSON.stringify(this.editScen));
+        this._settingsService.putEntity('', this.editScen, this.configSettings.scenariosURL)
+            .subscribe((response) => {
+                this._nssService.setSelectedRegion(this.selectedRegion);
+                // clear form
+                let wimMessages;
+                if (response.headers) {wimMessages = response.headers.get('x-usgswim-messages'); }
+                if (wimMessages) { this.outputWimMessages(wimMessages); }
+                this._toasterService.pop('success', 'Success', 'Scenario was edited');
+                this.cancelEditRegScenario();
+            }, error => {
+                const wimMessages = JSON.parse(error.headers.get('x-usgswim-messages'));
+                if (wimMessages) { this.outputWimMessages(wimMessages);
+                } else {this._toasterService.pop('error', 'Error deleting Citation', error._body.message || error.statusText); }
+            }
+        );
+    }
+
+    outputWimMessages(msg) {
+        for (const key of Object.keys(msg)) {
+            this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), msg[key]);
+        }
     }
 
     public print(item) {
         console.log(item);
+    }
+
+    private getDismissReason(reason: any): string {
+        if (reason === ModalDismissReasons.ESC) {
+            return 'by pressing ESC';
+        } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+            return 'by clicking on a backdrop';
+        } else {
+            return `with: ${reason}`;
+        }
     }
 } // end component

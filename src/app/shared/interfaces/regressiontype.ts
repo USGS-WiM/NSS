@@ -12,6 +12,5 @@ export interface Regressiontype {
     unit?: Unittype[];
     equation?: string;
     equivalentYears?: number;
-    predictionInterval?: Predictioninterval[];
-    
+    predictionInterval?: Predictioninterval;
 }

@@ -3,6 +3,7 @@
     <div class="sidebar-item">
         <label>Choose Region:</label>
         <select id="regSelect" [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
+            <option selected hidden value=""></option>
             <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
         </select>
     </div> <!-- end sidebar-item-->
@@ -17,7 +18,7 @@
 
 
     <div class="sidebar-item" *ngIf="regressionRegions"> 
-        <label>Limit by Regression Group(s):</label>
+        <label>Limit by Regression Region(s):</label>
         <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"
             [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)"> 
         </ss-multiselect-dropdown>

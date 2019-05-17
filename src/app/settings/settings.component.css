@@ -6,22 +6,10 @@
     padding-top: 75px;
  }
 
- #resource-list #sidebar-wrapper {
-    display: inline-block;
-    width: 20%;
-    width: calc(0px + 200px);
-    vertical-align: top;
-    left: 0;
-    margin: 0 auto;
-    background-color: transparent;
-    background: none;
-    background-image: none;
-    position: relative !important;
-}
+
 
 #resource-list #page-content-wrapper {
-    width: 80%;
-    width: calc(100% - 200px);
+    width: calc(100% - 235px);
     display: inline-block;
     vertical-align: top;
     padding: 20px;
@@ -38,4 +26,43 @@ h1 {
 
 .btn-blue {
     margin-right: 5px;
+}
+
+.settings-links {
+    padding-top: 0;
+}
+
+.settings-links a {
+    color: #111111;
+    font-size: 15px !important;
+}
+
+#sidebar-wrapper {
+    overflow-x: scroll !important;
+    padding: 25px 15px;
+    overflow: visible !important;
+    font-size: 98% !important;
+    box-sizing: inherit;
+    left: 0;
+    margin: 0 auto;
+    transform: translate3d(0px, 0px, 0px);
+    z-index: 100;
+    background-color: #eceef4 !important;
+    width: 300px;
+    pointer-events: auto;
+    position: fixed;
+    height: 100%;
+}
+.sidebar-item{
+    display: block;
+    box-sizing: border-box;
+    padding: 0 0 15px 0;
+}
+
+::ng-deep legend {
+    font-size: 16px !important;
+}
+
+::ng-deep button {
+    margin: 5px 0px;
 }

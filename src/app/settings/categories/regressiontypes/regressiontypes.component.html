@@ -1,11 +1,11 @@
-<div class="regSelect">Choose Region:
+<div>
+    <legend style="margin-bottom:25px;margin-top:0;">Regression Types</legend>
+</div>
+<div class="regSelect">Filter By Region:
     <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
         <option value="none">None</option>
         <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
     </select>
-</div>
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Regression Types</legend>
 </div>
 
 <button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewRegressionForm()"><i class="fa fa-plus"

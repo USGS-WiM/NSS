@@ -41,6 +41,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public selectedRegion;
     private configSettings: Config;
     public addPredInt = false;
+    public modalRef;
 
     constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -121,7 +122,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
             this.regressionRegions = res;
         });
-        this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
+        this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' })
+        this.modalRef.result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
                 if (document.querySelector('body > .modal')) {
@@ -195,7 +197,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         regs.name = this.regressionTypes[regIndex].name;
         regs.description = this.regressionTypes[regIndex].description;
 
-        const newErrors = {};
+        const newErrors = {}; regs.expected.parameters = {};
         for (const parameter of regRegs.parameters) {
             regs.expected.parameters[parameter.code] = parameter.value;
             const paramIndex = this.variables.findIndex(item => item.code === parameter.code);
@@ -222,21 +224,22 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             .subscribe((response) => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
                 // clear form
-                let wimMessages;
-                if (response.headers) {wimMessages = response.headers.get('x-usgswim-messages'); }
-                if (wimMessages) { this.outputWimMessages(wimMessages); }
-                this._toasterService.pop('success', 'Success', 'Scenario was created');
+                if (!response.headers) {this._toasterService.pop('success', 'Success', 'Scenario was added');
+                } else {this._settingsService.outputWimMessages(response); }
                 this.cancelCreateScenario();
             }, error => {
-                const wimMessages = JSON.parse(error.headers.get('x-usgswim-messages'));
-                if (wimMessages) { this.outputWimMessages(wimMessages); }
+                if (!this._settingsService.outputWimMessages(error)) {
+                    this._toasterService.pop('error', 'Error creating Scenario', error._body.message || error.statusText);
+                }
             }
         );
     }
 
     outputWimMessages(msg) {
         for (const key of Object.keys(msg)) {
-            this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), msg[key]);
+            for (const item of msg[key]) {
+                this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+            }
         }
     }
 
@@ -245,7 +248,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         while (params.length !== 0) { params.removeAt(0); }
         const errors = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         while (errors.length !== 0) {errors.removeAt(0); }
+        this.addPredInt = false;
         this.newScenForm.reset();
+        this.modalRef.close();
     }
 
     hideDiv(divId) {

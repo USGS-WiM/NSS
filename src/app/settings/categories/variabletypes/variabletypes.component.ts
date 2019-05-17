@@ -110,7 +110,10 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
                 this._settingsservice.setVariables(this.variableTypes);
                 this._toasterService.pop('success', 'Success', 'Variable was created');
                 this.cancelCreateVariableType();
-            }, error => { this._toasterService.pop('error', 'Error creating Variable', error._body.message || error.statusText); }
+            }, error => {
+                if (this._settingsservice.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error creating Variable', error._body.message || error.statusText);
+            }
         );
     }
 
@@ -133,21 +136,24 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
 
     // edits made, save clicked
     public saveVariable(u: Variabletype, i: number) {
-        if (u.name === undefined || u.description === undefined || u.code === undefined) {
+        if (u.name === undefined || u.code === undefined) {
             // don't save it
             this._toasterService.pop('error', 'Error updating Variable', 'Name, description and Code are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.variablesURL).subscribe(
-                (resp: Variabletype) => {
-                    this._toasterService.pop('success', 'Success', 'Variable was updated');
+                (resp) => {
                     u.isEditing = false;
                     this.variableTypes[i] = u;
                     this._settingsservice.setVariables(this.variableTypes);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.varForm.form.dirty) { this.varForm.reset(); }
-                }, error => { this._toasterService.pop('error', 'Error updating Variable', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(resp);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error updating Variable', error._body.message || error.statusText);
+                }
             );
         }
     }
@@ -160,10 +166,13 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
             const index = this.variableTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.variablesURL)
                 .subscribe(result => {
-                    this._toasterService.pop('success', 'Success', 'Variable was deleted');
                     this.variableTypes.splice(index, 1);
                     this._settingsservice.setVariables(this.variableTypes); // update service
-                }, error => { this._toasterService.pop('error', 'Error deleting Variable', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(result);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error deleting Variable', error._body.message || error.statusText);
+            }
             );
         }
     }

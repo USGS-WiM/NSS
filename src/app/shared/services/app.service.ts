@@ -21,7 +21,8 @@ import { Toast } from 'angular2-toaster/src/toast';
 import { Unittype } from 'app/shared/interfaces/unitType';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { RegionsComponent } from 'app/settings/categories/regions/regions.component';
-import { ToasterService } from 'angular2-toaster';
+import { ToasterService, ToasterConfig } from 'angular2-toaster';
+import { Predictioninterval } from '../interfaces/predictioninterval';
 
 @Injectable()
 export class NSSService {
@@ -60,32 +61,27 @@ export class NSSService {
     public setAddScenarioModal(val: any) { 
         this._showHideAddScenarioModal.next(val);
     }
-    // show the filter modal in the mainview
+    // show the add scenario modal in the mainview
     public get showAddScenarioModal(): any {
         return this._showHideAddScenarioModal.asObservable();
     }
-
-    private _showHideCreateModal: Subject<boolean> = new Subject<boolean>();
-    public setCreateModal(val: any) {
-        this._showHideCreateModal.next(val);
+    // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
+    private _showHideAddRegressioRegionModal: Subject<boolean> = new Subject<boolean>();
+    public setAddRegressionRegionModal(val: any) {
+        this._showHideAddRegressioRegionModal.next(val);
     }
-    // show the filter modal in the mainview
-    public get showCreateModal(): any {
-        return this._showHideCreateModal.asObservable();
+    // show the add regression region modal in the mainview
+    public get showAddRegRegionModal(): any {
+        return this._showHideAddRegressioRegionModal.asObservable();
     }
 
     private _showHideLoginModal: Subject<boolean> = new Subject<boolean>();
     public setLoginModal(val: any) {
         this._showHideLoginModal.next(val);
     }
-    // show the filter modal in the mainview
+    // show the login modal in the mainview
     public get showLoginModal(): any {
         return this._showHideLoginModal.asObservable();
-    }
-
-    public get loginType(): any {
-        // this will return the login type (manager v. admin)
-        return '';
     }
 
     // -+-+-+-+-+-+-+-+-+ hydrograph  getter/setter  -+-+-+-+-+-+-+-+-+
@@ -581,15 +577,22 @@ export class NSSService {
                         const i = scen.links[0].href.indexOf('?');
                         const param = scen.links[0].href.substring(i + 1);
                         this.getCitations(new URLSearchParams(param)).subscribe(c => {
-                            if (!(c.length === 1 && c[0] === null)) {
-                                scen.citations = c;
-                            }
+                            if (!(c.length === 1 && c[0] === null)) { scen.citations = c; }
                         });
                         // clear Parameter.'Value'
                         scen.regressionRegions.forEach(rr => {
                             rr.parameters.forEach(p => {
                                 p.value = null;
                             });
+                            if (rr.regressions) {
+                                rr.regressions.forEach((r) => {
+                                    if (!r.predictionInterval) {
+                                        r.predictionInterval = {biasCorrectionFactor: null, student_T_Statistic: null, variance: null,
+                                            xiRowVector: null, covarianceMatrix: null} as Predictioninterval;
+                                    }
+                                    r['equationMathJax'] = '`' + r.equation + '`';
+                                });
+                            }
                         });
                     });
                     this._scenarioSubject.next(s);
@@ -600,7 +603,7 @@ export class NSSService {
 
     // calculate Scenarios (POST)
     postScenarios(id: number, s: Scenario[], searchArgs?: URLSearchParams) {
-        // let body = JSON.stringify(s);
+        console.log(JSON.stringify(s));
         const options = new RequestOptions({ headers: this.jsonHeader, search: searchArgs });
 
         return this._http
@@ -608,7 +611,8 @@ export class NSSService {
             // .map(sResult => sResult.json())
             .subscribe(
                 res => {
-                    console.log(res.headers.get('x-usgswim-messages'));
+                    const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
+                    if (wimMessages) { this.outputWimMessages(wimMessages); }
                     const sResult = res.json();
                     sResult.forEach(scen => {
                         if (scen.regressionRegions.length > 0) {
@@ -617,15 +621,15 @@ export class NSSService {
                             const param = scen.links[0].href.substring(i + 1);
                             this.getCitations(new URLSearchParams(param)).subscribe(
                                 c => {
-                                    scen.citations = c;
+                                    if (!(c.length === 1 && c[0] === null)) { scen.citations = c; }
                                 },
-                                error => this.handleError
+                                error => { this.handleError(error); }
                             );
                         }
                     });
                     this._scenarioSubject.next(sResult);
                 },
-                error => this.handleError
+                error => { this.handleError(error); }
             );
     }
 
@@ -638,14 +642,21 @@ export class NSSService {
             .catch(this.handleError);
     }
 
-    private handleError(error: any) {
-        const wimMessages = JSON.parse(error.headers.get('x-usgswim-messages'));
-        for (const key of Object.keys(wimMessages)) {
-            this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), wimMessages[key]);
-        }
+    public handleError(error: Response | any) {
+        if (error._body !== '') {error._body = JSON.parse(error._body); }
+        return Observable.throw(error);
+    }
 
-        const errMsg = error.message ? error.message : error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-        console.error(errMsg);
-        return observableThrowError(errMsg);
+    public outputWimMessages(res) {
+        const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
+        if (wimMessages) {
+            for (const key of Object.keys(wimMessages)) {
+                for (const item of wimMessages[key]) {
+                    this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -55,7 +55,6 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         private _configService: ConfigService
     ) {
         this.newRegForm = _fb.group({
-            id: new FormControl(null),
             name: new FormControl(null, Validators.required),
             description: new FormControl(null),
             code: new FormControl(null, Validators.required)
@@ -147,7 +146,10 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
                     this.onRegSelect(this.selectedRegion);
                 }
                 this.cancelCreateRegression();
-            }, error => { this._toasterService.pop('error', 'Error creating Regression Type', error._body.message || error.statusText); }
+            }, error => {
+                if (this._settingsservice.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error creating Regression Type', error._body.message || error.statusText);
+        }
         );
     }
 
@@ -176,15 +178,18 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.regTypeURL).subscribe(
-                (resp: Regressiontype) => {
-                    this._toasterService.pop('success', 'Success', 'Regression Type was updated');
+                (resp) => {
                     u.isEditing = false;
                     this.regressionTypes[i] = u;
                     this._settingsservice.setRegTypes(this.regressionTypes);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.regressionForm.form.dirty) { this.regressionForm.reset(); }
-                }, error => { this._toasterService.pop('error', 'Error updating Regression Type', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(resp);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error updating Regression Type', error._body.message || error.statusText);
+            }
             );
         }
     }
@@ -197,10 +202,13 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
             const index = this.regressionTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regTypeURL)
                 .subscribe(result => {
-                    this._toasterService.pop('success', 'Success', 'Regression Type was deleted');
                     this.regressionTypes.splice(index, 1);
                     this._settingsservice.setRegTypes(this.regressionTypes); // update service
-                }, error => { this._toasterService.pop('error', 'Error deleting Regression Type', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(result);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error deleting Regression Type', error._body.message || error.statusText);
+            }
             );
         }
     }

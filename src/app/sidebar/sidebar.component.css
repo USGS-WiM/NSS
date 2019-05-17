@@ -70,3 +70,12 @@ select:focus{
     transition: .15s;
     color: rgba(0,0,0,.9)!important;
 }*/
+
+.sidebar-item span {
+    font-weight: 600;
+    padding-right: 5px;
+}
+
+.sidebar-item i {
+    cursor: pointer;
+}

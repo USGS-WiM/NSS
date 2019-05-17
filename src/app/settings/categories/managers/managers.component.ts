@@ -125,7 +125,10 @@ export class ManagersComponent implements OnInit {
                 this._settingsservice.setManagers(this.managers);
                 this._toasterService.pop('success', 'Success', 'Manager was created');
                 this.cancelCreateUser();
-            }, error => { this._toasterService.pop('error', 'Error creating Manager', error._body.message || error.statusText); }
+            }, error => {
+                if (this._settingsservice.outputWimMessages(error)) {return;}
+                this._toasterService.pop('error', 'Error creating Manager', error._body.message || error.statusText);
+        }
         );
     }
 
@@ -154,15 +157,18 @@ export class ManagersComponent implements OnInit {
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.managersURL).subscribe(
-                (resp: Manager) => {
-                    this._toasterService.pop('success', 'Success', 'Manager was updated');
+                (resp) => {
                     u.isEditing = false;
                     this.managers[i] = u;
                     this._settingsservice.setManagers(this.managers);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.userForm.nativeElement.dirty) { this.userForm.reset(); }
-                }, error => { this._toasterService.pop('error', 'Error updating Manager', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(resp);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error updating Manager', error._body.message || error.statusText);
+            }
             );
         }
     }
@@ -175,10 +181,13 @@ export class ManagersComponent implements OnInit {
             const index = this.managers.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.managersURL)
                 .subscribe(result => {
-                    this._toasterService.pop('success', 'Success', 'Manager was deleted');
                     this.managers.splice(index, 1);
                     this._settingsservice.setManagers(this.managers); // update service
-                }, error => {this._toasterService.pop('error', 'Error deleting Manager', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(result);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error deleting Manager', error._body.message || error.statusText);
+            }
             );
         }
     }

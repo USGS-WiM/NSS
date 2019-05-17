@@ -44,3 +44,16 @@
     }
 }
 
+.sgLabel {
+    font-size: 1.2rem !important;
+    border-bottom: 1px black solid;
+}
+
+.rrLabel {
+    font-size: 1rem !important;
+}
+
+.addErrorButton {
+    padding: 5px;
+    height: 30px;
+}

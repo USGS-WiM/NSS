@@ -104,6 +104,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
                 this._toasterService.pop('success', 'Success', 'Error was created');
                 this.cancelCreateError();
             }, error => {
+                if (this._settingsservice.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error creating Error', error._body.message || error.statusText);
             }
         );
@@ -134,15 +135,16 @@ export class ErrorsComponent implements OnInit, OnDestroy {
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.errorsURL).subscribe(
-                (resp: Error) => {
-                    this._toasterService.pop('success', 'Success', 'Error was updated');
+                (resp) => {
                     u.isEditing = false;
                     this.errors[i] = u;
                     this._settingsservice.setErrors(this.errors);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.errorForm.form.dirty) { this.errorForm.reset(); }
+                    this._settingsservice.outputWimMessages(resp);
                 }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating Error', error._body.message || error.statusText);
                 }
             );
@@ -157,10 +159,11 @@ export class ErrorsComponent implements OnInit, OnDestroy {
             const index = this.errors.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.errorsURL)
                 .subscribe(result => {
-                    this._toasterService.pop('success', 'Success', 'Error was deleted');
                     this.errors.splice(index, 1);
                     this._settingsservice.setErrors(this.errors); // update service
+                    this._settingsservice.outputWimMessages(result);
                 }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Error', error._body.message || error.statusText);
                 }
             );

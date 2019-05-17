@@ -107,7 +107,10 @@ export class RolesComponent implements OnInit, OnDestroy {
                 this._settingsservice.setRoles(this.roles);
                 this._toasterService.pop('success', 'Success', 'Role was created');
                 this.cancelCreateRole();
-            }, error => { this._toasterService.pop('error', 'Error creating Role', error._body.message || error.statusText); }
+            }, error => {
+                if (this._settingsservice.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error creating Role', error._body.message || error.statusText);
+            }
         );
     }
 
@@ -136,15 +139,18 @@ export class RolesComponent implements OnInit, OnDestroy {
         } else {
             delete r.isEditing;
             this._settingsservice.putEntity(r.id, r, this.configSettings.rolesURL).subscribe(
-                (resp: Role) => {
-                    this._toasterService.pop('success', 'Success', 'Role was updated');
+                (resp) => {
                     r.isEditing = false;
                     this.roles[i] = r;
                     this._settingsservice.setRoles(this.roles);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.roleForm.form.dirty) { this.roleForm.reset(); }
-                }, error => { this._toasterService.pop('error', 'Error updating Role', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(resp);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error updating Role', error._body.message || error.statusText);
+            }
             );
         }
     }
@@ -157,10 +163,13 @@ export class RolesComponent implements OnInit, OnDestroy {
             const index = this.roles.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.rolesURL)
                 .subscribe(result => {
-                    this._toasterService.pop('success', 'Success', 'Role was deleted');
                     this.roles.splice(index, 1);
                     this._settingsservice.setRoles(this.roles); // update service
-                }, error => { this._toasterService.pop('error', 'Error deleting Role', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(result);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error deleting Role', error._body.message || error.statusText);
+            }
             );
         }
     }

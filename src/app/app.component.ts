@@ -33,7 +33,6 @@ export class AppComponent implements OnInit, OnDestroy {
     returnUrl: string;
     isLoggedIn: boolean;
     public loginError = false;
-    public toggleSidebar;
     constructor(
         private _nssService: NSSService,
         public router: Router,
@@ -82,9 +81,6 @@ export class AppComponent implements OnInit, OnDestroy {
     @ViewChild(MainviewComponent) mainviewCommponent: MainviewComponent;
     public showAbout() {
         this._nssService.setAboutModal(true);
-    }
-    public showCreate() {
-        this._nssService.setCreateModal(true);
     }
 
     public showLoginModal(): void {
@@ -171,5 +167,15 @@ export class AppComponent implements OnInit, OnDestroy {
         }
 
         return tooOld;
-      }
+    }
+
+    public toggleSidebar(){
+        // should allow sidebar to go in and come back out
+        var sidebar = document.getElementById("wimSidebar");
+        if (sidebar.style.display === "none") {
+            sidebar.style.display = "block";
+        } else {
+            sidebar.style.display = "none";
+        }
+    }
 }

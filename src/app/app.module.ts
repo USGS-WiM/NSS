@@ -24,10 +24,7 @@ import { RegressionTypesComponent } from './settings/categories/regressiontypes/
 import { UnitTypesComponent } from './settings/categories/unittypes/unittypes.component';
 import { UnitSystemsComponent } from './settings/categories/unitsystems/unitsystems.component';
 import { VariableTypesComponent } from './settings/categories/variabletypes/variabletypes.component';
-import { RegressionRegionsComponent } from './settings/categories/regressionregions/regressionregions.component';
-import { ScenariosComponent } from './settings/categories/scenarios/scenarios.component';
 import { ManagersComponent } from './settings/categories/managers/managers.component';
-import { CitationsComponent } from './settings/categories/citations/citations.component';
 import { ErrorsComponent } from './settings/categories/errors/errors.component';
 
 import { environment } from '../environments/environment';
@@ -58,14 +55,11 @@ const appRoutes: Routes = [
     children: [
       { path: 'statisticgroups', component: StatisticGroupsComponent },
       { path: 'regions', component: RegionsComponent},
-      { path: 'regressionregions', component: RegressionRegionsComponent },
       { path: 'regressiontypes', component: RegressionTypesComponent },
       { path: 'unittypes', component: UnitTypesComponent },
       { path: 'unitsystems', component: UnitSystemsComponent },
       { path: 'variabletypes', component: VariableTypesComponent },
-      { path: 'scenarios', component: ScenariosComponent },
       { path: 'managers', component: ManagersComponent },
-      { path: 'citations', component: CitationsComponent},
       { path: 'errors', component: ErrorsComponent},
       { path: 'roles', component: RolesComponent}
     ],
@@ -91,9 +85,8 @@ export function highchartsFactory() {
 @NgModule({
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, LoaderComponent, UniquePipe, StatisticGroupsComponent,
-    MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, CitationsComponent,
-    RegressionRegionsComponent, ScenariosComponent, ManagersComponent, ProfileComponent, ErrorsComponent, RegionsComponent, RolesComponent,
-    AddScenarioModal
+    MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
+    ProfileComponent, ErrorsComponent, RegionsComponent, RolesComponent, AddScenarioModal
   ],
   imports: [
     BrowserModule, FormsModule, HttpModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

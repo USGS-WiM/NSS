@@ -135,7 +135,10 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
                 this._toasterService.pop('success', 'Success', 'Statistic Group was created');
                 this.getAllStatGroups();
                 this.cancelCreateStatGroup();
-            }, error => { this._toasterService.pop('error', 'Error creating Statistic Group', error._body.message || error.statusText); }
+            }, error => {
+                if (this._settingsservice.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error creating Statistic Group', error._body.message || error.statusText);
+        }
         );
     }
 
@@ -164,15 +167,18 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.statisticGrpURL).subscribe(
-                (resp: Statisticgroup) => {
-                    this._toasterService.pop('success', 'Success', 'Statistic Group was updated');
+                (resp) => {
                     u.isEditing = false;
                     this.statisticGroups[i] = u;
                     this._settingsservice.setStatGroups(this.statisticGroups);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.statGroupForm.form.dirty) { this.statGroupForm.reset(); }
-                }, error => { this._toasterService.pop('error', 'Error updating Statistic Group', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(resp);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error updating Statistic Group', error._body.message || error.statusText);
+            }
             );
         }
     }
@@ -185,10 +191,13 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
             const index = this.statisticGroups.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.statisticGrpURL)
                 .subscribe(result => {
-                    this._toasterService.pop('success', 'Success', 'Statistic Group was deleted');
                     this.statisticGroups.splice(index, 1);
                     this._settingsservice.setStatGroups(this.statisticGroups); // update service
-                }, error => { this._toasterService.pop('error', 'Error deleting Statistic Group', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(result);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error deleting Statistic Group', error._body.message || error.statusText);
+            }
             );
         }
     }

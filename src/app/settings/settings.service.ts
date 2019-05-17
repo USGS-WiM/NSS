@@ -114,12 +114,12 @@ export class SettingsService {
     }
 
     // ------------ PUTS --------------------------------
-    public putEntity(id, entity: any, url: string) {
+    public putEntity(id, entity, url: string) {
         const options = new RequestOptions({ headers: this.authHeader });
         if (id !== '') {url += '/' + id; }
         return this._http
             .put(this.configSettings.baseURL + url, entity, options)
-            .map(res => <any>res.json())
+            .map(res => res)
             .catch(this.errorHandler);
     }
 
@@ -131,11 +131,24 @@ export class SettingsService {
             .catch(this.errorHandler);
     }
 
-    private errorHandler(error: Response | any) {
+    public errorHandler(error: Response | any) {
         if (error._body !== '') {error._body = JSON.parse(error._body); }
-
         return Observable.throw(error);
     }
+
+    public outputWimMessages(res) {
+        const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
+        if (wimMessages) {
+            for (const key of Object.keys(wimMessages)) {
+                for (const item of wimMessages[key]) {
+                    this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     // SETTERS ///////////////////////////////////////////
     public setRegions(r: Array<Region>) {
         this._regionSubject.next(r);
@@ -173,5 +186,4 @@ export class SettingsService {
     public setRoles(r: Array<Role>) {
         this._rolesSubject.next(r);
     }
-
 }

@@ -11,7 +11,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { throwError as observableThrowError, } from 'rxjs';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
+import { ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
 
 import { NSSService } from 'app/shared/services/app.service';
@@ -40,6 +40,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     public tempData;
     private jsonHeader: Headers = new Headers({ Accept: 'application/json', 'Content-Type': 'application/json' });
     public toast: Toast;
+    public config: ToasterConfig = new ToasterConfig({timeout: 0});
     constructor(
         public _nssService: NSSService,
         private _http: Http,
@@ -107,12 +108,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
             delete this.userInfo.isEditing;
             delete this.userInfo.role;
             this._settingsService.putEntity(this.userInfo.id, this.userInfo, this.configSettings.managersURL).subscribe(
-                (resp: Manager) => {
-                    this._toasterService.pop('success', 'Success', 'User was updated');
+                (resp) => {
                     this.userInfo.isEditing = false;
                     this.getUserInfo();
                     if (this.userForm.nativeElement.dirty) { this.userForm.reset(); }
-                }, error => { this._toasterService.pop('error', 'Error updating User', error._body.message || error.statusText); }
+                    this._settingsService.outputWimMessages(resp);
+                }, error => {
+                    if (this._settingsService.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error updating User', error._body.message || error.statusText);
+            }
             );
         }
     }

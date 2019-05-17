@@ -8,6 +8,8 @@ import { Regressiontype } from '../shared/interfaces/regressiontype';
 import { Regressionregion } from '../shared/interfaces/regressionregion';
 import { IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/angular-2-dropdown-multiselect';
 import { Toast } from 'angular2-toaster/src/toast';
+import { AuthService } from 'app/shared/services/auth.service';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'wim-sidebar',
@@ -23,6 +25,7 @@ export class SidebarComponent implements OnInit {
     // public get selectedRegion():Region {return this._nssService.selectedRegion;};
     public selectedRegion;
     public regions: Array<Region>;
+    public loggedInRole;
 
     // regression regions
     public selectedRegRegionIDs: Array<number>; // multiselect populates this with those selected
@@ -51,9 +54,15 @@ export class SidebarComponent implements OnInit {
     // scenario
     public scenarios: Array<Scenario>;
 
-    constructor(private _nssService: NSSService) {}
+    constructor(private _nssService: NSSService, private _authService: AuthService) {}
 
     ngOnInit() {
+        this.loggedInRole = localStorage.getItem('loggedInRole');
+        this._authService.loggedInRole().subscribe(role => {
+            if (role === 'Administrator' || role === 'Manager') {
+                this.loggedInRole = role;
+            }
+        });
         this.doShow = true;
         this.selectedPlot = '';
         this.selectedRegressionRegions = [];
@@ -281,6 +290,7 @@ export class SidebarComponent implements OnInit {
         }
     }
 
+    // clear all selected stat groups, reg regions and reg types
     public clearSelections() {
         this.selectedStatGrpIDs = [];
         this.selectedRegRegionIDs = [];
@@ -294,6 +304,10 @@ export class SidebarComponent implements OnInit {
             // this.selectedPlot = undefined;
             this._nssService.addChart(p);
         }
+    }
+
+    public showAddRegRegion() {
+        this._nssService.setAddRegressionRegionModal(true);
     }
 
     // number only allowed in Value

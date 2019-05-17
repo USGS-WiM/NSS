@@ -107,7 +107,10 @@ export class RegionsComponent implements OnInit, OnDestroy {
                 this._settingsservice.setRegions(this.regions);
                 this._toasterService.pop('success', 'Success', 'Region was created');
                 this.cancelCreateRegion();
-            }, error => { this._toasterService.pop('error', 'Error creating Region', error._body.message || error.statusText); }
+            }, error => {
+                if (this._settingsservice.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error creating Region', error._body.message || error.statusText);
+        }
         );
     }
 
@@ -136,15 +139,18 @@ export class RegionsComponent implements OnInit, OnDestroy {
         } else {
             delete r.isEditing;
             this._settingsservice.putEntity(r.id, r, this.configSettings.regionURL).subscribe(
-                (resp: Region) => {
-                    this._toasterService.pop('success', 'Success', 'Region was updated');
+                (resp) => {
                     r.isEditing = false;
                     this.regions[i] = r;
                     this._settingsservice.setRegions(this.regions);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.regForm.form.dirty) { this.regForm.reset(); }
-                }, error => {this._toasterService.pop('error', 'Error updating Region', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(resp);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error updating Region', error._body.message || error.statusText);
+            }
             );
         }
     }
@@ -157,10 +163,13 @@ export class RegionsComponent implements OnInit, OnDestroy {
             const index = this.regions.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regionURL)
                 .subscribe(result => {
-                    this._toasterService.pop('success', 'Success', 'Region was deleted');
                     this.regions.splice(index, 1);
                     this._settingsservice.setRegions(this.regions); // update service
-                }, error => { this._toasterService.pop('error', 'Error deleting Region', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(result);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error deleting Region', error._body.message || error.statusText);
+            }
             );
         }
     }

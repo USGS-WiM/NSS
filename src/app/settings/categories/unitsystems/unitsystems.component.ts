@@ -125,7 +125,10 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
                 this._settingsservice.setUnitSystems(this.unitSystems);
                 this._toasterService.pop('success', 'Success', 'Unit System was created');
                 this.cancelCreateUnit();
-            }, error => { this._toasterService.pop('error', 'Error creating Unit System', error._body.message || error.statusText); }
+            }, error => {
+                if (this._settingsservice.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error creating Unit System', error._body.message || error.statusText);
+        }
         );
     }
 
@@ -155,15 +158,18 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.unitSystemsURL).subscribe(
-                (resp: UnitSystem) => {
-                    this._toasterService.pop('success', 'Success', 'Unit System was updated');
+                (resp) => {
                     u.isEditing = false;
                     this.unitSystems[i] = u;
                     this._settingsservice.setUnitSystems(this.unitSystems);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.usForm.form.dirty) { this.usForm.reset(); }
-                }, error => { this._toasterService.pop('error', 'Error updating Unit System', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(resp);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error updating Unit System', error._body.message || error.statusText);
+            }
             );
         }
     }
@@ -176,10 +182,13 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
             const index = this.unitSystems.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.unitSystemsURL)
                 .subscribe(result => {
-                    this._toasterService.pop('success', 'Success', 'Unit System was deleted');
                     this.unitSystems.splice(index, 1);
                     this._settingsservice.setUnitSystems(this.unitSystems); // update service
-                }, error => { this._toasterService.pop('error', 'Error deleting Unit System', error._body.message || error.statusText); }
+                    this._settingsservice.outputWimMessages(result);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error deleting Unit System', error._body.message || error.statusText);
+            }
             );
         }
     }

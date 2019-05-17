@@ -1,13 +1,12 @@
+<div>
+    <legend style="margin-bottom:25px;margin-top:0;">Statistic Groups</legend>
+</div>
 <div class="regSelect">
-    Choose Region:
+    Filter By Region:
     <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
         <option value="none">None</option>
         <option [ngValue]="i" *ngFor="let i of regions">{{ i.name }}</option>
     </select>
-</div>
-
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Statistic Groups</legend>
 </div>
 
 <button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewStatGroupForm()">

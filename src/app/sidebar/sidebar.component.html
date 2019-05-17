@@ -1,7 +1,7 @@
 <form class="wim-sidebar fixed" id="wimSidebar">
 
     <div class="sidebar-item">
-        <label>Choose Region:</label>
+        <span>Choose Region:</span>
         <select id="regSelect" [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
             <option selected hidden value=""></option>
             <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
@@ -10,15 +10,22 @@
 
 
     <div class="sidebar-item" *ngIf="statisticGroups">
-        <label>Limit by Statistic Group(s):</label>
+        <span>
+            <span>Limit by Statistic Group(s):</span>
+            <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
+        </span>
         <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedStatGrpIDs"
             [(ngModel)]="selectedStatGrpIDs" (ngModelChange)="onStatGrpSelect($event)">
         </ss-multiselect-dropdown>
     </div> <!-- end sidebar-item-->
 
 
-    <div class="sidebar-item" *ngIf="regressionRegions"> 
-        <label>Limit by Regression Region(s):</label>
+    <div class="sidebar-item" *ngIf="regressionRegions">
+        <span>
+            <span>Limit by Regression Region(s):</span>
+            <i *ngIf="loggedInRole" (click)="showAddRegRegion()" title="Add Regression Region" class="ion-plus-circled"></i>
+            <i *ngIf="!loggedInRole" class="ion-information-circled"></i>
+        </span>
         <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"
             [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)"> 
         </ss-multiselect-dropdown>
@@ -26,7 +33,10 @@
 
 
     <div class="sidebar-item" *ngIf="regressionTypes">
-        <label>Limit by Statistic:</label>
+        <span>
+            <span>Limit by Statistic(s):</span>
+            <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
+        </span>
         <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="mySGSettings" name="selectedRegTypeIDs"
             [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
         </ss-multiselect-dropdown>

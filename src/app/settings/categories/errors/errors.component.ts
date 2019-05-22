@@ -101,7 +101,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.errors.push(response);
                 this._settingsservice.setErrors(this.errors);
-                this._toasterService.pop('success', 'Success', 'Error was created');
+                this._toasterService.pop('info', 'Info', 'Error was created');
                 this.cancelCreateError();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }

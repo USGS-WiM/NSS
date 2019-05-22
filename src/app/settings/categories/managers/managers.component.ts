@@ -123,7 +123,7 @@ export class ManagersComponent implements OnInit {
                 response.isEditing = false;
                 this.managers.push(response);
                 this._settingsservice.setManagers(this.managers);
-                this._toasterService.pop('success', 'Success', 'Manager was created');
+                this._toasterService.pop('info', 'Info', 'Manager was created');
                 this.cancelCreateUser();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return;}

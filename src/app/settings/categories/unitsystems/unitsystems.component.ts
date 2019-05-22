@@ -123,7 +123,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.unitSystems.push(response);
                 this._settingsservice.setUnitSystems(this.unitSystems);
-                this._toasterService.pop('success', 'Success', 'Unit System was created');
+                this._toasterService.pop('info', 'Info', 'Unit System was created');
                 this.cancelCreateUnit();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }

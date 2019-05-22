@@ -611,8 +611,7 @@ export class NSSService {
             // .map(sResult => sResult.json())
             .subscribe(
                 res => {
-                    const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
-                    if (wimMessages) { this.outputWimMessages(wimMessages); }
+                    if (res.headers) { this.outputWimMessages(res); }
                     const sResult = res.json();
                     sResult.forEach(scen => {
                         if (scen.regressionRegions.length > 0) {

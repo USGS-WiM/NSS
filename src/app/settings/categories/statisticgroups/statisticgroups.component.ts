@@ -132,7 +132,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
             .subscribe((response: Statisticgroup) => {
                 response.isEditing = false;
                 this.cancelCreateStatGroup();
-                this._toasterService.pop('success', 'Success', 'Statistic Group was created');
+                this._toasterService.pop('info', 'Info', 'Statistic Group was created');
                 this.getAllStatGroups();
                 this.cancelCreateStatGroup();
             }, error => {

@@ -108,7 +108,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.variableTypes.push(response);
                 this._settingsservice.setVariables(this.variableTypes);
-                this._toasterService.pop('success', 'Success', 'Variable was created');
+                this._toasterService.pop('info', 'Info', 'Variable was created');
                 this.cancelCreateVariableType();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }

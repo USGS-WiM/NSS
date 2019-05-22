@@ -148,7 +148,7 @@ input[type="radio"]{
 
 
 input{
-  margin-bottom: 5px !important;
+  margin: 5px !important;
 }
 
 button:disabled:hover{
@@ -213,7 +213,9 @@ input[type="radio"]{
 .hidden-print {
   margin-top: 15px;
 }
-
+input {
+    margin: 0px !important;
+}
 .form-invalid input {
   margin-bottom: 12px !important;
 }
@@ -221,4 +223,9 @@ input[type="radio"]{
 .settingsMultSelect {
   background-color: white;
   border: 2px solid #e0e3e6;
+}
+
+/* needed smaller table cells */
+.col-xs-half {
+    width: 4%;
 }

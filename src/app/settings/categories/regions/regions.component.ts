@@ -105,7 +105,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.regions.push(response);
                 this._settingsservice.setRegions(this.regions);
-                this._toasterService.pop('success', 'Success', 'Region was created');
+                this._toasterService.pop('info', 'Info', 'Region was created');
                 this.cancelCreateRegion();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }

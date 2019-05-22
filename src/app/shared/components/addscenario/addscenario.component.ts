@@ -122,7 +122,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
             this.regressionRegions = res;
         });
-        this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' })
+        this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
@@ -182,22 +182,23 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     createNewScenario() {
+        // adding all necessary properties, since ngValue won't work with all the nested properties
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id.toString() === scen['statisticGroupID']);
         scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
-
+        // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id.toString() === regRegs.ID);
         regRegs['name'] = this.regressionRegions[regRegIndex].name;
         regRegs['code'] = this.regressionRegions[regRegIndex].code;
-
+        // add regression code/name/description
         const regIndex = this.regressionTypes.findIndex(item => item.id.toString() === regs.ID);
         regs.code = this.regressionTypes[regIndex].code;
         regs.name = this.regressionTypes[regIndex].name;
         regs.description = this.regressionTypes[regIndex].description;
-
-        const newErrors = {}; regs.expected.parameters = {};
+        // add parameter name, description, add values/check if between limits
+        regs.expected.parameters = {};
         for (const parameter of regRegs.parameters) {
             regs.expected.parameters[parameter.code] = parameter.value;
             const paramIndex = this.variables.findIndex(item => item.code === parameter.code);
@@ -208,23 +209,25 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 return;
             } // make sure given values are within the limits
         }
+        // get error values
         for (let i = 0; i < regs.errors.length; i ++) {
             const value = (<HTMLInputElement>document.getElementById('errValue' + i)).value;
             regs.errors[i].value = value;
         }
-
+        // check prediction interval
         if (!this.addPredInt || (!regs.predictionInterval.biasCorrectionFactor && !regs.predictionInterval.student_T_Statistic &&
             !regs.predictionInterval.variance && !regs.predictionInterval.xiRowVector && !regs.predictionInterval.covarianceMatrix)) {
                 regs.predictionInterval = null; regs.expected.intervalBounds = null;
             }
-        scen['regressionRegions'].regressions = [regs]; // this is changing the form for some reason
+        // change regression region/regression to arrays
+        scen['regressionRegions'].regressions = [regs];
         scen['regressionRegions'] = [regRegs];
-        console.log(JSON.stringify(scen));
+        // post scenario
         this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
             .subscribe((response) => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
                 // clear form
-                if (!response.headers) {this._toasterService.pop('success', 'Success', 'Scenario was added');
+                if (!response.headers) {this._toasterService.pop('info', 'Info', 'Scenario was added');
                 } else {this._settingsService.outputWimMessages(response); }
                 this.cancelCreateScenario();
             }, error => {
@@ -236,6 +239,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     outputWimMessages(msg) {
+        // output messages from http request to toast
         for (const key of Object.keys(msg)) {
             for (const item of msg[key]) {
                 this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
@@ -244,6 +248,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     cancelCreateScenario() {
+        // reset form if canceled, remove all added params/errors
         const params = <FormArray>this.newScenForm.get('regressionRegions.parameters');
         while (params.length !== 0) { params.removeAt(0); }
         const errors = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
@@ -254,16 +259,19 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     hideDiv(divId) {
+        // collapse param/error div
         const div = document.getElementById(divId);
         div.classList.add('hidden');
     }
 
     showDiv(divId) {
+        // uncollapse param/error div
         const div = document.getElementById(divId);
         div.classList.remove('hidden');
     }
 
     checkDiv(divId) {
+        // check if div is collapsed or not
         const div = document.getElementById(divId);
         if (div && div.classList.contains('hidden')) {return false;
         } else {return true; }

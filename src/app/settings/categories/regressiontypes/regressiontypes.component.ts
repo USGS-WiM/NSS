@@ -139,7 +139,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this._settingsservice.postEntity(newReg, this.configSettings.regTypeURL).subscribe(
             (response: Regressiontype) => {
                 response.isEditing = false;
-                this._toasterService.pop('success', 'Success', 'Regression type was created');
+                this._toasterService.pop('info', 'Info', 'Regression type was created');
                 if (this.selectedRegion === 'none') {
                     this.getAllRegTypes();
                 } else {

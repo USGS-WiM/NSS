@@ -113,6 +113,10 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public addCitation: boolean;
     public editSGIndex; public editRRindex; public editIdx;
     public config: ToasterConfig = new ToasterConfig({timeout: 0});
+    public regressionRegions;
+    public addRegReg: boolean;
+    public selectedRegRegion;
+    public modalRef;
 
     constructor(
         private _nssService: NSSService,
@@ -161,11 +165,13 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this.showRegion = false; this.editRegionScenario = false;
         this.resultsErrorLength = 0; // used for colspan on Errors <th>
         this._nssService.selectedRegion.subscribe(region => {
+            if (this.selectedRegion && region && this.selectedRegion.name !== region.name) {this.cancelEditRegionScenario(); }
             this.selectedRegion = region;
             if (region) { this.showRegion = true; }
-            this.editRegionScenario = false;
+            window.scrollTo(0, 0);
         });
         this.loggedInRole = localStorage.getItem('loggedInRole');
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJaxLoad']); // preload mathjax
         // this is based on a behaviorSubject, so it gets an initial notification of [].
         this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
             this.selectedRegressionRegion = regRegions;
@@ -178,7 +184,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                     queryString += "GRIDCODE LIKE '%" + rr.code.toLowerCase() + "%' OR ";
                 });
             }
-            if (queryString != '') {
+            if (queryString !== '') {
                 queryString = queryString.slice(0, -4); // remove the last ')R'
 
                 queryObj = { [this.activeLayerID]: queryString };
@@ -1178,79 +1184,26 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
     public editRegScenario() {
         this.editRegionScenario = true;
-        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']);
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']); // render equations into Mathjax
+        this.getRegRegions(); // get list of regression regions for the region
     }
 
-    public saveRegression(r, rIndex, rrIndex, sgIndex) {
+    public cancelEditRegionScenario() {
+        this.editRegionScenario = false;
+        if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
+    }
+
+    public saveParameter(p, rrIndex, sgIndex) {
         this.getBounds = false;
-        this.editScen = JSON.parse(JSON.stringify(this.scenarios[sgIndex]));
-        this.editScen.regressionRegions = [this.editScen.regressionRegions[rrIndex]];
-        for (const reg of this.editScen.regressionRegions[0].regressions) {
-            if (reg.id === r.id) {
-                this.editScen.regressionRegions[0].regressions = [reg];
-                reg.expected = {value: '', parameters: {}, intervalBounds: null};
-                // check prediction interval inputs
-                let count = 0;
-                Object.keys(reg.predictionInterval).forEach((key) => {
-                    if (reg.predictionInterval[key] != null && reg.predictionInterval[key] !== '') {count ++; }
-                });
-                if (count <= 1) { reg.predictionInterval = null; // if only id exists
-                } else if (count === 6) {
-                    this.getBounds = true;
-                    reg.expected.intervalBounds = {lower: null, upper: null};
-                } else {
-                    this._toasterService.pop('error', 'Error', 'Prediction Interval not complete.');
-                    return;
-                }
-                this.paramsNeeded = [];
-                for (const param of this.editScen.regressionRegions[0]['parameters']) {
-                    if (reg.equation.indexOf(param.code) > -1) {
-                        this.paramsNeeded.push(param); // only if param is in equation
-                    }
-                }
-            }
-        }
-        console.log(JSON.stringify(this.editScen));
-        r.isEditing = false;
-        this.showInputModal();
-    }
-
-    public editRowClicked(item, idx, rrIndex, sgIndex) {
-        if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData) {
-            this.CancelEditRowClicked();
-        } // if another item was being edited, cancel that
-        this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
-        this.editIdx = idx; this.editRRindex = rrIndex; this.editSGIndex = sgIndex;
-        this.itemBeingEdited = item;
-        item.isEditing = true;
-        if (item.equation) {this.showMathjax(item); }
-    }
-
-    public CancelEditRowClicked() {
-        // this.itemBeingEdited = this.tempData;
-        if (this.itemBeingEdited.limits) {
-            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].parameters[this.editIdx] = this.tempData;
-        } else {this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].regressions[this.editIdx] = this.tempData; }
-        this.itemBeingEdited.isEditing = false;
-        if (this.itemBeingEdited.equation) {
-            const equ = document.getElementById('mathjaxEq' + this.itemBeingEdited.id);
-            equ.style.visibility = 'hidden';
-            MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']);
-        }
-    }
-
-    public addError(errors) {
-        errors.push({});
-    }
-
-    public saveParameter(p, pIndex, rrIndex, sgIndex) {
-        this.getBounds = false;
+        // only sending back the regression that contains the parameter
         this.editScen = JSON.parse(JSON.stringify(this.scenarios[sgIndex]));
         this.editScen.regressionRegions = [this.editScen.regressionRegions[rrIndex]];
         for (const reg of this.editScen.regressionRegions[0].regressions) {
             if (reg.equation.indexOf(p.code) > -1) {
+                // only send back first regression whose equation contains the edited parameter
                 this.editScen.regressionRegions[0].regressions = [reg];
                 reg.expected = {value: '', parameters: {}, intervalBounds: null};
+                // if regression has prediction interval, need to ask for expected bounds
                 if (!reg.predictionInterval.biasCorrectionFactor || !reg.predictionInterval.student_T_Statistic || !reg.predictionInterval.variance
                     || !reg.predictionInterval.xiRowVector || !reg.predictionInterval.covarianceMatrix) {reg.predictionInterval = null;
                 } else {
@@ -1258,65 +1211,156 @@ export class MainviewComponent implements OnInit, OnDestroy {
                     reg.expected.intervalBounds = {lower: null, upper: null};
                 }
                 this.paramsNeeded = [];
+                // add necessary params to expected results
                 for (const param of this.editScen.regressionRegions[0]['parameters']) {
                     if (reg.equation.indexOf(param.code) > -1) {
-                        this.paramsNeeded.push(param); // try doing just those in the equation???
+                        this.paramsNeeded.push(param); // only need values for params in equation
                     }
                 }
                 break;
             }
         }
-        console.log(JSON.stringify(this.editScen));
-        p.isEditing = false;
         this.showInputModal();
+    }
+
+    public saveRegression(r, rIndex, rrIndex, sgIndex) {
+        this.getBounds = false;
+        // only sending back the edited regression/regression regions
+        this.editScen = JSON.parse(JSON.stringify(this.scenarios[sgIndex]));
+        this.editScen.regressionRegions = [this.editScen.regressionRegions[rrIndex]];
+        const reg = this.editScen.regressionRegions[0].regressions[rIndex];
+        reg.expected = {value: '', parameters: {}, intervalBounds: null};
+        // check prediction interval inputs
+        let count = 0;
+        Object.keys(reg.predictionInterval).forEach((key) => {
+            if (reg.predictionInterval[key] != null && reg.predictionInterval[key] !== '') {count ++; }
+        });
+        if (count <= 1) { reg.predictionInterval = null; // if only id exists
+        } else if (count === 6) {
+            this.getBounds = true;
+            reg.expected.intervalBounds = {lower: null, upper: null};
+        } else {
+            this._toasterService.pop('error', 'Error', 'Prediction Interval not complete.');
+            return;
+        }
+        // get list of necessary params to check expected results
+        this.paramsNeeded = [];
+        for (const param of this.editScen.regressionRegions[0]['parameters']) {
+            if (reg.equation.indexOf(param.code) > -1) {
+                this.paramsNeeded.push(param); // only need values for params in equation
+            }
+        }
+        // only need to send back the edited regression
+        this.editScen.regressionRegions[0].regressions = [reg];
+        this.showInputModal();
+    }
+
+    public getRegRegions() {
+        // get list of region's regression regions, remove if we take out the citations IDs
+        this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
+            .subscribe(res => {
+                if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
+                this.regressionRegions = res;
+            });
+    }
+
+    public editRowClicked(item, rrIndex, sgIndex, idx?) {
+        if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
+            this.CancelEditRowClicked();
+        } // if another item was being edited, cancel that
+        this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
+        idx >= 0 ? this.editIdx = idx : this.editIdx = null;
+        this.editRRindex = rrIndex; this.editSGIndex = sgIndex; // setting indices because the cancel function wasn't overwriting things
+        this.itemBeingEdited = item;
+        item.isEditing = true;
+        if (item.equation) {this.showMathjax(item); }
+        if (idx === undefined) {
+            // do we need the citation IDs?
+            const rrIdx = this.regressionRegions.findIndex(rr => rr.id === item.id);
+            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].citationID = this.regressionRegions[rrIdx].citationID;
+        }
+    }
+
+    public CancelEditRowClicked() {
+        // reset item if cancelling editing
+        if (this.editIdx === null) { // if regression region
+            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex] = this.tempData;
+        } else if (this.itemBeingEdited.limits) { // if parameter
+            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].parameters[this.editIdx] = this.tempData;
+        } else if (this.itemBeingEdited.equation) { // if regression
+            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].regressions[this.editIdx] = this.tempData;
+            const equ = document.getElementById('mathjaxEq' + this.itemBeingEdited.id);
+            equ.style.visibility = 'hidden';
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']);
+        }
+    }
+
+    public addError(errors) {
+        // if user adds error, push empty object to array
+        errors.push({});
+    }
+
+    compareObjects(Obj1, Obj2) {
+        // used to make sure the existing options are showing in selects
+        return Obj1 && Obj2 ? Obj1.id === Obj2.id : Obj1 === Obj2;
     }
 
     deleteRegression(sgID, rrID, rID) {
         const check = confirm('Are you sure you want to delete this Regression?');
-        if (confirm) {
+        if (check) {
             const sParams: URLSearchParams = new URLSearchParams();
             sParams.set('statisticgroupID', sgID);
             sParams.set('regressionregionID', rrID);
             sParams.set('regressiontypeID', rID);
             this._settingsService.deleteEntity('', this.configSettings.scenariosURL, sParams).subscribe(result => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
-                this.editRegionScenario = true;
-                this._nssService.outputWimMessages(result);
+                if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
-                this._nssService.handleError(error);
+                if (error.headers) {this._nssService.outputWimMessages(error);
+                } else { this._nssService.handleError(error); }
+            });
+        }
+    }
+
+    deleteRegRegion(rrID) {
+        const check = confirm('Are you sure you want to delete this Regression Region?');
+        if (check) {
+            this._settingsService.deleteEntity(rrID, this.configSettings.regRegionURL).subscribe(result => {
+                this._nssService.setSelectedRegion(this.selectedRegion);
+                if (result.headers) { this._nssService.outputWimMessages(result); }
+            }, error => {
+                if (error.headers) {this._nssService.outputWimMessages(error);
+                } else { this._nssService.handleError(error); }
             });
         }
     }
 
     showInputModal() {
+        // modal for expected results/parameter values
         let CloseResult;
-        this._modalService.open(this.valuesRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
+        this.modalRef = this._modalService.open(this.valuesRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
                 if (document.querySelector('body > .modal')) {
                     document.body.classList.add('modal-open');
                 }
                CloseResult = `Closed with: ${result}`;
-                if (CloseResult) {
-                    // this.CancelEditRowClicked();
-                }
             },
             reason => {
                 CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
-                if (CloseResult) {
-                    // this.CancelEditRowClicked();
-                }
             }
         );
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJaxEq']);
     }
 
     submitScenario() {
-        console.log(JSON.stringify(this.editScen));
+        // put edited scenario
         this._settingsService.putEntity('', this.editScen, this.configSettings.scenariosURL)
             .subscribe((response) => {
-                this._nssService.setSelectedRegion(this.selectedRegion);
-                // clear form
+                this._nssService.setSelectedRegion(this.selectedRegion); // update everything
                 this._nssService.outputWimMessages(response);
+                this.modalRef.close();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error deleting Scenario', error._body.message || error.statusText);
@@ -1325,6 +1369,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
 
     outputWimMessages(msg) {
+        // takes messages from http requests and outputs into toast
         for (const key of Object.keys(msg)) {
             for (const item of msg[key]) {
                 this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
@@ -1333,19 +1378,115 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
 
     showMathjax(reg) {
+        // updates Mathjax as the user edits the equation
         const equ = document.getElementById('mathjaxEq' + reg.id);
         equ.style.visibility = 'hidden';
         if (equ.firstChild) {equ.removeChild(equ.firstChild); }
         const equation = '`' + reg.equation + '`';
+        reg.equationMathJax = equation;
         equ.insertAdjacentHTML('afterbegin', '<span [MathJax]>' + equation + '</span');
-        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'matghjaxEq' + reg.id],
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathjaxEq' + reg.id],
             function() {
                 equ.style.visibility = '';
             });
+            // use this in original equations too??
     }
 
-    public print(item) {
-        console.log(item);
+    public saveRegReg(rr) {
+        // put edited regression region
+        const rridx = this.regressionRegions.findIndex(item => item.id === rr.id);
+        const currentRR = this.regressionRegions[rridx];
+        Object.keys(currentRR).forEach(key => {
+            if (!this.editScenarioForm.value[key]) {this.editScenarioForm.value[key] = currentRR[key]; }
+        });
+        this._settingsService.putEntity(rr.id, this.editScenarioForm.value, this.configSettings.regRegionURL).subscribe(res => {
+                this.CancelEditRowClicked();
+                this._nssService.setSelectedRegion(this.selectedRegion);
+                if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+                } else {this._settingsService.outputWimMessages(res); }
+            }, error => {
+                if (this._settingsService.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText); }
+            );
+    }
+
+    public checkLimits(val, min, max) {
+        // make sure value is between the min/max limits
+        if (val <= max && val >= min) {return true; }
+        return false;
+    }
+    /////////////////////// Finish Add/Edit/Delete Scenarios Section ///////////////////////////
+
+    // show add regression region modal
+    public showNewRegressionRegionForm(rr?) {
+        // shows form for creating new regression and/or citation
+        if (rr) { // rr already exists, only want citation
+            this.selectedRegRegion = rr;
+            this.addCitation = true;
+            this.addRegReg = false;
+        } else { // rr doesn't exist
+            this.addRegReg = true;
+            this.addCitation = false;
+        }
+        if (this.selectedRegion) {this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
+        this.showNewRegRegForm = true;
+        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then(
+            result => {
+                // this is the solution for the first modal losing scrollability
+                if (document.querySelector('body > .modal')) {
+                    document.body.classList.add('modal-open');
+                }
+                if (result) {this.cancelCreateRegression(); }
+            },
+            reason => {if (reason) {this.cancelCreateRegression(); }}
+        );
+    }
+
+    private cancelCreateRegression() {
+        this.showNewRegRegForm = false;
+        this.newRegRegForm.reset();
+        this.modalRef.close();
+    }
+
+    private createNewRegression() {
+        const regionID = this.newRegRegForm.value.state;
+        this._settingsService
+            .postEntity(this.newRegRegForm.value, this.configSettings.regionURL + regionID + '/' + this.configSettings.regRegionURL)
+            .subscribe(
+                (response) => {
+                    response.isEditing = false;
+                    if (!response.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
+                    } else {this._settingsService.outputWimMessages(response); }
+                    if (this.addCitation) { // if user elected to add a citation, send that through
+                        this.createNewCitation(response);
+                    } else {
+                        this.cancelCreateRegression();
+                        this._nssService.setSelectedRegion(this.selectedRegion);
+                    }
+                }, error => {
+                    if (this._settingsService.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText); }
+            );
+    }
+
+    public createNewCitation(rr) {
+        // add new citation
+        this._settingsService.postEntity(this.newCitForm.value, this.configSettings.regRegionURL + '/' + rr.id + '/' +
+            this.configSettings.citationURL)
+            .subscribe((res) => {
+                this.newCitForm.reset();
+                this.addCitation = false;
+                rr.citationID = res.id;
+                if (!res.headers) {this._toasterService.pop('info', 'Info', 'Citation was added');
+                } else {this._settingsService.outputWimMessages(res); }
+                this.cancelCreateRegression();
+                this._nssService.setSelectedRegion(this.selectedRegion);
+            }, error => {
+                if (this._settingsService.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
+            }
+        );
     }
 
     private getDismissReason(reason: any): string {
@@ -1357,72 +1498,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
             return `with: ${reason}`;
         }
     }
-    /////////////////////// Finish Add/Edit/Delete Scenarios Section ///////////////////////////
-
-    // show add regression region modal
-    public showNewRegressionRegionForm() {
-        this.addCitation = false;
-        this.newRegRegForm.controls['name'].setValue(null);
-        this.newRegRegForm.controls['description'].setValue('');
-        if (this.selectedRegion) {this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
-        this.showNewRegRegForm = true;
-        this.newRegRegForm.controls['code'].setValue(null);
-        this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
-            result => {
-                // this is the solution for the first modal losing scrollability
-                if (document.querySelector('body > .modal')) {
-                    document.body.classList.add('modal-open');
-                }
-                this.CloseResult = `Closed with: ${result}`;
-                if (this.CloseResult) {
-                    this.cancelCreateRegression();
-                }
-            },
-            reason => {
-                this.CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
-                if (this.CloseResult) {
-                    this.cancelCreateRegression();
-                }
-            }
-        );
-    }
-
-    private cancelCreateRegression() {
-        this.showNewRegRegForm = false;
-        this.newRegRegForm.reset();
-    }
-
-    private createNewRegression() {
-        const region = this.newRegRegForm.value.state;
-        this._settingsService
-            .postEntity(this.newRegRegForm.value, this.configSettings.regionURL + region + '/' + this.configSettings.regRegionURL)
-            .subscribe(
-                (response) => {
-                    response.isEditing = false;
-                    if (!response.headers) {this._toasterService.pop('success', 'Success', 'Regression region was added');
-                    } else {this._settingsService.outputWimMessages(response); }
-                    this._nssService.setSelectedRegion(this.selectedRegion);
-                    this.cancelCreateRegression();
-                    if (this.addCitation) {
-                        this._settingsService.postEntity(this.newCitForm.value, this.configSettings.regRegionURL + '/' + response.id + '/' +
-                            this.configSettings.citationURL)
-                            .subscribe((res) => {
-                                this.newCitForm.reset();
-                                this.addCitation = false;
-                                if (!res.headers) {this._toasterService.pop('success', 'Success', 'Citation was added');
-                                } else {this._settingsService.outputWimMessages(res); }
-                            }, error => {
-                                if (this._settingsService.outputWimMessages(error)) {return; }
-                                this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
-                            }
-                        );
-                    }
-                }, error => {
-                    if (this._settingsService.outputWimMessages(error)) {return; }
-                    this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText); }
-            );
-    }
-
 
     ngOnDestroy() {
         this.modalSubscript.unsubscribe();

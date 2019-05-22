@@ -94,16 +94,15 @@
                             </div>
                             
                             <div formArrayName="limits">
-                                <!-- Variable Max-->
-                                <div class="form-group required col-md-6">
-                                    <label class="req" for="max">Variable Max:</label>
-                                    <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="max" required>
-                                </div>
-            
                                 <!-- Variable Min-->
                                 <div class="form-group required col-md-6">
                                     <label class="req" for="min">Variable Min:</label>
                                     <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="min" required>
+                                </div>
+                                <!-- Variable Max-->
+                                <div class="form-group required col-md-6">
+                                    <label class="req" for="max">Variable Max:</label>
+                                    <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="max" required>
                                 </div>
                             </div>
         

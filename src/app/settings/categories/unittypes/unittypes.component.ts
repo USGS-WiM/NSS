@@ -133,7 +133,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.unitTypes.push(response);
                 this._settingsservice.setUnits(this.unitTypes);
-                this._toasterService.pop('success', 'Success', 'Unit was created');
+                this._toasterService.pop('info', 'Info', 'Unit was created');
                 this.cancelCreateUnit();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }

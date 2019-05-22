@@ -105,7 +105,7 @@ export class RolesComponent implements OnInit, OnDestroy {
                 response.isEditing = false;
                 this.roles.push(response);
                 this._settingsservice.setRoles(this.roles);
-                this._toasterService.pop('success', 'Success', 'Role was created');
+                this._toasterService.pop('info', 'Info', 'Role was created');
                 this.cancelCreateRole();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }

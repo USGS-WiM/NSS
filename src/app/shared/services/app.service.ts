@@ -590,7 +590,7 @@ export class NSSService {
                                         r.predictionInterval = {biasCorrectionFactor: null, student_T_Statistic: null, variance: null,
                                             xiRowVector: null, covarianceMatrix: null} as Predictioninterval;
                                     }
-                                    r['equationMathJax'] = '`' + r.equation + '`';
+                                    r['equationMathJax'] = '`' + r.equation.replace(/_/g, ' \\_') + '`';
                                 });
                             }
                         });
@@ -603,7 +603,6 @@ export class NSSService {
 
     // calculate Scenarios (POST)
     postScenarios(id: number, s: Scenario[], searchArgs?: URLSearchParams) {
-        console.log(JSON.stringify(s));
         const options = new RequestOptions({ headers: this.jsonHeader, search: searchArgs });
 
         return this._http
@@ -651,7 +650,7 @@ export class NSSService {
         if (wimMessages) {
             for (const key of Object.keys(wimMessages)) {
                 for (const item of wimMessages[key]) {
-                    this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+                    if (item.indexOf('Count:') === -1) {this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item); }
                 }
             }
             return true;

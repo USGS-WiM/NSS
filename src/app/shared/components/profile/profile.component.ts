@@ -21,6 +21,7 @@ import { ConfigService } from 'app/config.service';
 import { AuthService } from '../../services/auth.service';
 import { Manager } from '../../interfaces/manager';
 import { SettingsService } from 'app/settings/settings.service';
+import { LoginService } from 'app/shared/services/login.service';
 
 @Component({
     moduleId: module.id,
@@ -41,13 +42,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private jsonHeader: Headers = new Headers({ Accept: 'application/json', 'Content-Type': 'application/json' });
     public toast: Toast;
     public config: ToasterConfig = new ToasterConfig({timeout: 0});
+    public passwordTest = '';
     constructor(
         public _nssService: NSSService,
         private _http: Http,
         private _configService: ConfigService,
         private _toasterService: ToasterService,
         private _settingsService: SettingsService,
-        private router: Router
+        private router: Router,
+        public _loginService: LoginService
     ) {
         this.configSettings = this._configService.getConfiguration();
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -82,11 +85,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private getUserInfo() {
         this._settingsService.getEntities(this.configSettings.managersURL + '/' + this.loggedInID).subscribe(res => {
             this.userInfo = res;
-            for (const role of this.roles) {
-                if (res['roleID'] === role.id) {
-                    this.userInfo['role'] = role.name;
-                }
-            }
         });
     }
 
@@ -97,13 +95,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
     public editUser() {
         this.userInfo.isEditing = true;
         this.tempData = Object.assign({}, this.userInfo);
+        this.passwordTest = '';
     }
 
     public saveUser() {
         if (this.userInfo.username === undefined || this.userInfo.email === undefined || this.userInfo.firstName === undefined ||
-            this.userInfo.lastName === undefined || this.userInfo.roleID === undefined) {
+            this.userInfo.lastName === undefined || this.userInfo.role === undefined) {
             // don't save it
-            this._toasterService.pop('error', 'Error updating User', 'First name, last name, username, email and role ID are required.');
+            this._toasterService.pop('error', 'Error updating User', 'First name, last name, username, email and role are required.');
+        } else if (this.userInfo.password && this.userInfo.password !== this.passwordTest) {
+            this._toasterService.pop('error', 'Error', 'Passwords do not match. Please try again.');
         } else {
             delete this.userInfo.isEditing;
             delete this.userInfo.role;
@@ -113,6 +114,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
                     this.getUserInfo();
                     if (this.userForm.nativeElement.dirty) { this.userForm.reset(); }
                     this._settingsService.outputWimMessages(resp);
+                    if (this.userInfo.password) {
+                        this._loginService.logout();
+                        this.router.navigate(['']);
+                        this._nssService.setLoginModal(true);
+                    }
                 }, error => {
                     if (this._settingsService.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating User', error._body.message || error.statusText);

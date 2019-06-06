@@ -36,6 +36,9 @@ Clone the repo and navigate to folder.
 
 ## Building and testing
 
+```
+ng build --prod --base-href
+```
 
 ## Deployment
 

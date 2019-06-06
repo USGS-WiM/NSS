@@ -5,7 +5,7 @@ export interface Manager{
     lastName?: string;
     otherInfo?: string;
     primaryPhone?: string;
-    roleID?: number;
+    role?: string;
     secondaryPhone?: string;
     username: string;
     password?: string;

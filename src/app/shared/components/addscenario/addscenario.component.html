@@ -13,7 +13,7 @@
                 <select class="form-control" formControlName="statisticGroupID">
                     <option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}}</option>
                 </select>
-                <div class="input-invalid-warning" *ngIf="!newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty">Role ID
+                <div class="input-invalid-warning" *ngIf="!newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty">Role
                     is required</div>
             </div>
 

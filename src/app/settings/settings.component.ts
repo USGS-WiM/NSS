@@ -11,7 +11,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { throwError as observableThrowError, } from 'rxjs';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
+import { ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
 
 import { NSSService } from '../shared/services/app.service';
@@ -34,6 +34,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     private navigationSubscription;
     private jsonHeader: Headers = new Headers({ Accept: 'application/json', 'Content-Type': 'application/json' });
     public toast: Toast;
+    public config: ToasterConfig = new ToasterConfig({timeout: 0});
     constructor(
         public _nssService: NSSService,
         private _http: Http,

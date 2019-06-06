@@ -62,12 +62,12 @@ export class AuthService {
     //store the info to be retrieved in other components
     public storeUserInfo(manager: Manager): void {
         //store in localStorage and in .next for subscriptions on change
-        localStorage.setItem('loggedInRole', this.getLoggedInRole(manager.roleID));
+        localStorage.setItem('loggedInRole', manager.role);
         localStorage.setItem('loggedInName', manager.firstName + ' ' + manager.lastName);
         localStorage.setItem('loggedInUserName', manager.username);
         localStorage.setItem('loggedInID', manager.id.toString());
 
-        this._loggedInRole.next(this.getLoggedInRole(manager.roleID));
+        this._loggedInRole.next(manager.role);
         this._loggedInName.next(manager.firstName + ' ' + manager.lastName);
         this._loggedInUserName.next(manager.username);
         this._loggedInID.next(manager.id);
@@ -87,14 +87,5 @@ export class AuthService {
         let now: number = new Date().getTime();
         let setupTime: number = Number(localStorage.getItem('setupTime'));
         localStorage.setItem('setupTime', now.toString());
-    }
-    // get the loggedIn Role
-    public getLoggedInRole(roleId: number): string {
-        switch (roleId) {
-            case 1:
-                return 'Administrator';
-            case 2:
-                return 'Manager';
-        }
     }
 } // end AuthService

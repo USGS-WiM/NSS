@@ -24,7 +24,7 @@
         <span>
             <span>Limit by Regression Region(s):</span>
             <i *ngIf="loggedInRole" (click)="showAddRegRegion()" title="Add Regression Region" class="ion-plus-circled"></i>
-            <i *ngIf="!loggedInRole" class="ion-information-circled"></i>
+            <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>
         <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"
             [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)"> 

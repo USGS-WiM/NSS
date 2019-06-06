@@ -1,7 +1,7 @@
 <div id="printArea" class="mainPage scrollable">
 
     <!-- toaster directive -->
-    <toaster-container ></toaster-container>
+    <toaster-container [toasterconfig]="config"></toaster-container>
     <!-- / toaster directive -->
 
     <div><h3 style="font-size: 32px !important; font-weight: bolder !important;">{{title}}</h3></div>
@@ -766,13 +766,15 @@
                                     <td>
                                         <div class="data-controls">
                                             <i *ngIf="!r.isEditing" title="Edit Regression" (click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="fa fa-pencil"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                                                aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
                                             <i *ngIf="!r.isEditing" title="Delete Regression" (click)="deleteRegression(s.statisticGroupID, rr.id, r.id)" class="fa fa-times"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                                            <i *ngIf="r.isEditing" title="Save Regression" (click)="saveRegression(r, rIndex, rrIndex, sgIndex)" class="fa fa-floppy-o"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                                            <i *ngIf="r.isEditing" title="Save Regression" (click)="saveRegression(r, rrIndex, sgIndex)" class="fa fa-floppy-o"
+                                                aria-hidden="true" style="cursor:pointer;padding-right:5px;"></i>
                                             <i *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="fa fa-history"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                                            <!--<i *ngIf="s.statisticGroupID === 2" title="Move to Low Flow Statistics" (click)="moveToLowFlow(r, rIndex, rrIndex, sgIndex)"
+                                                class="fa fa-exchange" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>--><!--removing for now, not working in DB-->
                                         </div>
                                     </td>
                                     <td>
@@ -890,6 +892,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+            <!--<button type="button" (click)="!changeStatGroup ? submitScenario() : putLowFlow()" class="btn-blue">Create</button>-->
             <button type="button" (click)="submitScenario()" class="btn-blue">Create</button>
         </div>
     </div>

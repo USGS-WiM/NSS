@@ -117,6 +117,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public addRegReg: boolean;
     public selectedRegRegion;
     public modalRef;
+    // public changeStatGroup = false;
 
     constructor(
         private _nssService: NSSService,
@@ -165,7 +166,9 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this.showRegion = false; this.editRegionScenario = false;
         this.resultsErrorLength = 0; // used for colspan on Errors <th>
         this._nssService.selectedRegion.subscribe(region => {
-            if (this.selectedRegion && region && this.selectedRegion.name !== region.name) {this.cancelEditRegionScenario(); }
+            if (this.selectedRegion && region && this.selectedRegion.name !== region.name && this.editRegionScenario) {
+                this.cancelEditRegionScenario();
+            } // if row being edited when new region selected, cancel that.
             this.selectedRegion = region;
             if (region) { this.showRegion = true; }
             window.scrollTo(0, 0);
@@ -217,8 +220,8 @@ export class MainviewComponent implements OnInit, OnDestroy {
 
                 s.regressionRegions.forEach((rr, index) => {
                     regID = '(RG_Code: ' + rr.code + ')'; // need to show the regID for each limit so they know which one they are out of range on
-                    if (rr.results) {
-                        if (rr.results[0].errors) {
+                    if (rr.results && rr.results.length > 0) {
+                        if (rr.results[0] && rr.results[0].errors) {
                             this.resultsErrorLength = rr.results[0].errors.length;
                         }
                         let eqResult: Equationresults = { name: '', formulas: [] };
@@ -241,6 +244,8 @@ export class MainviewComponent implements OnInit, OnDestroy {
                         });
                         if (rr.id > 0) this.equationResults.push(eqResult);
                         this.appendixEquationsforExport.push(equationString); // push each equation string in for use when exporting appendix table later
+                    } else if (rr.results && rr.results.length === 0) {
+                        this._toasterService.pop('error', 'Error', 'No results returned.');
                     } // end there's results
                     // populate uniqueParameters and uniqueUnitTypes
                     if (rr.id > 0) {
@@ -1231,10 +1236,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
         const reg = this.editScen.regressionRegions[0].regressions[rIndex];
         reg.expected = {value: '', parameters: {}, intervalBounds: null};
         // check prediction interval inputs
-        let count = 0;
-        Object.keys(reg.predictionInterval).forEach((key) => {
-            if (reg.predictionInterval[key] != null && reg.predictionInterval[key] !== '') {count ++; }
-        });
+        const count = this.checkPredInt(reg);
         if (count <= 1) { reg.predictionInterval = null; // if only id exists
         } else if (count === 6) {
             this.getBounds = true;
@@ -1253,6 +1255,14 @@ export class MainviewComponent implements OnInit, OnDestroy {
         // only need to send back the edited regression
         this.editScen.regressionRegions[0].regressions = [reg];
         this.showInputModal();
+    }
+
+    public checkPredInt(reg) {
+        let count = 0;
+        Object.keys(reg.predictionInterval).forEach((key) => {
+            if (reg.predictionInterval[key] != null && reg.predictionInterval[key] !== '') {count ++; }
+        });
+        return count;
     }
 
     public getRegRegions() {
@@ -1382,7 +1392,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
         const equ = document.getElementById('mathjaxEq' + reg.id);
         equ.style.visibility = 'hidden';
         if (equ.firstChild) {equ.removeChild(equ.firstChild); }
-        const equation = '`' + reg.equation + '`';
+        const equation = '`' + reg.equation.replace(/_/g, ' \\_') + '`';
         reg.equationMathJax = equation;
         equ.insertAdjacentHTML('afterbegin', '<span [MathJax]>' + equation + '</span');
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathjaxEq' + reg.id],
@@ -1391,6 +1401,67 @@ export class MainviewComponent implements OnInit, OnDestroy {
             });
             // use this in original equations too??
     }
+
+    // trying to PUT peak flow regs to low flow on button click, holding off for now
+    /*moveToLowFlow(r, rrID, rrIndex, sgIndex) {
+        // console.log(JSON.stringify(r));
+        // console.log(this.scenarios);
+        r.expected = {value: '', parameters: {}, intervalBounds: null};
+        if (r.isEditing) {
+            const count = this.checkPredInt(r);
+            if (count <= 1) { r.predictionInterval = null; // if only id exists
+            } else if (count === 6) {
+                this.getBounds = true;
+                r.expected.intervalBounds = {lower: null, upper: null};
+            } else {
+                this._toasterService.pop('error', 'Error', 'Prediction Interval not complete.');
+                return;
+            }
+        }
+        const regReg = this.scenarios[sgIndex].regressionRegions[rrIndex];
+        this.getBounds = false;
+        const lowFlowIndex = this.scenarios.findIndex(scen => scen.statisticGroupID === 4);
+        if (lowFlowIndex > -1) {
+            // if low flow statistics exists in the region, send that back with the new regression
+            this.editScen = JSON.parse(JSON.stringify(this.scenarios[lowFlowIndex]));
+            const lowRRIndex = this.editScen.regressionRegions.findIndex(rr => rr.id ===  regReg.id);
+            if (lowRRIndex > -1) {
+                this.editScen.regressionRegions[lowRRIndex].regressions = [r];
+            } else {
+                regReg.regressions = [r];
+                this.editScen.regressionRegions.push(regReg);
+            }
+        } else {
+            // if no low flow statistics in the region, edit peak flow scenario object
+            this.editScen = JSON.parse(JSON.stringify(this.scenarios[sgIndex]));
+            this.editScen.statisticGroupID = 4;
+            this.editScen.statisticGroupName = 'Low-Flow Statistics';
+            this.editScen.regressionRegions = [this.editScen[rrIndex]];
+            this.editScen.regressionRegions[0] = [r];
+        }
+        // get list of necessary params to check expected results
+        this.paramsNeeded = [];
+        for (const param of this.editScen.regressionRegions[0]['parameters']) {
+            if (r.equation.indexOf(param.code) > -1) {
+                this.paramsNeeded.push(param); // only need values for params in equation
+            }
+        }
+        this.changeStatGroup = true;
+        this.showInputModal();
+    }
+
+    putLowFlow() {
+        console.log(this.editScen);
+        console.log(JSON.stringify(this.editScen));
+        this._settingsService.putEntity('', this.editScen, this.configSettings.scenariosURL + '?existingstatisticgroup=2')
+        .subscribe(scen => {
+            console.log(scen);
+            alert('success');
+        }, error => {
+            if (this._settingsService.outputWimMessages(error)) {return; }
+            this._toasterService.pop('error', 'Error moving regression', error._body.message || error.statusText);
+        });
+    }*/
 
     public saveRegReg(rr) {
         // put edited regression region

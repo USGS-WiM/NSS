@@ -48,7 +48,6 @@ export class SettingsService {
     private _managersSubject: BehaviorSubject<Array<Manager>> = <BehaviorSubject<Manager[]>>new BehaviorSubject([]);
     private _citationsSubject: BehaviorSubject<Array<Citation>> = <BehaviorSubject<Citation[]>>new BehaviorSubject([]);
     private _errorsSubject: BehaviorSubject<Array<Error>> = <BehaviorSubject<Error[]>>new BehaviorSubject([]);
-    private _rolesSubject: BehaviorSubject<Array<Role>> = <BehaviorSubject<Role[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: Http, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -88,9 +87,6 @@ export class SettingsService {
     }
     public errors(): Observable<Array<Error>> {
         return this._errorsSubject.asObservable();
-    }
-    public roles(): Observable<Array<Role>> {
-        return this._rolesSubject.asObservable();
     }
 
     // HTTP REQUESTS ////////////////////////////////////
@@ -141,7 +137,7 @@ export class SettingsService {
         if (wimMessages) {
             for (const key of Object.keys(wimMessages)) {
                 for (const item of wimMessages[key]) {
-                    this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+                    if (item.indexOf('Count:') === -1) {this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item); }
                 }
             }
             return true;
@@ -182,8 +178,5 @@ export class SettingsService {
     }
     public setErrors(e: Array<Error>) {
         this._errorsSubject.next(e);
-    }
-    public setRoles(r: Array<Role>) {
-        this._rolesSubject.next(r);
     }
 }

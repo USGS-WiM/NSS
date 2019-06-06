@@ -15,15 +15,15 @@
                     <th class="col-xs-2">Email</th>
                     <th class="col-xs-2">First name</th>
                     <th class="col-xs-2">Last Name</th>
-                    <th class="col-xs-1">Role ID</th>
+                    <th class="col-xs-1">Role</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let m of managers; let i = index">
                     <td>
                         <div class="data-controls">
-                            <i *ngIf="!m.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="fa fa-pencil"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                            <!--<i *ngIf="!m.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;-->
                             <i *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.id)" class="fa fa-times"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                             <i *ngIf="m.isEditing" title="Save Manager" (click)="saveManager(m,i)" class="fa fa-floppy-o"
@@ -49,10 +49,10 @@
                         <span *ngIf="m.isEditing"><input type="text" name="lastName" [(ngModel)]="m.lastName" required></span>
                     </td>
                     <td>
-                        <span *ngIf="!m.isEditing">{{ m.roleID }}</span>
+                        <span *ngIf="!m.isEditing">{{ m.role }}</span>
                         <span *ngIf="m.isEditing">
-                            <select [(ngModel)]="m.roleID" name="roleID">
-                                <option *ngFor="let role of roles" [value]="role.id">{{role.name}}</option>
+                            <select [(ngModel)]="m.role" name="role">
+                                <option *ngFor="let role of roles" [value]="role">{{role}}</option>
                             </select></span>
                     </td>
                 </tr>
@@ -111,13 +111,13 @@
                     is required</div>
             </div>
 
-            <!-- Role ID* -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('roleID').valid && newUserForm.get('roleID').dirty}">
-                <label class="req" for="roleID">Role:</label>
-                <select class="form-control" formControlName="roleID">
-                    <option *ngFor="let role of roles" [value]="role.id">{{role.name}}</option>
+            <!-- Role* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('role').valid && newUserForm.get('role').dirty}">
+                <label class="req" for="role">Role:</label>
+                <select class="form-control" formControlName="role">
+                    <option *ngFor="let role of roles" [value]="role.name">{{role.name}}</option>
                 </select>
-                <div class="input-invalid-warning" *ngIf="!newUserForm.get('roleID').valid && newUserForm.get('roleID').dirty">Role ID
+                <div class="input-invalid-warning" *ngIf="!newUserForm.get('role').valid && newUserForm.get('role').dirty">Role
                     is required</div>
             </div>
 

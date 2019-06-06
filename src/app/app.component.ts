@@ -68,6 +68,10 @@ export class AppComponent implements OnInit, OnDestroy {
             this.logout();
         }
 
+        this._nssService.showLoginModal.subscribe(show => {
+            if (show) {this.showLoginModal(); }
+        });
+
         this.manager = { username: '', password: '' };
 
         // get return url from route parameters or default to '/'

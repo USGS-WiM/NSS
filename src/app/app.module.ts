@@ -39,7 +39,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthService } from './shared/services/auth.service';
 import { SettingsService } from './settings/settings.service';
 import { RegionsComponent } from './settings/categories/regions/regions.component';
-import { RolesComponent } from './settings/categories/roles/roles.component';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { AdminGuard } from './shared/guards/admin.guard';
 import { ProfileComponent } from './shared/components/profile/profile.component';
@@ -60,8 +59,7 @@ const appRoutes: Routes = [
       { path: 'unitsystems', component: UnitSystemsComponent },
       { path: 'variabletypes', component: VariableTypesComponent },
       { path: 'managers', component: ManagersComponent },
-      { path: 'errors', component: ErrorsComponent},
-      { path: 'roles', component: RolesComponent}
+      { path: 'errors', component: ErrorsComponent}
     ],
     runGuardsAndResolvers: 'always'
   },
@@ -86,7 +84,7 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, LoaderComponent, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, RolesComponent, AddScenarioModal
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal
   ],
   imports: [
     BrowserModule, FormsModule, HttpModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

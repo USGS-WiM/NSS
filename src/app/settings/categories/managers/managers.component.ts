@@ -59,7 +59,7 @@ export class ManagersComponent implements OnInit {
             email: new FormControl(null, Validators.required),
             firstName: new FormControl(null, Validators.required),
             lastName: new FormControl(null, Validators.required),
-            roleID: new FormControl(null, Validators.required)
+            role: new FormControl(null, Validators.required)
         });
         this.configSettings = this._configService.getConfiguration();
     }
@@ -78,7 +78,7 @@ export class ManagersComponent implements OnInit {
         this.newUserForm.controls['password'].setValue(null);
         this.newUserForm.controls['firstName'].setValue(null);
         this.newUserForm.controls['lastName'].setValue(null);
-        this.newUserForm.controls['roleID'].setValue(null);
+        this.newUserForm.controls['role'].setValue(null);
         this.newUserForm.controls['email'].setValue(null);
         this.showUserForm = true;
         this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
@@ -151,9 +151,9 @@ export class ManagersComponent implements OnInit {
 
     // edits made, save clicked
     public saveManager(u: Manager, i: number) {
-        if (u.username === undefined || u.email === undefined || u.firstName === undefined || u.lastName === undefined || u.roleID === undefined) {
+        if (u.username === undefined || u.email === undefined || u.firstName === undefined || u.lastName === undefined || u.role === undefined) {
             // don't save it
-            this._toasterService.pop('error', 'Error updating Manager', 'First name, last name, username, email and role ID are required.');
+            this._toasterService.pop('error', 'Error updating Manager', 'First name, last name, username, email and role are required.');
         } else {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.managersURL).subscribe(

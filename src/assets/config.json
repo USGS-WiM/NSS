@@ -2,7 +2,7 @@
    "baseURL": "https://test.streamstats.usgs.gov/nssservicesv2/",
     "citationURL": "Citations",
     "errorsURL": "Errors",
-    "loginURL": "login",
+    "loginURL": "authenticate",
     "managersURL": "Managers",
     "regionURL": "Regions/",
     "regRegionURL": "RegressionRegions",

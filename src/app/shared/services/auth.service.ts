@@ -34,14 +34,6 @@ export class AuthService {
         // getter (loggedInRole)
         return this._loggedInRole.asObservable();
     }
-    private _loggedInName: Subject<string> = new Subject<string>();
-    public setloggedInName(val: string) {
-        this._loggedInName.next(val);
-    }
-    public loggedInName(): Observable<string> {
-        // getter (loggedInName)
-        return this._loggedInName.asObservable();
-    }
     private _loggedInUserName: Subject<string> = new Subject<string>();
     public setloggedInUserName(val: string) {
         this._loggedInUserName.next(val);
@@ -60,15 +52,13 @@ export class AuthService {
     }
 
     //store the info to be retrieved in other components
-    public storeUserInfo(manager: Manager): void {
+    public storeUserInfo(manager): void {
         //store in localStorage and in .next for subscriptions on change
         localStorage.setItem('loggedInRole', manager.role);
-        localStorage.setItem('loggedInName', manager.firstName + ' ' + manager.lastName);
         localStorage.setItem('loggedInUserName', manager.username);
         localStorage.setItem('loggedInID', manager.id.toString());
 
         this._loggedInRole.next(manager.role);
-        this._loggedInName.next(manager.firstName + ' ' + manager.lastName);
         this._loggedInUserName.next(manager.username);
         this._loggedInID.next(manager.id);
         this.setStorageExpiration();
@@ -77,7 +67,6 @@ export class AuthService {
     public removeUserInfo(): void {
         localStorage.clear();
         this._loggedInRole.next();
-        this._loggedInName.next();
         this._loggedInUserName.next();
         this._loggedInID.next();
     }

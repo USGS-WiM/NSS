@@ -67,7 +67,7 @@ To push tags to remote origin: `git push origin --tags`
 ## Authors
 
 * **[Jeremy Newson](https://www.usgs.gov/staff-profiles/jeremy-k-newson)**  - *Point of Contact* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
-* **[Tonia Roddick](https://www.usgs.gov/staff-profiles/tonia-m-roddick)**  - *Developer* 
+* **[Katrin Jacobsen](https://www.usgs.gov/staff-profiles/katrin-jacobsen)**  - *Developer* 
 
 See also the list of [contributors](https://github.com/USGS-WiM/NSS/graphs/contributors) who participated in this project.
 

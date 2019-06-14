@@ -32,21 +32,17 @@ export class LoginService {
     }
 
     // log in
-    public login(username: string, password: string) {
+    public login(user: object) {
         const headers: Headers = new Headers();
-        const creds: string = 'Basic ' + btoa(username + ':' + password);
-
-        headers.append('Authorization', creds);
-        headers.append('Accept', 'application/json');
         headers.append('Content-Type', 'application/json');
-        return this.http.get(this.configSettings.baseURL + this.configSettings.loginURL, { headers: headers })
+        return this.http.post(this.configSettings.baseURL + this.configSettings.loginURL, user, { headers: headers })
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response
                 const user = response.json();
                 if (user) {
                     this._loggedInSubject.next(true);
                     // store user creds in localStorage and details in service for retrieval
-                    localStorage.setItem('credentials', creds);
+                    localStorage.setItem('auth', 'Bearer ' + user.token);
                     this._authService.storeUserInfo(user);
                 }
             })

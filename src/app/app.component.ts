@@ -72,8 +72,6 @@ export class AppComponent implements OnInit, OnDestroy {
             if (show) {this.showLoginModal(); }
         });
 
-        this.manager = { username: '', password: '' };
-
         // get return url from route parameters or default to '/'
         this.returnUrl = '';
 
@@ -123,10 +121,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // log user in, navigate to home
     public loginRun() {
-        this.manager.username = this.LoginForm.get('username').value;
-        this.manager.password = this.LoginForm.get('password').value;
         this.loading = true; // not using this yet
-        this._loginService.login(this.manager.username, this.manager.password).subscribe(
+        this._loginService.login(this.LoginForm.value).subscribe(
             () => {
                 if (this._loginService.isLoggedIn) {
                     this.router.navigate([this.returnUrl]);

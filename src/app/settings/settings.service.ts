@@ -33,7 +33,7 @@ import { URLSearchParams } from '@angular/http';
 export class SettingsService {
     public authHeader: Headers = new Headers({
         'Content-Type': 'application/json',
-        Authorization: localStorage.getItem('credentials')
+        Authorization: localStorage.getItem('auth')
     });
     private configSettings: Config;
     // SUBJECTS //////////////////////////////////////

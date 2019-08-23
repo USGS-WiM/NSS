@@ -229,3 +229,7 @@ input {
 .col-xs-half {
     width: 4%;
 }
+
+.equation {
+    margin-bottom: 20px !important;
+}

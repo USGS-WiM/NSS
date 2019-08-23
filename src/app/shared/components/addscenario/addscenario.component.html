@@ -42,7 +42,7 @@
                     <!-- Equation* -->
                     <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.equation').valid && newScenForm.get('regressionRegions.regressions.equation').dirty}">
                         <label class="req" for="equation">Equation:</label>
-                        <input class="form-control" type="text" formControlName="equation" required (ngModelChange)="showMathjax()">
+                        <input class="form-control equation" type="text" formControlName="equation" required (ngModelChange)="showMathjax()">
                         <span id="mathjaxEq"></span>
                         <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.equation').valid && newScenForm.get('regressionRegions.regressions.equation').dirty">Expression
                             is required</div>
@@ -52,26 +52,6 @@
                     <div class="form-group">
                         <label class="req" for="equivalentYears">Equivalent Years (optional):</label>
                         <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="equivalentYears" >
-                    </div>
-
-                    <!-- Expected* -->
-                    <div formGroupName="expected">
-                        <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty}">
-                            <label class="req" for="expression">Expected value (based on given parameter values and equation):</label>
-                            <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="value" required>
-                            <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty">Expected value
-                                is required</div>
-                        </div>
-                    </div>
-
-                    <!-- Units-->
-                    <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty}">
-                        <label class="req" for="unit">Unit Type:</label>
-                        <select class="form-control" formControlName="unit">
-                            <option *ngFor="let ut of unitTypes" [ngValue]="ut">{{ut.name}} ({{ut.abbr}})</option>
-                        </select>
-                        <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty">Unit Type
-                            is required</div>
                     </div>
                 </div>
 
@@ -118,12 +98,6 @@
                             <div class="form-group required">
                                 <label class="req" for="comments">Variable Comments:</label>
                                 <textarea class="form-control" rows="3" placeholder="" formControlName="comments"></textarea>
-                            </div>
-    
-                            <!-- Variable Value* (moved to expected before posting)-->
-                            <div class="form-group required">
-                                <label class="req" for="value">Variable Value (used to confirm equation produces the expected value):</label>
-                                <input class="form-control" type="number" formControlName="value" required>
                             </div>
                         </div>
                     </div>
@@ -214,6 +188,42 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- parameter values -->
+                <div formArrayName="parameters">
+                    <div *ngFor="let var of newScenForm.get('regressionRegions.parameters').controls; let varIndex = index">
+                        <div [formGroupName]="varIndex">
+                            <!-- Variable Value* (moved to expected before posting)-->
+                            <div class="form-group required">
+                                <label class="req" for="value">Variable {{varIndex + 1}} Value:</label>
+                                <input class="form-control" type="number" formControlName="value" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- expected value/unit type-->
+                <div formArrayName="regressions">
+                    <!-- Expected* -->
+                    <div formGroupName="expected">
+                        <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty}">
+                            <label class="req" for="expression">Expected value (based on given parameter values and equation):</label>
+                            <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="value" required>
+                            <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty">Expected value
+                                is required</div>
+                        </div>
+                    </div>
+
+                    <!-- Units-->
+                    <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty}">
+                        <label class="req" for="unit">Unit Type:</label>
+                        <select class="form-control" formControlName="unit">
+                            <option *ngFor="let ut of unitTypes" [ngValue]="ut">{{ut.name}} ({{ut.abbr}})</option>
+                        </select>
+                        <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty">Unit Type
+                            is required</div>
                     </div>
                 </div>
             </div>

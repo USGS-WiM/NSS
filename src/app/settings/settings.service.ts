@@ -133,6 +133,7 @@ export class SettingsService {
     }
 
     public outputWimMessages(res) {
+        this._toasterService.clear();
         const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
         if (wimMessages) {
             for (const key of Object.keys(wimMessages)) {

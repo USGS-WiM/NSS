@@ -16,7 +16,7 @@ import { ConfigService } from 'app/config.service';
 import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 declare var MathJax: {
-    Hub: { Queue }
+    Hub: { Queue, Config }
 };
 
 @Component({
@@ -165,6 +165,14 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         if (equ.firstChild) {equ.removeChild(equ.firstChild); }
         this.equation = '`' + exp + '`';
         equ.insertAdjacentHTML('afterbegin', '<span [MathJax]="equation">' + this.equation + '</span');
+        MathJax.Hub.Config({
+            'HTML-CSS': {
+                linebreaks: { automatic: true}
+            },
+            CommonHTML: {
+                linereaks: { automatic: true }
+            }
+        });
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'MathJax'],
             function() {
                 equ.style.visibility = '';

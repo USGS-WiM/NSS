@@ -3,8 +3,8 @@
     "name": "NSS",
     "organization": "U.S. Geological Survey",
     "description": "National Stream Flow Statistics public access to Regions, Statistic Groups, Regression Regions, Charts and Citations",
-    "version": "v0.0.0",
-    "status": "Development",
+    "version": "v1.0.0",
+    "status": "Production",
 
     "permissions": {
       "usageType": "openSource",
@@ -16,7 +16,7 @@
       ]
     },
 
-    "homepageURL": "http://test.streamstats.usgs.gov.s3-website-us-east-1.amazonaws.com/nss/",
+    "homepageURL": "https://streamstats.usgs.gov",
     "downloadURL": "https://github.com/USGS-WiM/NSS/archive/master.zip",
     "disclaimerURL": "https://github.com/USGS-WiM/NSS/blob/master/DISCLAIMER.md",
     "repositoryUrl": "https://github.com/USGS-WiM/NSS",
@@ -25,6 +25,7 @@
     "laborHours": null,
 
     "tags": [
+      "streamstats",
       "regression",
       "nss",
 	  "statistic",
@@ -32,7 +33,7 @@
     ],
 
     "languages": [
-      "Markdown"
+      "angular", "markdown"
     ],
 
     "contact": {
@@ -41,7 +42,7 @@
     },
 
     "date": {
-      "metadataLastUpdated": "2017-10-30"
+      "metadataLastUpdated": "2019-04-19"
     }
   }
 ]

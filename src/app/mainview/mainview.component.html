@@ -24,9 +24,11 @@
                 <span *ngFor="let rr of selectedRegressionRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.name}}{{isLast ? "" : ", "}}</span>
             </div>
         </div>
-        <button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showAddScenarioModal()">Add Scenario</button>
-        <button *ngIf="loggedInRole && showRegion && !editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="editRegScenario()">Edit Scenario</button>
-        <button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="cancelEditRegionScenario()">Cancel Edit Scenario</button>
+        <div class="hidden-print">
+            <button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showAddScenarioModal()">Add Scenario</button>
+            <button *ngIf="loggedInRole && showRegion && !editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="editRegScenario()">Edit Scenario</button>
+            <button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="cancelEditRegionScenario()">Finish Editing</button>
+        </div>
     </div>
     <br clear="all"/>
 
@@ -364,20 +366,20 @@
                                                   <div><input [colorPicker]="hydrographs[i].colorPickerColor" (colorPickerChange)="changeLineColor(i,$event)" [style.background]="hydrographs[i].colorPickerColor" [value]="hydrographs[i].colorPickerColor"/></div>
                                                 </div>
                                                 <div class="form-group col-xs-6">
-                                                    <label class="control-label">Curve Width:</label>
+                                                    <label class="control-label">Line Weight:</label>
                                                     <div><input type="text" name="lineWidth" (keyup)="setLineWidth(i)" [(ngModel)]="hydrographs[i].lineWidth"/></div>
                                                 </div>
                                             </div>
-                                            <div><!-- Line symbol color/point symbol -->
+                                            <div><!-- Point symbol color/point symbol -->
                                                 <div class="form-group col-xs-6">
-                                                    <label class="control-label">Line Symbol Color:</label>
+                                                    <label class="control-label">Point Symbol Color:</label>
                                                     <div><input [colorPicker]="hydrographs[i].lineSymbolFillColor" (colorPickerChange)="changeLineSymbolColor(i,$event)" [style.background]="hydrographs[i].lineSymbolFillColor" [value]="hydrographs[i].lineSymbolFillColor"/></div>
                                                 </div>
                                                 <div class="form-group col-xs-6">
                                                     <label class="control-label">Point Symbol:</label>
                                                     <div>
                                                         <span class="select-wim">
-                                                            <select [(ngModel)]="hydrographs[i].lineSymbol" (ngModelChange)="setLineSymbol(i,$event)" name="lineSymbol">
+                                                            <select [disabled]="!hydrographs[i].pointSymbols" [(ngModel)]="hydrographs[i].lineSymbol" (ngModelChange)="setLineSymbol(i,$event)" name="lineSymbol">
                                                                 <option value="circle">Circle</option>
                                                                 <option value="square">Square</option>
                                                                 <option value="diamond">Diamond</option>
@@ -395,6 +397,9 @@
                                                     <div><input type="text" class="form-control" name="curveLabel" [(ngModel)]="hydrographs[i].curveLabel" (keyup)="updateCurveLabel(i)" /></div>
                                                 </div>
                                                 <div class="form-group col-xs-6">
+                                                    <label class="control-label">
+                                                        <input type="checkbox" name="pointSymbols" (change)="showHideLineSymbol(i, $event.target.checked)" [(ngModel)]="hydrographs[i].pointSymbols"/> Show Point Symbols
+                                                    </label><br>
                                                     <label class="control-label">
                                                         <input type="checkbox" name="dataLabels" (change)="updateDataLabels(i, $event.target.checked)" [(ngModel)]="hydrographs[i].dataLabels"/> Show Data Values
                                                     </label>
@@ -527,20 +532,20 @@
                                                     <div><input [colorPicker]="frequencyPlotChart.colorPickerColor" (colorPickerChange)="changeFreqLineColor($event)" [style.background]="frequencyPlotChart.colorPickerColor" [value]="frequencyPlotChart.colorPickerColor"/></div>
                                                 </div>
                                                 <div class="form-group col-xs-6">
-                                                    <label class="control-label">Curve Width:</label>
+                                                    <label class="control-label">Line Weight:</label>
                                                     <div><input type="text" name="lineWidth" (keyup)="setFreqLineWidth()" [(ngModel)]="frequencyPlotChart.lineWidth"/></div>
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="form-group col-xs-6">
-                                                    <label class="control-label">Line Symbol Color:</label>
+                                                    <label class="control-label">Point Symbol Color:</label>
                                                     <div><input [colorPicker]="frequencyPlotChart.lineSymbolFillColor" (colorPickerChange)="changeFreqLineSymbolColor($event)" [style.background]="frequencyPlotChart.lineSymbolFillColor" [value]="frequencyPlotChart.lineSymbolFillColor"/></div>
                                                 </div>
                                                 <div class="form-group col-xs-6">
                                                     <label class="control-label">Point Symbol:</label>
                                                     <div>
                                                         <span class="select-wim">
-                                                            <select [(ngModel)]="frequencyPlotChart.lineSymbol" (ngModelChange)="setFreqLineSymbol($event)" name="lineSymbol">
+                                                            <select [disabled]="!frequencyPlotChart.pointSymbols" [(ngModel)]="frequencyPlotChart.lineSymbol" (ngModelChange)="setFreqLineSymbol($event)" name="lineSymbol">
                                                                 <option value="circle">Circle</option>
                                                                 <option value="square">Square</option>
                                                                 <option value="diamond">Diamond</option>
@@ -558,6 +563,9 @@
                                                     <div><input type="text" class="form-control" name="curveLabel" [(ngModel)]="frequencyPlotChart.curveLabel" (keyup)="updateFreqCurveLabel()" /></div>
                                                 </div>
                                                 <div class="form-group col-xs-6">
+                                                    <label class="control-label">
+                                                        <input type="checkbox" name="pointSymbols" (change)="showHideFreqSymbol($event.target.checked)" [(ngModel)]="frequencyPlotChart.pointSymbols"/> Show Point Symbols
+                                                    </label><br>
                                                     <label class="control-label">
                                                         <input type="checkbox" name="dataLabels" (change)="updateFreqDataLabels($event.target.checked)" [(ngModel)]="frequencyPlotChart.dataLabels"/> Show Data Values
                                                     </label>
@@ -926,11 +934,13 @@
             </div>
 
             <!-- Short Name -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty}">
-                <label class="req" for="code">Code:</label>
+            <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty || (newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC'))}">
+                <label class="req" for="code">Code (e.g. GC1234):</label>
                 <input class="form-control" type="text" formControlName="code">
-                <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty">Code
+                <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty && newRegRegForm.get('code').value == ''">Code
                     is required</div>
+                <div class="input-invalid-warning" *ngIf="newRegRegForm.get('code').value != '' && newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC')">
+                        Code must start with "GC"</div>
             </div>
             <!-- Region* -->
             <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('state').valid && newRegRegForm.get('state').dirty }">

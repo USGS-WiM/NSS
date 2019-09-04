@@ -15,6 +15,7 @@ import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
+import { AuthService } from 'app/shared/services/auth.service';
 declare var MathJax: {
     Hub: { Queue, Config }
 };
@@ -42,9 +43,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     private configSettings: Config;
     public addPredInt = false;
     public modalRef;
+    public loggedInRole;
 
     constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
-        private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService) {
+        private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
+        private _authService: AuthService) {
         this.newScenForm = _fb.group({
             'statisticGroupID': new FormControl(null, Validators.required),
             'regressionRegions': this._fb.group({
@@ -78,12 +81,20 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        // subscriber for logged in role
+        this.loggedInRole = localStorage.getItem('loggedInRole');
+        this._authService.loggedInRole().subscribe(role => {
+            if (role === 'Administrator' || role === 'Manager') {
+                this.loggedInRole = role;
+            }
+        });
         // show the filter modal == Change Filters button was clicked in sidebar
         this.modalSubscript = this._nssService.showAddScenarioModal.subscribe((show: boolean) => {
             if (show) { this.showModal(); }
         });
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
+            if (region.id) {this.getRegRegions(); }
         });
         this._nssService.getVersion.subscribe((v: string) => {
             this.appVersion = v;
@@ -116,12 +127,17 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.modalElement = this.addScenarioModal;
     }
 
-    public showModal(): void {
+    public getRegRegions() {
+        // moving to own function for when new regression region is added
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
             .subscribe(res => {
             if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
             this.regressionRegions = res;
         });
+    }
+
+    public showModal(): void {
+        if (this.selectedRegion) {this.getRegRegions(); }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
             result => {
@@ -283,6 +299,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         const div = document.getElementById(divId);
         if (div && div.classList.contains('hidden')) {return false;
         } else {return true; }
+    }
+
+    public showAddRegRegion() {
+        this._nssService.setAddRegressionRegionModal(true);
     }
 
     private getDismissReason(reason: any): string {

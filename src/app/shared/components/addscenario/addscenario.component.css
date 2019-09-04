@@ -46,3 +46,8 @@ button {
 .form-group.col-md-6 {
     padding-left: 0;
 }
+
+.ion-plus-circled {
+    margin: 0px 5px;
+    cursor: pointer;
+}

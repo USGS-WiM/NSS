@@ -326,11 +326,12 @@ export class MainviewComponent implements OnInit, OnDestroy {
                     minorTic_LY: true,
                     minorGrid_LY: true,
                     colorPickerColor: '#7CB5EC',
-                    curveLabel: 'PK25',
+                    curveLabel: 'Computed Points',
                     lineSymbolFillColor: '#7CB5EC',
                     reverse_LY: false,
                     reverse_BX: false,
-                    dataLabels: false
+                    dataLabels: false,
+                    pointSymbols: true
                 };
 
                 this.showChartBtn_txt = 'Hide';
@@ -389,7 +390,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                             data: this.DIMLESS_ARRAY.map(p => {
                                 return [p[0] * 1, this.sigFigures(p[1] * rec)];
                             }),
-                            name: H_areaAveraged ? 'PK25 (Area-weighted average)' : 'PK25',
+                            name: H_areaAveraged ? 'Computed Points (Area-weighted average)' : 'Computed Points',
                             states: {
                                 hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
                             }
@@ -464,11 +465,12 @@ export class MainviewComponent implements OnInit, OnDestroy {
                         minorTic_LY: false,
                         minorGrid_LY: false,
                         colorPickerColor: '#7CB5EC',
-                        curveLabel: 'PK25',
+                        curveLabel: 'Computed Points',
                         lineSymbolFillColor: '#7CB5EC',
                         reverse_LY: false,
                         reverse_BX: false,
-                        dataLabels: false
+                        dataLabels: false,
+                        pointSymbols: true
                     };
                     // get array of recurrences from result
                     let freqDataArray: number[][];
@@ -478,7 +480,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                             s.regressionRegions.forEach(rr => {
                                 if (rr.name == 'Area-Averaged') {
                                     F_areaAveraged = true; // area averaged, add title to chart stating
-                                    this.frequencyPlotChart.curveLabel = 'PK25 (Area-weighted average)';
+                                    this.frequencyPlotChart.curveLabel = 'Computed Points (Area-weighted average)';
                                     rr.results.forEach(R => {
                                         let x: number = +R.name.substring(0, R.name.indexOf(' '));
                                         freqDataArray.push([x, this.sigFigures(R.value)]);
@@ -507,7 +509,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                                         dataLabels: {
                                             enabled: true
                                         },
-                                        name: F_areaAveraged ? 'PK25 (Area-weighted average)' : 'PK25',
+                                        name: F_areaAveraged ? 'Computed Points (Area-weighted average)' : 'Computed Points',
                                         states: {
                                             hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
                                         }
@@ -522,7 +524,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                             {
                                 data: this.fChartValues,
                                 marker: { enabled: true },
-                                name: F_areaAveraged ? 'PK25 (Area-weighted average)' : 'PK25',
+                                name: F_areaAveraged ? 'Computed Points (Area-weighted average)' : 'Computed Points',
                                 states: {
                                     hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
                                 }
@@ -872,14 +874,19 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public setLineWidth(i: number) {
         this.charts[i].series[0].update({ lineWidth: this.hydrographs[i].lineWidth });
     }
-    // change line symbol fill color HYDRO
+    // change point symbol fill color HYDRO
     public changeLineSymbolColor(i: number, c: string) {
         this.charts[i].series[0].update({ marker: { fillColor: c } });
         this.hydrographs[i].lineSymbolFillColor = c;
     }
     // change point symbol HYDRO
     public setLineSymbol(i: number, e: Event) {
+        this.charts[i].series[0].update({ marker: { enabled: true } });
         this.charts[i].series[0].update({ marker: { symbol: this.hydrographs[i].lineSymbol } });
+    }
+    // show/hide point symbol HYDRO
+    public showHideLineSymbol(i: number, value: boolean) {
+        this.charts[i].series[0].update({ marker: { enabled: value } });
     }
     // change curve label HYDRO
     public updateCurveLabel(i: number) {
@@ -1074,7 +1081,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public setFreqLineWidth() {
         this.freqChart.series[0].update({ lineWidth: this.frequencyPlotChart.lineWidth });
     }
-    // change line symbol fill color FREQUENCY
+    // change point symbol fill color FREQUENCY
     public changeFreqLineSymbolColor(c: string) {
         this.freqChart.series[0].update({ marker: { fillColor: c } });
         this.frequencyPlotChart.lineSymbolFillColor = c;
@@ -1082,6 +1089,10 @@ export class MainviewComponent implements OnInit, OnDestroy {
     // change point symbol FREQUENCY
     public setFreqLineSymbol(e: Event) {
         this.freqChart.series[0].update({ marker: { symbol: this.frequencyPlotChart.lineSymbol } });
+    }
+    // show/hide point symbols FREQUENCY
+    public showHideFreqSymbol(value: boolean) {
+        this.freqChart.series[0].update({ marker: { enabled: value } });
     }
     // change curve label FREQUENCY
     public updateFreqCurveLabel() {
@@ -1142,10 +1153,18 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
     // need superscript tag in unittype (using <span [innerHTML]="setSuperScript(p.UnitType.Abbr)"> converts tags to actual html)
     public setSuperScript(unit: string) {
-        let newUnitWithSupTag: string = '';
-        let indexOfSup = unit.indexOf('^');
-        if (indexOfSup > -1) newUnitWithSupTag = unit.substring(0, indexOfSup) + '<sup>' + unit.substring(indexOfSup + 1) + '</sup>';
-        else newUnitWithSupTag = unit;
+        let newUnitWithSupTag = ''; let endSupIndex = -1;
+        const indexOfSup = unit.indexOf('^');
+        // find first non-numeric value (often "/") after superscript to prevent everything following the caret from being superscripted
+        const strAfterCaret = unit.substring(indexOfSup + 1);
+        const nonNumeric = strAfterCaret.match(/\D/);
+        if (nonNumeric) {endSupIndex = strAfterCaret.indexOf(nonNumeric[0]); }
+        if (indexOfSup > -1 && endSupIndex > -1) {
+            newUnitWithSupTag = unit.substring(0, indexOfSup) + '<sup>' + strAfterCaret.substring(0, endSupIndex)
+                + '</sup>' + strAfterCaret.substring(endSupIndex);
+        } else if (indexOfSup > -1) {
+            newUnitWithSupTag = unit.substring(0, indexOfSup) + '<sup>' + strAfterCaret + '</sup>';
+        } else { newUnitWithSupTag = unit; }
 
         return newUnitWithSupTag;
     }

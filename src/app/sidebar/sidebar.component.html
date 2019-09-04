@@ -22,8 +22,8 @@
 
     <div class="sidebar-item" *ngIf="regressionRegions">
         <span>
-            <span>Limit by Regression Region(s):</span>
-            <i *ngIf="loggedInRole" (click)="showAddRegRegion()" title="Add Regression Region" class="ion-plus-circled"></i>
+            <span>Limit by Hydrologic Region(s):</span>
+            <i *ngIf="loggedInRole == 'Administrator'" (click)="showAddRegRegion()" title="Add Regression Region" class="ion-plus-circled"></i>
             <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>
         <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"

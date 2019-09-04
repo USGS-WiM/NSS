@@ -8,6 +8,7 @@ import { Regressiontype } from '../shared/interfaces/regressiontype';
 import { Regressionregion } from '../shared/interfaces/regressionregion';
 import { IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/angular-2-dropdown-multiselect';
 import { Toast } from 'angular2-toaster/src/toast';
+import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
@@ -54,7 +55,7 @@ export class SidebarComponent implements OnInit {
     // scenario
     public scenarios: Array<Scenario>;
 
-    constructor(private _nssService: NSSService, private _authService: AuthService) {}
+    constructor(private _nssService: NSSService, private _authService: AuthService, private _toasterService: ToasterService) {}
 
     ngOnInit() {
         this.loggedInRole = localStorage.getItem('loggedInRole');
@@ -70,6 +71,10 @@ export class SidebarComponent implements OnInit {
         this._nssService.getRegions();
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
+            if (regions.length === 0) {
+                this._toasterService.clear();
+                this._toasterService.pop('error', 'You have no assigned regions. Contact your administrator to add new regions.');
+            }
         });
         this._nssService.selectedRegion.subscribe((r: Region) => {
             this.selectedRegion = r;
@@ -137,6 +142,9 @@ export class SidebarComponent implements OnInit {
                 // if there are results, show the chart buttons
                 if (sc.regressionRegions.length > 0 && sc.regressionRegions[0].results && sc.statisticGroupName.indexOf('Peak-Flow') > -1) {
                     this.showChart = true;
+                    sc.regressionRegions[0].results.forEach((r) => {
+                        r.equation = r.equation.replace(/_/g, ' \\_');
+                    });
                 } else { this.showChart = false; }
             });
         });

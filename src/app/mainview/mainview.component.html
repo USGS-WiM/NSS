@@ -58,12 +58,12 @@
             <table *ngIf="scenarios[0].regressionRegions.length > 0" style="border:solid 1px gray" class="table">
                 <thead>
                     <tr>
-                        <th class="col-xs-5">Parameter</th>
+                        <th class="col-xs-4">Parameter</th>
                         <th>Code</th>
-                        <th class="col-xs-2">Value</th>
+                        <th class="col-xs-3">Value</th>
                         <th class="col-xs-1" *ngIf="multipleRegRegions"></th>
                         <th class="col-xs-2">Min Limit</th>
-                        <th class="col-xs-3">Max Limit</th>
+                        <th class="col-xs-2">Max Limit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -646,6 +646,8 @@
         <br/><br/><br/>
     </div><!-- end results back -->
     </div>
+
+    <!-- editRegionScenario -->
     <div class="hidden-print" *ngIf="editRegionScenario">
         <form #editScenarioForm="ngForm">
             <div>
@@ -694,14 +696,68 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <i title="Add Citation" (click)="showNewRegressionRegionForm(rr)" class="ion-plus-circled pull-left"
+                                            <i title="Add Citation" (click)="showNewRegressionRegionForm(rr.id)" class="ion-plus-circled pull-left"
                                                     aria-hidden="true" style="cursor:pointer;padding:10px 0px;"></i>
                                         </td>
                                     </tr>
                                 </tbody>
-                            </table>
-                        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Parameters</legend>
+                        </table>
+
+                        <!--Citation table-->
+                        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Citation</legend>
+                        <table *ngIf="rr.citationID" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="col-xs-1"></th>
+                                    <th class="col-xs-4">Title</th>
+                                    <th class="col-xs-3">Author</th>
+                                    <th class="col-xs-4">Citation URL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let c of citations | citationfilter:rr.citationID; let cIndex = index;">
+                                    <td>
+                                        <div class="data-controls">
+                                            <i *ngIf="!c.isEditing" title="Edit Citation" (click)="editRowClicked(c, rrIndex, sgIndex, cIndex)" class="fa fa-pencil"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                                            <i *ngIf="!c.isEditing" title="Remove Citation" (click)="removeCitation(rr)" class="fa fa-minus-circle"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                                            <!-- <i *ngIf="!c.isEditing" title="Delete Citation" (click)="deleteCitation(c.id)" class="fa fa-times"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i> -->
+                                            <i *ngIf="c.isEditing" title="Save Citation" (click)="saveCitation(c)" class="fa fa-floppy-o"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                                            <i *ngIf="c.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="fa fa-history"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!c.isEditing">{{ c.title }}</span>
+                                        <span *ngIf="c.isEditing">
+                                            <input type="text" name="title" [(ngModel)]="c.title">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!c.isEditing">{{ c.author }}</span>
+                                        <span *ngIf="c.isEditing">
+                                            <input type="text" name="author" [(ngModel)]="c.author">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!c.isEditing">{{ c.citationURL }}</span>
+                                        <span *ngIf="c.isEditing">
+                                            <input type="text" name="citationURL" [(ngModel)]="c.citationURL">
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div *ngIf="!rr.citationID">
+                            <p><i title="Add Citation" (click)="showNewRegressionRegionForm(rr)" class="ion-plus-circled pull-left"
+                                aria-hidden="true" style="cursor:pointer;padding:0px 10px;"></i>No citation available</p>
+                        </div>
+                        
                         <!--Parameter table-->
+                        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Parameters</legend>
                         <table class="table">
                             <thead>
                                 <tr>
@@ -754,8 +810,10 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Regressions</legend>
+
+                        
                         <!--Regression table-->
+                        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Regressions</legend>
                         <table class="table">
                             <thead>
                                 <tr>

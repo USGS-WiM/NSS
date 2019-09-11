@@ -29,6 +29,7 @@ import { ErrorsComponent } from './settings/categories/errors/errors.component';
 
 import { environment } from '../environments/environment';
 import { UniquePipe } from './mainview/unique.pipe';
+import { CitationFilterPipe } from './mainview/citation-filter.pipe';
 
 import { NSSService } from './shared/services/app.service';
 import { ConfigService } from './config.service';
@@ -84,7 +85,7 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, LoaderComponent, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, CitationFilterPipe
   ],
   imports: [
     BrowserModule, FormsModule, HttpModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

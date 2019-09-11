@@ -118,6 +118,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public selectedRegRegion;
     public modalRef;
     // public changeStatGroup = false;
+    public citations: Array<Citation>;
 
     constructor(
         private _nssService: NSSService,
@@ -202,6 +203,8 @@ export class MainviewComponent implements OnInit, OnDestroy {
         // subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
             this.scenarios = s;
+            this.getCitations(); // get full list of citations
+            this.getRegRegions(); // get list of regression regions for the region
             this.resultsBack = false;
             this.equationResults = [];
             this.uniqueParameters = []; this.uniqueUnitTypes = []; this.uniqueRegRegions = [];
@@ -1209,12 +1212,57 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public editRegScenario() {
         this.editRegionScenario = true;
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']); // render equations into Mathjax
-        this.getRegRegions(); // get list of regression regions for the region
     }
 
     public cancelEditRegionScenario() {
         this.editRegionScenario = false;
         if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
+    }
+
+    public saveCitation(c) {
+        // put edited scenario
+        this._settingsService.putEntity(c.id, c, this.configSettings.citationURL)
+            .subscribe((response) => {
+                c.isEditing = false;
+                this._nssService.setSelectedRegion(this.selectedRegion); // update everything
+                this._nssService.outputWimMessages(response);
+            }, error => {
+                if (this._settingsService.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error editing Citation', error._body.message || error.statusText);
+            }
+        );
+    }
+
+    public deleteCitation(id) {
+        const check = confirm('Are you sure you want to delete this citation?');
+        if (check) {
+            this._settingsService.deleteEntity(id, this.configSettings.citationURL).subscribe(result => {
+                this._nssService.setSelectedRegion(this.selectedRegion);
+                if (result.headers) { this._nssService.outputWimMessages(result); }
+            }, error => {
+                if (error.headers) {this._nssService.outputWimMessages(error);
+                } else { this._nssService.handleError(error); }
+            });
+        }
+    }
+
+    // remove citation from regression region (set citationID to null)
+    public removeCitation(rr) {
+        const check = confirm('Are you sure you want to remove this citation from ' + rr.name + '?');
+        if (check) {
+            const idx = this.regressionRegions.findIndex(r => r.id === rr.id);
+            const regReg = this.regressionRegions[idx];
+            regReg.citationID = null;
+            this._settingsService.putEntity(rr.id, regReg, this.configSettings.regRegionURL)
+                .subscribe((response) => {
+                    this._nssService.setSelectedRegion(this.selectedRegion); // update everything
+                    this._nssService.outputWimMessages(response);
+                }, error => {
+                    if (this._settingsService.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error removing Citation', error._body.message || error.statusText);
+                }
+            );
+        }
     }
 
     public saveParameter(p, rrIndex, sgIndex) {
@@ -1290,6 +1338,21 @@ export class MainviewComponent implements OnInit, OnDestroy {
             .subscribe(res => {
                 if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
                 this.regressionRegions = res;
+                if (this.scenarios) {
+                    this.scenarios.forEach((s => {
+                        s.regressionRegions.forEach(rr => {
+                            const rrIdx = this.regressionRegions.findIndex(r => r.id === rr.id);
+                            rr.citationID = this.regressionRegions[rrIdx].citationID;
+                        });
+                    }));
+                }
+            });
+    }
+
+    public getCitations() {
+        this._settingsService.getEntities(this.configSettings.citationURL)
+            .subscribe(res => {
+                this.citations = res;
             });
     }
 
@@ -1314,6 +1377,8 @@ export class MainviewComponent implements OnInit, OnDestroy {
         // reset item if cancelling editing
         if (this.editIdx === null) { // if regression region
             this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex] = this.tempData;
+        } else if (this.itemBeingEdited.citationURL) { // if citation
+            this.citations[this.editIdx] = this.tempData;
         } else if (this.itemBeingEdited.limits) { // if parameter
             this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].parameters[this.editIdx] = this.tempData;
         } else if (this.itemBeingEdited.equation) { // if regression
@@ -1392,7 +1457,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                 this.modalRef.close();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) {return; }
-                this._toasterService.pop('error', 'Error deleting Scenario', error._body.message || error.statusText);
+                this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
             }
         );
     }

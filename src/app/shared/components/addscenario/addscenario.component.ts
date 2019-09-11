@@ -94,7 +94,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
-            if (region.id) {this.getRegRegions(); }
+            if (region && region.id) {this.getRegRegions(); }
         });
         this._nssService.getVersion.subscribe((v: string) => {
             this.appVersion = v;

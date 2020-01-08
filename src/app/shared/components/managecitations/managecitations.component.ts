@@ -16,6 +16,7 @@ import { ConfigService } from 'app/config.service';
 import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
+import { Citation } from 'app/shared/interfaces/citation';
 declare var MathJax: {
     Hub: { Queue, Config }
 };
@@ -44,6 +45,8 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public addPredInt = false;
     public modalRef;
     public loggedInRole;
+    public citations: Array<Citation>;
+    public scenarios: Scenario[];
 
     constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -122,6 +125,101 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this._settingsService.getEntities(this.configSettings.errorsURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.errors = res;
+        });
+        // subscribe to scenarios
+        this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
+            this.scenarios = s;
+            this.getCitations(); // get full list of citations
+            this.getRegRegions(); // get list of regression regions for the region
+            this.resultsBack = false;
+            this.equationResults = [];
+            this.uniqueParameters = []; this.uniqueUnitTypes = []; this.uniqueRegRegions = [];
+            let regID: string = '';
+            this.showWeights = false; this.multipleRegRegions = false;
+            this.scenarios.forEach(s => {
+                this.appendixEquationsforExport = [];
+                // show weight inputs if more than 1 regression region chosen
+                const firstRegname = s.regressionRegions[0].name;
+                if (s.regressionRegions.length > 1) {
+                    this.showWeights = true;
+                    this.multipleRegRegions = true;
+                } else if (this.uniqueRegRegions.indexOf(firstRegname) === -1) { this.uniqueRegRegions.push(firstRegname); }
+
+                if (this.uniqueRegRegions.length > 1) { this.multipleRegRegions = true; }
+
+                s.regressionRegions.forEach((rr, index) => {
+                    regID = '(RG_Code: ' + rr.code + ')'; // need to show the regID for each limit so they know which one they are out of range on
+                    if (rr.results && rr.results.length > 0) {
+                        if (rr.results[0] && rr.results[0].errors) {
+                            this.resultsErrorLength = rr.results[0].errors.length;
+                        }
+                        let eqResult: Equationresults = { name: '', formulas: [] };
+                        let equationString: string = '';
+                        if (index < 1) {
+                            // first time thru
+                            equationString = rr.name !== 'Area-Averaged' ? rr.name + '\r\n' : '';
+                        } else {
+                            let name = rr.name !== 'Area-Averaged' ? rr.name + '\r\n' : '';
+                            equationString = '\r\n' + name;
+                        }
+                        // only care if average result
+                        if (rr.id > 0) eqResult.name = rr.name;
+                        this.resultsBack = true;
+                        rr.results.forEach(R => {
+                            if (eqResult.name != '') {
+                                eqResult.formulas.push({ Code: R.code, Equation: this.buildEquation(rr.parameters, R.equation) });
+                                equationString += R.code + '= ,' + R.equation + '\r\n';
+                            }
+                        });
+                        if (rr.id > 0) this.equationResults.push(eqResult);
+                        this.appendixEquationsforExport.push(equationString); // push each equation string in for use when exporting appendix table later
+                    } else if (rr.results && rr.results.length === 0) {
+                        this._toasterService.pop('error', 'Error', 'No results returned.');
+                    } // end there's results
+                    // populate uniqueParameters and uniqueUnitTypes
+                    if (rr.id > 0) {
+                        rr.parameters.forEach(p => {
+                            // is this param code already in array list?
+                            let pIndex = this.uniqueParameters
+                                .map(function(parame) {
+                                    return parame.code;
+                                })
+                                .indexOf(p.code);
+                            if (pIndex < 0) {
+                                p.limitArray = [];
+                                if (p.limits != undefined) {
+                                    p.limits.rrID = regID;
+                                    p.limitArray.push(p.limits);
+                                } else {p.limits = {max: null, min: null}}
+                                this.uniqueParameters.push(p);
+                            } else {
+                                // already in here. find the matching one and add it's limits to the LimitArray
+                                const limArray = this.uniqueParameters[pIndex].limitArray;
+                                if (p.limits !== undefined) { p.limits.rrID = regID;
+                                } else {p.limits = {min: null, max: null}}
+                                // check if limit array already in list (some duplicates due to statistic/regression groups)
+                                if (!this.containsObject(p.limits, limArray)) {
+                                    limArray.push(p.limits);
+                                }
+                            }
+                            // is this unitType already in the array list?
+                            let uIndex = this.uniqueUnitTypes
+                                .map(function(unit) {
+                                    return unit.abbr;
+                                })
+                                .indexOf(p.unitType.abbr);
+                            if (uIndex < 0) {
+                                // not in there yet
+                                this.uniqueUnitTypes.push(p.unitType);
+                            }
+                            p.isEditing = false;
+                        });
+                    }
+                }); // end s.regressionRegion.forEach
+                if (this.resultsBack) {
+                    MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathjax']); // for the appendix of equations
+                }
+            });
         });
 
         this.modalElement = this.manageCitationsModal;
@@ -323,5 +421,12 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.modalSubscript.unsubscribe();
+    }
+
+    public getCitations() {
+        this._settingsService.getEntities(this.configSettings.citationURL)
+            .subscribe(res => {
+                this.citations = res;
+            });
     }
 }

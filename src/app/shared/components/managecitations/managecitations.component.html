@@ -6,7 +6,21 @@
         </div>
     </div>
     <div class="modal-body">
-        
+
+        <h2 style="margin:0;padding:0">Citations</h2>
+        <div *ngFor="let sc of scenarios">
+            <div *ngIf="sc.citations">
+                <label *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</label>
+                <div *ngFor="let l of sc.citations">
+                    <a *ngIf="l" [href]="l.citationURL" [target]="_blank">
+                        <div>{{l.author}}</div>
+                        <div>{{l.title}}</div>
+                    </a>
+                    <br />
+                </div>
+            </div>
+        </div>
+        <!--end foreach scenario (for citations) {{l != undefined ? l.rrID : ''}}-->
 
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>

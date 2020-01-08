@@ -25,7 +25,7 @@ declare var MathJax: {
     templateUrl: './managecitations.component.html',
     styleUrls: ['./managecitations.component.css']
 })
-export class AddScenarioModal implements OnInit, OnDestroy {
+export class ManageCitationsModal implements OnInit, OnDestroy {
     @ViewChild('manageCitations') public manageCitationsModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
     public CloseResult: any;

@@ -89,7 +89,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             }
         });
         // show the filter modal == Change Filters button was clicked in sidebar
-        this.modalSubscript = this._nssService.showAddScenarioModal.subscribe((show: boolean) => {
+        this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((show: boolean) => {
             if (show) { this.showModal(); }
         });
         this._nssService.selectedRegion.subscribe(region => {

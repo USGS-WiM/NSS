@@ -65,6 +65,15 @@ export class NSSService {
     public get showAddScenarioModal(): any {
         return this._showHideAddScenarioModal.asObservable();
     }
+    // -+-+-+-+-+-+-+-+-+ manage citations modal -+-+-+-+-+-+-+-+
+    private _showHideManageCitationsModal: Subject<boolean> = new Subject<boolean>();
+    public setManageCitationsModal(val: any) { 
+        this._showHideManageCitationsModal.next(val);
+    }
+    // show the manage citations modal in the mainview
+    public get showManageCitationsModal(): any {
+        return this._showHideManageCitationsModal.asObservable();
+    }
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
     private _showHideAddRegressioRegionModal: Subject<boolean> = new Subject<boolean>();
     public setAddRegressionRegionModal(val: any) {

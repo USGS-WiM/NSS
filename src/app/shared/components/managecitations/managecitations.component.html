@@ -1,0 +1,16 @@
+<ng-template #manageCitations let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="col-xs-12">
+            <h4 class="modal-title pull-left">Manage Citations </h4>
+            <button class="close pull-right" (click)="d('closed')">x</button>
+        </div>
+    </div>
+    <div class="modal-body">
+        
+
+        <div class="modal-footer">
+            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+            <button type="button" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="btn-blue">Create</button>
+        </div>
+    </div>
+</ng-template>

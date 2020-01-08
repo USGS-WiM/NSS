@@ -836,7 +836,7 @@
                                                 aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
                                             <i *ngIf="!r.isEditing" title="Delete Regression" (click)="deleteRegression(s.statisticGroupID, rr.id, r.id)" class="fa fa-times"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                                            <i *ngIf="r.isEditing" title="Save Regression" (click)="saveRegression(r, rrIndex, sgIndex)" class="fa fa-floppy-o"
+                                            <i *ngIf="r.isEditing" title="Save Regression" (click)="saveRegression(r, rIndex, rrIndex, sgIndex)" class="fa fa-floppy-o"
                                                 aria-hidden="true" style="cursor:pointer;padding-right:5px;"></i>
                                             <i *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="fa fa-history"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
@@ -1037,6 +1037,7 @@
                 <div class="input-invalid-warning" *ngIf="!newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty">URL
                     is required</div>
             </div>
+            <button *ngIf="addCitation" type="button" class="btn-blue" (click)="addCitation = false; newCitForm.reset();">Remove Citation</button>
         </form>
 
         <div class="modal-footer">

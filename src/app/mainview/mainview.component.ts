@@ -1606,6 +1606,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     private cancelCreateRegression() {
         this.showNewRegRegForm = false;
         this.newRegRegForm.reset();
+        this.newCitForm.reset();
         this.modalRef.close();
     }
 

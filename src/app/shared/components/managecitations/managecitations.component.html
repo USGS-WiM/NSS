@@ -6,7 +6,6 @@
         </div>
     </div>
     <div class="modal-body">
-
         <h2 style="margin:0;padding:0">Citations</h2>
         <div *ngFor="let sc of scenarios">
             <div *ngIf="sc.citations">
@@ -20,11 +19,8 @@
                 </div>
             </div>
         </div>
-        <!--end foreach scenario (for citations) {{l != undefined ? l.rrID : ''}}-->
-
         <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="btn-blue">Create</button>
+            <button type="button" (click)="d('closed')" class="btn-black">Close</button>
         </div>
     </div>
 </ng-template>

@@ -659,7 +659,7 @@
                             aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
                         <i *ngIf="!rr.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(rr.id)" class="fa fa-times"
                             aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                        <label *ngIf="!rr.isEditing" class="rrLabel">{{rr.name}}</label>
+                        <label *ngIf="!rr.isEditing" class="rrLabel">{{rr.name}} (RG_Code: {{rr.code}})</label>
                         <table *ngIf="rr.isEditing" class="table">
                                 <thead>
                                     <tr>

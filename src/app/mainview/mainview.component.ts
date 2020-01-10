@@ -1209,6 +1209,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public showAddScenarioModal() {
         this._nssService.setAddScenarioModal(true);
     }
+
     public editRegScenario() {
         this.editRegionScenario = true;
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']); // render equations into Mathjax
@@ -1217,6 +1218,10 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public cancelEditRegionScenario() {
         this.editRegionScenario = false;
         if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
+    }
+
+    public showManageCitationsModal() {
+        this._nssService.setManageCitationsModal(true);
     }
 
     public saveCitation(c) {

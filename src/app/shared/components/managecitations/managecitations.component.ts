@@ -26,7 +26,6 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     @ViewChild('manageCitations') public manageCitationsModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
     private modalSubscript;
-    public appVersion: string;
     public regressionRegions;
     public selectedRegion;
     private configSettings: Config;
@@ -55,9 +54,6 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
             if (region && region.id) {this.getRegRegions(); }
-        });
-        this._nssService.getVersion.subscribe((v: string) => {
-            this.appVersion = v;
         });
         // subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {

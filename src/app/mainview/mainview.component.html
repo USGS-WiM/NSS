@@ -28,6 +28,7 @@
             <button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showAddScenarioModal()">Add Scenario</button>
             <button *ngIf="loggedInRole && showRegion && !editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="editRegScenario()">Edit Scenario</button>
             <button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="cancelEditRegionScenario()">Finish Editing</button>
+            <button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showManageCitationsModal()">Manage Citations</button>
         </div>
     </div>
     <br clear="all"/>

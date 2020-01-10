@@ -5,4 +5,6 @@ export interface Predictioninterval {
     xiRowVector?: string;
     XIRowVector?: string;
     covarianceMatrix: string;
+    lowerBound: number;
+    supperBound: number;
 }

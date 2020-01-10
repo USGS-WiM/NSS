@@ -1356,6 +1356,33 @@ export class MainviewComponent implements OnInit, OnDestroy {
             });
     }
 
+
+    public cloneRowClicked(statisticGroup, item, regRegion,rIndex) {
+        //console.log(item);
+        console.log(statisticGroup);
+        console.log(regRegion.name);
+        console.log(item.name);
+        console.log(item.equationMathJax);
+        console.log(item.equivalentYears);
+
+        console.log("parameters");
+
+        console.log(item.predictionInterval.biasCorrectionFactor);
+        console.log(item.predictionInterval.student_T_Statistic);
+        console.log(item.predictionInterval.variance);
+        console.log(item.predictionInterval.xiRowVector);
+        console.log(item.predictionInterval.covarianceMatrix);
+        //const reg = this.editScen.regressionRegions[0].regressions[rIndex];
+        //console.log(item.expected.intervalBounds.upper);
+        console.log(item.expected.value);
+        console.log("lower");
+
+        console.log("error");
+
+        //console.log(item.expected);
+        console.log(item.unit.unit);
+    }
+
     public editRowClicked(item, rrIndex, sgIndex, idx?) {
         if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
             this.CancelEditRowClicked();

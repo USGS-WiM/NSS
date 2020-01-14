@@ -171,12 +171,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }));
     }
 
-    clearNewScenario() {
-        console.log("clear new scenario");
-        this.newScenForm=null;
-        this.newScenForm.patchValue({regressionRegions:{regressions:{equivalentYears:'0'}}})
-    }
-
     addError() {
         const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         control.push(this._fb.group({
@@ -235,6 +229,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         for(let i = parmControl.length-1; i >= 0; i--) {
             parmControl.removeAt(i);
         }
+        this.addPredInt = false
     }
 
     createNewScenario() {

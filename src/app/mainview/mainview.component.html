@@ -836,7 +836,9 @@
                                         <div class="data-controls">
                                             <i *ngIf="!r.isEditing" title="Edit Regression" (click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="fa fa-pencil"
                                                 aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
-                                            <i *ngIf="!r.isEditing" title="Clone Scenario" (click)="cloneRowClicked(s.statisticGroupName,r,  rr, rIndex)" class="fa fa-clone"
+                                            <i *ngIf="!r.isEditing" title="Clone Scenario" (click)="showCloneScenarioModal()" class="fa fa-clone"
+                                                aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
+                                            <i *ngIf="!r.isEditing" title="Clone Scenario" (click)="cloneRowClicked(s, r, rr)" class="fa fa-clone"
                                                 aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
                                             <i *ngIf="!r.isEditing" title="Delete Regression" (click)="deleteRegression(s.statisticGroupID, rr.id, r.id)" class="fa fa-times"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>

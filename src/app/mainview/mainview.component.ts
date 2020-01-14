@@ -29,6 +29,7 @@ import { NgForm, FormGroup, FormBuilder, FormControl, Validators } from '@angula
 import { Predictioninterval } from 'app/shared/interfaces/predictioninterval';
 import { URLSearchParams } from '@angular/http';
 import { Citation } from 'app/shared/interfaces/citation';
+import { element } from '@angular/core/src/render3';
 
 declare var MathJax: {
     Hub: { Queue };
@@ -1205,9 +1206,13 @@ export class MainviewComponent implements OnInit, OnDestroy {
         popupWin.document.close();
     }
 
-    /////////////////////// Add/Edit/Delete Scenarios Section ///////////////////////////
+    /////////////////////// Add/Clone/Edit/Delete Scenarios Section ///////////////////////////
     public showAddScenarioModal() {
         this._nssService.setAddScenarioModal(true);
+    }
+
+    public showCloneScenarioModal() {
+        this._nssService.setCloneScenarioModal(true);
     }
 
     public editRegScenario() {
@@ -1362,30 +1367,39 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
 
 
-    public cloneRowClicked(statisticGroup, item, regRegion,rIndex) {
-        //console.log(item);
-        console.log(statisticGroup);
-        console.log(regRegion.name);
-        console.log(item.name);
-        console.log(item.equationMathJax);
-        console.log(item.equivalentYears);
+    public cloneRowClicked(statisticGroup, item, regRegion) {
+        //this.newCloneScenForm.controls['statisticGroupID'].setValue(this.statisticGroup.statisticGroupid);
+         console.log(statisticGroup);
+         console.log(regRegion);
+        console.log(item);
+        // console.log(item.equationMathJax);
+        // console.log(item.equivalentYears);
 
-        console.log("parameters");
+        // regRegion.parameters.forEach((element)=>{
+        //     console.log(element.description)
+        //     console.log(element.limits.min)
+        //     console.log(element.limits.max)
+        //     console.log(element.unitType.unit)
+        //     console.log(element.value)
+        //     console.log("parameter value")
+        // });
 
-        console.log(item.predictionInterval.biasCorrectionFactor);
-        console.log(item.predictionInterval.student_T_Statistic);
-        console.log(item.predictionInterval.variance);
-        console.log(item.predictionInterval.xiRowVector);
-        console.log(item.predictionInterval.covarianceMatrix);
-        //const reg = this.editScen.regressionRegions[0].regressions[rIndex];
-        //console.log(item.expected.intervalBounds.upper);
-        console.log(item.expected.value);
-        console.log("lower");
+        // console.log(item.predictionInterval.biasCorrectionFactor);
+        // console.log(item.predictionInterval.student_T_Statistic);
+        // console.log(item.predictionInterval.variance);
+        // console.log(item.predictionInterval.xiRowVector);
+        // console.log(item.predictionInterval.covarianceMatrix);
+        // console.log("upper");
+        // console.log("lower");
 
-        console.log("error");
+        // item.errors.forEach((element)=>{
+        //     console.log(element.name)
+        //     console.log(element.value)
+        // });
 
-        //console.log(item.expected);
-        console.log(item.unit.unit);
+        // console.log(item);
+        // console.log(item.unit.unit);
+        // this.showAddScenarioModal();
     }
 
     public editRowClicked(item, rrIndex, sgIndex, idx?) {

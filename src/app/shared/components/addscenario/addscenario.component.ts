@@ -127,6 +127,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.modalElement = this.addScenarioModal;
     }
 
+    
+
     public getRegRegions() {
         // moving to own function for when new regression region is added
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
@@ -169,13 +171,30 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }));
     }
 
+    clearNewScenario() {
+        console.log("clear new scenario");
+        this.newScenForm=null;
+        this.newScenForm.patchValue({regressionRegions:{regressions:{equivalentYears:'0'}}})
+    }
+
     addError() {
         const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
-        control.push(new FormControl(null, Validators.required));
+        control.push(this._fb.group({
+            errcode: new FormControl(null, Validators.required),
+            errvalue: new FormControl(null, Validators.required)
+        }));
     }
+
 
     showMathjax() {
         const exp = this.newScenForm.get('regressionRegions.regressions.equation').value;
+        if(exp==null){
+            this.equation=" ";
+            const equ = document.getElementById('mathjaxEq');
+            equ.style.visibility = 'hidden';
+            if (equ.firstChild) {equ.removeChild(equ.firstChild); }
+            equ.insertAdjacentHTML('afterbegin', '<span [MathJax]="equation">' + this.equation + '</span');
+        }else{
         const equ = document.getElementById('mathjaxEq');
         equ.style.visibility = 'hidden';
         if (equ.firstChild) {equ.removeChild(equ.firstChild); }
@@ -193,6 +212,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             function() {
                 equ.style.visibility = '';
             });
+        }
     }
 
     removeVariable(i) {
@@ -203,6 +223,18 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     removeError(i) {
         const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         control.removeAt(i);
+    }
+
+    public clearScenario(){
+        this.newScenForm.reset();
+        const errorControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
+        for(let i = errorControl.length-1; i >= 0; i--) {
+            errorControl.removeAt(i);
+        }
+        const parmControl = <FormArray>this.newScenForm.get('regressionRegions.parameters');
+        for(let i = parmControl.length-1; i >= 0; i--) {
+            parmControl.removeAt(i);
+        }
     }
 
     createNewScenario() {

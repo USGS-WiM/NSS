@@ -154,7 +154,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
-        this.newScenForm.get('regressionRegions.ID').setValue('');
+        //this.newScenForm.get('regressionRegions.ID').setValue('');
     }
 
     addVariable() {
@@ -173,12 +173,16 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     addError() {
         const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
-        control.push(this._fb.group({
-            errcode: new FormControl(null, Validators.required),
-            errvalue: new FormControl(null, Validators.required)
-        }));
-    }
+        control.push(new FormControl(null, Validators.required));
+    } 
 
+   /* addError() {
+        const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
+        control.push(this._fb.group({
+            errorCode: new FormControl(null, Validators.required),
+            errorValue: new FormControl(null, Validators.required)
+        }));
+    } */
 
     showMathjax() {
         const exp = this.newScenForm.get('regressionRegions.regressions.equation').value;
@@ -235,6 +239,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     createNewScenario() {
         // adding all necessary properties, since ngValue won't work with all the nested properties
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
+        console.log(JSON.stringify(this.newScenForm.value));
+        console.log(this.newScenForm.value);
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id.toString() === scen['statisticGroupID']);
         scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
@@ -260,29 +266,45 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 return;
             } // make sure given values are within the limits
         }
+
         // get error values
         for (let i = 0; i < regs.errors.length; i ++) {
             const value = (<HTMLInputElement>document.getElementById('errValue' + i)).value;
             regs.errors[i].value = value;
         }
+
         // check prediction interval
         if (!this.addPredInt || (!regs.predictionInterval.biasCorrectionFactor && !regs.predictionInterval.student_T_Statistic &&
             !regs.predictionInterval.variance && !regs.predictionInterval.xiRowVector && !regs.predictionInterval.covarianceMatrix)) {
                 regs.predictionInterval = null; regs.expected.intervalBounds = null;
             }
+
         // change regression region/regression to arrays
         scen['regressionRegions'].regressions = [regs];
         scen['regressionRegions'] = [regRegs];
+        console.log("1");
+
         // post scenario
         this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
             .subscribe((response) => {
+                console.log("2");
                 this._nssService.setSelectedRegion(this.selectedRegion);
+                console.log("3");
                 // clear form
-                if (!response.headers) {this._toasterService.pop('info', 'Info', 'Scenario was added');
-                } else {this._settingsService.outputWimMessages(response); }
+                if (!response.headers) {
+                    this._toasterService.pop('info', 'Info', 'Scenario was added');
+                    console.log("4");
+                } else {
+                    this._settingsService.outputWimMessages(response); 
+                    console.log("5");
+
+                }
                 this.cancelCreateScenario();
+                console.log("6");
             }, error => {
-                if (!this._settingsService.outputWimMessages(error)) {
+                console.log("7");
+                if (!this._settingsService.outputWimMessages(error)) {                                       
+                    console.log("8");
                     this._toasterService.pop('error', 'Error creating Scenario', error._body.message || error.statusText);
                 }
             }

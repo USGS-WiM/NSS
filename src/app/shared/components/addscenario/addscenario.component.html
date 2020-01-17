@@ -182,7 +182,7 @@
                                 <!--Error ID-->
                                 <div class="form-group required">
                                     <label class="req" for="id">Error:</label>
-                                    <select class="form-control" formControlName="id" (ngModelChange)="fillError($event, errIndex)" (ngModel)="errors">
+                                    <select class="form-control" formControlName="id" (ngModel)="errors">
                                         <option *ngFor="let e of errors" [ngValue]="e.id">{{e.name}}</option>
                                     </select>
                                 </div>

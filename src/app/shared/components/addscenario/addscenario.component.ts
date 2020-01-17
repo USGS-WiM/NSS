@@ -176,27 +176,18 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }));
     }  
 
-    fillError(id,index){
-        const errorList = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
-        const error = errorList.at(index).value;
-        const selectedError = this.errors.find(x => x.id == id);
-        error.name = selectedError.name;
-        error.code = selectedError.code;
-    }
-
     showMathjax() {
         const exp = this.newScenForm.get('regressionRegions.regressions.equation').value;
-        if(exp == null){
-            this.equation = " ";
-            const equ = document.getElementById('mathjaxEq');
-            equ.style.visibility = 'hidden';
-            if (equ.firstChild) {equ.removeChild(equ.firstChild); }
-            equ.insertAdjacentHTML('afterbegin', '<span [MathJax]="equation">' + this.equation + '</span');
-        }else{
         const equ = document.getElementById('mathjaxEq');
         equ.style.visibility = 'hidden';
-        if (equ.firstChild) {equ.removeChild(equ.firstChild); }
+        if (equ.firstChild) {
+            equ.removeChild(equ.firstChild); 
+        }
+        if(exp == null){
+            this.equation = " ";
+        }else{
         this.equation = '`' + exp + '`';
+        }
         equ.insertAdjacentHTML('afterbegin', '<span [MathJax]="equation">' + this.equation + '</span');
         MathJax.Hub.Config({
             'HTML-CSS': {
@@ -210,7 +201,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             function() {
                 equ.style.visibility = '';
             });
-        }
     }
 
     removeVariable(i) {

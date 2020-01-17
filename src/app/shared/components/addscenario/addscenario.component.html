@@ -167,37 +167,9 @@
                         </div>
                     </div>
                     <button *ngIf="!addPredInt" type="button" class="btn-blue" (click)="addPredInt = true">Add Prediction Interval</button>
-                    <!-- Errors-->
-                    <div formArrayName="errors">
-                        <button type="button" class="btn-blue" (click)="addError()">Add Error</button>
-                        <div *ngFor="let err of newScenForm.get('regressionRegions.regressions.errors').controls; let errIndex = index">
-                            <div class="scenDropdown">
-                                <div (click)="removeError(errIndex)"><i class="ion-close"></i></div>
-                                <div *ngIf="checkDiv('error' + (errIndex + 1))" class="showHideScen" (click)="hideDiv('error' + (errIndex + 1))">Error {{errIndex + 1}}
-                                    <i class="ion-android-arrow-dropdown"></i></div>
-                                <div *ngIf="!checkDiv('error' + (errIndex + 1))" class="showHideScen" (click)="showDiv('error' + (errIndex + 1))">Error {{errIndex + 1}}<i class="ion-android-arrow-dropright"></i></div>
-                            </div>
-                            <div [id]="'error' + (errIndex + 1)" class="scenFormGroup">
-                                <!-- Error ID-->
-                                <div class="form-group required">
-                                    <label class="req" [for]="errIndex">Error:</label>
-                                    <select class="form-control" [formControlName]="errIndex">
-                                        <option *ngFor="let e of errors" [ngValue]="e">{{e.name}}</option>
-                                    </select>
-                                </div>
-
-                                <!-- Error Value-->
-                                <div class="form-group required">
-                                    <label class="req">Value:</label>
-                                    <input [id]="'errValue' + errIndex" (keypress)="_keyPress($event)" type="number" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                     <!-- Errors-->
-                    <!-- <div formArrayName="errors">
+                     <div formArrayName="errors">
                         <button type="button" class="btn-blue" (click)="addError()">Add Error</button>
                         <div *ngFor="let err of newScenForm.get('regressionRegions.regressions.errors').controls; let errIndex = index">
                             <div class="scenDropdown">
@@ -207,22 +179,22 @@
                                 <div *ngIf="!checkDiv('error' + (errIndex + 1))" class="showHideScen" (click)="showDiv('error' + (errIndex + 1))">Error {{errIndex + 1}}<i class="ion-android-arrow-dropright"></i></div>
                             </div>
                             <div [formGroupName]=errIndex [id]="'error' + (errIndex + 1)" class="scenFormGroup">
-
+                                <!--Error ID-->
                                 <div class="form-group required">
-                                    <label class="req" for="errorCode">Error:</label>
-                                    <select class="form-control" formControlName="errorCode">
-                                        <option *ngFor="let e of errors" [ngValue]="e">{{e.name}}</option>
+                                    <label class="req" for="id">Error:</label>
+                                    <select class="form-control" formControlName="id" (ngModelChange)="fillError($event, errIndex)" (ngModel)="errors">
+                                        <option *ngFor="let e of errors" [ngValue]="e.id">{{e.name}}</option>
                                     </select>
                                 </div>
-            
+                                <!--Error Value-->
                                 <div class="form-group required">
-                                    <label class="req" for="errorValue">Value:</label>
-                                    <input class="form-control" [id]="'errValue' + errIndex" (keypress)="_keyPress($event)" type="number" formControlName="errorValue" required>
+                                    <label class="req" for="value">Value:</label>
+                                    <input class="form-control" [id]="'value' + errIndex" (keypress)="_keyPress($event)" type="number" formControlName="value" required>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>-->
+                </div> 
 
                 <!-- parameter values -->
                 <div formArrayName="parameters">

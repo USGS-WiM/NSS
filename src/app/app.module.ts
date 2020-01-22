@@ -45,7 +45,6 @@ import { AdminGuard } from './shared/guards/admin.guard';
 import { ProfileComponent } from './shared/components/profile/profile.component';
 import { AddScenarioModal } from './shared/components/addscenario/addscenario.component';
 import { ManageCitationsModal } from './shared/components/managecitations/managecitations.component';
-import { CloneScenarioModal } from './shared/components/clonescenario/clonescenario.component';
 
 declare const require: any;
 
@@ -87,7 +86,7 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, LoaderComponent, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, CloneScenarioModal
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe
   ],
   imports: [
     BrowserModule, FormsModule, HttpModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

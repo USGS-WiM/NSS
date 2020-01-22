@@ -6,7 +6,7 @@
 // authors:  Tonia Roddick USGS Wisconsin Internet Mapping
 // purpose: modal used to show about information
 
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NSSService } from 'app/shared/services/app.service';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -39,6 +39,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public unitTypes;
     public equation;
     public errors;
+    public item2: any;
+    public regRegion: any;
+    public statisticGroup: any;
+    public clone: boolean;
     public selectedRegion;
     private configSettings: Config;
     public addPredInt = false;
@@ -81,6 +85,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this._nssService.currentItem.subscribe(item => this.item2 = item);
+        this._nssService.currentRegRegion.subscribe(regRegion => this.regRegion = regRegion);
+        this._nssService.currentStatisticGroup.subscribe(statisticGroup => this.statisticGroup = statisticGroup);
+        this._nssService.currentClone.subscribe(clone => this.clone = clone);
+
         // subscriber for logged in role
         this.loggedInRole = localStorage.getItem('loggedInRole');
         this._authService.loggedInRole().subscribe(role => {
@@ -125,6 +134,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
 
         this.modalElement = this.addScenarioModal;
+
     }
 
     public getRegRegions() {
@@ -152,6 +162,53 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
+        
+        console.log(this.clone);
+
+        if(this.clone==true){
+            console.log("clone senario");
+            this.clearScenario();
+            this.cloneSenario();
+        }else{
+            console.log("new senario");
+        }
+            
+    }
+
+    cloneSenario(){
+        if(this.item2.predictionInterval.biasCorrectionFactor!=null){
+            this.addPredInt = true
+        }
+        this.newScenForm.patchValue({
+            statisticGroupID: this.statisticGroup.statisticGroupID,
+            regressionRegions: {
+                ID: this.regRegion.id,
+                regressions:{
+                    ID: this.item2.id,
+                    //unit:this.item.unit.id,
+                    equation: this.item2.equationMathJax,
+                    equivalentYears: this.item2.equivalentYears,
+                    predictionInterval: {
+                        biasCorrectionFactor: this.item2.predictionInterval.biasCorrectionFactor,
+                        student_T_Statistic: this.item2.predictionInterval.student_T_Statistic,
+                        variance: this.item2.predictionInterval.variance,
+                        xiRowVector: this.item2.predictionInterval.xiRowVector,
+                        covarianceMatrix: this.item2.predictionInterval.covarianceMatrix,
+                    }, 
+                    expected:{
+                       // value: '6',
+                        intervalBounds: {
+                            //lower: '2',
+                            //upper: '14',
+                        } 
+                    }
+                } 
+            }
+        });
+        console.log(this.item2);
+        console.log(this.statisticGroup);
+        console.log(this.regRegion);    
+        this.item2=" ";
     }
 
     addVariable() {
@@ -231,6 +288,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id.toString() === scen['statisticGroupID']);
+        console.log(statGroupIndex);
+
         scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
         // add regression region name/code

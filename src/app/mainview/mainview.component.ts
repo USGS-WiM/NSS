@@ -49,6 +49,10 @@ export class MainviewComponent implements OnInit, OnDestroy {
     @ViewChild('CitationForm') citationForm;
     public newCitForm: FormGroup;
     public title: string;
+    public statisticGroup: any;
+    public item: any;
+    public regRegion: any;
+    public clone: boolean;
     public resultsBack: boolean; // flag that swaps content on mainpage from scenarios w/o results to those with results
     public equationResults: Equationresults[]; // used in Appendix
     public showWeights: boolean; // if more than 1 regRegion, then show input for weighted
@@ -175,6 +179,13 @@ export class MainviewComponent implements OnInit, OnDestroy {
             if (region) { this.showRegion = true; }
             window.scrollTo(0, 0);
         });
+
+
+        this._nssService.currentItem.subscribe(item => this.item = item);
+        this._nssService.currentStatisticGroup.subscribe(statisticGroup => this.statisticGroup = statisticGroup);
+        this._nssService.currentRegRegion.subscribe(regRegion => this.regRegion = regRegion);
+        this._nssService.currentClone.subscribe(clone => this.clone = clone);
+
         this.loggedInRole = localStorage.getItem('loggedInRole');
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJaxLoad']); // preload mathjax
         // this is based on a behaviorSubject, so it gets an initial notification of [].
@@ -1208,11 +1219,13 @@ export class MainviewComponent implements OnInit, OnDestroy {
 
     /////////////////////// Add/Clone/Edit/Delete Scenarios Section ///////////////////////////
     public showAddScenarioModal() {
+        this.newClone(false);
         this._nssService.setAddScenarioModal(true);
     }
 
     public showCloneScenarioModal() {
-        this._nssService.setCloneScenarioModal(true);
+        this.newClone(true);
+        this._nssService.setAddScenarioModal(true);
     }
 
     public editRegScenario() {
@@ -1366,12 +1379,24 @@ export class MainviewComponent implements OnInit, OnDestroy {
             });
     }
 
+    newItem(i){
+        this._nssService.changeItem(i);
+    }
 
-    public cloneRowClicked(statisticGroup, item, regRegion) {
-        //this.newCloneScenForm.controls['statisticGroupID'].setValue(this.statisticGroup.statisticGroupid);
-         console.log(statisticGroup);
-         console.log(regRegion);
-        console.log(item);
+    newRegRegion(regr){
+        this._nssService.changeRegRegion(regr);
+    }
+    newStatisticGroup(sg){
+        this._nssService.changeStatisticGroup(sg);
+    }
+    newClone(x){
+        this._nssService.changeClone(x);
+    }
+
+    public cloneRowClicked(sg, i, regr) {
+        this.newItem(i);
+        this.newRegRegion(regr);
+        this.newStatisticGroup(sg);
         // console.log(item.equationMathJax);
         // console.log(item.equivalentYears);
 
@@ -1399,7 +1424,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
 
         // console.log(item);
         // console.log(item.unit.unit);
-        // this.showAddScenarioModal();
+         this.showCloneScenarioModal();
     }
 
     public editRowClicked(item, rrIndex, sgIndex, idx?) {

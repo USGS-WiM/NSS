@@ -66,6 +66,35 @@ export class NSSService {
     public setCloneScenarioModal(val: any) { 
         this._showHideCloneScenarioModal.next(val);
     }
+
+    private statisticGroupSource = new BehaviorSubject<any>(' ');
+    currentStatisticGroup=this.statisticGroupSource.asObservable();
+
+    changeStatisticGroup(statisticGroup: any){
+        this.statisticGroupSource.next(statisticGroup);
+    }
+
+    private itemSource = new BehaviorSubject<any>(' ');
+    currentItem=this.itemSource.asObservable();
+
+    changeItem(item: any){
+        this.itemSource.next(item);
+    }
+
+    private regRegionSource = new BehaviorSubject<any>(' ');
+    currentRegRegion=this.regRegionSource.asObservable();
+
+    changeRegRegion(regRegion: any){
+        this.regRegionSource.next(regRegion);
+    }
+
+    private cloneSource = new BehaviorSubject<boolean>(true);
+    currentClone=this.cloneSource.asObservable();
+
+    changeClone(clone: boolean){
+        this.cloneSource.next(clone);
+    }
+
     // show the add scenario modal in the mainview
     public get showAddScenarioModal(): any {
         return this._showHideAddScenarioModal.asObservable();

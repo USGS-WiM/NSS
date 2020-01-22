@@ -32,6 +32,9 @@ export class CloneScenarioModal implements OnInit, OnDestroy {
   public unitTypes;
   public equation;
   public errors;
+  public item: any;
+  public regRegion: any;
+  public statisticGroup: any;
   public selectedRegion;
   private configSettings: Config;
   public addPredInt = false;
@@ -74,7 +77,11 @@ export class CloneScenarioModal implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-      // subscriber for logged in role
+    this._nssService.currentItem.subscribe(item => this.item = item);
+    this._nssService.currentRegRegion.subscribe(regRegion => this.regRegion = regRegion);
+    this._nssService.currentStatisticGroup.subscribe(statisticGroup => this.statisticGroup = statisticGroup);
+
+    // subscriber for logged in role
       this.loggedInRole = localStorage.getItem('loggedInRole');
       this._authService.loggedInRole().subscribe(role => {
           if (role === 'Administrator' || role === 'Manager') {
@@ -147,41 +154,39 @@ export class CloneScenarioModal implements OnInit, OnDestroy {
               this.cancelCreateScenario();
           }
       );
-      this.newCloneScenForm.get('regressionRegions.ID').setValue('');
 
-      //statistic group
-      this.newCloneScenForm.patchValue({statisticGroupID:"4"});
-      //regression region
-      this.newCloneScenForm.patchValue({regressionRegions:{ID: '31'}});
-      //regression type
-      this.newCloneScenForm.patchValue({regressionRegions:{regressions:{ID: '3'}}});
-      //equation
-      this.newCloneScenForm.patchValue({regressionRegions:{regressions:{equation: '3'}}});
-      //equivalent years
-      this.newCloneScenForm.patchValue({regressionRegions:{regressions:{equivalentYears: '0'}}});
-       //expected value
-       this.newCloneScenForm.patchValue({regressionRegions:{regressions:{expected:{value: '4'}}}});
+      this.newCloneScenForm.patchValue({
+        //statisticGroupID: '4',
+        regressionRegions: {
+            //ID: '31',
+            regressions:{
+                //ID:'3',
+                equation: this.item.equationMathJax,
+                //equivalentYears:'0',
+                predictionInterval: {
+                   // biasCorrectionFactor: '0',
+                   // student_T_Statistic: '0',
+                   // variance: '1.20',
+                   // xiRowVector: '0.23',
+                   // covarianceMatrix: '[["0.045353964","-0.003658533","-0.008200806"],["-0.003658533","0.001511573","-1.74E-05"],["-0.008200806","-1.74E-05","0.001884111"]]',     
+                }, 
+                expected:{
+                   // value: '6',
+                    intervalBounds: {
+                        //lower: '2',
+                        //upper: '14',
+                    } 
+                }
+            } 
+        }
+      });
 
 
-       //unit DOESNT WORK
-       this.newCloneScenForm.patchValue({regressionRegions:{regressions:{unit:{id: '41'}}}});
+      console.log(this.item);
+      console.log(this.regRegion);
+      console.log(this.statisticGroup);
 
        
-       //bias correction factor
-       this.newCloneScenForm.patchValue({regressionRegions:{regressions:{predictionInterval:{biasCorrectionFactor: '0'}}}});
-       //student t statistic
-       this.newCloneScenForm.patchValue({regressionRegions:{regressions:{predictionInterval:{student_T_Statistic: '0'}}}});
-       //variance
-       this.newCloneScenForm.patchValue({regressionRegions:{regressions:{predictionInterval:{variance: '1.20'}}}});
-       //xi row
-       this.newCloneScenForm.patchValue({regressionRegions:{regressions:{predictionInterval:{xiRowVector: '0.23'}}}});
-       //covariance matrix
-       this.newCloneScenForm.patchValue({regressionRegions:{regressions:{predictionInterval:{covarianceMatrix: '[["0.045353964","-0.003658533","-0.008200806"],["-0.003658533","0.001511573","-1.74E-05"],["-0.008200806","-1.74E-05","0.001884111"]]'}}}});
-       //lower bound
-       this.newCloneScenForm.patchValue({regressionRegions:{regressions:{expected:{intervalBounds:{lower: '2'}}}}});
-       //upper bound
-       this.newCloneScenForm.patchValue({regressionRegions:{regressions:{expected:{intervalBounds:{upper: '4'}}}}});
-
   }
 
   //add parameter
@@ -200,30 +205,39 @@ export class CloneScenarioModal implements OnInit, OnDestroy {
   }
 
   addError() {
-      const control = <FormArray>this.newCloneScenForm.get('regressionRegions.regressions.errors');
-      control.push(new FormControl(null, Validators.required));
-  }
+    const control = <FormArray>this.newCloneScenForm.get('regressionRegions.regressions.errors');
+    control.push(this._fb.group({
+        id: new FormControl(null, Validators.required),
+        value: new FormControl(null, Validators.required)
+    }));
+}
 
-  showMathjax() {
-      const exp = this.newCloneScenForm.get('regressionRegions.regressions.equation').value;
-      const equ = document.getElementById('mathjaxEq');
-      equ.style.visibility = 'hidden';
-      if (equ.firstChild) {equ.removeChild(equ.firstChild); }
-      this.equation = '`' + exp + '`';
-      equ.insertAdjacentHTML('afterbegin', '<span [MathJax]="equation">' + this.equation + '</span');
-      MathJax.Hub.Config({
-          'HTML-CSS': {
-              linebreaks: { automatic: true}
-          },
-          CommonHTML: {
-              linereaks: { automatic: true }
-          }
-      });
-      MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'MathJax'],
-          function() {
-              equ.style.visibility = '';
-          });
-  }
+    showMathjax() {
+        const exp = this.newCloneScenForm.get('regressionRegions.regressions.equation').value;
+        const equ = document.getElementById('mathjaxEq');
+        equ.style.visibility = 'hidden';
+        if (equ.firstChild) {
+            equ.removeChild(equ.firstChild); 
+        }
+        if(exp == null){
+            this.equation = " ";
+        }else{
+        this.equation = '`' + exp + '`';
+        }
+        equ.insertAdjacentHTML('afterbegin', '<span [MathJax]="equation">' + this.equation + '</span');
+        MathJax.Hub.Config({
+            'HTML-CSS': {
+                linebreaks: { automatic: true}
+            },
+            CommonHTML: {
+                linereaks: { automatic: true }
+            }
+        });
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'MathJax'],
+            function() {
+                equ.style.visibility = '';
+            });
+    }
 
   removeVariable(i) {
       const control = <FormArray>this.newCloneScenForm.get('regressionRegions.parameters');
@@ -235,8 +249,26 @@ export class CloneScenarioModal implements OnInit, OnDestroy {
       control.removeAt(i);
   }
 
+  public clearScenario(){
+    this.newCloneScenForm.reset();
+    const errorControl = <FormArray>this.newCloneScenForm.get('regressionRegions.regressions.errors');
+    for(let i = errorControl.length-1; i >= 0; i--) {
+        errorControl.removeAt(i);
+    }
+    const parmControl = <FormArray>this.newCloneScenForm.get('regressionRegions.parameters');
+    for(let i = parmControl.length-1; i >= 0; i--) {
+        parmControl.removeAt(i);
+    }
+    this.addPredInt = false
+}
+
   createNewScenario() {
-      //console.log(this.newCloneScenForm.get('regressionRegions.regressions.unit'));
+      console.log(this.newCloneScenForm.value);
+      console.log(this.newCloneScenForm.get('regressionRegions.regressions.unit').value);
+      console.log(this.newCloneScenForm.get('regressionRegions.regressions.equation').value);
+
+
+
       //console.log(this.newCloneScenForm.get('regressionRegions.regressions.expected'));
       // adding all necessary properties, since ngValue won't work with all the nested properties
       const scen = JSON.parse(JSON.stringify(this.newCloneScenForm.value));
@@ -265,11 +297,7 @@ export class CloneScenarioModal implements OnInit, OnDestroy {
               return;
           } // make sure given values are within the limits
       }
-      // get error values
-      for (let i = 0; i < regs.errors.length; i ++) {
-          const value = (<HTMLInputElement>document.getElementById('errValue' + i)).value;
-          regs.errors[i].value = value;
-      }
+      
       // check prediction interval
       if (!this.addPredInt || (!regs.predictionInterval.biasCorrectionFactor && !regs.predictionInterval.student_T_Statistic &&
           !regs.predictionInterval.variance && !regs.predictionInterval.xiRowVector && !regs.predictionInterval.covarianceMatrix)) {

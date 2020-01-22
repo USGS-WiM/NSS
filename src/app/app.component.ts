@@ -19,6 +19,7 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
+
     public loggedInRole = '';
     @ViewChild('login') public loginModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
@@ -29,6 +30,10 @@ export class AppComponent implements OnInit, OnDestroy {
     public LoginForm: FormGroup;
     public modalRef;
     public title;
+    public item: any;
+    public regRegion: any;
+    public statisticGroup: any;
+    public clone: boolean;
     loading = false;
     returnUrl: string;
     isLoggedIn: boolean;
@@ -51,6 +56,11 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this._nssService.currentItem.subscribe(item => this.item = item);
+        this._nssService.currentRegRegion.subscribe(regRegion => this.regRegion = regRegion);
+        this._nssService.currentStatisticGroup.subscribe(statisticGroup => this.statisticGroup = statisticGroup);
+        this._nssService.currentClone.subscribe(clone => this.clone = clone);
+
         this._authService.loggedInRole().subscribe(role => {
             if (role === 'Administrator' || role === 'Manager') {
                 this.loggedInRole = role;

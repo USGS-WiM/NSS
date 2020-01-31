@@ -1011,8 +1011,10 @@
                     Region is required
                 </div>
             </div>
+            <app-map></app-map>
             <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true">Add Citation</button>
         </form>
+        
         <form *ngIf="addCitation" [formGroup]="newCitForm">
             <label>Citation</label>
             <!-- Title -->

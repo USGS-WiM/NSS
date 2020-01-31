@@ -1011,8 +1011,9 @@
                     Region is required
                 </div>
             </div>
-            <app-map></app-map>
-            <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true">Add Citation</button>
+            
+            <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="uploadPolygon = true">Upload Polygon</button>
+            <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true" style="margin-left: 5px;">Add Citation</button>
         </form>
         
         <form *ngIf="addCitation" [formGroup]="newCitForm">
@@ -1041,6 +1042,12 @@
             </div>
             <button *ngIf="addCitation" type="button" class="btn-blue" (click)="addCitation = false; newCitForm.reset();">Remove Citation</button>
         </form>
+        
+        <form *ngIf="uploadPolygon">
+            <app-map></app-map>
+            <button *ngIf="uploadPolygon" type="button" class="btn-blue" (click)="uploadPolygon = false;">Remove Polygon</button>
+        </form>
+        
 
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>

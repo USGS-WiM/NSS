@@ -111,6 +111,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public CloseResult;
     public regions;
     public addCitation: boolean;
+    public uploadPolygon: boolean;
     public editSGIndex; public editRRindex; public editIdx;
     public config: ToasterConfig = new ToasterConfig({timeout: 0});
     public regressionRegions;
@@ -1583,10 +1584,12 @@ export class MainviewComponent implements OnInit, OnDestroy {
         if (rr) { // rr already exists, only want citation
             this.selectedRegRegion = rr;
             this.addCitation = true;
+            //this.uploadPolygon = true?
             this.addRegReg = false;
         } else { // rr doesn't exist
             this.addRegReg = true;
             this.addCitation = false;
+            this.uploadPolygon = false;
         }
         if (this.selectedRegion) {this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
         this.showNewRegRegForm = true;

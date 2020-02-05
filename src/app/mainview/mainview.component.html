@@ -836,7 +836,7 @@
                                         <div class="data-controls">
                                             <i *ngIf="!r.isEditing" title="Edit Regression" (click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="fa fa-pencil"
                                                 aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
-                                            <i *ngIf="!r.isEditing" title="Clone Scenario" (click)="cloneRowClicked(s, r, rr)" class="fa fa-clone"
+                                            <i *ngIf="!r.isEditing" title="Clone Scenario" (click)="cloneRowClicked(s.statisticGroupID, r, rr)" class="fa fa-clone"
                                                 aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
                                             <i *ngIf="!r.isEditing" title="Delete Regression" (click)="deleteRegression(s.statisticGroupID, rr.id, r.id)" class="fa fa-times"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
@@ -897,7 +897,7 @@
                                             Student T Statistic: {{r.predictionInterval.student_T_Statistic}}<br>
                                             Variance: {{r.predictionInterval.variance}}<br>
                                             XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
-                                            Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}
+                                            Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}<br>
                                         </span>
                                         <span *ngIf="!r.isEditing && !r.predictionInterval.biasCorrectionFactor && !r.predictionInterval.student_T_Statistic && !r.predictionInterval.variance 
                                             && !r.predictionInterval.xiRowVector && !r.predictionInterval.covarianceMatrix">None</span>

@@ -107,6 +107,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public itemBeingEdited;
     public uniqueRegRegions;
     public editScen;
+    public cloneScen;
     public paramsNeeded;
     public getBounds: boolean;
     private modalSubscript;
@@ -1397,34 +1398,10 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this.newItem(i);
         this.newRegRegion(regr);
         this.newStatisticGroup(sg);
-        // console.log(item.equationMathJax);
-        // console.log(item.equivalentYears);
-
-        // regRegion.parameters.forEach((element)=>{
-        //     console.log(element.description)
-        //     console.log(element.limits.min)
-        //     console.log(element.limits.max)
-        //     console.log(element.unitType.unit)
-        //     console.log(element.value)
-        //     console.log("parameter value")
-        // });
-
-        // console.log(item.predictionInterval.biasCorrectionFactor);
-        // console.log(item.predictionInterval.student_T_Statistic);
-        // console.log(item.predictionInterval.variance);
-        // console.log(item.predictionInterval.xiRowVector);
-        // console.log(item.predictionInterval.covarianceMatrix);
-        // console.log("upper");
-        // console.log("lower");
-
-        // item.errors.forEach((element)=>{
-        //     console.log(element.name)
-        //     console.log(element.value)
-        // });
-
-        // console.log(item);
-        // console.log(item.unit.unit);
-         this.showCloneScenarioModal();
+       // console.log(sg);
+       // console.log(i);
+       // console.log(regr);
+        this.showCloneScenarioModal();
     }
 
     public editRowClicked(item, rrIndex, sgIndex, idx?) {

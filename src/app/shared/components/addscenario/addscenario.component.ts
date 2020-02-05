@@ -163,52 +163,92 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
         );
         
-        console.log(this.clone);
-
-        if(this.clone==true){
-            console.log("clone senario");
+        if(this.clone == true){
+            //clone
             this.clearScenario();
             this.cloneSenario();
         }else{
-            console.log("new senario");
-        }
-            
+            //new
+        }   
     }
 
-    cloneSenario(){
-        if(this.item2.predictionInterval.biasCorrectionFactor!=null){
-            this.addPredInt = true
-        }
+    cloneSenario(){  
+        this.unitTypes.forEach( (element,index) => {  
+            if(element.id.toString()==this.item2.unit.id.toString()){
+                this.newScenForm.patchValue({regressionRegions: {regressions:{unit:this.unitTypes[index]}}});
+            }
+        });
+
         this.newScenForm.patchValue({
-            statisticGroupID: this.statisticGroup.statisticGroupID,
+            statisticGroupID: this.statisticGroup.toString(),
             regressionRegions: {
-                ID: this.regRegion.id,
+                ID: this.regRegion.id.toString(),
                 regressions:{
-                    ID: this.item2.id,
-                    //unit:this.item.unit.id,
-                    equation: this.item2.equationMathJax,
-                    equivalentYears: this.item2.equivalentYears,
-                    predictionInterval: {
-                        biasCorrectionFactor: this.item2.predictionInterval.biasCorrectionFactor,
-                        student_T_Statistic: this.item2.predictionInterval.student_T_Statistic,
-                        variance: this.item2.predictionInterval.variance,
-                        xiRowVector: this.item2.predictionInterval.xiRowVector,
-                        covarianceMatrix: this.item2.predictionInterval.covarianceMatrix,
-                    }, 
+                    ID: this.item2.id.toString(),
+                    equation: this.item2.equation.toString(),
+                    equivalentYears: this.item2.equivalentYears.toString(),
                     expected:{
-                       // value: '6',
-                        intervalBounds: {
-                            //lower: '2',
-                            //upper: '14',
-                        } 
+                        //Expected Value  -cant find
                     }
                 } 
             }
         });
-        console.log(this.item2);
-        console.log(this.statisticGroup);
-        console.log(this.regRegion);    
-        this.item2=" ";
+        
+        //Prediction Interval
+        if(this.item2.predictionInterval.biasCorrectionFactor!=null){
+            this.addPredInt = true
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {biasCorrectionFactor: this.item2.predictionInterval.biasCorrectionFactor.toString()}}}});
+        } 
+        if(this.item2.predictionInterval.student_T_Statistic!=null){
+            this.addPredInt = true
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {student_T_Statistic: this.item2.predictionInterval.student_T_Statistic.toString()}}}});
+        }
+        if(this.item2.predictionInterval.variance!=null){
+            this.addPredInt = true
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {variance: this.item2.predictionInterval.variance.toString()}}}});
+        }
+        if(this.item2.predictionInterval.xiRowVector!=null){
+            this.addPredInt = true
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {xiRowVector: this.item2.predictionInterval.xiRowVector.toString()}}}});
+        }
+        if(this.item2.predictionInterval.covarianceMatrix!=null){
+            if(this.item2.predictionInterval.covarianceMatrix!="null"){
+                this.addPredInt = true
+                this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {covarianceMatrix: this.item2.predictionInterval.covarianceMatrix.toString()}}}});
+            }
+        }
+        //Prediction Interval Upper -cant find
+        //Prediction Interval Lower -cant find
+
+        //parameters
+        this.regRegion.parameters.forEach((element,index)=>{
+            this.addVariable();
+            const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
+            controlArray.controls[index].get('code').setValue(element.code.toString());
+            //dimesionless units don't have min and max
+            if(element.limits.max!=null){
+                controlArray.controls[index].get('limits.max').setValue(element.limits.max.toString());
+            }
+            if(element.limits.min!=null){
+                controlArray.controls[index].get('limits.min').setValue(element.limits.min.toString());
+            }
+            this.unitTypes.forEach( (unit,x) => {  
+                if(unit.id.toString()==element.unitType.id.toString()){
+                    controlArray.controls[index].get('unitType').setValue(this.unitTypes[x]);
+               }
+            });
+
+            //Comments -cant find
+            //Value -null regRegion.pararmeters.index.value
+        }); 
+
+        //errors
+         this.item2.errors.forEach((element,index)=>{
+            this.addError();
+            const controlArray = <FormArray> this.newScenForm.get('regressionRegions.regressions.errors');       
+            controlArray.controls[index].get('id').setValue(element.id);
+            controlArray.controls[index].get('value').setValue(element.value.toString());
+        });            
     }
 
     addVariable() {
@@ -285,10 +325,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     createNewScenario() {
         // adding all necessary properties, since ngValue won't work with all the nested properties
+        console.log(this.newScenForm.value);
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id.toString() === scen['statisticGroupID']);
-        console.log(statGroupIndex);
 
         scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;

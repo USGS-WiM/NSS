@@ -235,3 +235,8 @@ input {
 .equation {
     margin-bottom: 20px !important;
 }
+
+/* Fixed New Regression Region Polygon Map formatting */
+#map section {
+  margin: 0 !important;
+}

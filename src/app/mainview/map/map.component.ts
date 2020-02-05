@@ -37,9 +37,7 @@ export class MapComponent implements OnInit {
       'Streets': streets
     };
 
-    var layerControl = L.control.layers(baseMaps);
-    this.map.addControl(layerControl);
-   // L.control.layers(baseMaps, null, { position: 'topright' }).addTo(this.map);
+    L.control.layers(baseMaps).addTo(this.map);
   }
 
 }

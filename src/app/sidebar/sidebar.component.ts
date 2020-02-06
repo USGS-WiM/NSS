@@ -255,10 +255,14 @@ export class SidebarComponent implements OnInit {
             s.regressionRegions.forEach(rr => {
                 if (numOfRegRegions > 1) { totalWeight += Number(rr.percentWeight); }
                 rr.parameters.forEach(p => {
-                    if (!p.value) {
+                    if (p.value==null) {
                         ValueRequired = true;
                         p.missingVal = true;
-                    } else { p.missingVal = false; }
+                        console.log('doesntwork');
+                    } else { 
+                        p.missingVal = false; 
+                        console.log('work');
+                    }
                 });
             });
         });

@@ -258,11 +258,7 @@ export class SidebarComponent implements OnInit {
                     if (p.value==null) {
                         ValueRequired = true;
                         p.missingVal = true;
-                        console.log('doesntwork');
-                    } else { 
-                        p.missingVal = false; 
-                        console.log('work');
-                    }
+                    } else { p.missingVal = false; }
                 });
             });
         });

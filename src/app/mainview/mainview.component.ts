@@ -1387,9 +1387,11 @@ export class MainviewComponent implements OnInit, OnDestroy {
     newRegRegion(regr){
         this._nssService.changeRegRegion(regr);
     }
+
     newStatisticGroup(sg){
         this._nssService.changeStatisticGroup(sg);
     }
+
     newClone(x){
         this._nssService.changeClone(x);
     }
@@ -1398,9 +1400,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this.newItem(i);
         this.newRegRegion(regr);
         this.newStatisticGroup(sg);
-       // console.log(sg);
-       // console.log(i);
-       // console.log(regr);
         this.showCloneScenarioModal();
     }
 

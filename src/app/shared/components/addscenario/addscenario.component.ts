@@ -39,7 +39,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public unitTypes;
     public equation;
     public errors;
-    public item2: any;
+    public itemParameters: any;
     public regRegion: any;
     public statisticGroup: any;
     public clone: boolean;
@@ -85,7 +85,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this._nssService.currentItem.subscribe(item => this.item2 = item);
+        this._nssService.currentItem.subscribe(item => this.itemParameters = item);
         this._nssService.currentRegRegion.subscribe(regRegion => this.regRegion = regRegion);
         this._nssService.currentStatisticGroup.subscribe(statisticGroup => this.statisticGroup = statisticGroup);
         this._nssService.currentClone.subscribe(clone => this.clone = clone);
@@ -162,19 +162,16 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
-        
-        if(this.clone == true){
-            //clone
+
+        if (this.clone == true){
             this.clearScenario();
             this.cloneSenario();
-        }else{
-            //new
-        }   
+        }  
     }
 
     cloneSenario(){  
         this.unitTypes.forEach( (element,index) => {  
-            if(element.id.toString()==this.item2.unit.id.toString()){
+            if (element.id.toString() == this.itemParameters.unit.id.toString()){
                 this.newScenForm.patchValue({regressionRegions: {regressions:{unit:this.unitTypes[index]}}});
             }
         });
@@ -184,66 +181,58 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             regressionRegions: {
                 ID: this.regRegion.id.toString(),
                 regressions:{
-                    ID: this.item2.id.toString(),
-                    equation: this.item2.equation.toString(),
-                    equivalentYears: this.item2.equivalentYears.toString(),
-                    expected:{
-                        //Expected Value  -cant find
-                    }
+                    ID: this.itemParameters.id.toString(),
+                    equation: this.itemParameters.equation.toString(),
+                    equivalentYears: this.itemParameters.equivalentYears.toString(),
                 } 
             }
         });
         
         //Prediction Interval
-        if(this.item2.predictionInterval.biasCorrectionFactor!=null){
+        if (this.itemParameters.predictionInterval.biasCorrectionFactor != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {biasCorrectionFactor: this.item2.predictionInterval.biasCorrectionFactor.toString()}}}});
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {biasCorrectionFactor: this.itemParameters.predictionInterval.biasCorrectionFactor.toString()}}}});
         } 
-        if(this.item2.predictionInterval.student_T_Statistic!=null){
+        if (this.itemParameters.predictionInterval.student_T_Statistic != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {student_T_Statistic: this.item2.predictionInterval.student_T_Statistic.toString()}}}});
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {student_T_Statistic: this.itemParameters.predictionInterval.student_T_Statistic.toString()}}}});
         }
-        if(this.item2.predictionInterval.variance!=null){
+        if (this.itemParameters.predictionInterval.variance != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {variance: this.item2.predictionInterval.variance.toString()}}}});
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {variance: this.itemParameters.predictionInterval.variance.toString()}}}});
         }
-        if(this.item2.predictionInterval.xiRowVector!=null){
+        if (this.itemParameters.predictionInterval.xiRowVector != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {xiRowVector: this.item2.predictionInterval.xiRowVector.toString()}}}});
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {xiRowVector: this.itemParameters.predictionInterval.xiRowVector.toString()}}}});
         }
-        if(this.item2.predictionInterval.covarianceMatrix!=null){
-            if(this.item2.predictionInterval.covarianceMatrix!="null"){
+        if (this.itemParameters.predictionInterval.covarianceMatrix != null){
+            if (this.itemParameters.predictionInterval.covarianceMatrix != "null"){
                 this.addPredInt = true
-                this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {covarianceMatrix: this.item2.predictionInterval.covarianceMatrix.toString()}}}});
+                this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {covarianceMatrix: this.itemParameters.predictionInterval.covarianceMatrix.toString()}}}});
             }
         }
-        //Prediction Interval Upper -cant find
-        //Prediction Interval Lower -cant find
 
         //parameters
-        this.regRegion.parameters.forEach((element,index)=>{
+        this.regRegion.parameters.forEach((element,index) => {
             this.addVariable();
             const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
             controlArray.controls[index].get('code').setValue(element.code.toString());
             //dimesionless units don't have min and max
-            if(element.limits.max!=null){
+            if (element.limits.max != null){
                 controlArray.controls[index].get('limits.max').setValue(element.limits.max.toString());
             }
-            if(element.limits.min!=null){
+            if (element.limits.min != null){
                 controlArray.controls[index].get('limits.min').setValue(element.limits.min.toString());
             }
             this.unitTypes.forEach( (unit,x) => {  
-                if(unit.id.toString()==element.unitType.id.toString()){
+                if (unit.id.toString() == element.unitType.id.toString()){
                     controlArray.controls[index].get('unitType').setValue(this.unitTypes[x]);
                }
             });
-
-            //Comments -cant find
-            //Value -null regRegion.pararmeters.index.value
         }); 
 
         //errors
-         this.item2.errors.forEach((element,index)=>{
+         this.itemParameters.errors.forEach((element,index) => {
             this.addError();
             const controlArray = <FormArray> this.newScenForm.get('regressionRegions.regressions.errors');       
             controlArray.controls[index].get('id').setValue(element.id);
@@ -260,7 +249,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 min: new FormControl(null, Validators.required),
             }),
             unitType: new FormControl(null, Validators.required),
-            comments: new FormControl(null),
+            //comments: new FormControl(null),
             value: new FormControl(null, Validators.required)
         }));
     }
@@ -325,7 +314,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     createNewScenario() {
         // adding all necessary properties, since ngValue won't work with all the nested properties
-        console.log(this.newScenForm.value);
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id.toString() === scen['statisticGroupID']);

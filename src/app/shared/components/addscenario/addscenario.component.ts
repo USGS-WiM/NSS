@@ -160,15 +160,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
-        console.log(this.cloneParameters);
 
         if (this.cloneParameters != " "){
-            console.log("clone");
             this.clearScenario();
             this.cloneScenario();
-        }  else{
-            console.log("new");
-        }
+        }  
     }
 
     cloneScenario(){  

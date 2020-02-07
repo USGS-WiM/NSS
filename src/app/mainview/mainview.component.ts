@@ -29,7 +29,8 @@ import { NgForm, FormGroup, FormBuilder, FormControl, Validators } from '@angula
 import { Predictioninterval } from 'app/shared/interfaces/predictioninterval';
 import { URLSearchParams } from '@angular/http';
 import { Citation } from 'app/shared/interfaces/citation';
-import { element } from '@angular/core/src/render3';
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
+
 
 declare var MathJax: {
     Hub: { Queue };
@@ -49,10 +50,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
     @ViewChild('CitationForm') citationForm;
     public newCitForm: FormGroup;
     public title: string;
-    public statisticGroup: any;
-    public item: any;
-    public regRegion: any;
-    public clone: boolean;
     public resultsBack: boolean; // flag that swaps content on mainpage from scenarios w/o results to those with results
     public equationResults: Equationresults[]; // used in Appendix
     public showWeights: boolean; // if more than 1 regRegion, then show input for weighted
@@ -180,12 +177,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
             if (region) { this.showRegion = true; }
             window.scrollTo(0, 0);
         });
-
-
-        this._nssService.currentItem.subscribe(item => this.item = item);
-        this._nssService.currentStatisticGroup.subscribe(statisticGroup => this.statisticGroup = statisticGroup);
-        this._nssService.currentRegRegion.subscribe(regRegion => this.regRegion = regRegion);
-        this._nssService.currentClone.subscribe(clone => this.clone = clone);
 
         this.loggedInRole = localStorage.getItem('loggedInRole');
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJaxLoad']); // preload mathjax
@@ -1218,17 +1209,22 @@ export class MainviewComponent implements OnInit, OnDestroy {
         popupWin.document.close();
     }
 
-    /////////////////////// Add/Clone/Edit/Delete Scenarios Section ///////////////////////////
-    public showAddScenarioModal() {
-        this.newClone(false);
-        this._nssService.setAddScenarioModal(true);
-    }
-
+    /////////////////////// Clone Scenarios Section ///////////////////////////
     public showCloneScenarioModal() {
-        this.newClone(true);
         this._nssService.setAddScenarioModal(true);
     }
 
+    newCloneScenario(cloneScen){
+        this._nssService.changeItem(cloneScen);
+    }
+
+    public cloneRowClicked(statisticGroupID, r, rr) {
+        this.cloneScen={r,rr,statisticGroupID};
+        this.newCloneScenario(this.cloneScen);
+        this.showCloneScenarioModal();
+    }
+
+    /////////////////////// Edit Scenarios Section ///////////////////////////
     public editRegScenario() {
         this.editRegionScenario = true;
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']); // render equations into Mathjax
@@ -1239,8 +1235,81 @@ export class MainviewComponent implements OnInit, OnDestroy {
         if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
     }
 
+    public editRowClicked(item, rrIndex, sgIndex, idx?) {
+        if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
+            this.CancelEditRowClicked();
+        } // if another item was being edited, cancel that
+        this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
+        idx >= 0 ? this.editIdx = idx : this.editIdx = null;
+        this.editRRindex = rrIndex; this.editSGIndex = sgIndex; // setting indices because the cancel function wasn't overwriting things
+        this.itemBeingEdited = item;
+        item.isEditing = true;
+        if (item.equation) {this.showMathjax(item); }
+        if (idx === undefined) {
+            // do we need the citation IDs?
+            const rrIdx = this.regressionRegions.findIndex(rr => rr.id === item.id);
+            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].citationID = this.regressionRegions[rrIdx].citationID;
+        }
+    }
+
+    public CancelEditRowClicked() {
+        // reset item if cancelling editing
+        if (this.editIdx === null) { // if regression region
+            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex] = this.tempData;
+        } else if (this.itemBeingEdited.citationURL) { // if citation
+            this.citations[this.editIdx] = this.tempData;
+        } else if (this.itemBeingEdited.limits) { // if parameter
+            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].parameters[this.editIdx] = this.tempData;
+        } else if (this.itemBeingEdited.equation) { // if regression
+            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].regressions[this.editIdx] = this.tempData;
+            const equ = document.getElementById('mathjaxEq' + this.itemBeingEdited.id);
+            equ.style.visibility = 'hidden';
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']);
+        }
+    }
+
+    /////////////////////// Delete Scenarios Section ///////////////////////////
+    deleteRegression(sgID, rrID, rID) {
+        const check = confirm('Are you sure you want to delete this Regression?');
+        if (check) {
+            const sParams: URLSearchParams = new URLSearchParams();
+            sParams.set('statisticgroupID', sgID);
+            sParams.set('regressionregionID', rrID);
+            sParams.set('regressiontypeID', rID);
+            this._settingsService.deleteEntity('', this.configSettings.scenariosURL, sParams).subscribe(result => {
+                this._nssService.setSelectedRegion(this.selectedRegion);
+                if (result.headers) { this._nssService.outputWimMessages(result); }
+            }, error => {
+                if (error.headers) {this._nssService.outputWimMessages(error);
+                } else { this._nssService.handleError(error); }
+            });
+        }
+    }
+
+    deleteRegRegion(rrID) {
+        const check = confirm('Are you sure you want to delete this Regression Region?');
+        if (check) {
+            this._settingsService.deleteEntity(rrID, this.configSettings.regRegionURL).subscribe(result => {
+                this._nssService.setSelectedRegion(this.selectedRegion);
+                if (result.headers) { this._nssService.outputWimMessages(result); }
+            }, error => {
+                if (error.headers) {this._nssService.outputWimMessages(error);
+                } else { this._nssService.handleError(error); }
+            });
+        }
+    }
+
+    
+    /////////////////////// Citations Section ///////////////////////////
     public showManageCitationsModal() {
         this._nssService.setManageCitationsModal(true);
+    }
+
+    public getCitations() {
+        this._settingsService.getEntities(this.configSettings.citationURL)
+            .subscribe(res => {
+                this.citations = res;
+            });
     }
 
     public saveCitation(c) {
@@ -1287,6 +1356,11 @@ export class MainviewComponent implements OnInit, OnDestroy {
                 }
             );
         }
+    }
+    
+    /////////////////////// Add Scenarios Section ///////////////////////////
+    public showAddScenarioModal() {
+        this._nssService.setAddScenarioModal(true);
     }
 
     public saveParameter(p, rrIndex, sgIndex) {
@@ -1373,69 +1447,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
             });
     }
 
-    public getCitations() {
-        this._settingsService.getEntities(this.configSettings.citationURL)
-            .subscribe(res => {
-                this.citations = res;
-            });
-    }
-
-    newItem(i){
-        this._nssService.changeItem(i);
-    }
-
-    newRegRegion(regr){
-        this._nssService.changeRegRegion(regr);
-    }
-
-    newStatisticGroup(sg){
-        this._nssService.changeStatisticGroup(sg);
-    }
-
-    newClone(x){
-        this._nssService.changeClone(x);
-    }
-
-    public cloneRowClicked(sg, i, regr) {
-        this.newItem(i);
-        this.newRegRegion(regr);
-        this.newStatisticGroup(sg);
-        this.showCloneScenarioModal();
-    }
-
-    public editRowClicked(item, rrIndex, sgIndex, idx?) {
-        if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
-            this.CancelEditRowClicked();
-        } // if another item was being edited, cancel that
-        this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
-        idx >= 0 ? this.editIdx = idx : this.editIdx = null;
-        this.editRRindex = rrIndex; this.editSGIndex = sgIndex; // setting indices because the cancel function wasn't overwriting things
-        this.itemBeingEdited = item;
-        item.isEditing = true;
-        if (item.equation) {this.showMathjax(item); }
-        if (idx === undefined) {
-            // do we need the citation IDs?
-            const rrIdx = this.regressionRegions.findIndex(rr => rr.id === item.id);
-            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].citationID = this.regressionRegions[rrIdx].citationID;
-        }
-    }
-
-    public CancelEditRowClicked() {
-        // reset item if cancelling editing
-        if (this.editIdx === null) { // if regression region
-            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex] = this.tempData;
-        } else if (this.itemBeingEdited.citationURL) { // if citation
-            this.citations[this.editIdx] = this.tempData;
-        } else if (this.itemBeingEdited.limits) { // if parameter
-            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].parameters[this.editIdx] = this.tempData;
-        } else if (this.itemBeingEdited.equation) { // if regression
-            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].regressions[this.editIdx] = this.tempData;
-            const equ = document.getElementById('mathjaxEq' + this.itemBeingEdited.id);
-            equ.style.visibility = 'hidden';
-            MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']);
-        }
-    }
-
     public addError(errors) {
         // if user adds error, push empty object to array
         errors.push({});
@@ -1444,36 +1455,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
     compareObjects(Obj1, Obj2) {
         // used to make sure the existing options are showing in selects
         return Obj1 && Obj2 ? Obj1.id === Obj2.id : Obj1 === Obj2;
-    }
-
-    deleteRegression(sgID, rrID, rID) {
-        const check = confirm('Are you sure you want to delete this Regression?');
-        if (check) {
-            const sParams: URLSearchParams = new URLSearchParams();
-            sParams.set('statisticgroupID', sgID);
-            sParams.set('regressionregionID', rrID);
-            sParams.set('regressiontypeID', rID);
-            this._settingsService.deleteEntity('', this.configSettings.scenariosURL, sParams).subscribe(result => {
-                this._nssService.setSelectedRegion(this.selectedRegion);
-                if (result.headers) { this._nssService.outputWimMessages(result); }
-            }, error => {
-                if (error.headers) {this._nssService.outputWimMessages(error);
-                } else { this._nssService.handleError(error); }
-            });
-        }
-    }
-
-    deleteRegRegion(rrID) {
-        const check = confirm('Are you sure you want to delete this Regression Region?');
-        if (check) {
-            this._settingsService.deleteEntity(rrID, this.configSettings.regRegionURL).subscribe(result => {
-                this._nssService.setSelectedRegion(this.selectedRegion);
-                if (result.headers) { this._nssService.outputWimMessages(result); }
-            }, error => {
-                if (error.headers) {this._nssService.outputWimMessages(error);
-                } else { this._nssService.handleError(error); }
-            });
-        }
     }
 
     showInputModal() {

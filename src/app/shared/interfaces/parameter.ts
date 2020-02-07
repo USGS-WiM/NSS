@@ -9,7 +9,6 @@ export interface Parameter {
     unitType: Unittype;
     value: number;
     limits: Limit;
-    comments: string;
     rrid?: number;
     limitArray?: Array<Limit>;
     outOfRange?: boolean;

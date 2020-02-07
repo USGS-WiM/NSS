@@ -6,7 +6,7 @@
 // authors:  Tonia Roddick USGS Wisconsin Internet Mapping
 // purpose: modal used to show about information
 
-import { Component, ViewChild, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NSSService } from 'app/shared/services/app.service';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
@@ -16,6 +16,7 @@ import { ConfigService } from 'app/config.service';
 import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 declare var MathJax: {
     Hub: { Queue, Config }
 };
@@ -39,7 +40,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public unitTypes;
     public equation;
     public errors;
-    public itemParameters: any;
+    public cloneParameters: any;
     public regRegion: any;
     public statisticGroup: any;
     public clone: boolean;
@@ -85,10 +86,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this._nssService.currentItem.subscribe(item => this.itemParameters = item);
-        this._nssService.currentRegRegion.subscribe(regRegion => this.regRegion = regRegion);
-        this._nssService.currentStatisticGroup.subscribe(statisticGroup => this.statisticGroup = statisticGroup);
-        this._nssService.currentClone.subscribe(clone => this.clone = clone);
+        this._nssService.currentItem.subscribe(item => this.cloneParameters = item);
 
         // subscriber for logged in role
         this.loggedInRole = localStorage.getItem('loggedInRole');
@@ -162,58 +160,66 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
+        console.log(this.cloneParameters);
 
-        if (this.clone == true){
+        if (this.cloneParameters != " "){
+            console.log("clone");
             this.clearScenario();
-            this.cloneSenario();
-        }  
+            this.cloneScenario();
+        }  else{
+            console.log("new");
+        }
     }
 
-    cloneSenario(){  
+    cloneScenario(){  
         this.unitTypes.forEach( (element,index) => {  
-            if (element.id.toString() == this.itemParameters.unit.id.toString()){
+            if (element.id.toString() == this.cloneParameters.r.unit.id.toString()){
                 this.newScenForm.patchValue({regressionRegions: {regressions:{unit:this.unitTypes[index]}}});
             }
         });
 
+        if(!this.cloneParameters.r.equivalentYears){
+            this.cloneParameters.r.equivalentYears=0;
+        }
+
         this.newScenForm.patchValue({
-            statisticGroupID: this.statisticGroup.toString(),
+            statisticGroupID: this.cloneParameters.statisticGroupID.toString(),
             regressionRegions: {
-                ID: this.regRegion.id.toString(),
+                ID: this.cloneParameters.rr.id.toString(),
                 regressions:{
-                    ID: this.itemParameters.id.toString(),
-                    equation: this.itemParameters.equation.toString(),
-                    equivalentYears: this.itemParameters.equivalentYears.toString(),
+                    ID: this.cloneParameters.r.id.toString(),
+                    equation: this.cloneParameters.r.equation.toString(),
+                    equivalentYears: this.cloneParameters.r.equivalentYears.toString(),
                 } 
             }
         });
-        
+
         //Prediction Interval
-        if (this.itemParameters.predictionInterval.biasCorrectionFactor != null){
+        if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {biasCorrectionFactor: this.itemParameters.predictionInterval.biasCorrectionFactor.toString()}}}});
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {biasCorrectionFactor: this.cloneParameters.r.predictionInterval.biasCorrectionFactor.toString()}}}});
         } 
-        if (this.itemParameters.predictionInterval.student_T_Statistic != null){
+        if (this.cloneParameters.r.predictionInterval.student_T_Statistic != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {student_T_Statistic: this.itemParameters.predictionInterval.student_T_Statistic.toString()}}}});
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {student_T_Statistic: this.cloneParameters.r.predictionInterval.student_T_Statistic.toString()}}}});
         }
-        if (this.itemParameters.predictionInterval.variance != null){
+        if (this.cloneParameters.r.predictionInterval.variance != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {variance: this.itemParameters.predictionInterval.variance.toString()}}}});
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {variance: this.cloneParameters.r.predictionInterval.variance.toString()}}}});
         }
-        if (this.itemParameters.predictionInterval.xiRowVector != null){
+        if (this.cloneParameters.r.predictionInterval.xiRowVector != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {xiRowVector: this.itemParameters.predictionInterval.xiRowVector.toString()}}}});
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {xiRowVector: this.cloneParameters.r.predictionInterval.xiRowVector.toString()}}}});
         }
-        if (this.itemParameters.predictionInterval.covarianceMatrix != null){
-            if (this.itemParameters.predictionInterval.covarianceMatrix != "null"){
+        if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null){
+            if (this.cloneParameters.r.predictionInterval.covarianceMatrix != "null"){
                 this.addPredInt = true
-                this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {covarianceMatrix: this.itemParameters.predictionInterval.covarianceMatrix.toString()}}}});
+                this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {covarianceMatrix: this.cloneParameters.r.predictionInterval.covarianceMatrix.toString()}}}});
             }
         }
 
         //parameters
-        this.regRegion.parameters.forEach((element,index) => {
+        this.cloneParameters.rr.parameters.forEach((element,index) => {
             this.addVariable();
             const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
             controlArray.controls[index].get('code').setValue(element.code.toString());
@@ -231,13 +237,13 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             });
         }); 
 
-        //errors
-         this.itemParameters.errors.forEach((element,index) => {
+        this.cloneParameters.r.errors.forEach((element,index) => {
             this.addError();
             const controlArray = <FormArray> this.newScenForm.get('regressionRegions.regressions.errors');       
             controlArray.controls[index].get('id').setValue(element.id);
             controlArray.controls[index].get('value').setValue(element.value.toString());
-        });            
+        });  
+        this.cloneParameters = " "; 
     }
 
     addVariable() {

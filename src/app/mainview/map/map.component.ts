@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import { ShapeService } from '../../shared/services/shape.service';
+import * as shp from 'shpjs';
+import { GeojsonService } from '../../shared/services/geojson.service';
 
 @Component({
   selector: 'app-map',
@@ -10,8 +12,11 @@ import { ShapeService } from '../../shared/services/shape.service';
 export class MapComponent implements OnInit {
   public map;
   private polygon;
+  private input;
+  private file;
 
-  constructor(private shapeService: ShapeService) { }
+  constructor(private shapeService: ShapeService,
+    private geojsonService: GeojsonService) { }
 
   ngOnInit() {
     this.initMap();
@@ -60,10 +65,53 @@ export class MapComponent implements OnInit {
       })
     });
 
-    this.map.addLayer(polygonLayer);
-    this.map.fitBounds(polygonLayer.getBounds());
+    // this.map.addLayer(polygonLayer);
+    // this.map.fitBounds(polygonLayer.getBounds());
   }
 
-  
+  // async SHPtoGEOJSON(form: any) {
+  //   await this.GeojsonService.readFileContent(file)
+  //     .toPromise().then(
+  //       res => {
+  //         shp(res).then(function (geojson) {
+  //           console.log(geojson);
+  //         })
+  //       }
+  //     );
+  // }
+
+  public loadFile() {
+    console.log("hey")
+
+    this.input = document.getElementById('fileinput');
+    if (!this.input.files[0]) {
+      alert("Please select a file.");
+    }
+    else {
+
+      console.log("here")
+      this.file = this.input.files[0];
+      console.log(this.file);
+      shp(this.file).then(function (geojson) {
+        //L.geoJSON(geojson).addTo(this.map);
+        //this.map.fitBounds()
+
+        const newLayer = L.geoJSON(geojson, {
+          style: (feature) => ({
+            weight: 3,
+            opacity: 0.5,
+            color: '#000000',
+            fillOpacity: 0.8,
+            fillColor: '#fc8d62'
+          })
+        });
+
+        this.map.addLayer(newLayer);
+        this.map.fitBounds(newLayer.getBounds());
+      });
+    }
+  }
+
+
 
 }

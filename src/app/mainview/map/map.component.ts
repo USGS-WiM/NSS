@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
-import { shareReplay } from 'rxjs/operators';
+import { ShapeService } from '../../shared/services/shape.service';
 
 @Component({
   selector: 'app-map',
@@ -9,12 +9,19 @@ import { shareReplay } from 'rxjs/operators';
 })
 export class MapComponent implements OnInit {
   public map;
-  private data;
+  private polygon;
 
-  constructor() { }
+  constructor(private shapeService: ShapeService) { }
 
   ngOnInit() {
+    this.initMap();
+    this.shapeService.getStateShapes().subscribe(polygon => {
+      this.polygon = polygon;
+      this.initPolygonLayer();
+    });
+  }
 
+  private initMap(): void {
     const mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
       '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -40,49 +47,23 @@ export class MapComponent implements OnInit {
     };
 
     L.control.layers(baseMaps).addTo(this.map);
-
-    this.data = {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "properties": {},
-          "geometry": {
-            "type": "Polygon",
-            "coordinates": [
-              [
-                [
-                  -111.884765625,
-                  34.52466147177172
-                ],
-                [
-                  -88.76953125,
-                  34.52466147177172
-                ],
-                [
-                  -88.76953125,
-                  43.32517767999296
-                ],
-                [
-                  -111.884765625,
-                  43.32517767999296
-                ],
-                [
-                  -111.884765625,
-                  34.52466147177172
-                ]
-              ]
-            ]
-          }
-        }
-      ]
-    }
-
-    //L.geoJSON(this.data).addTo(this.map);
-
-   // shp.shp('./assets/shp/test_regA.zip').then(function (geojson) {
-      // Do something with the geojson
-   // })
   }
+
+  private initPolygonLayer() {
+    const polygonLayer = L.geoJSON(this.polygon, {
+      style: (feature) => ({
+        weight: 3,
+        opacity: 0.5,
+        color: '#000000',
+        fillOpacity: 0.8,
+        fillColor: '#fc8d62'
+      })
+    });
+
+    this.map.addLayer(polygonLayer);
+    this.map.fitBounds(polygonLayer.getBounds());
+  }
+
+  
 
 }

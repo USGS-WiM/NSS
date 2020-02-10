@@ -46,6 +46,8 @@ import { ProfileComponent } from './shared/components/profile/profile.component'
 import { AddScenarioModal } from './shared/components/addscenario/addscenario.component';
 import { ManageCitationsModal } from './shared/components/managecitations/managecitations.component';
 import { MapComponent } from './mainview/map/map.component';
+import { HttpClientModule } from '@angular/common/http';
+import { ShapeService } from './shared/services/shape.service';
 
 declare const require: any;
 
@@ -92,12 +94,12 @@ export function highchartsFactory() {
   imports: [
     BrowserModule, FormsModule, HttpModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,
     Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule, NgbModule.forRoot(),
-    RouterModule.forRoot(appRoutes, {onSameUrlNavigation: 'reload'})
+    RouterModule.forRoot(appRoutes, {onSameUrlNavigation: 'reload'}), HttpClientModule
   ],
   providers: [
     NSSService, { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService, LoaderService,
     { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
-    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard
+    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ShapeService
   ],
   bootstrap: [AppComponent],
   exports: [RouterModule]

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
+import { shareReplay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-map',
@@ -7,7 +8,8 @@ import * as L from 'leaflet';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
-  private map;
+  public map;
+  private data;
 
   constructor() { }
 
@@ -38,6 +40,49 @@ export class MapComponent implements OnInit {
     };
 
     L.control.layers(baseMaps).addTo(this.map);
+
+    this.data = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -111.884765625,
+                  34.52466147177172
+                ],
+                [
+                  -88.76953125,
+                  34.52466147177172
+                ],
+                [
+                  -88.76953125,
+                  43.32517767999296
+                ],
+                [
+                  -111.884765625,
+                  43.32517767999296
+                ],
+                [
+                  -111.884765625,
+                  34.52466147177172
+                ]
+              ]
+            ]
+          }
+        }
+      ]
+    }
+
+    //L.geoJSON(this.data).addTo(this.map);
+
+   // shp.shp('./assets/shp/test_regA.zip').then(function (geojson) {
+      // Do something with the geojson
+   // })
   }
 
 }

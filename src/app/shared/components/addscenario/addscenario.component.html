@@ -52,7 +52,6 @@
                         <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.equation').valid && newScenForm.get('regressionRegions.regressions.equation').dirty">Expression
                             is required</div>
                     </div>
-
                     <!-- Equivalent Years -->
                     <div class="form-group">
                         <label class="req" for="equivalentYears">Equivalent Years (optional):</label>
@@ -100,10 +99,10 @@
                                 </div>
             
                             <!-- Parameter Comments-->
-                            <div class="form-group required">
+                            <!-- <div class="form-group required">
                                 <label class="req" for="comments">Parameter Comments:</label>
                                 <textarea class="form-control" rows="3" placeholder="" formControlName="comments"></textarea>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -140,13 +139,13 @@
                             <!-- XI Row Vector -->
                             <div class="form-group">
                                 <label class="req" for="xiRowVector">XI Row Vector:</label>
-                                <input class="form-control" (keypress)="_keyPress($event)" type="text" formControlName="xiRowVector">
+                                <input class="form-control" type="text" formControlName="xiRowVector">
                             </div>
     
                             <!-- Covariance Matrix -->
                             <div class="form-group">
                                 <label class="req" for="covarianceMatrix">Covariance Matrix:</label>
-                                <input class="form-control" (keypress)="_keyPress($event)" type="text" formControlName="covarianceMatrix">
+                                <input class="form-control"  type="text" formControlName="covarianceMatrix">
                             </div>
                         </div>
                         <div formGroupName="expected">

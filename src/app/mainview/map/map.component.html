@@ -1,6 +1,8 @@
 <form #f="ngForm" class="ui form" (ngSubmit)="loadFile(f.value)">
-  <input type='file' id='fileinput'>
-  <button type="submit" class="ui button">Submit</button> 
+  <label>Polygon</label><br>
+  <label for="file">Polygon Shapefile (.zip):</label>
+  <input type='file' id='fileinput' formControlName="file">
+  <button type="submit" class="ui button" style="margin-top: 10px;">Preview File</button> 
 </form> 
 
 <div class="map-container">

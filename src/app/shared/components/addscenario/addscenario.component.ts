@@ -16,7 +16,6 @@ import { ConfigService } from 'app/config.service';
 import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 declare var MathJax: {
     Hub: { Queue, Config }
 };

@@ -3,6 +3,7 @@ import * as L from 'leaflet';
 import { ShapeService } from '../../shared/services/shape.service';
 import * as shp from 'shpjs';
 import { GeojsonService } from '../../shared/services/geojson.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-map',
@@ -14,9 +15,11 @@ export class MapComponent implements OnInit {
   private polygon;
   private input;
   private file;
+  public geojson2;
 
   constructor(private shapeService: ShapeService,
-    private geojsonService: GeojsonService) { }
+    private geojsonService: GeojsonService,
+    private http: HttpClient) { }
 
   ngOnInit() {
     this.initMap();
@@ -65,53 +68,49 @@ export class MapComponent implements OnInit {
       })
     });
 
-    // this.map.addLayer(polygonLayer);
-    // this.map.fitBounds(polygonLayer.getBounds());
+    this.map.addLayer(polygonLayer);
+    this.map.fitBounds(polygonLayer.getBounds());
   }
 
-  // async SHPtoGEOJSON(form: any) {
-  //   await this.GeojsonService.readFileContent(file)
-  //     .toPromise().then(
-  //       res => {
-  //         shp(res).then(function (geojson) {
-  //           console.log(geojson);
-  //         })
-  //       }
-  //     );
-  // }
+  async SHPtoGEOJSON(form: any) {
+    await this.geojsonService.readFileContent(this.file)
+      .toPromise().then(
+        res => {
+          shp(res).then(function (geojson) {
+            console.log(geojson);
+            //alert(geojson);
+            //L.geoJSON(geojson).addTo(this.map);
+            // const polygonLayer = L.geoJSON(geojson, {
+            //   style: (feature) => ({
+            //     weight: 3,
+            //     opacity: 0.5,
+            //     color: '#000000',
+            //     fillOpacity: 0.8,
+            //     fillColor: '#fc8d62'
+            //   })
+            // });
+        
+            // this.map.addLayer(polygonLayer);
+            // this.map.fitBounds(polygonLayer.getBounds());
+
+            
+
+          })
+        }
+      );
+  }
+
 
   public loadFile() {
-    console.log("hey")
-
     this.input = document.getElementById('fileinput');
     if (!this.input.files[0]) {
       alert("Please select a file.");
     }
     else {
-
-      console.log("here")
       this.file = this.input.files[0];
       console.log(this.file);
-      shp(this.file).then(function (geojson) {
-        //L.geoJSON(geojson).addTo(this.map);
-        //this.map.fitBounds()
-
-        const newLayer = L.geoJSON(geojson, {
-          style: (feature) => ({
-            weight: 3,
-            opacity: 0.5,
-            color: '#000000',
-            fillOpacity: 0.8,
-            fillColor: '#fc8d62'
-          })
-        });
-
-        this.map.addLayer(newLayer);
-        this.map.fitBounds(newLayer.getBounds());
-      });
+      this.SHPtoGEOJSON(this.file);
     }
   }
-
-
 
 }

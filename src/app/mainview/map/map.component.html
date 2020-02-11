@@ -1,6 +1,6 @@
-<form action='#' onsubmit="return false;">
+<form #f="ngForm" class="ui form" (ngSubmit)="loadFile(f.value)">
   <input type='file' id='fileinput'>
-  <input type='button' id='btnLoad' value='Load' (click)='loadFile()'>
+  <button type="submit" class="ui button">Submit</button> 
 </form> 
 
 <div class="map-container">

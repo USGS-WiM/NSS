@@ -1628,6 +1628,12 @@ export class MainviewComponent implements OnInit, OnDestroy {
                         this.cancelCreateRegression();
                         this._nssService.setSelectedRegion(this.selectedRegion);
                     }
+                    if (this.uploadPolygon) { // if user elected to upload a polygon, send that through
+                        //TODO
+                        //this.uploadNewPolygon(response);
+                    } else {
+                        //TODO
+                    }
                 }, error => {
                     if (this._settingsService.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText); }
@@ -1651,6 +1657,11 @@ export class MainviewComponent implements OnInit, OnDestroy {
                 this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
             }
         );
+    }
+
+    public uploadNewPolygon(rr) {
+        // upload new polygon
+        //TODO
     }
 
     private getDismissReason(reason: any): string {

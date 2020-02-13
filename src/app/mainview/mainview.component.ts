@@ -1629,10 +1629,10 @@ export class MainviewComponent implements OnInit, OnDestroy {
                         this._nssService.setSelectedRegion(this.selectedRegion);
                     }
                     if (this.uploadPolygon) { // if user elected to upload a polygon, send that through
-                        //TODO
-                        //this.uploadNewPolygon(response);
+                        this.uploadNewPolygon(response);
                     } else {
-                        //TODO
+                        this.cancelCreateRegression();
+                        this._nssService.setSelectedRegion(this.selectedRegion);
                     }
                 }, error => {
                     if (this._settingsService.outputWimMessages(error)) {return; }
@@ -1660,8 +1660,8 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
 
     public uploadNewPolygon(rr) {
-        // upload new polygon
-        //TODO
+        // Upload new polygon
+        // TODO: Send polygon to services
     }
 
     private getDismissReason(reason: any): string {

@@ -12,29 +12,17 @@ import { HttpClient } from '@angular/common/http';
 })
 export class MapComponent implements OnInit {
   public map;
-  private polygon;
   private input;
   private file;
-  public geojson2;
 
-  constructor(private shapeService: ShapeService,
-    private geojsonService: GeojsonService,
-    private http: HttpClient) { }
+  constructor(private geojsonService: GeojsonService) { }
 
   ngOnInit() {
-    this.initMap();
-    this.shapeService.getStateShapes().subscribe(polygon => {
-      this.polygon = polygon;
-      this.initPolygonLayer();
-    });
-  }
-
-  private initMap(): void {
     const mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
       '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       // tslint:disable-next-line:max-line-length
-      mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+      mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYW1lZGVuYmxpayIsImEiOiJjanY1bDh0bDMxNWJnM3luNWhzb2RsMW0yIn0.uBxkotb36ZLCTAwIySGYPw';
 
     const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -57,8 +45,8 @@ export class MapComponent implements OnInit {
     L.control.layers(baseMaps).addTo(this.map);
   }
 
-  private initPolygonLayer() {
-    const polygonLayer = L.geoJSON(this.polygon, {
+  private addGeojsonToMap(polygon) {
+    const polygonLayer = L.geoJSON(polygon, {
       style: (feature) => ({
         weight: 3,
         opacity: 0.5,
@@ -73,28 +61,13 @@ export class MapComponent implements OnInit {
   }
 
   async SHPtoGEOJSON(form: any) {
+    const self = this;
     await this.geojsonService.readFileContent(this.file)
       .toPromise().then(
         res => {
           shp(res).then(function (geojson) {
             console.log(geojson);
-            //alert(geojson);
-            //L.geoJSON(geojson).addTo(this.map);
-            // const polygonLayer = L.geoJSON(geojson, {
-            //   style: (feature) => ({
-            //     weight: 3,
-            //     opacity: 0.5,
-            //     color: '#000000',
-            //     fillOpacity: 0.8,
-            //     fillColor: '#fc8d62'
-            //   })
-            // });
-        
-            // this.map.addLayer(polygonLayer);
-            // this.map.fitBounds(polygonLayer.getBounds());
-
-            
-
+            this.addGeojsonToMap(geojson);
           })
         }
       );

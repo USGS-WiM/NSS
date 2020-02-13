@@ -47,7 +47,6 @@ import { AddScenarioModal } from './shared/components/addscenario/addscenario.co
 import { ManageCitationsModal } from './shared/components/managecitations/managecitations.component';
 import { MapComponent } from './mainview/map/map.component';
 import { HttpClientModule } from '@angular/common/http';
-import { ShapeService } from './shared/services/shape.service';
 
 declare const require: any;
 
@@ -99,7 +98,7 @@ export function highchartsFactory() {
   providers: [
     NSSService, { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService, LoaderService,
     { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
-    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ShapeService
+    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard
   ],
   bootstrap: [AppComponent],
   exports: [RouterModule]

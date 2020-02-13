@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
-import { ShapeService } from '../../shared/services/shape.service';
 import * as shp from 'shpjs';
 import { GeojsonService } from '../../shared/services/geojson.service';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-map',

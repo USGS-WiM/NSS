@@ -51,7 +51,6 @@ export class MapComponent implements OnInit {
   }
 
   public addGeojsonToMap(polygon: any) {
-    console.log("hello");
     const polygonLayer = L.geoJSON(polygon, {
       style: (feature) => ({
         weight: 3,
@@ -72,7 +71,6 @@ export class MapComponent implements OnInit {
       .toPromise().then(
         res => {
           shp(res).then(function (geojson) {
-            console.log(geojson);
             self.addGeojsonToMap(geojson);
           })
         }
@@ -86,7 +84,6 @@ export class MapComponent implements OnInit {
     }
     else {
       this.file = this.input.files[0];
-      console.log(this.file);
       this.SHPtoGEOJSON(this.file);
     }
   }

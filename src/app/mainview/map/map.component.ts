@@ -18,34 +18,42 @@ export class MapComponent implements OnInit {
   constructor(private geojsonService: GeojsonService) { }
 
   ngOnInit() {
-    const mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-      '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      // tslint:disable-next-line:max-line-length
-      mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYW1lZGVuYmxpayIsImEiOiJjanY1bDh0bDMxNWJnM3luNWhzb2RsMW0yIn0.uBxkotb36ZLCTAwIySGYPw';
-
-    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    
+    // Initialize basemap layers
+    const tileLayer_topography = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
     });
-    const grayscale = L.tileLayer(mbUrl, { id: 'mapbox.light', attribution: mbAttr });
-    const streets = L.tileLayer(mbUrl, { id: 'mapbox.streets', attribution: mbAttr });
+    const tileLayer_streets = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+    });
+    const tileLayer_grayscale = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
+    });
+    const tileLayer_satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
 
+    // Initialize map 
     this.map = new L.Map('map', {
       center: new L.LatLng(39.8283, -98.5795),
       zoom: 4,
-      layers: [streets]
+      layers: [tileLayer_streets]
     });
 
+    // Create basemap collection
     const baseMaps = {
-      'Open Street Map': osm,
-      'Grayscale': grayscale,
-      'Streets': streets
+      'Streets': tileLayer_streets,
+      'Topography': tileLayer_topography,
+      'Grayscale': tileLayer_grayscale,
+      'Satellite': tileLayer_satellite
     };
 
+    // Add basemap control to the map
     L.control.layers(baseMaps).addTo(this.map);
   }
 
-  private addGeojsonToMap(polygon) {
+  public addGeojsonToMap(polygon: any) {
+    console.log("hello");
     const polygonLayer = L.geoJSON(polygon, {
       style: (feature) => ({
         weight: 3,
@@ -67,12 +75,11 @@ export class MapComponent implements OnInit {
         res => {
           shp(res).then(function (geojson) {
             console.log(geojson);
-            this.addGeojsonToMap(geojson);
+            self.addGeojsonToMap(geojson);
           })
         }
       );
   }
-
 
   public loadFile() {
     this.input = document.getElementById('fileinput');

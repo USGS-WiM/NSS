@@ -48,7 +48,6 @@ import { ManageCitationsModal } from './shared/components/managecitations/manage
 import { MapComponent } from './mainview/map/map.component';
 import { HttpClientModule } from '@angular/common/http';
 import { GeojsonService } from './shared/services/geojson.service';
-import { AddregressionregionComponent } from './shared/components/addregressionregion/addregressionregion.component';
 
 declare const require: any;
 
@@ -90,7 +89,7 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, LoaderComponent, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, MapComponent, AddregressionregionComponent
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, MapComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

@@ -969,4 +969,96 @@
     </div>
 </ng-template>
 
+<!--Add regression region modal-->
+<ng-template #add let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="col-xs-12">
+            <h4 class="modal-title pull-left" *ngIf="addRegReg">New Regression Region </h4>
+            <h4 class="modal-title pull-left" *ngIf="!addRegReg">New Citation </h4>
+            <button class="close pull-right" (click)="d('closed')">x</button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <h3 class="modal-title" *ngIf="addRegReg">New Regression Region</h3>
+        <h3 class="modal-title" *ngIf="!addRegReg">New Citation</h3>
+        <form *ngIf="addRegReg" [formGroup]="newRegRegForm" styel="margin-bottom: 10px;">
+            <!-- Regression Type Name* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('name').valid && newRegRegForm.get('name').dirty}">
+                <label class="req" for="name">Name:</label>
+                <input class="form-control" type="text" formControlName="name" required>
+                <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('name').valid && newRegRegForm.get('name').dirty">Regression
+                    Name is required</div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
+            </div>
+
+            <!-- Short Name -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty || (newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC'))}">
+                <label class="req" for="code">Code (e.g. GC1234):</label>
+                <input class="form-control" type="text" formControlName="code">
+                <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty && newRegRegForm.get('code').value == ''">Code
+                    is required</div>
+                <div class="input-invalid-warning" *ngIf="newRegRegForm.get('code').value != '' && newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC')">
+                        Code must start with "GC"</div>
+            </div>
+            <!-- Region* -->
+            <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('state').valid && newRegRegForm.get('state').dirty }">
+                <label class="req" for="state">Region:</label>
+                <select class="form-control" formControlName="state">
+                    <option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</option>
+                </select>
+                <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('state').valid && newRegRegForm.get('state').dirty">
+                    Region is required
+                </div>
+            </div>
+            
+            <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="uploadPolygon = true">Upload Polygon</button>
+            <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true" style="margin-left: 5px;">Add Citation</button>
+        </form>
+        
+        <form *ngIf="addCitation" [formGroup]="newCitForm">
+            <label>Citation</label>
+            <!-- Title -->
+            <div class="form-group required">
+                <label for="title">Title:</label>
+                <textarea class="form-control" rows="3" placeholder="" formControlName="title"></textarea>
+                <div class="input-invalid-warning" *ngIf="!newCitForm.get('title').valid && newCitForm.get('title').dirty">Author
+                        is required</div>
+            </div>
+            <!-- Author* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('author').valid && newCitForm.get('author').dirty}">
+                <label class="req" for="author">Author:</label>
+                <input class="form-control" type="text" formControlName="author" required>
+                <div class="input-invalid-warning" *ngIf="!newCitForm.get('author').valid && newCitForm.get('author').dirty">Author
+                    is required</div>
+            </div>
+
+            <!-- Short Name -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty}">
+                <label class="req" for="citationURL">Citation URL:</label>
+                <input class="form-control" type="text" formControlName="citationURL">
+                <div class="input-invalid-warning" *ngIf="!newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty">URL
+                    is required</div>
+            </div>
+            <button *ngIf="addCitation" type="button" class="btn-blue" (click)="addCitation = false; newCitForm.reset();">Remove Citation</button>
+        </form>
+        
+        <form *ngIf="uploadPolygon">
+            <app-map></app-map>
+            <button *ngIf="uploadPolygon" type="button" class="btn-blue" (click)="uploadPolygon = false;">Remove Polygon</button>
+        </form>
+        
+
+        <div class="modal-footer">
+            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+            <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="btn-blue">Create</button>
+            <button *ngIf="!addRegReg" type="button" (click)="createNewCitation(selectedRegRegion)" [disabled]="!newCitForm.valid" class="btn-blue">Create</button>
+        </div>
+    </div>
+</ng-template>
+
 <router-outlet></router-outlet>

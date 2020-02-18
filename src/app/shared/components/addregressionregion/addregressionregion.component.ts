@@ -36,7 +36,6 @@ import { Citation } from 'app/shared/interfaces/citation';
   styleUrls: ['./addregressionregion.component.css']
 })
 export class AddregressionregionComponent implements OnInit {
-  @ViewChild('addRegressionRegion') public addRegressionRegionModal; // : ModalDirective;  //modal for validator
   @ViewChildren('inputsTable', { read: ViewContainerRef }) inputTable;
   @ViewChildren('resultsTable', { read: ViewContainerRef }) resultTable;
   @ViewChild('editScenarioForm') editScenarioForm;
@@ -117,38 +116,25 @@ export class AddregressionregionComponent implements OnInit {
   public modalRef;
   // public changeStatGroup = false;
   public citations: Array<Citation>;
-  private modalElement: any;
 
   constructor(
     private _nssService: NSSService,
-    private _loaderService: LoaderService,
-    private _toasterService: ToasterService,
-    @Inject(DOCUMENT) private _document: any,
-    private _pageScrollService: PageScrollService,
-    private _authService: AuthService,
-    private _fb: FormBuilder,
-    private router: Router,
-    private _settingsService: SettingsService,
-    private _configService: ConfigService,
-    private _modalService: NgbModal
+        private _loaderService: LoaderService,
+        private _toasterService: ToasterService,
+        @Inject(DOCUMENT) private _document: any,
+        private _pageScrollService: PageScrollService,
+        private _authService: AuthService,
+        private _fb: FormBuilder,
+        private router: Router,
+        private _settingsService: SettingsService,
+        private _configService: ConfigService,
+        private _modalService: NgbModal
   ) { }
 
   ngOnInit() {
-
     this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((show: boolean) => {
-      if (show) { this.showModal(); }
-    });
-
-    this.modalElement = this.addRegressionRegionModal;
-
-  }
-
-  public showModal(): void {
-    this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
-}
-
-  public showAddScenarioModal() {
-    this._nssService.setAddScenarioModal(true);
+      if (show) { this.showNewRegressionRegionForm(); }
+  });
   }
 
   private createNewRegression() {
@@ -217,28 +203,28 @@ export class AddregressionregionComponent implements OnInit {
   public showNewRegressionRegionForm(rr?) {
     // shows form for creating new regression and/or citation
     if (rr) { // rr already exists, only want citation
-      this.selectedRegRegion = rr;
-      this.addCitation = true;
-      //this.uploadPolygon = true?
-      this.addRegReg = false;
+        this.selectedRegRegion = rr;
+        this.addCitation = true;
+        //this.uploadPolygon = true?
+        this.addRegReg = false;
     } else { // rr doesn't exist
-      this.addRegReg = true;
-      this.addCitation = false;
-      this.uploadPolygon = false;
+        this.addRegReg = true;
+        this.addCitation = false;
+        this.uploadPolygon = false;
     }
-    if (this.selectedRegion) { this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
+    if (this.selectedRegion) {this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
     this.showNewRegRegForm = true;
     this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
     this.modalRef.result.then(
-      result => {
-        // this is the solution for the first modal losing scrollability
-        if (document.querySelector('body > .modal')) {
-          document.body.classList.add('modal-open');
-        }
-        if (result) { this.cancelCreateRegression(); }
-      },
-      reason => { if (reason) { this.cancelCreateRegression(); } }
+        result => {
+            // this is the solution for the first modal losing scrollability
+            if (document.querySelector('body > .modal')) {
+                document.body.classList.add('modal-open');
+            }
+            if (result) {this.cancelCreateRegression(); }
+        },
+        reason => {if (reason) {this.cancelCreateRegression(); }}
     );
-  }
+}
 
 }

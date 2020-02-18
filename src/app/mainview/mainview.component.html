@@ -6,8 +6,6 @@
 
     <div><h3 style="font-size: 32px !important; font-weight: bolder !important;">{{title}}</h3></div>
     <div style="margin-bottom: 5px; opacity: 0.5; letter-spacing: 0.6px;">{{timestamp | date:"MMMM d, y hh:mma"}}</div>
-
-
     <span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span>
     <div class="col-md-6" style="padding: 0;">
         <div *ngIf="showRegion">
@@ -836,14 +834,12 @@
                                         <div class="data-controls">
                                             <i *ngIf="!r.isEditing" title="Edit Regression" (click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="fa fa-pencil"
                                                 aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
-                                            <i *ngIf="!r.isEditing" title="Clone Scenario" (click)="cloneRowClicked(s.statisticGroupID, r, rr)" class="fa fa-clone"
-                                                aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
                                             <i *ngIf="!r.isEditing" title="Delete Regression" (click)="deleteRegression(s.statisticGroupID, rr.id, r.id)" class="fa fa-times"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                                             <i *ngIf="r.isEditing" title="Save Regression" (click)="saveRegression(r, rIndex, rrIndex, sgIndex)" class="fa fa-floppy-o"
                                                 aria-hidden="true" style="cursor:pointer;padding-right:5px;"></i>
                                             <i *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="fa fa-history"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i> 
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                                             <!--<i *ngIf="s.statisticGroupID === 2" title="Move to Low Flow Statistics" (click)="moveToLowFlow(r, rIndex, rrIndex, sgIndex)"
                                                 class="fa fa-exchange" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>--><!--removing for now, not working in DB-->
                                         </div>
@@ -897,7 +893,7 @@
                                             Student T Statistic: {{r.predictionInterval.student_T_Statistic}}<br>
                                             Variance: {{r.predictionInterval.variance}}<br>
                                             XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
-                                            Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}<br>
+                                            Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}
                                         </span>
                                         <span *ngIf="!r.isEditing && !r.predictionInterval.biasCorrectionFactor && !r.predictionInterval.student_T_Statistic && !r.predictionInterval.variance 
                                             && !r.predictionInterval.xiRowVector && !r.predictionInterval.covarianceMatrix">None</span>
@@ -964,7 +960,7 @@
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
             <!--<button type="button" (click)="!changeStatGroup ? submitScenario() : putLowFlow()" class="btn-blue">Create</button>-->
-            <button type="button" (click)="submitScenario()" class="btn-blue">Submit</button>
+            <button type="button" (click)="submitScenario()" class="btn-blue">Create</button>
         </div>
     </div>
 </ng-template>

@@ -39,6 +39,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public unitTypes;
     public equation;
     public errors;
+    public cloneParameters: any;
+    public regRegion: any;
+    public statisticGroup: any;
+    public clone: boolean;
     public selectedRegion;
     private configSettings: Config;
     public addPredInt = false;
@@ -81,6 +85,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this._nssService.currentItem.subscribe(item => this.cloneParameters = item);
+
         // subscriber for logged in role
         this.loggedInRole = localStorage.getItem('loggedInRole');
         this._authService.loggedInRole().subscribe(role => {
@@ -125,6 +131,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
 
         this.modalElement = this.addScenarioModal;
+
     }
 
     public getRegRegions() {
@@ -152,6 +159,86 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
+
+        if (this.cloneParameters != " "){
+            this.clearScenario();
+            this.cloneScenario();
+        }  
+    }
+
+    cloneScenario(){  
+        this.unitTypes.forEach( (element,index) => {  
+            if (element.id.toString() == this.cloneParameters.r.unit.id.toString()){
+                this.newScenForm.patchValue({regressionRegions: {regressions:{unit:this.unitTypes[index]}}});
+            }
+        });
+
+        if(!this.cloneParameters.r.equivalentYears){
+            this.cloneParameters.r.equivalentYears=0;
+        }
+
+        this.newScenForm.patchValue({
+            statisticGroupID: this.cloneParameters.statisticGroupID.toString(),
+            regressionRegions: {
+                ID: this.cloneParameters.rr.id.toString(),
+                regressions:{
+                    ID: this.cloneParameters.r.id.toString(),
+                    equation: this.cloneParameters.r.equation.toString(),
+                    equivalentYears: this.cloneParameters.r.equivalentYears.toString(),
+                } 
+            }
+        });
+
+        //Prediction Interval
+        if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null){
+            this.addPredInt = true
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {biasCorrectionFactor: this.cloneParameters.r.predictionInterval.biasCorrectionFactor.toString()}}}});
+        } 
+        if (this.cloneParameters.r.predictionInterval.student_T_Statistic != null){
+            this.addPredInt = true
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {student_T_Statistic: this.cloneParameters.r.predictionInterval.student_T_Statistic.toString()}}}});
+        }
+        if (this.cloneParameters.r.predictionInterval.variance != null){
+            this.addPredInt = true
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {variance: this.cloneParameters.r.predictionInterval.variance.toString()}}}});
+        }
+        if (this.cloneParameters.r.predictionInterval.xiRowVector != null){
+            this.addPredInt = true
+            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {xiRowVector: this.cloneParameters.r.predictionInterval.xiRowVector.toString()}}}});
+        }
+        if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null){
+            if (this.cloneParameters.r.predictionInterval.covarianceMatrix != "null"){
+                this.addPredInt = true
+                this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {covarianceMatrix: this.cloneParameters.r.predictionInterval.covarianceMatrix.toString()}}}});
+            }
+        }
+
+        //parameters
+        this.cloneParameters.rr.parameters.forEach((element,index) => {
+            this.addVariable();
+            const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
+            controlArray.controls[index].get('code').setValue(element.code.toString());
+            //dimesionless units don't have min and max
+            if (element.limits.max != null){
+                controlArray.controls[index].get('limits.max').setValue(element.limits.max.toString());
+            }
+            if (element.limits.min != null){
+                controlArray.controls[index].get('limits.min').setValue(element.limits.min.toString());
+            }
+            this.unitTypes.forEach( (unit,x) => {  
+                if (unit.id.toString() == element.unitType.id.toString()){
+                    controlArray.controls[index].get('unitType').setValue(this.unitTypes[x]);
+               }
+            });
+        }); 
+
+        this.cloneParameters.r.errors.forEach((element,index) => {
+            this.addError();
+            const controlArray = <FormArray> this.newScenForm.get('regressionRegions.regressions.errors');       
+            controlArray.controls[index].get('id').setValue(element.id);
+            controlArray.controls[index].get('value').setValue(element.value.toString());
+        });  
+        this.cloneParameters = " "; 
     }
 
     addVariable() {
@@ -163,7 +250,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 min: new FormControl(null, Validators.required),
             }),
             unitType: new FormControl(null, Validators.required),
-            comments: new FormControl(null),
+            //comments: new FormControl(null),
             value: new FormControl(null, Validators.required)
         }));
     }
@@ -231,6 +318,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id.toString() === scen['statisticGroupID']);
+
         scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
         // add regression region name/code

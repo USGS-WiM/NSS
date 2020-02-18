@@ -19,6 +19,7 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
+
     public loggedInRole = '';
     @ViewChild('login') public loginModal; // : ModalDirective;  //modal for validator
     private modalElement: any;

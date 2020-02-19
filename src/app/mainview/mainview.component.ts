@@ -44,7 +44,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     @ViewChildren('resultsTable', { read: ViewContainerRef }) resultTable;
     @ViewChild('editScenarioForm') editScenarioForm;
     @ViewChild('values') public valuesRef: TemplateRef<any>;
-    @ViewChild('add') public addRef: TemplateRef<any>;
+    //@ViewChild('add') public addRef: TemplateRef<any>;
     @ViewChild('CitationForm') citationForm;
     public newCitForm: FormGroup;
     public title: string;
@@ -598,7 +598,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
             this.regTypes = res;
         });
         this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((show: boolean) => {
-            if (show) { this.showNewRegressionRegionForm(); }
+       //     if (show) { this.showNewRegressionRegionForm(); }
         });
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
@@ -1578,32 +1578,32 @@ export class MainviewComponent implements OnInit, OnDestroy {
     /////////////////////// Finish Add/Edit/Delete Scenarios Section ///////////////////////////
 
     // show add regression region modal
-    public showNewRegressionRegionForm(rr?) {
-        // shows form for creating new regression and/or citation
-        if (rr) { // rr already exists, only want citation
-            this.selectedRegRegion = rr;
-            this.addCitation = true;
-            //this.uploadPolygon = true?
-            this.addRegReg = false;
-        } else { // rr doesn't exist
-            this.addRegReg = true;
-            this.addCitation = false;
-            this.uploadPolygon = false;
-        }
-        if (this.selectedRegion) {this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
-        this.showNewRegRegForm = true;
-        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
-        this.modalRef.result.then(
-            result => {
-                // this is the solution for the first modal losing scrollability
-                if (document.querySelector('body > .modal')) {
-                    document.body.classList.add('modal-open');
-                }
-                if (result) {this.cancelCreateRegression(); }
-            },
-            reason => {if (reason) {this.cancelCreateRegression(); }}
-        );
-    }
+    // public showNewRegressionRegionForm(rr?) {
+    //     // shows form for creating new regression and/or citation
+    //     if (rr) { // rr already exists, only want citation
+    //         this.selectedRegRegion = rr;
+    //         this.addCitation = true;
+    //         //this.uploadPolygon = true?
+    //         this.addRegReg = false;
+    //     } else { // rr doesn't exist
+    //         this.addRegReg = true;
+    //         this.addCitation = false;
+    //         this.uploadPolygon = false;
+    //     }
+    //     if (this.selectedRegion) {this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
+    //     this.showNewRegRegForm = true;
+    //     this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+    //     this.modalRef.result.then(
+    //         result => {
+    //             // this is the solution for the first modal losing scrollability
+    //             if (document.querySelector('body > .modal')) {
+    //                 document.body.classList.add('modal-open');
+    //             }
+    //             if (result) {this.cancelCreateRegression(); }
+    //         },
+    //         reason => {if (reason) {this.cancelCreateRegression(); }}
+    //     );
+    // }
 
     private cancelCreateRegression() {
         this.showNewRegRegForm = false;

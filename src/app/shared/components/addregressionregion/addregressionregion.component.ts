@@ -90,6 +90,17 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       })
     });
     this.configSettings = this._configService.getConfiguration();
+    this.newRegRegForm = _fb.group({
+      name: new FormControl(null, Validators.required),
+      description: new FormControl(null),
+      code: new FormControl(null, Validators.required),
+      state: new FormControl(null, Validators.required)
+  });
+  this.newCitForm = _fb.group({
+      'title': new FormControl(null, Validators.required),
+      'author': new FormControl(null, Validators.required),
+      'citationURL': new FormControl(null, Validators.required)
+  });
   }
 
   ngOnInit() {

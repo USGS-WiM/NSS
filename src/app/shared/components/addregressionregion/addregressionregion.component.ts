@@ -4,21 +4,18 @@
 
 // copyright:   2017 WiM - USGS
 // authors:  Tonia Roddick USGS Wisconsin Internet Mapping
-// purpose: modal used to show about information
+// purpose: modal used to add a new regression region
 
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NSSService } from 'app/shared/services/app.service';
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { SettingsService } from 'app/settings/settings.service';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Region } from '../../interfaces/region';
-declare var MathJax: {
-  Hub: { Queue, Config }
-};
 
 @Component({
   selector: 'addRegressionRegionModal',
@@ -93,30 +90,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._nssService.getVersion.subscribe((v: string) => {
       this.appVersion = v;
     });
-    this._settingsService.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
-      res.sort((a, b) => a.name.localeCompare(b.name));
-      this.statisticGroups = res;
-    });
-    this._settingsService.getEntities(this.configSettings.regTypeURL).subscribe(res => {
-      res.sort((a, b) => a.name.localeCompare(b.name));
-      this.regressionTypes = res;
-    });
-    this._settingsService.getEntities(this.configSettings.variablesURL).subscribe(res => {
-      res.sort((a, b) => a.name.localeCompare(b.name));
-      this.variables = res;
-    });
-    this._settingsService.getEntities(this.configSettings.unitsURL).subscribe(res => {
-      res.sort((a, b) => a.name.localeCompare(b.name));
-      for (const unit of res) {
-        unit['unit'] = unit['name'];
-        unit['abbr'] = unit['abbreviation'];
-      }
-      this.unitTypes = res;
-    });
-    this._settingsService.getEntities(this.configSettings.errorsURL).subscribe(res => {
-      res.sort((a, b) => a.name.localeCompare(b.name));
-      this.errors = res;
-    });
     this._nssService.regions.subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
@@ -159,26 +132,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
       }
     }
-  }
-
-  hideDiv(divId) {
-    // collapse param/error div
-    const div = document.getElementById(divId);
-    div.classList.add('hidden');
-  }
-
-  showDiv(divId) {
-    // uncollapse param/error div
-    const div = document.getElementById(divId);
-    div.classList.remove('hidden');
-  }
-
-  checkDiv(divId) {
-    // check if div is collapsed or not
-    const div = document.getElementById(divId);
-    if (div && div.classList.contains('hidden')) {
-      return false;
-    } else { return true; }
   }
 
   public showAddRegRegion() {

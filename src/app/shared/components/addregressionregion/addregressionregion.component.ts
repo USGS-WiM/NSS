@@ -92,7 +92,10 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       }
     });
     this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((show: boolean) => {
-      if (show) { this.showNewRegressionRegionForm(); }
+      if (show) { 
+          this.showNewRegressionRegionForm();
+          this.loadMap();
+        }
     });
     this._nssService.selectedRegion.subscribe(region => {
       this.selectedRegion = region;
@@ -112,13 +115,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   }
 
-  ngAfterViewInit() {
-    this.loadMap
-  }
-
   public loadMap() {
-    this.uploadPolygon = true;
-
     // Initialize basemap layers
     const tileLayer_topography = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
       attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
@@ -134,7 +131,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
 
     // Initialize map 
-    this.uploadPolygon = true; 
     this.map = new L.Map('map', {
       center: new L.LatLng(39.8283, -98.5795),
       zoom: 4,

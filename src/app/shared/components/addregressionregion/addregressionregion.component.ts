@@ -111,7 +111,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.modalElement = this.addRegressionRegionModal;
 
     this.uploadPolygon = true;
-    //this.loadMap();
 
   }
 
@@ -147,6 +146,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
     // Add basemap control to the map
     L.control.layers(baseMaps).addTo(this.map);
+
   }
 
   public getRegRegions() {
@@ -326,6 +326,11 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }
   }
 
-
+  public showMap() {
+    this.uploadPolygon = true;
+    setInterval(() => {
+      this.map.invalidateSize();
+    }, 100);
+  }
 }
 

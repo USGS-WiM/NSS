@@ -45,7 +45,7 @@
               </div>
           </div>
           
-          <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="uploadPolygon = true;">Upload Polygon</button>
+          <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="showMap()">Upload Polygon</button>
           <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true" style="margin-left: 5px;">Add Citation</button>
       </form>
       
@@ -90,7 +90,7 @@
           <div id="map"></div>
         </div>
       </div>
-      <button *ngIf="uploadPolygon" type="button" class="btn-blue" (click)="uploadPolygon = false;">Remove Polygon</button>
+      <button *ngIf="uploadPolygon" type="button" class="btn-blue" (click)="uploadPolygon = false">Remove Polygon</button>
 
       <div class="modal-footer">
           <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>

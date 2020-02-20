@@ -45,7 +45,6 @@ import { AdminGuard } from './shared/guards/admin.guard';
 import { ProfileComponent } from './shared/components/profile/profile.component';
 import { AddScenarioModal } from './shared/components/addscenario/addscenario.component';
 import { ManageCitationsModal } from './shared/components/managecitations/managecitations.component';
-import { MapComponent } from './mainview/map/map.component';
 import { HttpClientModule } from '@angular/common/http';
 import { GeojsonService } from './shared/services/geojson.service';
 import { AddRegressionRegionModal} from './shared/components/addregressionregion/addregressionregion.component';
@@ -90,7 +89,7 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, LoaderComponent, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, MapComponent, AddRegressionRegionModal
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal
   ],
   imports: [
     BrowserModule, FormsModule, HttpModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

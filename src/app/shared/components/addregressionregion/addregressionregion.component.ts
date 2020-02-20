@@ -107,6 +107,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
     this.modalElement = this.addRegressionRegionModal;
 
+    this.uploadPolygon = true;
+    //this.loadMap();
+
+  }
+
+  ngAfterViewInit() {
+    this.loadMap
   }
 
   public loadMap() {
@@ -127,6 +134,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
 
     // Initialize map 
+    this.uploadPolygon = true; 
     this.map = new L.Map('map', {
       center: new L.LatLng(39.8283, -98.5795),
       zoom: 4,

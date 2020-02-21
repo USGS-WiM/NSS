@@ -1177,36 +1177,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
     // print pdf
     public printPage() {
-        let printContents, popupWin;
-        printContents = document.getElementById('printArea').innerHTML;
-        popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
-        popupWin.document.open();
-        popupWin.document.write(`
-      <html>
-        <head>
-          <title></title>
-          <style>                   
-            .hidden-print {
-                display: none !important;
-            }
-            #print-content * {
-                visibility: visible;
-            }            
-            h3 {
-                text-align: center;
-            }
-            th, td {
-                margin-top:-8px;
-                padding-top:8px;
-                page-break-inside:avoid;
-            }
-          </style>
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
-            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        </head>
-    <body onload="window.print();window.close()">${printContents}</body>
-      </html>`);
-        popupWin.document.close();
+        window.print();
     }
 
     /////////////////////// Clone Scenarios Section ///////////////////////////

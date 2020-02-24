@@ -213,6 +213,11 @@ input[type="radio"]{
 .hidden-print {
   margin-top: 15px;
 }
+
+.wim-nav.hidden-print {
+  margin-top: 0px !important;
+}
+
 input {
     margin: 0px !important;
 }

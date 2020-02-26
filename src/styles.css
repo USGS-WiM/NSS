@@ -110,11 +110,12 @@ input[type="radio"]{
 .mobile-nav-toggle:before{
   width: 45px !important;
 }
-.mobile-nav-toggle:focus:before, .mobile-nav-toggle:active:before{
+.mobile-nav-toggle:focus:before{
   content: '\f20e' !important;
-  transform: rotate(0deg) !important;
-  -webkit-transform: rotate(0deg) !important;
-  opacity: 0.6 !important;
+} 
+.mobile-nav-toggle:focus {
+  transform: none !important;
+  -webkit-transform: none !important;
 }
 .identification{
   font-size: 10px !important;

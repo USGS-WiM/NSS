@@ -27,6 +27,7 @@ export class SidebarComponent implements OnInit {
     public selectedRegion;
     public regions: Array<Region>;
     public loggedInRole;
+    public region;
 
     // regression regions
     public selectedRegRegionIDs: Array<number>; // multiselect populates this with those selected
@@ -199,6 +200,7 @@ export class SidebarComponent implements OnInit {
         this.selectedRegRegionIDs = [];
         this.selectedStatGrpIDs = [];
         this.selectedRegTypeIDs = [];
+        this.region=r;
         this._nssService.setSelectedRegion(r);
     }
 
@@ -255,7 +257,7 @@ export class SidebarComponent implements OnInit {
             s.regressionRegions.forEach(rr => {
                 if (numOfRegRegions > 1) { totalWeight += Number(rr.percentWeight); }
                 rr.parameters.forEach(p => {
-                    if (!p.value) {
+                    if (p.value==null) {
                         ValueRequired = true;
                         p.missingVal = true;
                     } else { p.missingVal = false; }
@@ -303,6 +305,7 @@ export class SidebarComponent implements OnInit {
         this.selectedStatGrpIDs = [];
         this.selectedRegRegionIDs = [];
         this.selectedRegTypeIDs = [];
+        this._nssService.setSelectedRegion(this.region);
     }
 
     // want to see a chart (which one?) ---- may delete, trying it on (ngModelChange)=" of select

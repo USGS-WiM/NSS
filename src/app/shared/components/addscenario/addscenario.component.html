@@ -2,7 +2,9 @@
     <div class="modal-header">
         <div class="col-xs-12">
             <h4 class="modal-title pull-left">New Scenario </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
+            <!--close and save-->
+            <button class="close pull-right" (click)="c('closed')">x</button><br><br>
+            
         </div>
     </div>
     <div class="modal-body">
@@ -50,7 +52,6 @@
                         <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.equation').valid && newScenForm.get('regressionRegions.regressions.equation').dirty">Expression
                             is required</div>
                     </div>
-
                     <!-- Equivalent Years -->
                     <div class="form-group">
                         <label class="req" for="equivalentYears">Equivalent Years (optional):</label>
@@ -98,10 +99,10 @@
                                 </div>
             
                             <!-- Parameter Comments-->
-                            <div class="form-group required">
+                            <!-- <div class="form-group required">
                                 <label class="req" for="comments">Parameter Comments:</label>
                                 <textarea class="form-control" rows="3" placeholder="" formControlName="comments"></textarea>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -138,13 +139,13 @@
                             <!-- XI Row Vector -->
                             <div class="form-group">
                                 <label class="req" for="xiRowVector">XI Row Vector:</label>
-                                <input class="form-control" (keypress)="_keyPress($event)" type="text" formControlName="xiRowVector">
+                                <input class="form-control" type="text" formControlName="xiRowVector">
                             </div>
     
                             <!-- Covariance Matrix -->
                             <div class="form-group">
                                 <label class="req" for="covarianceMatrix">Covariance Matrix:</label>
-                                <input class="form-control" (keypress)="_keyPress($event)" type="text" formControlName="covarianceMatrix">
+                                <input class="form-control"  type="text" formControlName="covarianceMatrix">
                             </div>
                         </div>
                         <div formGroupName="expected">
@@ -165,8 +166,9 @@
                         </div>
                     </div>
                     <button *ngIf="!addPredInt" type="button" class="btn-blue" (click)="addPredInt = true">Add Prediction Interval</button>
+
                     <!-- Errors-->
-                    <div formArrayName="errors">
+                     <div formArrayName="errors">
                         <button type="button" class="btn-blue" (click)="addError()">Add Error</button>
                         <div *ngFor="let err of newScenForm.get('regressionRegions.regressions.errors').controls; let errIndex = index">
                             <div class="scenDropdown">
@@ -175,24 +177,23 @@
                                     <i class="ion-android-arrow-dropdown"></i></div>
                                 <div *ngIf="!checkDiv('error' + (errIndex + 1))" class="showHideScen" (click)="showDiv('error' + (errIndex + 1))">Error {{errIndex + 1}}<i class="ion-android-arrow-dropright"></i></div>
                             </div>
-                            <div [id]="'error' + (errIndex + 1)" class="scenFormGroup">
-                                <!-- Error ID-->
+                            <div [formGroupName]=errIndex [id]="'error' + (errIndex + 1)" class="scenFormGroup">
+                                <!--Error ID-->
                                 <div class="form-group required">
-                                    <label class="req" [for]="errIndex">Error:</label>
-                                    <select class="form-control" [formControlName]="errIndex">
-                                        <option *ngFor="let e of errors" [ngValue]="e">{{e.name}}</option>
+                                    <label class="req" for="id">Error:</label>
+                                    <select class="form-control" formControlName="id" (ngModel)="errors">
+                                        <option *ngFor="let e of errors" [ngValue]="e.id">{{e.name}}</option>
                                     </select>
                                 </div>
-            
-                                <!-- Error Value-->
+                                <!--Error Value-->
                                 <div class="form-group required">
-                                    <label class="req">Value:</label>
-                                    <input [id]="'errValue' + errIndex" (keypress)="_keyPress($event)" type="number" required>
+                                    <label class="req" for="value">Value:</label>
+                                    <input class="form-control" [id]="'value' + errIndex" (keypress)="_keyPress($event)" type="number" formControlName="value" required>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> 
 
                 <!-- parameter values -->
                 <div formArrayName="parameters">
@@ -234,7 +235,9 @@
         </form>
 
         <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+            <!--close and save-->
+            <button type="button" (click)="clearScenario()" class="btn-black">Clear All</button>
+            <button type="button" (click)="c('closed')" class="btn-black">Cancel</button>
             <button type="button" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="btn-blue">Create</button>
         </div>
     </div>

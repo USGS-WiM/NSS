@@ -1,6 +1,7 @@
 <aboutModal></aboutModal>
 <addScenarioModal></addScenarioModal>
-<nav class="wim-nav">
+<manageCitationsModal></manageCitationsModal>
+<nav class="wim-nav hidden-print">
     <div class="container" style="width: 100%;">
         <button class="mobile-nav-toggle" (click)="toggleSidebar()"></button>
         <a href="https://usgs.gov" class="nav-branding">
@@ -22,7 +23,7 @@
                     <span class="nav-link-text">About</span>
                 </span>
             </a>
-            <!-- <a (click)="showLoginModal()" [class.hidden]="isLoggedIn">
+            <!-- a (click)="showLoginModal()" [class.hidden]="isLoggedIn">
                 <span>
                     <span class="nav-link-text">Login</span>
                 </span>

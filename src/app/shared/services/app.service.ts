@@ -61,9 +61,35 @@ export class NSSService {
     public setAddScenarioModal(val: any) { 
         this._showHideAddScenarioModal.next(val);
     }
+    // -+-+-+-+-+-+-+-+-+ clone scenario modal -+-+-+-+-+-+-+-+
+    private _showHideCloneScenarioModal: Subject<boolean> = new Subject<boolean>();
+    public setCloneScenarioModal(val: any) { 
+        this._showHideCloneScenarioModal.next(val);
+    }
+
+    private itemSource = new BehaviorSubject<any>(' ');
+    currentItem=this.itemSource.asObservable();
+
+    changeItem(item: any){
+        this.itemSource.next(item);
+    }
+
     // show the add scenario modal in the mainview
     public get showAddScenarioModal(): any {
         return this._showHideAddScenarioModal.asObservable();
+    }
+    // show the add scenario modal in the mainview
+    public get showCloneScenarioModal(): any {
+        return this._showHideCloneScenarioModal.asObservable();
+    }
+    // -+-+-+-+-+-+-+-+-+ manage citations modal -+-+-+-+-+-+-+-+
+    private _showHideManageCitationsModal: Subject<boolean> = new Subject<boolean>();
+    public setManageCitationsModal(val: any) { 
+        this._showHideManageCitationsModal.next(val);
+    }
+    // show the manage citations modal in the mainview
+    public get showManageCitationsModal(): any {
+        return this._showHideManageCitationsModal.asObservable();
     }
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
     private _showHideAddRegressioRegionModal: Subject<boolean> = new Subject<boolean>();

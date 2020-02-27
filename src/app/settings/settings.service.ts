@@ -7,7 +7,7 @@
 // purpose: services to get/store/post/put/delete via http and subjects used throughout the application
 
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import { Http, Headers, RequestOptions, Response,URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/observable/throw';
@@ -25,9 +25,7 @@ import { Manager } from 'app/shared/interfaces/manager';
 import { UnitSystem } from 'app/shared/interfaces/unitsystems';
 import { Citation } from 'app/shared/interfaces/citation';
 import { Error } from 'app/shared/interfaces/error';
-import { Role } from 'app/shared/interfaces/role';
 import { ToasterService } from 'angular2-toaster';
-import { URLSearchParams } from '@angular/http';
 
 @Injectable()
 export class SettingsService {

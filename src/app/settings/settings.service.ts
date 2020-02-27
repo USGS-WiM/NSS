@@ -7,7 +7,7 @@
 // purpose: services to get/store/post/put/delete via http and subjects used throughout the application
 
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions, Response,URLSearchParams } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/observable/throw';
@@ -29,9 +29,9 @@ import { ToasterService } from 'angular2-toaster';
 
 @Injectable()
 export class SettingsService {
-    public authHeader: Headers = new Headers({
+    public authHeader: HttpHeaders = new HttpHeaders({
         'Content-Type': 'application/json',
-        Authorization: localStorage.getItem('auth')
+        Authorization: localStorage.getItem('auth') || ''
     });
     private configSettings: Config;
     // SUBJECTS //////////////////////////////////////
@@ -48,7 +48,7 @@ export class SettingsService {
     private _errorsSubject: BehaviorSubject<Array<Error>> = <BehaviorSubject<Error[]>>new BehaviorSubject([]);
 
 
-    constructor(private _http: Http, private _configService: ConfigService, private _toasterService: ToasterService) {
+    constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {
         this.configSettings = this._configService.getConfiguration();
     }
 
@@ -91,37 +91,40 @@ export class SettingsService {
 
     // ------------ GETS ---------------------------
     public getEntities(url: string) {
-        const options = new RequestOptions({ headers: this.authHeader });
         return this._http
-            .get(this.configSettings.baseURL + url, options)
-            .map(res => { if (res) {return <Array<any>>res.json(); }})
+            .get(this.configSettings.baseURL + url, { headers: this.authHeader })
+            .map(res => { if (res) {return <Array<any>>res }})
             .catch(this.errorHandler);
     }
 
     // ------------ POSTS ------------------------------
     public postEntity(entity: object, url: string) {
-        const options = new RequestOptions({ headers: this.authHeader });
+        //const options = new RequestOptions({ headers: this.authHeader });
         return this._http
-            .post(this.configSettings.baseURL + url, entity, options)
-            .map(res => <any>res.json())
+            .post(this.configSettings.baseURL + url, entity, { headers: this.authHeader, observe: 'response' })
+            .map(res => {
+                if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
+                } else {this.outputWimMessages(res); }
+                return res.body;
+            })
             .catch(this.errorHandler);
     }
 
     // ------------ PUTS --------------------------------
     public putEntity(id, entity, url: string) {
-        const options = new RequestOptions({ headers: this.authHeader });
+        //const options = new RequestOptions({ headers: this.authHeader });
         if (id !== '') {url += '/' + id; }
         return this._http
-            .put(this.configSettings.baseURL + url, entity, options)
+            .put(this.configSettings.baseURL + url, entity, { headers: this.authHeader })
             .map(res => res)
             .catch(this.errorHandler);
     }
 
     // ------------ DELETES ------------------------------
     public deleteEntity(id, url: string, searchArgs?: URLSearchParams) {
-        const options = new RequestOptions({ headers: this.authHeader, search: searchArgs });
+        //const options = new RequestOptions({ headers: this.authHeader, search: searchArgs });
         if (id !== '') {url += '/' + id; }
-        return this._http.delete(this.configSettings.baseURL + url, options)
+        return this._http.delete(this.configSettings.baseURL + url, { headers: this.authHeader })
             .catch(this.errorHandler);
     }
 

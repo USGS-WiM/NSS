@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { URLSearchParams } from '@angular/http';
+import { HttpParams } from '@angular/common/http';
 import { NSSService } from '../shared/services/app.service';
 import { Region } from '../shared/interfaces/region';
 import { Scenario } from '../shared/interfaces/scenario';
@@ -10,7 +10,6 @@ import { IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/a
 import { Toast } from 'angular2-toaster/src/toast';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
-import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'wim-sidebar',
@@ -294,8 +293,8 @@ export class SidebarComponent implements OnInit {
             });
             // now post the scenario to get the results to pass to mainview
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
-            const sParams: URLSearchParams = new URLSearchParams();
-            sParams.set('regressiontypes', regTypesIDstring);
+            const sParams = new HttpParams()
+            .set('regressiontypes', regTypesIDstring)
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
         }
     }

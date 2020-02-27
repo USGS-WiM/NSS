@@ -23,6 +23,7 @@ import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { RegionsComponent } from 'app/settings/categories/regions/regions.component';
 import { ToasterService, ToasterConfig } from 'angular2-toaster';
 import { Predictioninterval } from '../interfaces/predictioninterval';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class NSSService {
@@ -628,7 +629,7 @@ export class NSSService {
     }
 
     // calculate Scenarios (POST)
-    postScenarios(id: number, s: Scenario[], searchArgs?: URLSearchParams) {
+    postScenarios(id: number, s: Scenario[], searchArgs?: HttpParams) {
         const options = new RequestOptions({ headers: this.jsonHeader, search: searchArgs });
 
         return this._http

@@ -23,11 +23,11 @@
                     <span class="nav-link-text">About</span>
                 </span>
             </a>
-            <!-- a (click)="showLoginModal()" [class.hidden]="isLoggedIn">
+            <a (click)="showLoginModal()" [class.hidden]="isLoggedIn">
                 <span>
                     <span class="nav-link-text">Login</span>
                 </span>
-            </a> -->
+            </a> 
             <div class="dropdown" [class.hidden]="!isLoggedIn">
                 <a class="dropbtn nav-link-text">
                     <i class="ion-person"></i>
@@ -38,9 +38,6 @@
                     <a routerLink="profile" routerLinkActive="active">Profile</a>
                 </div>
             </div>
-            <!--<a href="/#/"><span><i class="ion-plus-round"></i> New Site</span></a>
-                <a href="/#/"><span><i class="ion-ios-book"></i> Guide</span></a>
-                <a href="/#/"><span><i class="ion-help"></i> FAQ</span></a>-->
         </div>
     </div>
 </nav>

@@ -8,19 +8,19 @@
 
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Config } from 'app/shared/interfaces/config';
 
 @Injectable()
 export class ConfigService {
     private config: Config;
-    constructor(private _http: Http) {}
+    constructor(private _http: HttpClient) {}
 
     public load(url: string) {
         return new Promise(resolve => {
             this._http
                 .get(url)
-                .map(res => res.json())
-                .subscribe(config => {
+                .subscribe((config:Config) => {
                     this.config = config;
                     resolve();
                 });

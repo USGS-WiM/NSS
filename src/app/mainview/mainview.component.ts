@@ -1601,11 +1601,13 @@ export class MainviewComponent implements OnInit, OnDestroy {
         const regionID = this.newRegRegForm.value.state;
         this._settingsService
             .postEntity(this.newRegRegForm.value, this.configSettings.regionURL + regionID + '/' + this.configSettings.regRegionURL)
-            .subscribe(
-                (response) => {
+            .subscribe((response:any) => {
                     response.isEditing = false;
-                    if (!response.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
-                    } else {this._settingsService.outputWimMessages(response); }
+                    if (!response.headers) {
+                        this._toasterService.pop('info', 'Info', 'Regression region was added');
+                    } else {
+                        this._settingsService.outputWimMessages(response); 
+                    }
                     if (this.addCitation) { // if user elected to add a citation, send that through
                         this.createNewCitation(response);
                     } else {
@@ -1622,12 +1624,15 @@ export class MainviewComponent implements OnInit, OnDestroy {
         // add new citation
         this._settingsService.postEntity(this.newCitForm.value, this.configSettings.regRegionURL + '/' + rr.id + '/' +
             this.configSettings.citationURL)
-            .subscribe((res) => {
+            .subscribe((res:any) => {
                 this.newCitForm.reset();
                 this.addCitation = false;
                 rr.citationID = res.id;
-                if (!res.headers) {this._toasterService.pop('info', 'Info', 'Citation was added');
-                } else {this._settingsService.outputWimMessages(res); }
+                if (!res.headers) {
+                    this._toasterService.pop('info', 'Info', 'Citation was added');
+                } else {
+                    this._settingsService.outputWimMessages(res); 
+                }
                 this.cancelCreateRegression();
                 this._nssService.setSelectedRegion(this.selectedRegion);
             }, error => {

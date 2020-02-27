@@ -355,7 +355,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
         // post scenario
         this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
-            .subscribe((response) => {
+            .subscribe((response: any) => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
                 // clear form
                 if (!response.headers) {

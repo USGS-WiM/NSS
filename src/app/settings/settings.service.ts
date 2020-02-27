@@ -99,7 +99,6 @@ export class SettingsService {
 
     // ------------ POSTS ------------------------------
     public postEntity(entity: object, url: string) {
-        //const options = new RequestOptions({ headers: this.authHeader });
         return this._http
             .post(this.configSettings.baseURL + url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => {
@@ -112,7 +111,6 @@ export class SettingsService {
 
     // ------------ PUTS --------------------------------
     public putEntity(id, entity, url: string) {
-        //const options = new RequestOptions({ headers: this.authHeader });
         if (id !== '') {url += '/' + id; }
         return this._http
             .put(this.configSettings.baseURL + url, entity, { headers: this.authHeader, observe: 'response' })
@@ -122,7 +120,6 @@ export class SettingsService {
 
     // ------------ DELETES ------------------------------
     public deleteEntity(id, url: string, params?: string) {
-        //const options = new RequestOptions({ headers: this.authHeader, search: searchArgs });
         if (id !== '') {url += '/' + id; }
         if (params) {url += params; }
         return this._http.delete(this.configSettings.baseURL + url, { headers: this.authHeader, observe: 'response'})

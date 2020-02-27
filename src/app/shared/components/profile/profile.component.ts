@@ -9,17 +9,13 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 import { Router, NavigationEnd } from '@angular/router';
-import { Http, Headers, RequestOptions } from '@angular/http';
 import { throwError as observableThrowError, } from 'rxjs';
 import { ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
 
 import { NSSService } from 'app/shared/services/app.service';
-import { Region } from '../../interfaces/region';
 import { Config } from '../../interfaces/config';
 import { ConfigService } from 'app/config.service';
-import { AuthService } from '../../services/auth.service';
-import { Manager } from '../../interfaces/manager';
 import { SettingsService } from 'app/settings/settings.service';
 import { LoginService } from 'app/shared/services/login.service';
 
@@ -39,13 +35,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     public userInfo;
     public roles;
     public tempData;
-    private jsonHeader: Headers = new Headers({ Accept: 'application/json', 'Content-Type': 'application/json' });
     public toast: Toast;
     public config: ToasterConfig = new ToasterConfig({timeout: 0});
     public passwordTest = '';
     constructor(
         public _nssService: NSSService,
-        private _http: Http,
         private _configService: ConfigService,
         private _toasterService: ToasterService,
         private _settingsService: SettingsService,

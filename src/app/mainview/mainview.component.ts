@@ -23,13 +23,9 @@ import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { SettingsService } from 'app/settings/settings.service';
 import { ConfigService } from 'app/config.service';
 import { Config } from 'app/shared/interfaces/config';
-import { Error } from 'app/shared/interfaces/error';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { NgForm, FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { Predictioninterval } from 'app/shared/interfaces/predictioninterval';
-import { URLSearchParams } from '@angular/http';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Citation } from 'app/shared/interfaces/citation';
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 
 declare var MathJax: {
@@ -1243,10 +1239,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     deleteRegression(sgID, rrID, rID) {
         const check = confirm('Are you sure you want to delete this Regression?');
         if (check) {
-            const sParams: URLSearchParams = new URLSearchParams();
-            sParams.set('statisticgroupID', sgID);
-            sParams.set('regressionregionID', rrID);
-            sParams.set('regressiontypeID', rID);
+            const sParams = '?statisticgroupID=' + sgID + '&regressionregionID=' + rrID + '&regressiontypeID=' + rID;
             this._settingsService.deleteEntity('', this.configSettings.scenariosURL, sParams).subscribe(result => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
                 if (result.headers) { this._nssService.outputWimMessages(result); }

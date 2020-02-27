@@ -115,16 +115,17 @@ export class SettingsService {
         //const options = new RequestOptions({ headers: this.authHeader });
         if (id !== '') {url += '/' + id; }
         return this._http
-            .put(this.configSettings.baseURL + url, entity, { headers: this.authHeader })
+            .put(this.configSettings.baseURL + url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => res)
             .catch(this.errorHandler);
     }
 
     // ------------ DELETES ------------------------------
-    public deleteEntity(id, url: string, searchArgs?: URLSearchParams) {
+    public deleteEntity(id, url: string, params?: string) {
         //const options = new RequestOptions({ headers: this.authHeader, search: searchArgs });
         if (id !== '') {url += '/' + id; }
-        return this._http.delete(this.configSettings.baseURL + url, { headers: this.authHeader })
+        if (params) {url += params; }
+        return this._http.delete(this.configSettings.baseURL + url, { headers: this.authHeader, observe: 'response'})
             .catch(this.errorHandler);
     }
 

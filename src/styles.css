@@ -125,7 +125,13 @@ input[type="radio"]{
   font-weight: bolder;
   opacity: 0.5;
 }
+#wimSidebar {
+  display: block;
+}
 @media (max-width: 800px) {
+  #wimSidebar {
+    display: none;
+  }
   .wim-sidebar{
     display: none;
     position: fixed;

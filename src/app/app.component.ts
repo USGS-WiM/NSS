@@ -52,6 +52,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        
         this._authService.loggedInRole().subscribe(role => {
             if (role === 'Administrator' || role === 'Manager') {
                 this.loggedInRole = role;
@@ -78,6 +79,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.modalElement = this.loginModal;
         this.loginError = false;
+       
+        window.onresize = function(event) {
+            var sidebar = document.getElementById("wimSidebar");
+            if (window.innerWidth > 800) {
+                sidebar.style.display = "block";
+            } else {
+                sidebar.style.display = "none";
+            }
+            
+        };
+        
     }
     // @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
     @ViewChild(SidebarComponent) sidebarComponent: SidebarComponent;
@@ -173,10 +185,15 @@ export class AppComponent implements OnInit, OnDestroy {
     public toggleSidebar(){
         // should allow sidebar to go in and come back out
         var sidebar = document.getElementById("wimSidebar");
-        if (sidebar.style.display === "none") {
+        
+        if (sidebar.style.display == "") {
+            sidebar.style.display = "block";
+        } else if (sidebar.style.display === "none") {
             sidebar.style.display = "block";
         } else {
             sidebar.style.display = "none";
         }
     }
+
+    
 }

@@ -5,7 +5,6 @@ import { Http, Headers, RequestOptions, URLSearchParams } from '@angular/http';
 import 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import { EMPTY } from 'rxjs';
 
 // interfaces
 import { Region } from 'app/shared/interfaces/region';
@@ -20,8 +19,7 @@ import { ConfigService } from '../../config.service';
 import { Toast } from 'angular2-toaster/src/toast';
 import { Unittype } from 'app/shared/interfaces/unitType';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
-import { RegionsComponent } from 'app/settings/categories/regions/regions.component';
-import { ToasterService, ToasterConfig } from 'angular2-toaster';
+import { ToasterService } from 'angular2-toaster';
 import { Predictioninterval } from '../interfaces/predictioninterval';
 import { HttpParams } from '@angular/common/http';
 

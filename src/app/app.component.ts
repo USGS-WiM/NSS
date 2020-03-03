@@ -52,6 +52,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+
         this._authService.loggedInRole().subscribe(role => {
             if (role === 'Administrator' || role === 'Manager') {
                 this.loggedInRole = role;
@@ -70,7 +71,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
 
         this._nssService.showLoginModal.subscribe(show => {
-            if (show) {this.showLoginModal(); }
+            if (show) { this.showLoginModal(); }
         });
 
         // get return url from route parameters or default to '/'
@@ -78,6 +79,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.modalElement = this.loginModal;
         this.loginError = false;
+
+        // Ensures sidebar will appear if screen changes size
+        window.onresize = function (event) {
+            var sidebar = document.getElementById("wimSidebar");
+            if (window.innerWidth > 800) {
+                sidebar.style.display = "block";
+            } else {
+                sidebar.style.display = "none";
+            }
+        };
+
     }
     // @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
     @ViewChild(SidebarComponent) sidebarComponent: SidebarComponent;
@@ -162,21 +174,24 @@ export class AppComponent implements OnInit, OnDestroy {
         const now: number = new Date().getTime();
         const setupTime: number = Number(localStorage.getItem('setupTime'));
         if (now - setupTime > twentyFourHours) {
-          // is it greater than 12 hours
-          tooOld = true;
-          localStorage.clear();
+            // is it greater than 12 hours
+            tooOld = true;
+            localStorage.clear();
         }
 
         return tooOld;
     }
 
-    public toggleSidebar(){
+    public toggleSidebar() {
         // should allow sidebar to go in and come back out
         var sidebar = document.getElementById("wimSidebar");
-        if (sidebar.style.display === "none") {
+        if (sidebar.style.display == "") {
+            sidebar.style.display = "block";
+        } else if (sidebar.style.display === "none") {
             sidebar.style.display = "block";
         } else {
             sidebar.style.display = "none";
         }
     }
+
 }

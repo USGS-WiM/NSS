@@ -26,6 +26,7 @@ import { Config } from 'app/shared/interfaces/config';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Citation } from 'app/shared/interfaces/citation';
+import { HttpResponse } from '@angular/common/http';
 
 
 declare var MathJax: {
@@ -1397,8 +1398,10 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
-            .subscribe(res => {
-                if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
+            .subscribe((res) => {
+                if (res.length > 1) { 
+                    res.sort((a, b) => a.name.localeCompare(b.name)); 
+                }
                 this.regressionRegions = res;
                 if (this.scenarios) {
                     this.scenarios.forEach((s => {

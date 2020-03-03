@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { MultiselectDropdownModule } from '../../node_modules/angular-2-dropdown-multiselect';
@@ -90,7 +89,7 @@ export function highchartsFactory() {
     ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe
   ],
   imports: [
-    BrowserModule, FormsModule, HttpModule,HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,
+    BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,
     Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule, NgbModule.forRoot(),
     RouterModule.forRoot(appRoutes, {onSameUrlNavigation: 'reload'})
   ],

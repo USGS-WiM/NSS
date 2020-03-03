@@ -1,5 +1,4 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
-// import { NavbarComponent } from './navbar/navbar.component';
 import { MainviewComponent } from './mainview/mainview.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { PageScrollConfig } from 'ng2-page-scroll';
@@ -136,7 +135,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 window.location.reload();
             },
             error => {
-                this._toasterService.pop('error', 'Error logging in', error._body.message || error.statusText);
+                this._toasterService.pop('error', 'Error logging in',  error.statusText|| error._body.message);
                 this.loading = false;
             }
         );

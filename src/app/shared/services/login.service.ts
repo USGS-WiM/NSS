@@ -7,7 +7,7 @@
 // purpose: login service that logs user in (http) and stores creds, passes user info on to authservice
 
 import { Injectable } from '@angular/core';
-import { Http, Headers, Response } from '@angular/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -23,7 +23,7 @@ export class LoginService {
 
     public _loggedInSubject: BehaviorSubject<boolean> = <BehaviorSubject<boolean>>new BehaviorSubject(false);
 
-    constructor(private http: Http, private _authService: AuthService, private _configService: ConfigService) {
+    constructor(private http: HttpClient, private _authService: AuthService, private _configService: ConfigService) {
         this.configSettings = this._configService.getConfiguration();
     }
 
@@ -32,13 +32,14 @@ export class LoginService {
     }
 
     // log in
-    public login(user: object) {
-        const headers: Headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-        return this.http.post(this.configSettings.baseURL + this.configSettings.loginURL, user, { headers: headers })
-            .map((response: Response) => {
+    public login(user: any){
+        const headers: HttpHeaders = new HttpHeaders({
+            'Content-Type': 'application/json',
+        });
+        return this.http.post(this.configSettings.baseURL + this.configSettings.loginURL, user, { headers: headers, observe: "response"})
+            .map((response:HttpResponse<null>) => {
                 // login successful if there's a jwt token in the response
-                const user = response.json();
+                user = response.body;
                 if (user) {
                     this._loggedInSubject.next(true);
                     // store user creds in localStorage and details in service for retrieval

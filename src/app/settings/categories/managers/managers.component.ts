@@ -26,9 +26,9 @@ import { Role } from 'app/shared/interfaces/role';
     templateUrl: 'managers.component.html'
 })
 export class ManagersComponent implements OnInit {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('User') userForm;
+    @ViewChild('User', {static: true}) userForm;
     public selectedRegion;
     public regions;
     public selectedRegRegionIDs;

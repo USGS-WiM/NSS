@@ -20,7 +20,7 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
 export class AppComponent implements OnInit, OnDestroy {
 
     public loggedInRole = '';
-    @ViewChild('login') public loginModal; // : ModalDirective;  //modal for validator
+    @ViewChild('login', {static: true}) public loginModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
     public closeResult: any;
     private modalSubscript;
@@ -79,8 +79,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.loginError = false;
     }
     // @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
-    @ViewChild(SidebarComponent) sidebarComponent: SidebarComponent;
-    @ViewChild(MainviewComponent) mainviewCommponent: MainviewComponent;
+    @ViewChild(SidebarComponent, {static: true}) sidebarComponent: SidebarComponent;
+    @ViewChild(MainviewComponent, {static: true}) mainviewCommponent: MainviewComponent;
     public showAbout() {
         this._nssService.setAboutModal(true);
     }

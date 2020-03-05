@@ -26,9 +26,9 @@ import { ConfigService } from 'app/config.service';
 })
 
 export class VariableTypesComponent implements OnInit, OnDestroy {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('VariableTypeForm') varForm;
+    @ViewChild('VariableTypeForm', {static: true}) varForm;
     public selectedRegion;
     public regions;
     public selectedRegRegionIDs;

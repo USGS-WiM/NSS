@@ -25,7 +25,7 @@ import { LoginService } from 'app/shared/services/login.service';
     styleUrls: ['profile.component.css']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-    @ViewChild('UserInfo') userForm;
+    @ViewChild('UserInfo', {static: true}) userForm;
     public services;
     public configSettings: Config;
     public isAdmin: boolean;

@@ -26,9 +26,9 @@ import { ConfigService } from 'app/config.service';
 })
 
 export class RegionsComponent implements OnInit, OnDestroy {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('RegionForm') regForm;
+    @ViewChild('RegionForm', {static: true}) regForm;
     public selectedRegion;
     public selectedRegRegionIDs;
     public selectedStatGroupIDs;

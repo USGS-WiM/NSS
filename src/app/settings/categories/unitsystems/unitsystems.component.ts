@@ -26,9 +26,9 @@ import { UnitSystem } from 'app/shared/interfaces/unitsystems';
     templateUrl: 'unitsystems.component.html'
 })
 export class UnitSystemsComponent implements OnInit, OnDestroy {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('UnitSystemForm') usForm;
+    @ViewChild('UnitSystemForm', {static: true}) usForm;
     public selectedRegion;
     public regions;
     public selectedRegRegionIDs;

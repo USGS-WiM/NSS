@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
-import { DOCUMENT } from '@angular/platform-browser';
+import { DOCUMENT } from "@angular/common";
 
 import { Region } from '../shared/interfaces/region';
 import { Regressionregion } from '../shared/interfaces/regressionregion';
@@ -41,10 +41,10 @@ declare var MathJax: {
 export class MainviewComponent implements OnInit, OnDestroy {
     @ViewChildren('inputsTable', { read: ViewContainerRef }) inputTable;
     @ViewChildren('resultsTable', { read: ViewContainerRef }) resultTable;
-    @ViewChild('editScenarioForm') editScenarioForm;
-    @ViewChild('values') public valuesRef: TemplateRef<any>;
-    @ViewChild('add') public addRef: TemplateRef<any>;
-    @ViewChild('CitationForm') citationForm;
+    @ViewChild('editScenarioForm', {static: true}) editScenarioForm;
+    @ViewChild('values', {static: true}) public valuesRef: TemplateRef<any>;
+    @ViewChild('add', {static: true}) public addRef: TemplateRef<any>;
+    @ViewChild('CitationForm', {static: true}) citationForm;
     public newCitForm: FormGroup;
     public title: string;
     public resultsBack: boolean; // flag that swaps content on mainpage from scenarios w/o results to those with results

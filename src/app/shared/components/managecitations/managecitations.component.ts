@@ -23,7 +23,7 @@ import { Citation } from 'app/shared/interfaces/citation';
     styleUrls: ['./managecitations.component.css']
 })
 export class ManageCitationsModal implements OnInit, OnDestroy {
-    @ViewChild('manageCitations') public manageCitationsModal; // : ModalDirective;  //modal for validator
+    @ViewChild('manageCitations', {static: true}) public manageCitationsModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
     private modalSubscript;
     public regressionRegions;

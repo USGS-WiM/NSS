@@ -45,6 +45,7 @@ import { AdminGuard } from './shared/guards/admin.guard';
 import { ProfileComponent } from './shared/components/profile/profile.component';
 import { AddScenarioModal } from './shared/components/addscenario/addscenario.component';
 import { ManageCitationsModal } from './shared/components/managecitations/managecitations.component';
+import { ToasterService} from 'angular2-toaster';
 
 declare const require: any;
 
@@ -90,13 +91,13 @@ export function highchartsFactory() {
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,
-    Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule, NgbModule.forRoot(),
+    Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule, NgbModule,
     RouterModule.forRoot(appRoutes, {onSameUrlNavigation: 'reload'})
   ],
   providers: [
     NSSService, { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService, LoaderService,
     { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
-    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard
+    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ToasterService
   ],
   bootstrap: [AppComponent],
   exports: [RouterModule]

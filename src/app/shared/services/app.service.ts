@@ -607,15 +607,15 @@ export class NSSService {
     }
 
     // calculate Scenarios (POST)
-    postScenarios(id: number, s: Scenario[], searchArgs?: HttpParams) {
-        const options = { headers: this.jsonHeader, search: searchArgs, observe: 'response' as 'response' };       
+    postScenarios(id: number, s: Scenario[], searchArgs?: string) {
+        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };       
         return this._http
-            .post(this.configSettings.baseURL + this.configSettings.regionURL + id + '/scenarios/estimate', s, options)
+            .post(this.configSettings.baseURL + this.configSettings.regionURL + id + '/scenarios/estimate/' + searchArgs, s, options)
             // .map(sResult => sResult.json())
             .subscribe(
                 res => {
                     if (res.headers) { this.outputWimMessages(res); }
-                    const sResult: any = res;
+                    const sResult: any = res.body;
                     sResult.forEach(scen => {
                         if (scen.regressionRegions.length > 0) {
                             // get citations

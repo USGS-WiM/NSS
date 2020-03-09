@@ -293,8 +293,7 @@ export class SidebarComponent implements OnInit {
             });
             // now post the scenario to get the results to pass to mainview
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
-            const sParams = new HttpParams()
-            .set('regressiontypes', regTypesIDstring)
+            const sParams = new HttpParams().set('regressiontypes', regTypesIDstring)
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
         }
     }

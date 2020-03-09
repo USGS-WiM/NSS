@@ -25,7 +25,6 @@ import { Predictioninterval } from '../interfaces/predictioninterval';
 @Injectable()
 export class NSSService {
     // updated whenever selected values are updated - used for getting other parts
-    private url:any;
     private _regRegionIdParams: string;
     private _regTypeIdParams: string;
     private _statGrpIdParams: string;
@@ -181,7 +180,6 @@ export class NSSService {
     }
     // getter (selectedRegion)
     public get selectedRegion(): Observable<Region> {
-        //console.log(this._selectedRegion.asObservable())
         return this._selectedRegion.asObservable();
     }
     // get all regions
@@ -267,7 +265,6 @@ export class NSSService {
     }
     // getter (selectedRegRegion)
     public get selectedRegRegions(): Observable<Array<Regressionregion>> {
-        //console.log(this._selectedRegRegions.asObservable())
         return this._selectedRegRegions.asObservable();
     }
     // once http.get.map is done.. the .subcribe calls this function to get everything formatted
@@ -516,7 +513,7 @@ export class NSSService {
 
     // get unit types
     public getUnitTypes(params?: string) {
-        let url=this.configSettings.unitsURL
+        let url = this.configSettings.unitsURL
         if (params) {
             url += params; 
         }
@@ -527,7 +524,7 @@ export class NSSService {
 
     // get variable types
     public getVariableTypes(params?: string) {
-        let url =this.configSettings.variablesURL
+        let url = this.configSettings.variablesURL
         if (params) {
             url += params; 
         }
@@ -538,7 +535,7 @@ export class NSSService {
 
     // get regressionRegions by region
     private getRegionRegressionRegions(id: number, params?: string) {
-        let url=this.configSettings.regRegionURL;
+        let url = this.configSettings.regRegionURL;
         if (params) {
             url += params; 
         }
@@ -549,7 +546,7 @@ export class NSSService {
 
     // get regressiontypes by region
     private getRegionRegressionTypes(id: number, params?: string) {
-        let url=this.configSettings.regTypeURL;
+        let url = this.configSettings.regTypeURL;
         if (params) {
             url += params; 
         }
@@ -560,7 +557,7 @@ export class NSSService {
 
     // get statisticgroups by region
     private getRegionStatisticGrps(id: number, params?: string) {
-        let url=this.configSettings.statisticGrpURL
+        let url = this.configSettings.statisticGrpURL
         if (params) {
             url += params; 
         }
@@ -571,7 +568,7 @@ export class NSSService {
 
     // get scenarios by region
     private getRegionScenario(id: number, params?: string) {
-        let url=this.configSettings.scenariosURL 
+        let url = this.configSettings.scenariosURL 
         if (params) {
             url += params; 
         }
@@ -640,7 +637,7 @@ export class NSSService {
 
 
     private getCitations(params?: string) {  
-        let url= this.configSettings.citationURL;
+        let url = this.configSettings.citationURL;
         if (params) {
             url += params; 
         }

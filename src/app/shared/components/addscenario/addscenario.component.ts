@@ -26,7 +26,7 @@ declare var MathJax: {
     styleUrls: ['./addscenario.component.css']
 })
 export class AddScenarioModal implements OnInit, OnDestroy {
-    @ViewChild('addScenario') public addScenarioModal; // : ModalDirective;  //modal for validator
+    @ViewChild('addScenario', {static: true}) public addScenarioModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
     public CloseResult: any;
     private modalSubscript;
@@ -169,7 +169,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     cloneScenario(){  
         this.unitTypes.forEach( (element,index) => {  
             if (element.id.toString() == this.cloneParameters.r.unit.id.toString()){
-                this.newScenForm.patchValue({regressionRegions: {regressions:{unit:this.unitTypes[index]}}});
+                this.newScenForm.patchValue({ regressionRegions: { regressions: { unit: this.unitTypes[index]}}});
             }
         });
 
@@ -181,7 +181,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             statisticGroupID: this.cloneParameters.statisticGroupID.toString(),
             regressionRegions: {
                 ID: this.cloneParameters.rr.id.toString(),
-                regressions:{
+                regressions: {
                     ID: this.cloneParameters.r.id.toString(),
                     equation: this.cloneParameters.r.equation.toString(),
                     equivalentYears: this.cloneParameters.r.equivalentYears.toString(),
@@ -192,24 +192,24 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         //Prediction Interval
         if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {biasCorrectionFactor: this.cloneParameters.r.predictionInterval.biasCorrectionFactor.toString()}}}});
+            this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { biasCorrectionFactor: this.cloneParameters.r.predictionInterval.biasCorrectionFactor.toString()}}}});
         } 
         if (this.cloneParameters.r.predictionInterval.student_T_Statistic != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {student_T_Statistic: this.cloneParameters.r.predictionInterval.student_T_Statistic.toString()}}}});
+            this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { student_T_Statistic: this.cloneParameters.r.predictionInterval.student_T_Statistic.toString()}}}});
         }
         if (this.cloneParameters.r.predictionInterval.variance != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {variance: this.cloneParameters.r.predictionInterval.variance.toString()}}}});
+            this.newScenForm.patchValue({ regressionRegions: { regressions:{ predictionInterval: { variance: this.cloneParameters.r.predictionInterval.variance.toString()}}}});
         }
         if (this.cloneParameters.r.predictionInterval.xiRowVector != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {xiRowVector: this.cloneParameters.r.predictionInterval.xiRowVector.toString()}}}});
+            this.newScenForm.patchValue({ regressionRegions: { regressions : { predictionInterval: { xiRowVector: this.cloneParameters.r.predictionInterval.xiRowVector.toString()}}}});
         }
         if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null){
             if (this.cloneParameters.r.predictionInterval.covarianceMatrix != "null"){
                 this.addPredInt = true
-                this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {covarianceMatrix: this.cloneParameters.r.predictionInterval.covarianceMatrix.toString()}}}});
+                this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { covarianceMatrix: this.cloneParameters.r.predictionInterval.covarianceMatrix.toString()}}}});
             }
         }
 
@@ -355,7 +355,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
         // post scenario
         this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
-            .subscribe((response) => {
+            .subscribe((response: any) => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
                 // clear form
                 if (!response.headers) {

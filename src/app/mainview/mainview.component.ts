@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
-import { DOCUMENT } from '@angular/platform-browser';
+import { DOCUMENT } from "@angular/common";
 
 import { Region } from '../shared/interfaces/region';
 import { Regressionregion } from '../shared/interfaces/regressionregion';
@@ -23,13 +23,10 @@ import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { SettingsService } from 'app/settings/settings.service';
 import { ConfigService } from 'app/config.service';
 import { Config } from 'app/shared/interfaces/config';
-import { Error } from 'app/shared/interfaces/error';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { NgForm, FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { Predictioninterval } from 'app/shared/interfaces/predictioninterval';
-import { URLSearchParams } from '@angular/http';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Citation } from 'app/shared/interfaces/citation';
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
+import { HttpResponse } from '@angular/common/http';
 
 
 declare var MathJax: {
@@ -44,10 +41,10 @@ declare var MathJax: {
 export class MainviewComponent implements OnInit, OnDestroy {
     @ViewChildren('inputsTable', { read: ViewContainerRef }) inputTable;
     @ViewChildren('resultsTable', { read: ViewContainerRef }) resultTable;
-    @ViewChild('editScenarioForm') editScenarioForm;
-    @ViewChild('values') public valuesRef: TemplateRef<any>;
-    @ViewChild('add') public addRef: TemplateRef<any>;
-    @ViewChild('CitationForm') citationForm;
+    @ViewChild('editScenarioForm', {static: true}) editScenarioForm;
+    @ViewChild('values', {static: true}) public valuesRef: TemplateRef<any>;
+    @ViewChild('add', {static: true}) public addRef: TemplateRef<any>;
+    @ViewChild('CitationForm', {static: true}) citationForm;
     public newCitForm: FormGroup;
     public title: string;
     public resultsBack: boolean; // flag that swaps content on mainpage from scenarios w/o results to those with results
@@ -1243,10 +1240,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     deleteRegression(sgID, rrID, rID) {
         const check = confirm('Are you sure you want to delete this Regression?');
         if (check) {
-            const sParams: URLSearchParams = new URLSearchParams();
-            sParams.set('statisticgroupID', sgID);
-            sParams.set('regressionregionID', rrID);
-            sParams.set('regressiontypeID', rID);
+            const sParams = '?statisticgroupID=' + sgID + '&regressionregionID=' + rrID + '&regressiontypeID=' + rID;
             this._settingsService.deleteEntity('', this.configSettings.scenariosURL, sParams).subscribe(result => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
                 if (result.headers) { this._nssService.outputWimMessages(result); }
@@ -1404,8 +1398,10 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
-            .subscribe(res => {
-                if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
+            .subscribe((res) => {
+                if (res.length > 1) { 
+                    res.sort((a, b) => a.name.localeCompare(b.name)); 
+                }
                 this.regressionRegions = res;
                 if (this.scenarios) {
                     this.scenarios.forEach((s => {
@@ -1608,11 +1604,13 @@ export class MainviewComponent implements OnInit, OnDestroy {
         const regionID = this.newRegRegForm.value.state;
         this._settingsService
             .postEntity(this.newRegRegForm.value, this.configSettings.regionURL + regionID + '/' + this.configSettings.regRegionURL)
-            .subscribe(
-                (response) => {
+            .subscribe((response:any) => {
                     response.isEditing = false;
-                    if (!response.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
-                    } else {this._settingsService.outputWimMessages(response); }
+                    if (!response.headers) {
+                        this._toasterService.pop('info', 'Info', 'Regression region was added');
+                    } else {
+                        this._settingsService.outputWimMessages(response); 
+                    }
                     if (this.addCitation) { // if user elected to add a citation, send that through
                         this.createNewCitation(response);
                     } else {
@@ -1629,12 +1627,15 @@ export class MainviewComponent implements OnInit, OnDestroy {
         // add new citation
         this._settingsService.postEntity(this.newCitForm.value, this.configSettings.regRegionURL + '/' + rr.id + '/' +
             this.configSettings.citationURL)
-            .subscribe((res) => {
+            .subscribe((res:any) => {
                 this.newCitForm.reset();
                 this.addCitation = false;
                 rr.citationID = res.id;
-                if (!res.headers) {this._toasterService.pop('info', 'Info', 'Citation was added');
-                } else {this._settingsService.outputWimMessages(res); }
+                if (!res.headers) {
+                    this._toasterService.pop('info', 'Info', 'Citation was added');
+                } else {
+                    this._settingsService.outputWimMessages(res); 
+                }
                 this.cancelCreateRegression();
                 this._nssService.setSelectedRegion(this.selectedRegion);
             }, error => {

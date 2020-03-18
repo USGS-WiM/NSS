@@ -25,9 +25,9 @@ import { ConfigService } from 'app/config.service';
     templateUrl: 'regressiontypes.component.html'
 })
 export class RegressionTypesComponent implements OnInit, OnDestroy {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('RegressionForm')
+    @ViewChild('RegressionForm', {static: true})
     regressionForm;
     public selectedRegion;
     public regions;

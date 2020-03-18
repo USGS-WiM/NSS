@@ -1,5 +1,4 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
-// import { NavbarComponent } from './navbar/navbar.component';
 import { MainviewComponent } from './mainview/mainview.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { PageScrollConfig } from 'ng2-page-scroll';
@@ -21,7 +20,7 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
 export class AppComponent implements OnInit, OnDestroy {
 
     public loggedInRole = '';
-    @ViewChild('login') public loginModal; // : ModalDirective;  //modal for validator
+    @ViewChild('login', {static: true}) public loginModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
     public closeResult: any;
     private modalSubscript;
@@ -92,8 +91,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     }
     // @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
-    @ViewChild(SidebarComponent) sidebarComponent: SidebarComponent;
-    @ViewChild(MainviewComponent) mainviewCommponent: MainviewComponent;
+    @ViewChild(SidebarComponent, {static: true}) sidebarComponent: SidebarComponent;
+    @ViewChild(MainviewComponent, {static: true}) mainviewCommponent: MainviewComponent;
     public showAbout() {
         this._nssService.setAboutModal(true);
     }
@@ -148,7 +147,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 window.location.reload();
             },
             error => {
-                this._toasterService.pop('error', 'Error logging in', error._body.message || error.statusText);
+                this._toasterService.pop('error', 'Error logging in',  error.statusText|| error._body.message);
                 this.loading = false;
             }
         );

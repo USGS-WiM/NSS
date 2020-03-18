@@ -26,9 +26,9 @@ import { ConfigService } from 'app/config.service';
 })
 
 export class ErrorsComponent implements OnInit, OnDestroy {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('ErrorForm') errorForm;
+    @ViewChild('ErrorForm', {static: true}) errorForm;
     public newErrForm: FormGroup;
     public showNewErrForm: boolean;
     public errors: Array<Error>;

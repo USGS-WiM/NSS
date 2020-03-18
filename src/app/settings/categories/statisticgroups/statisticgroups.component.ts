@@ -28,9 +28,9 @@ import { ConfigService } from 'app/config.service';
 })
 
 export class StatisticGroupsComponent implements OnInit, OnDestroy {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('StatGroupForm') statGroupForm;
+    @ViewChild('StatGroupForm', {static: true}) statGroupForm;
     public regressionTypes;
     public selectedRegion;
     public regions;

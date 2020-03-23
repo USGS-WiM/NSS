@@ -161,7 +161,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     // delete category type
     public deleteVariable(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Variable?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.variableTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.variablesURL)

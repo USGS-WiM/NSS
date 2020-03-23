@@ -197,7 +197,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     // delete category type
     public deleteRegression(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Regression Type?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.regressionTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regTypeURL)

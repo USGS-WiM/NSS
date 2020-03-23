@@ -154,7 +154,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
     // delete category type
     public deleteError(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Error?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.errors.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.errorsURL)

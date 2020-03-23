@@ -177,7 +177,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
     // delete category type
     public deleteUnit(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Unit System?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.unitSystems.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.unitSystemsURL)

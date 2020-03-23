@@ -158,7 +158,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
     // delete category type
     public deleteRegion(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Region?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.regions.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regionURL)

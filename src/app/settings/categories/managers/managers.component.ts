@@ -176,7 +176,7 @@ export class ManagersComponent implements OnInit {
     // delete category type
     public deleteManager(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Manager?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.managers.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.managersURL)

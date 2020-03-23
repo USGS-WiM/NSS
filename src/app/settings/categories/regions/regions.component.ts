@@ -43,6 +43,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
     public isEditing: boolean;
     public rowBeingEdited: number;
     public tempData;
+    public modalRef;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _toasterService: ToasterService,
         private _configService: ConfigService) {
@@ -72,7 +73,8 @@ export class RegionsComponent implements OnInit, OnDestroy {
         this.newRegForm.controls['name'].setValue(null);
         this.newRegForm.controls['code'].setValue(null);
         this.showNewRegForm = true;
-        this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then((result) => {
+        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then((result) => {
             // this is the solution for the first modal losing scrollability
             if (document.querySelector('body > .modal')) {
                 document.body.classList.add('modal-open');
@@ -94,8 +96,8 @@ export class RegionsComponent implements OnInit, OnDestroy {
     }
 
     private cancelCreateRegion() {
-        this.showNewRegForm = false;
         this.newRegForm.reset();
+        this.modalRef.close();
     }
 
     private createNewRegion() {

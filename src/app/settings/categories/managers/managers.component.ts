@@ -44,6 +44,7 @@ export class ManagersComponent implements OnInit {
     public isEditing: boolean;
     public rowBeingEdited: number;
     public tempData;
+    public modalRef;
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -81,7 +82,8 @@ export class ManagersComponent implements OnInit {
         this.newUserForm.controls['role'].setValue(null);
         this.newUserForm.controls['email'].setValue(null);
         this.showUserForm = true;
-        this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
+        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
                 if (document.querySelector('body > .modal')) {
@@ -112,8 +114,8 @@ export class ManagersComponent implements OnInit {
     }
 
     private cancelCreateUser() {
-        this.showUserForm = false;
         this.newUserForm.reset();
+        this.modalRef.close();
     }
 
     private createNewUser() {

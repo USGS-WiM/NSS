@@ -188,7 +188,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     // delete category type
     public deleteStatGroup(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Statistic Group?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.statisticGroups.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.statisticGrpURL)

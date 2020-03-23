@@ -48,6 +48,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     public rowBeingEdited: number;
     public tempData;
     public isEditing = false;
+    public modalRef;
 
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router,
@@ -100,7 +101,8 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         this.newStatGroupForm.controls['name'].setValue(null);
         this.newStatGroupForm.controls['code'].setValue(null);
         this.showNewStatForm = true;
-        this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then((result) => {
+        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then((result) => {
             // this is the solution for the first modal losing scrollability
             if (document.querySelector('body > .modal')) {
                 document.body.classList.add('modal-open');
@@ -122,8 +124,8 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     }
 
     private cancelCreateStatGroup() {
-        this.showNewStatForm = false;
         this.newStatGroupForm.reset();
+        this.modalRef.close();
     }
 
     private createNewStatGroup() {

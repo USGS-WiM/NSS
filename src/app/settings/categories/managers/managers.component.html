@@ -115,7 +115,7 @@
             <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('role').valid && newUserForm.get('role').dirty}">
                 <label class="req" for="role">Role:</label>
                 <select class="form-control" formControlName="role">
-                    <option *ngFor="let role of roles" [value]="role.name">{{role.name}}</option>
+                    <option *ngFor="let role of roles" [value]="role">{{role}}</option>
                 </select>
                 <div class="input-invalid-warning" *ngIf="!newUserForm.get('role').valid && newUserForm.get('role').dirty">Role
                     is required</div>

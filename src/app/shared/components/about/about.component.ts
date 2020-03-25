@@ -16,7 +16,7 @@ import { NSSService } from 'app/shared/services/app.service';
     styleUrls: ['./about.component.css']
 })
 export class AboutModal implements OnInit, OnDestroy {
-    @ViewChild('about') public aboutModal; // : ModalDirective;  //modal for validator
+    @ViewChild('about', {static: true}) public aboutModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
     public CloseResult: any;
     private modalSubscript;

@@ -39,8 +39,8 @@
     .hidden-print {
         display: none !important;
     }
-    #print-content * {
-        visibility: visible;
+    #printArea {
+        margin-top: 0rem;
     }
 }
 

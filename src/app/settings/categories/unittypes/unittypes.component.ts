@@ -27,9 +27,9 @@ import { UnitSystem } from 'app/shared/interfaces/unitsystems';
     templateUrl: 'unittypes.component.html'
 })
 export class UnitTypesComponent implements OnInit, OnDestroy {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('UnitTypeForm') unitForm;
+    @ViewChild('UnitTypeForm', {static: true}) unitForm;
     public selectedRegion;
     public regions;
     public selectedRegRegionIDs;
@@ -47,6 +47,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
     public isEditing: boolean;
     public rowBeingEdited: number;
     public tempData;
+    public modalRef;
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -91,7 +92,8 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         this.newUnitForm.controls['abbreviation'].setValue(null);
         this.newUnitForm.controls['unitSystemTypeID'].setValue(null);
         this.showNewUnitForm = true;
-        this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
+        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
                 if (document.querySelector('body > .modal')) {
@@ -122,8 +124,8 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
     }
 
     private cancelCreateUnit() {
-        this.showNewUnitForm = false;
         this.newUnitForm.reset();
+        this.modalRef.close();
     }
 
     private createNewUnit() {
@@ -187,7 +189,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
     // delete category type
     public deleteUnit(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Unit Type?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.unitTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.unitsURL)

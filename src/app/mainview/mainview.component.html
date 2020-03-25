@@ -46,10 +46,10 @@
                         <table class="table">
                             <tr *ngFor="let rr of sc.regressionRegions;let rInd = index">
                                 <td style="vertical-align:middle;">{{rr.name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_Code: {{rr.code}})</span></td>
-                                <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
+                                <!-- <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
                                 <td *ngIf="showWeights" class="col-xs-2">
                                     <input style="display:inline;" type="text" class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.percentWeight">
-                                </td>
+                                </td> -->
                             </tr>
                         </table>
                     </div><!-- end length > 0-->
@@ -133,7 +133,7 @@
         <div *ngFor="let s of scenarios">
             <h3>{{s.statisticGroupName}}</h3>
             <div *ngFor="let rr of s.regressionRegions;let r = index">
-                <div><!-- *ngIf="rr.id > 0">  -->
+                <div *ngIf="rr.id > 0"> 
                     <div class="row">
                         <div class="col-xs-12">
                             <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>

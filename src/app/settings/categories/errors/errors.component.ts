@@ -26,9 +26,9 @@ import { ConfigService } from 'app/config.service';
 })
 
 export class ErrorsComponent implements OnInit, OnDestroy {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('ErrorForm') errorForm;
+    @ViewChild('ErrorForm', {static: true}) errorForm;
     public newErrForm: FormGroup;
     public showNewErrForm: boolean;
     public errors: Array<Error>;
@@ -39,6 +39,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
     public isEditing: boolean;
     public rowBeingEdited: number;
     public tempData;
+    public modalRef;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _configService: ConfigService,
         private _toasterService: ToasterService) {
@@ -68,7 +69,8 @@ export class ErrorsComponent implements OnInit, OnDestroy {
         this.newErrForm.controls['name'].setValue(null);
         this.newErrForm.controls['code'].setValue(null);
         this.showNewErrForm = true;
-        this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then((result) => {
+        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then((result) => {
             // this is the solution for the first modal losing scrollability
             if (document.querySelector('body > .modal')) {
                 document.body.classList.add('modal-open');
@@ -90,8 +92,8 @@ export class ErrorsComponent implements OnInit, OnDestroy {
     }
 
     private cancelCreateError() {
-        this.showNewErrForm = false;
         this.newErrForm.reset();
+        this.modalRef.close();
     }
 
     private createNewError() {
@@ -154,7 +156,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
     // delete category type
     public deleteError(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Error?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.errors.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.errorsURL)

@@ -25,9 +25,9 @@ import { ConfigService } from 'app/config.service';
     templateUrl: 'regressiontypes.component.html'
 })
 export class RegressionTypesComponent implements OnInit, OnDestroy {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('RegressionForm')
+    @ViewChild('RegressionForm', {static: true})
     regressionForm;
     public selectedRegion;
     public regions;
@@ -44,6 +44,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public rowBeingEdited: number;
     public tempData;
     public isEditing = false;
+    public modalRef;
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -99,7 +100,8 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this.newRegForm.controls['description'].setValue(null);
         this.showNewRegForm = true;
         this.newRegForm.controls['code'].setValue(null);
-        this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
+        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
                 if (document.querySelector('body > .modal')) {
@@ -130,8 +132,8 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     }
 
     private cancelCreateRegression() {
-        this.showNewRegForm = false;
         this.newRegForm.reset();
+        this.modalRef.close();
     }
 
     private createNewRegression() {
@@ -197,7 +199,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     // delete category type
     public deleteRegression(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Regression Type?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.regressionTypes.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.regTypeURL)

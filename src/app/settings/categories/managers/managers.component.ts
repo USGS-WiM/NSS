@@ -26,9 +26,9 @@ import { Role } from 'app/shared/interfaces/role';
     templateUrl: 'managers.component.html'
 })
 export class ManagersComponent implements OnInit {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('User') userForm;
+    @ViewChild('User', {static: true}) userForm;
     public selectedRegion;
     public regions;
     public selectedRegRegionIDs;
@@ -44,6 +44,7 @@ export class ManagersComponent implements OnInit {
     public isEditing: boolean;
     public rowBeingEdited: number;
     public tempData;
+    public modalRef;
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -81,7 +82,8 @@ export class ManagersComponent implements OnInit {
         this.newUserForm.controls['role'].setValue(null);
         this.newUserForm.controls['email'].setValue(null);
         this.showUserForm = true;
-        this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then(
+        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then(
             result => {
                 // this is the solution for the first modal losing scrollability
                 if (document.querySelector('body > .modal')) {
@@ -112,8 +114,8 @@ export class ManagersComponent implements OnInit {
     }
 
     private cancelCreateUser() {
-        this.showUserForm = false;
         this.newUserForm.reset();
+        this.modalRef.close();
     }
 
     private createNewUser() {
@@ -176,7 +178,7 @@ export class ManagersComponent implements OnInit {
     // delete category type
     public deleteManager(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Manager?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.managers.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.managersURL)

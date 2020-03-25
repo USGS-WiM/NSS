@@ -1,5 +1,4 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
-// import { NavbarComponent } from './navbar/navbar.component';
 import { MainviewComponent } from './mainview/mainview.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { PageScrollConfig } from 'ng2-page-scroll';
@@ -21,7 +20,7 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
 export class AppComponent implements OnInit, OnDestroy {
 
     public loggedInRole = '';
-    @ViewChild('login') public loginModal; // : ModalDirective;  //modal for validator
+    @ViewChild('login', {static: true}) public loginModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
     public closeResult: any;
     private modalSubscript;
@@ -52,6 +51,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+
         this._authService.loggedInRole().subscribe(role => {
             if (role === 'Administrator' || role === 'Manager') {
                 this.loggedInRole = role;
@@ -70,7 +70,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
 
         this._nssService.showLoginModal.subscribe(show => {
-            if (show) {this.showLoginModal(); }
+            if (show) { this.showLoginModal(); }
         });
 
         // get return url from route parameters or default to '/'
@@ -78,10 +78,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.modalElement = this.loginModal;
         this.loginError = false;
+
+        // Ensures sidebar will appear if screen changes size
+        window.onresize = function (event) {
+            var sidebar = document.getElementById("wimSidebar");
+            if (window.innerWidth > 800) {
+                sidebar.style.display = "block";
+            } else {
+                sidebar.style.display = "none";
+            }
+        };
+
     }
     // @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
-    @ViewChild(SidebarComponent) sidebarComponent: SidebarComponent;
-    @ViewChild(MainviewComponent) mainviewCommponent: MainviewComponent;
+    @ViewChild(SidebarComponent, {static: true}) sidebarComponent: SidebarComponent;
+    @ViewChild(MainviewComponent, {static: true}) mainviewCommponent: MainviewComponent;
     public showAbout() {
         this._nssService.setAboutModal(true);
     }
@@ -136,7 +147,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 window.location.reload();
             },
             error => {
-                this._toasterService.pop('error', 'Error logging in', error._body.message || error.statusText);
+                this._toasterService.pop('error', 'Error logging in',  error.statusText|| error._body.message);
                 this.loading = false;
             }
         );
@@ -162,21 +173,24 @@ export class AppComponent implements OnInit, OnDestroy {
         const now: number = new Date().getTime();
         const setupTime: number = Number(localStorage.getItem('setupTime'));
         if (now - setupTime > twentyFourHours) {
-          // is it greater than 12 hours
-          tooOld = true;
-          localStorage.clear();
+            // is it greater than 12 hours
+            tooOld = true;
+            localStorage.clear();
         }
 
         return tooOld;
     }
 
-    public toggleSidebar(){
+    public toggleSidebar() {
         // should allow sidebar to go in and come back out
         var sidebar = document.getElementById("wimSidebar");
-        if (sidebar.style.display === "none") {
+        if (sidebar.style.display == "") {
+            sidebar.style.display = "block";
+        } else if (sidebar.style.display === "none") {
             sidebar.style.display = "block";
         } else {
             sidebar.style.display = "none";
         }
     }
+
 }

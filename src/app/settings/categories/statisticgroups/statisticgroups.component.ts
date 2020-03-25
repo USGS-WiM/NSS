@@ -28,9 +28,9 @@ import { ConfigService } from 'app/config.service';
 })
 
 export class StatisticGroupsComponent implements OnInit, OnDestroy {
-    @ViewChild('add')
+    @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
-    @ViewChild('StatGroupForm') statGroupForm;
+    @ViewChild('StatGroupForm', {static: true}) statGroupForm;
     public regressionTypes;
     public selectedRegion;
     public regions;
@@ -48,6 +48,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     public rowBeingEdited: number;
     public tempData;
     public isEditing = false;
+    public modalRef;
 
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router,
@@ -100,7 +101,8 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         this.newStatGroupForm.controls['name'].setValue(null);
         this.newStatGroupForm.controls['code'].setValue(null);
         this.showNewStatForm = true;
-        this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' }).result.then((result) => {
+        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then((result) => {
             // this is the solution for the first modal losing scrollability
             if (document.querySelector('body > .modal')) {
                 document.body.classList.add('modal-open');
@@ -122,8 +124,8 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     }
 
     private cancelCreateStatGroup() {
-        this.showNewStatForm = false;
         this.newStatGroupForm.reset();
+        this.modalRef.close();
     }
 
     private createNewStatGroup() {
@@ -186,7 +188,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     // delete category type
     public deleteStatGroup(deleteID: number) {
         const check = confirm('Are you sure you want to delete this Statistic Group?');
-        if (confirm) {
+        if (check) {
             // delete it
             const index = this.statisticGroups.findIndex(item => item.id === deleteID);
             this._settingsservice.deleteEntity(deleteID, this.configSettings.statisticGrpURL)

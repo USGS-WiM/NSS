@@ -26,7 +26,7 @@ import { GeojsonService } from '../../services/geojson.service';
   styleUrls: ['./addregressionregion.component.css']
 })
 export class AddRegressionRegionModal implements OnInit, OnDestroy {
-  @ViewChild('addRegressionRegion') public addRegressionRegionModal;
+  @ViewChild('addRegressionRegion', {static: true}) public addRegressionRegionModal;
   private modalElement: any;
   public CloseResult: any;
   private modalSubscript;
@@ -238,8 +238,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     const regionID = this.newRegRegForm.value.state;
     this._settingsService
       .postEntity(this.newRegRegForm.value, this.configSettings.regionURL + regionID + '/' + this.configSettings.regRegionURL)
-      .subscribe(
-        (response) => {
+      .subscribe((response:any) => {
           response.isEditing = false;
           if (!response.headers) {
             this._toasterService.pop('info', 'Info', 'Regression region was added');
@@ -267,13 +266,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     // add new citation
     this._settingsService.postEntity(this.newCitForm.value, this.configSettings.regRegionURL + '/' + rr.id + '/' +
       this.configSettings.citationURL)
-      .subscribe((res) => {
+      .subscribe((response: any) => {
         this.newCitForm.reset();
         this.addCitation = false;
-        rr.citationID = res.id;
-        if (!res.headers) {
+        rr.citationID = response.id;
+        if (!response.headers) {
           this._toasterService.pop('info', 'Info', 'Citation was added');
-        } else { this._settingsService.outputWimMessages(res); }
+        } else { this._settingsService.outputWimMessages(response); }
         this.cancelCreateRegression();
         this._nssService.setSelectedRegion(this.selectedRegion);
       }, error => {

@@ -135,6 +135,8 @@ export class AboutModal implements OnInit, OnDestroy {
              return
         }
         var url = "https://streamstats.freshdesk.com/helpdesk/tickets.json"
+        var token = 'yxAClTZwexFeIxpRR6g'
+        var accountID = '303973'
         var formdata = new FormData();
         
         formdata.append('helpdesk_ticket[email]', this.freshDeskTicket.email);
@@ -143,8 +145,8 @@ export class AboutModal implements OnInit, OnDestroy {
         //formdata.append('helpdesk_ticket[custom_field][regionid_' + '303973' + ']', this.RegionID);
         //formdata.append('helpdesk_ticket[custom_field][workspaceid_' + '303973' + ']', this.WorkspaceID);
         //formdata.append('helpdesk_ticket[custom_field][server_' + '303973' + ']', this.Server);
-        formdata.append('helpdesk_ticket[custom_field][browser_' + '303973' + ']', this.Browser);
-        formdata.append('helpdesk_ticket[custom_field][softwareversion_' + '303973' + ']', this.appVersion);
+        formdata.append('helpdesk_ticket[custom_field][browser_' + accountID + ']', this.Browser);
+        formdata.append('helpdesk_ticket[custom_field][softwareversion_' + accountID + ']', this.appVersion);
 
         if (this.freshDeskTicket.attachment){
             formdata.append('helpdesk_ticket[attachments][][resource]', this.form.get('avatar').value, this.form.get('name').value);
@@ -154,11 +156,11 @@ export class AboutModal implements OnInit, OnDestroy {
         console.log(formdata.get('helpdesk_ticket[email]'))
         console.log(formdata.get('helpdesk_ticket[subject]'))
         console.log(formdata.get('helpdesk_ticket[attachments][][resource]'))
-        console.log(formdata.get('helpdesk_ticket[custom_field][browser_' + '303973' + ']'))
-        console.log(formdata.get('helpdesk_ticket[custom_field][softwareversion_' + '303973' + ']'))
+        console.log(formdata.get('helpdesk_ticket[custom_field][browser_' +  accountID + ']'))
+        console.log(formdata.get('helpdesk_ticket[custom_field][softwareversion_' + accountID + ']'))
 
         const headers: HttpHeaders = new HttpHeaders({
-            "Authorization": "Basic " + btoa('yxAClTZwexFeIxpRR6g' + ":" + 'X'),
+            "Authorization": "Basic " + btoa(token + ":" + 'X'),
             "Content-Type": undefined
         });
 

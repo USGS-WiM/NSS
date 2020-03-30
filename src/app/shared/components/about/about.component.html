@@ -51,7 +51,7 @@
                 <ng-template ngbTabContent>
                     <div style="padding-top: 10px;">
                         <span>Use the form below to get support on a specific issue. Please include as much information as possible.</span>                        
-                        <form id="ticketForm" name="helpform">
+                        <form #f="ngForm" (ngSubmit)="submitFreshDeskTicket()">
                             <div class="well well-sm">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -80,9 +80,9 @@
                                                 <i class="fa fa-paperclip"></i>&nbsp;&nbsp;Attach File <input type="file" ngf-select (change)="uploadFile($event)" [(ngModel)]="freshDeskTicket.attachment" name="file" ngf-accept="'image/*'">
                                             </span>  
                                             <br />
-                                            <i *ngIf="freshDeskTicket.attachment" (click)=removeFile($event) class="fa fa-trash">&nbsp;&nbsp;Remove File</i>
+                                            <i *ngIf="freshDeskTicket.attachment" (click)=removeFile() class="fa fa-trash">&nbsp;&nbsp;Remove File</i>
                                         </div>
-                                        <button type="button" (click)="submitFreshDeskTicket()" class="btn-blue"><i class="fa fa-share"></i><span >&nbsp;&nbsp;Submit Support Request</span></button>
+                                        <button type="submit" [disabled]="!f.valid" class="btn-blue"><i class="fa fa-share"></i><span >&nbsp;&nbsp;Submit Support Request</span></button>
                                     </div>
                                 </div>
                             </div>

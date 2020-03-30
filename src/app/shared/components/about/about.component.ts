@@ -45,15 +45,13 @@ export class AboutModal implements OnInit, OnDestroy {
         private _nssService: NSSService, 
         public _settingsservice: SettingsService,
         private _modalService: NgbModal, 
-        private _toasterService: ToasterService
+        private _toasterService: ToasterService,
         ) {
         this.form = this.fb.group({
             name:"",
             avatar: [null]
         })
         this.freshDeskTicket = new freshDeskTicket();
-        this.showSuccessAlert = false;
-        this.submittingSupportTicket = false; 
     }
 
     ngOnInit() {
@@ -119,7 +117,7 @@ export class AboutModal implements OnInit, OnDestroy {
         this.form.get('avatar').updateValueAndValidity()
     }
 
-    removeFile(event){
+    removeFile(){
         this.form.patchValue({
             name: [""],
             avatar: [null]
@@ -136,7 +134,7 @@ export class AboutModal implements OnInit, OnDestroy {
              this._toasterService.pop('error', 'Error', 'Form not complete');
              return
         }
-        var url = 'https://streamstats.freshdesk.com/helpdesk/tickets.json';
+        var url = "https://streamstats.freshdesk.com/helpdesk/tickets.json"
         var formdata = new FormData();
         
         formdata.append('helpdesk_ticket[email]', this.freshDeskTicket.email);
@@ -152,12 +150,12 @@ export class AboutModal implements OnInit, OnDestroy {
             formdata.append('helpdesk_ticket[attachments][][resource]', this.form.get('avatar').value, this.form.get('name').value);
         }
 
-        //console.log(formdata.get('helpdesk_ticket[description]'))
-        //console.log(formdata.get('helpdesk_ticket[email]'))
-        //console.log(formdata.get('helpdesk_ticket[subject]'))
-        //console.log(formdata.get('helpdesk_ticket[attachments][][resource]'))
-        //console.log(formdata.get('helpdesk_ticket[custom_field][browser_' + '303973' + ']'))
-        //console.log(formdata.get('helpdesk_ticket[custom_field][softwareversion_' + '303973' + ']'))
+        console.log(formdata.get('helpdesk_ticket[description]'))
+        console.log(formdata.get('helpdesk_ticket[email]'))
+        console.log(formdata.get('helpdesk_ticket[subject]'))
+        console.log(formdata.get('helpdesk_ticket[attachments][][resource]'))
+        console.log(formdata.get('helpdesk_ticket[custom_field][browser_' + '303973' + ']'))
+        console.log(formdata.get('helpdesk_ticket[custom_field][softwareversion_' + '303973' + ']'))
 
         const headers: HttpHeaders = new HttpHeaders({
             "Authorization": "Basic " + btoa('yxAClTZwexFeIxpRR6g' + ":" + 'X'),
@@ -169,11 +167,12 @@ export class AboutModal implements OnInit, OnDestroy {
         this.http.post<any>(url, formdata,{ headers: headers, observe: "response"}).subscribe(
             (res) => {
                 console.log(res),
-                this._toasterService.pop('info', 'Info', 'Unit was created'),
+                this._toasterService.pop('info', 'Info', 'Ticket was created'),
                 this.cancelAbout();
             },(error) => {
-                if (this._settingsservice.outputWimMessages(error)) {return; }
-                this._toasterService.pop('error', 'Error creating Unit', error._body.message || error.statusText);
+                //if (this._settingsservice.outputWimMessages(error)) {return; }
+                //this._toasterService.pop('error', 'Error creating ticket', error._body.message || error.statusText);
+                console.log('error')
             }
         );
 

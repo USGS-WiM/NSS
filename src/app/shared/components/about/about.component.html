@@ -77,7 +77,7 @@
                                         <div class="form-group">
                                             <label for="title">Upload an Attachment (optional):</label><br />
                                             <span class="btn-file">
-                                                <i class="fa fa-paperclip"></i>&nbsp;&nbsp;Attach File <input type="file" ngf-select (change)="uploadFile($event)" [(ngModel)]="freshDeskTicket.attachment" name="file" ngf-accept="'image/*'">
+                                                <i class="fa fa-paperclip"></i>&nbsp;&nbsp;Attach File <input type="file" ngf-select (change)="uploadFile($event)" [(ngModel)]="freshDeskTicket.attachment" name="file" accept="image/*">
                                             </span>  
                                             <br />
                                             <i *ngIf="freshDeskTicket.attachment" (click)=removeFile() class="fa fa-trash">&nbsp;&nbsp;Remove File</i>

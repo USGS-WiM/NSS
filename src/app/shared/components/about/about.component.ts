@@ -51,7 +51,7 @@ export class AboutModal implements OnInit, OnDestroy {
         ) {
         this.form = this.fb.group({
             name:"",
-            avatar: [null]
+            file: [null]
         })
         this.freshDeskTicket = new freshDeskTicket();
     }
@@ -111,18 +111,18 @@ export class AboutModal implements OnInit, OnDestroy {
     }
 
     uploadFile(event) {
-        const file = (event.target as HTMLInputElement).files[0];
+        const temp = (event.target as HTMLInputElement).files[0];
         this.form.patchValue({
-            name:file.name,
-            avatar: file
+            name: temp.name,
+            file: temp
         });
-        this.form.get('avatar').updateValueAndValidity()
+        this.form.get('file').updateValueAndValidity()
     }
 
     removeFile(){
         this.form.patchValue({
             name: [""],
-            avatar: [null]
+            file: [null]
         });
         this.freshDeskTicket.attachment = null;
     }
@@ -135,31 +135,43 @@ export class AboutModal implements OnInit, OnDestroy {
         var url = "https://streamstats.freshdesk.com/api/v2/tickets"
         var token = 'yxAClTZwexFeIxpRR6g'
         var accountID = '303973'
+        var tags=["NSS"];
         var formdata = new FormData();
-        formdata.append('helpdesk_ticket[email]', this.freshDeskTicket.email);
-        formdata.append('helpdesk_ticket[subject]', this.freshDeskTicket.subject);
-        formdata.append('helpdesk_ticket[description]', this.freshDeskTicket.description);  
-        formdata.append('helpdesk_ticket[custom_field][browser_' + accountID + ']', this.Browser);
-        formdata.append('helpdesk_ticket[custom_field][softwareversion_' + accountID + ']', this.appVersion);
+        formdata.append('email', this.freshDeskTicket.email);
+        formdata.append('subject', this.freshDeskTicket.subject);
+        formdata.append('description', this.freshDeskTicket.description); 
+        formdata.append('status', "2"); 
+        //formdata.append('tags', JSON.stringify(tags));  
+        formdata.append('[custom_field][browser_' + accountID + ']', this.Browser);
+        formdata.append('[custom_field][softwareversion_' + accountID + ']', this.appVersion);
 
         if (this.freshDeskTicket.attachment){
-            formdata.append('helpdesk_ticket[attachments][][resource]', this.form.get('avatar').value, this.form.get('name').value);
+            formdata.append('attachments', this.form.get('file').value);
         }
+
+        console.log(formdata.get('email'))
+        console.log(formdata.get('subject'))
+        console.log(formdata.get('description'))
+        console.log(formdata.get('status'))
+        console.log(formdata.get('attachments'))
         
-        var data = {
-            "email": formdata.get('helpdesk_ticket[email]'),
-            "subject": formdata.get('helpdesk_ticket[subject]'),
-            "description": formdata.get('helpdesk_ticket[description]'),
+         var data = {
+            "attachments": [this.form.get('file').value], 
+            "email": formdata.get('email'),
+            "subject": formdata.get('subject'),
+            "description": formdata.get('description'),
             "status": 2,
             "tags" : ["NSS"],
-            "custom_fields":{"browser": formdata.get('helpdesk_ticket[custom_field][browser_' +  accountID + ']'),
-                              "softwareversion": formdata.get('helpdesk_ticket[custom_field][softwareversion_' + accountID + ']')}
-        };
+            "custom_fields":{"browser": formdata.get('[custom_field][browser_' +  accountID + ']'),
+                              "softwareversion": formdata.get('[custom_field][softwareversion_' + accountID + ']')}
+        }; 
 
         console.log(JSON.stringify(data))
+        console.log((data.attachments))
 
         const headers: HttpHeaders = new HttpHeaders({
             "Authorization": "Basic " + btoa(token + ":" + 'X'),
+            "Content-Type": "multipart/form-data"
         });
 
          this.http.post<any>(url, data, { headers: headers, observe: "response"}).subscribe(

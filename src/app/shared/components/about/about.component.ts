@@ -11,7 +11,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NSSService } from 'app/shared/services/app.service';
 import {freshDeskTicket} from 'app/shared/interfaces/freshdeskticket'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { SettingsService } from 'app/settings/settings.service';
 
@@ -24,7 +24,8 @@ declare var InstallTrigger: any;
     styleUrls: ['./about.component.css']
 })
 export class AboutModal implements OnInit, OnDestroy {
-    @ViewChild('about', {static: true}) public aboutModal;
+    @ViewChild('about', {static: true}) public aboutModal; // : ModalDirective;  //modal for validator
+    @ViewChild('f', {static: true}) ticketForm;
     private modalElement: any;
     public CloseResult: any;
     private modalSubscript;
@@ -39,6 +40,7 @@ export class AboutModal implements OnInit, OnDestroy {
     public showSuccessAlert: boolean;
     public submittingSupportTicket: boolean;
     public form: FormGroup;
+    public newTicketForm: FormGroup;
     constructor(
         private http: HttpClient,
         public fb: FormBuilder, 
@@ -130,69 +132,46 @@ export class AboutModal implements OnInit, OnDestroy {
     }
 
     public submitFreshDeskTicket(): void {
-        if (this.freshDeskTicket.email == null||this.freshDeskTicket.subject == null||this.freshDeskTicket.description == null){
-             this._toasterService.pop('error', 'Error', 'Form not complete');
-             return
-        }
-        var url = "https://streamstats.freshdesk.com/helpdesk/tickets.json"
+        var url = "https://streamstats.freshdesk.com/api/v2/tickets"
         var token = 'yxAClTZwexFeIxpRR6g'
         var accountID = '303973'
         var formdata = new FormData();
-        
         formdata.append('helpdesk_ticket[email]', this.freshDeskTicket.email);
         formdata.append('helpdesk_ticket[subject]', this.freshDeskTicket.subject);
         formdata.append('helpdesk_ticket[description]', this.freshDeskTicket.description);  
-        //formdata.append('helpdesk_ticket[custom_field][regionid_' + '303973' + ']', this.RegionID);
-        //formdata.append('helpdesk_ticket[custom_field][workspaceid_' + '303973' + ']', this.WorkspaceID);
-        //formdata.append('helpdesk_ticket[custom_field][server_' + '303973' + ']', this.Server);
         formdata.append('helpdesk_ticket[custom_field][browser_' + accountID + ']', this.Browser);
         formdata.append('helpdesk_ticket[custom_field][softwareversion_' + accountID + ']', this.appVersion);
 
         if (this.freshDeskTicket.attachment){
             formdata.append('helpdesk_ticket[attachments][][resource]', this.form.get('avatar').value, this.form.get('name').value);
         }
+        
+        var data = {
+            "email": formdata.get('helpdesk_ticket[email]'),
+            "subject": formdata.get('helpdesk_ticket[subject]'),
+            "description": formdata.get('helpdesk_ticket[description]'),
+            "status": 2,
+            "tags" : ["NSS"],
+            "custom_fields":{"browser": formdata.get('helpdesk_ticket[custom_field][browser_' +  accountID + ']'),
+                              "softwareversion": formdata.get('helpdesk_ticket[custom_field][softwareversion_' + accountID + ']')}
+        };
 
-        console.log(formdata.get('helpdesk_ticket[description]'))
-        console.log(formdata.get('helpdesk_ticket[email]'))
-        console.log(formdata.get('helpdesk_ticket[subject]'))
-        console.log(formdata.get('helpdesk_ticket[attachments][][resource]'))
-        console.log(formdata.get('helpdesk_ticket[custom_field][browser_' +  accountID + ']'))
-        console.log(formdata.get('helpdesk_ticket[custom_field][softwareversion_' + accountID + ']'))
+        console.log(JSON.stringify(data))
 
         const headers: HttpHeaders = new HttpHeaders({
             "Authorization": "Basic " + btoa(token + ":" + 'X'),
-            "Content-Type": undefined
         });
 
-        //var request: WiM.Services.Helpers.RequestInfo = new WiM.Services.Helpers.RequestInfo(url, true, WiM.Services.Helpers.methodType.POST, 'json', formdata, headers, angular.identity);
-
-        this.http.post<any>(url, formdata,{ headers: headers, observe: "response"}).subscribe(
+         this.http.post<any>(url, data, { headers: headers, observe: "response"}).subscribe(
             (res) => {
                 console.log(res),
                 this._toasterService.pop('info', 'Info', 'Ticket was created'),
                 this.cancelAbout();
             },(error) => {
-                //if (this._settingsservice.outputWimMessages(error)) {return; }
-                //this._toasterService.pop('error', 'Error creating ticket', error._body.message || error.statusText);
-                console.log('error')
+                this._toasterService.pop('error', 'Error', 'Error creating ticket'),
+                console.log(error)
             }
-        );
-
-        /*this.Execute(request).then(
-            (response: any) => {
-                console.log('Successfully submitted help ticket: ', response);
-                
-                //clear out fields
-                this.freshDeskTicket = new freshDeskTicket();
-
-                //show user feedback
-                this.showSuccessAlert = true;
-
-            }, (error) => {
-                //sm when error
-            }).finally(() => {
-                this.submittingSupportTicket = false;
-            }); */
+        );  
     }
 
 }

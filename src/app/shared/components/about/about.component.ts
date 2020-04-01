@@ -6,10 +6,10 @@
 // authors:  Tonia Roddick USGS Wisconsin Internet Mapping
 // purpose: modal used to show about information
 
-import { Component, ViewChild, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NSSService } from 'app/shared/services/app.service';
-import {freshDeskTicket} from 'app/shared/interfaces/freshdeskticket'
+import { freshDeskTicket } from 'app/shared/interfaces/freshdeskticket'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
@@ -96,7 +96,6 @@ export class AboutModal implements OnInit, OnDestroy {
 
     private getBrowser() {
         //modified from https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-        console.log('get browser')
         // Opera 8.0+
         if ((!!(<any>window).opr && !!opr.addons) || !!(<any>window).opera || navigator.userAgent.indexOf(' OPR/') >= 0) this.Browser = "Opera";
         // Firefox 1.0+
@@ -122,7 +121,8 @@ export class AboutModal implements OnInit, OnDestroy {
     }
 
     private cancelAbout() {
-        this.freshDeskTicket = new freshDeskTicket()
+        this.newTicketForm.reset();
+        this.removeFile();
     }
 
     public submitFreshDeskTicket(): void {
@@ -154,14 +154,12 @@ export class AboutModal implements OnInit, OnDestroy {
         // delete content type so webkit boundaries don't get added
         headers.delete('Content-Type');
 
-         this.http.post<any>(url, formdata, { headers: headers, observe: "response"}).subscribe(
+        this.http.post<any>(url, formdata, { headers: headers, observe: "response"}).subscribe(
             (res) => {
-                console.log(res),
                 this._toasterService.pop('info', 'Info', 'Ticket was created'),
                 this.cancelAbout();
             },(error) => {
-                this._toasterService.pop('error', 'Error', 'Error creating ticket'),
-                console.log(error)
+                this._toasterService.pop('error', 'Error', 'Error creating ticket')
             }
         );  
     }

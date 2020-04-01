@@ -58,6 +58,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public map;
   private input;
   private file;
+  private polygonLayer;
 
   constructor(private _nssService: NSSService,
               private _modalService: NgbModal,
@@ -288,7 +289,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public addGeojsonToMap(polygon: any) {
-    const polygonLayer = L.geoJSON(polygon, {
+    this.polygonLayer = L.geoJSON(polygon, {
       style: (feature) => ({
         weight: 3,
         opacity: 0.5,
@@ -298,8 +299,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       })
     });
 
-    this.map.addLayer(polygonLayer);
-    this.map.fitBounds(polygonLayer.getBounds());
+    this.map.addLayer(this.polygonLayer);
+    this.map.fitBounds(this.polygonLayer.getBounds());
   }
 
   async SHPtoGEOJSON(form: any) {
@@ -327,6 +328,11 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   public showMap() {
     this.uploadPolygon = true;
+    if (this.polygonLayer) {
+      this.map.removeLayer(this.polygonLayer);
+      this.map.setView(new L.LatLng(39.8283, -98.5795), 4);
+    }
+    
     setInterval(() => {
       this.map.invalidateSize();
     }, 100);

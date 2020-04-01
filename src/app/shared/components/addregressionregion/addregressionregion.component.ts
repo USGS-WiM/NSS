@@ -73,7 +73,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       name: new FormControl(null, Validators.required),
       description: new FormControl(null),
       code: new FormControl(null, Validators.required),
-      state: new FormControl(null, Validators.required)
+      state: new FormControl(null, Validators.required),
+      location: new FormControl(null, Validators.required)
     });
     this.newCitForm = _fb.group({
       'title': new FormControl(null, Validators.required),
@@ -250,12 +251,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
             this.cancelCreateRegression();
             this._nssService.setSelectedRegion(this.selectedRegion);
           }
-          if (this.uploadPolygon) { // if user elected to upload a polygon, send that through
-            this.uploadNewPolygon(response);
-          } else {
-            this.cancelCreateRegression();
-            this._nssService.setSelectedRegion(this.selectedRegion);
-          }
         }, error => {
           if (this._settingsService.outputWimMessages(error)) { return; }
           this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText);
@@ -283,11 +278,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       );
   }
 
-  public uploadNewPolygon(rr) {
-    // Upload new polygon
-    // TODO: Send polygon to services
-  }
-
   public addGeojsonToMap(polygon: any) {
     this.polygonLayer = L.geoJSON(polygon, {
       style: (feature) => ({
@@ -310,6 +300,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         res => {
           shp(res).then(function (geojson) {
             self.addGeojsonToMap(geojson);
+            this.regRegForm.get('location').setValue(geojson);
           })
         }
       );

@@ -51,33 +51,33 @@
                 <ng-template ngbTabContent>
                     <div style="padding-top: 10px;">
                         <span>Use the form below to get support on a specific issue. Please include as much information as possible.</span>                        
-                        <form #f="ngForm" (ngSubmit)="submitFreshDeskTicket()">
+                        <form #f="ngForm" [formGroup]="newTicketForm" (ngSubmit)="submitFreshDeskTicket()"> 
                             <div class="well well-sm">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="email">Email:</label>
-                                            <input type="email" #email="ngModel"
-                                                [class.is-invalid]="email.invalid" required
+                                            <input type="email"
+                                                [class.invalid]="newTicketForm.get('email').invalid" required
                                                 pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" class="form-control" name="primaryEmail"
-                                                [(ngModel)]="freshDeskTicket.email" 
+                                                formControlName="email" 
                                             />                                                
                                         </div>
-                                        <div *ngIf="email.errors && (email.invalid)">
-                                            <small class="text-danger" *ngIf="email.errors.pattern">Please provide a valid email address</small>
+                                        <div *ngIf="newTicketForm.get('email').dirty && !(newTicketForm.get('email').valid)">
+                                            <small class="text-danger">Please provide a valid email address</small>
                                         </div>
                                         <div class="form-group">
-                                            <label for="title">Subject:</label>
-                                            <input class="form-control" id="title" [(ngModel)]="freshDeskTicket.subject" name ="subject" required>
+                                            <label for="subject">Subject:</label>
+                                            <input class="form-control" id="subject" formControlName="subject" name ="subject" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="message">Description:</label>
-                                            <textarea class="form-control" rows="6" id="description" [(ngModel)]="freshDeskTicket.description" name = "description" required></textarea>
+                                            <textarea class="form-control" rows="6" id="description" formControlName="description" name = "description" required></textarea>
                                         </div>
                                         <div class="form-group">
                                             <label for="title">Upload an Attachment (optional):</label><br />
                                             <span class="btn-file">
-                                                <i class="fa fa-paperclip"></i>&nbsp;&nbsp;Attach File <input type="file" ngf-select (change)="uploadFile($event)" [(ngModel)]="freshDeskTicket.attachment" name="file" accept="image/*">
+                                                <i class="fa fa-paperclip"></i>&nbsp;&nbsp;Attach File <input type="file" ngf-select (change)="uploadFile($event)" formControlName="attachment" name="file" accept="image/*">
                                             </span>  
                                             <br />
                                             <i *ngIf="freshDeskTicket.attachment" (click)=removeFile() class="fa fa-trash">&nbsp;&nbsp;Remove File</i>

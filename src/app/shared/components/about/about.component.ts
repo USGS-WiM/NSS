@@ -11,7 +11,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NSSService } from 'app/shared/services/app.service';
 import {freshDeskTicket} from 'app/shared/interfaces/freshdeskticket'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { SettingsService } from 'app/settings/settings.service';
 
@@ -39,7 +39,6 @@ export class AboutModal implements OnInit, OnDestroy {
     public Server: string;
     public showSuccessAlert: boolean;
     public submittingSupportTicket: boolean;
-    public form: FormGroup;
     public newTicketForm: FormGroup;
     constructor(
         private http: HttpClient,
@@ -49,10 +48,12 @@ export class AboutModal implements OnInit, OnDestroy {
         private _modalService: NgbModal, 
         private _toasterService: ToasterService,
         ) {
-        this.form = this.fb.group({
-            name:"",
-            file: [null]
-        })
+        this.newTicketForm = fb.group({
+            'email': new FormControl(null, Validators.required),
+            'subject': new FormControl(null, Validators.required),
+            'description': new FormControl(null, Validators.required),
+            'attachment': new FormControl(null)
+        });
         this.freshDeskTicket = new freshDeskTicket();
     }
 
@@ -112,18 +113,11 @@ export class AboutModal implements OnInit, OnDestroy {
 
     uploadFile(event) {
         const temp = (event.target as HTMLInputElement).files[0];
-        this.form.patchValue({
-            name: temp.name,
-            file: temp
-        });
-        this.form.get('file').updateValueAndValidity()
+        this.freshDeskTicket.attachment = temp;
     }
 
     removeFile(){
-        this.form.patchValue({
-            name: [""],
-            file: [null]
-        });
+        this.newTicketForm.controls['attachment'].setValue(null);
         this.freshDeskTicket.attachment = null;
     }
 
@@ -134,47 +128,33 @@ export class AboutModal implements OnInit, OnDestroy {
     public submitFreshDeskTicket(): void {
         var url = "https://streamstats.freshdesk.com/api/v2/tickets"
         var token = 'yxAClTZwexFeIxpRR6g'
-        var accountID = '303973'
-        var tags=["NSS"];
+
+        // need formdata object to send file correctly
         var formdata = new FormData();
-        formdata.append('email', this.freshDeskTicket.email);
-        formdata.append('subject', this.freshDeskTicket.subject);
-        formdata.append('description', this.freshDeskTicket.description); 
         formdata.append('status', "2"); 
-        //formdata.append('tags', JSON.stringify(tags));  
-        formdata.append('[custom_field][browser_' + accountID + ']', this.Browser);
-        formdata.append('[custom_field][softwareversion_' + accountID + ']', this.appVersion);
+        formdata.append('tags[]', 'NSS');  
+        formdata.append('[custom_fields][browser]', this.Browser);
+        formdata.append('[custom_fields][softwareversion]', this.appVersion);
 
         if (this.freshDeskTicket.attachment){
-            formdata.append('attachments', this.form.get('file').value);
+            // if file was uploaded, add to form data
+            formdata.append('attachments[]', this.freshDeskTicket.attachment, this.freshDeskTicket.attachment.name);
         }
-
-        console.log(formdata.get('email'))
-        console.log(formdata.get('subject'))
-        console.log(formdata.get('description'))
-        console.log(formdata.get('status'))
-        console.log(formdata.get('attachments'))
         
-         var data = {
-            "attachments": [this.form.get('file').value], 
-            "email": formdata.get('email'),
-            "subject": formdata.get('subject'),
-            "description": formdata.get('description'),
-            "status": 2,
-            "tags" : ["NSS"],
-            "custom_fields":{"browser": formdata.get('[custom_field][browser_' +  accountID + ']'),
-                              "softwareversion": formdata.get('[custom_field][softwareversion_' + accountID + ']')}
-        }; 
+        // read form values from html
+        const formVal = this.newTicketForm.value;
 
-        console.log(JSON.stringify(data))
-        console.log((data.attachments))
+        formdata.append('subject', formVal.subject);
+        formdata.append('email', formVal.email);
+        formdata.append('description', formVal.description);
 
         const headers: HttpHeaders = new HttpHeaders({
-            "Authorization": "Basic " + btoa(token + ":" + 'X'),
-            "Content-Type": "multipart/form-data"
+            "Authorization": "Basic " + btoa(token + ":" + 'X')
         });
+        // delete content type so webkit boundaries don't get added
+        headers.delete('Content-Type');
 
-         this.http.post<any>(url, data, { headers: headers, observe: "response"}).subscribe(
+         this.http.post<any>(url, formdata, { headers: headers, observe: "response"}).subscribe(
             (res) => {
                 console.log(res),
                 this._toasterService.pop('info', 'Info', 'Ticket was created'),

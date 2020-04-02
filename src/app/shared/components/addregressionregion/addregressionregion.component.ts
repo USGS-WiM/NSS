@@ -59,6 +59,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   private input;
   private file;
   private polygonLayer;
+  private output;
 
   constructor(private _nssService: NSSService,
               private _modalService: NgbModal,
@@ -304,21 +305,24 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           shp(res).then(function (geojson) {
             self.addGeojsonToMap(geojson);
             
-            console.log(geojson.features[0].geometry.type);
-            console.log(geojson.features[0].geometry.coordinates);
+            //console.log(geojson.features[0].geometry.type);
+            //console.log(geojson.features[0].geometry.coordinates);
+            console.log(this.newRegRegForm.value.code);
 
-            const type = geojson.features[0].geometry.type;
-            const coordinates = geojson.features[0].geometry.coordinates;
+            //const type = geojson.features[0].geometry.type;
+            //const coordinates = geojson.features[0].geometry.coordinates;
 
-            const output = { 
+            this.output = { 
               geometry: {
                 type: geojson.features[0].geometry.type,
                 coordinates: geojson.features[0].geometry.coordinates
               },
-              associatedCodes: this.newRegRegForm.get('code')
-             }
-
-            this.newRegRegForm.get('location').setValue(output);
+              associatedCodes: this.newRegRegForm.value.code
+            }
+          
+            console.log(this.output);
+            //this.newRegRegForm.get('location').setValue(this.output);
+            this.newRegRegForm.controls['location'].setValue(this.output);
           })
         }
       );

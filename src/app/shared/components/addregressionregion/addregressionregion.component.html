@@ -81,7 +81,7 @@
             <div class="form-group">
                 <label for="location">Polygon (Shapefile .zip)</label>
                 <input type='file' id='fileinput'>
-                <button type="submit" class="ui button" style="margin-top: 10px;">Preview File</button> 
+                <button type="submit" class="ui button" style="margin-top: 10px;"><div *ngIf="loadingPolygon"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;Upload File</div>Upload File</button> 
             </div>
           </form> 
       </form>

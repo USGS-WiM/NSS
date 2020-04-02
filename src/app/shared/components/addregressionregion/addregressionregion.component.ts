@@ -56,6 +56,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public newCitForm: FormGroup;
   public regions;
   public map;
+  public loadingPolygon: boolean;
   private input;
   private file;
   private polygonLayer;
@@ -114,6 +115,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.modalElement = this.addRegressionRegionModal;
 
     this.uploadPolygon = true;
+    this.loadingPolygon = false;
 
   }
 
@@ -304,25 +306,14 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         res => {
           shp(res).then(function (geojson) {
             self.addGeojsonToMap(geojson);
+            self.loadingPolygon = false;
             
-            //console.log(geojson.features[0].geometry.type);
-            //console.log(geojson.features[0].geometry.coordinates);
-            console.log(this.newRegRegForm.value.code);
-
-            //const type = geojson.features[0].geometry.type;
-            //const coordinates = geojson.features[0].geometry.coordinates;
-
             this.output = { 
-              geometry: {
-                type: geojson.features[0].geometry.type,
-                coordinates: geojson.features[0].geometry.coordinates
-              },
-              associatedCodes: this.newRegRegForm.value.code
+              geometry: geojson.features[0].geometry,
+              associatedCodes: self.newRegRegForm.get('code').value
             }
-          
-            console.log(this.output);
-            //this.newRegRegForm.get('location').setValue(this.output);
-            this.newRegRegForm.controls['location'].setValue(this.output);
+
+            self.newRegRegForm.get('location').setValue(this.output);
           })
         }
       );
@@ -334,6 +325,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       alert("Please select a file.");
     }
     else {
+      this.loadingPolygon = true;
       this.file = this.input.files[0];
       this.SHPtoGEOJSON(this.file);
     }

@@ -74,7 +74,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       description: new FormControl(null),
       code: new FormControl(null, Validators.required),
       state: new FormControl(null, Validators.required),
-      location: new FormControl(null, Validators.required)
+      location: new FormControl(null)
     });
     this.newCitForm = _fb.group({
       'title': new FormControl(null, Validators.required),
@@ -237,6 +237,9 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   private createNewRegression() {
+
+    console.log(this.newRegRegForm.value.location)
+
     const regionID = this.newRegRegForm.value.state;
     this._settingsService
       .postEntity(this.newRegRegForm.value, this.configSettings.regionURL + regionID + '/' + this.configSettings.regRegionURL)
@@ -300,7 +303,22 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         res => {
           shp(res).then(function (geojson) {
             self.addGeojsonToMap(geojson);
-            this.regRegForm.get('location').setValue(geojson);
+            
+            console.log(geojson.features[0].geometry.type);
+            console.log(geojson.features[0].geometry.coordinates);
+
+            const type = geojson.features[0].geometry.type;
+            const coordinates = geojson.features[0].geometry.coordinates;
+
+            const output = { 
+              geometry: {
+                type: geojson.features[0].geometry.type,
+                coordinates: geojson.features[0].geometry.coordinates
+              },
+              associatedCodes: this.newRegRegForm.get('code')
+             }
+
+            this.newRegRegForm.get('location').setValue(output);
           })
         }
       );

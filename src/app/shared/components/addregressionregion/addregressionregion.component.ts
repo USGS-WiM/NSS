@@ -60,7 +60,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   private input;
   private file;
   private polygonLayer;
-  private output;
 
   constructor(private _nssService: NSSService,
               private _modalService: NgbModal,
@@ -308,12 +307,12 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
             self.addGeojsonToMap(geojson);
             self.loadingPolygon = false;
             
-            this.output = { 
+            const output = { 
               geometry: geojson.features[0].geometry,
               associatedCodes: self.newRegRegForm.get('code').value
             }
 
-            self.newRegRegForm.get('location').setValue(this.output);
+            self.newRegRegForm.get('location').setValue(output);
           })
         }
       );

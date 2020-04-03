@@ -9,7 +9,6 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NSSService } from 'app/shared/services/app.service';
-import { freshDeskTicket } from 'app/shared/interfaces/freshdeskticket'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
@@ -25,20 +24,18 @@ declare var InstallTrigger: any;
 })
 export class AboutModal implements OnInit, OnDestroy {
     @ViewChild('about', {static: true}) public aboutModal; // : ModalDirective;  //modal for validator
-    @ViewChild('f', {static: true}) ticketForm;
+    @ViewChild('form', {static: true}) ticketForm;
     private modalElement: any;
     public CloseResult: any;
     private modalSubscript;
     public appVersion: string;
     public Browser: string;
-    public freshDeskTicket : freshDeskTicket;
     public user: string
     public token: string
     public WorkspaceID: string;
     public RegionID: string;
     public Server: string;
-    public showSuccessAlert: boolean;
-    public submittingSupportTicket: boolean;
+    private file: File | null = null;
     public newTicketForm: FormGroup;
     constructor(
         private http: HttpClient,
@@ -54,7 +51,6 @@ export class AboutModal implements OnInit, OnDestroy {
             'description': new FormControl(null, Validators.required),
             'attachment': new FormControl(null)
         });
-        this.freshDeskTicket = new freshDeskTicket();
     }
 
     ngOnInit() {
@@ -112,12 +108,12 @@ export class AboutModal implements OnInit, OnDestroy {
 
     uploadFile(event) {
         const temp = (event.target as HTMLInputElement).files[0];
-        this.freshDeskTicket.attachment = temp;
+        this.file = temp;
     }
 
     removeFile(){
         this.newTicketForm.controls['attachment'].setValue(null);
-        this.freshDeskTicket.attachment = null;
+        this.file = null;
     }
 
     private cancelAbout() {
@@ -136,9 +132,9 @@ export class AboutModal implements OnInit, OnDestroy {
         formdata.append('[custom_fields][browser]', this.Browser);
         formdata.append('[custom_fields][softwareversion]', this.appVersion);
 
-        if (this.freshDeskTicket.attachment){
+        if (this.file){
             // if file was uploaded, add to form data
-            formdata.append('attachments[]', this.freshDeskTicket.attachment, this.freshDeskTicket.attachment.name);
+            formdata.append('attachments[]', this.file, this.file.name);
         }
         
         // read form values from html
@@ -154,14 +150,14 @@ export class AboutModal implements OnInit, OnDestroy {
         // delete content type so webkit boundaries don't get added
         headers.delete('Content-Type');
 
-        this.http.post<any>(url, formdata, { headers: headers, observe: "response"}).subscribe(
+         this.http.post<any>(url, formdata, { headers: headers, observe: "response"}).subscribe(
             (res) => {
                 this._toasterService.pop('info', 'Info', 'Ticket was created'),
                 this.cancelAbout();
             },(error) => {
                 this._toasterService.pop('error', 'Error', 'Error creating ticket')
             }
-        );  
+        ); 
     }
 
 }

@@ -1191,20 +1191,21 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
 
     public editRowClicked(item, rrIndex, sgIndex, idx?) {
-        if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
-            this.CancelEditRowClicked();
-        } // if another item was being edited, cancel that
-        this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
-        idx >= 0 ? this.editIdx = idx : this.editIdx = null;
-        this.editRRindex = rrIndex; this.editSGIndex = sgIndex; // setting indices because the cancel function wasn't overwriting things
-        this.itemBeingEdited = item;
-        item.isEditing = true;
-        if (item.equation) {this.showMathjax(item); }
-        if (idx === undefined) {
-            // do we need the citation IDs?
-            const rrIdx = this.regressionRegions.findIndex(rr => rr.id === item.id);
-            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].citationID = this.regressionRegions[rrIdx].citationID;
-        }
+        this._nssService.setAddRegressionRegionModal(true);
+        // if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
+        //     this.CancelEditRowClicked();
+        // } // if another item was being edited, cancel that
+        // this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
+        // idx >= 0 ? this.editIdx = idx : this.editIdx = null;
+        // this.editRRindex = rrIndex; this.editSGIndex = sgIndex; // setting indices because the cancel function wasn't overwriting things
+        // this.itemBeingEdited = item;
+        // item.isEditing = true;
+        // if (item.equation) {this.showMathjax(item); }
+        // if (idx === undefined) {
+        //     // do we need the citation IDs?
+        //     const rrIdx = this.regressionRegions.findIndex(rr => rr.id === item.id);
+        //     this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].citationID = this.regressionRegions[rrIdx].citationID;
+        // }
     }
 
     public CancelEditRowClicked() {
@@ -1549,32 +1550,35 @@ export class MainviewComponent implements OnInit, OnDestroy {
     /////////////////////// Finish Add/Edit/Delete Scenarios Section ///////////////////////////
 
     //show add regression region modal
-    // public showNewRegressionRegionForm(rr?) {
-    //     // shows form for creating new regression and/or citation
-    //     if (rr) { // rr already exists, only want citation
-    //         this.selectedRegRegion = rr;
-    //         this.addCitation = true;
-    //         //this.uploadPolygon = true?
-    //         this.addRegReg = false;
-    //     } else { // rr doesn't exist
-    //         this.addRegReg = true;
-    //         this.addCitation = false;
-    //         this.uploadPolygon = false;
-    //     }
-    //     if (this.selectedRegion) {this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
-    //     this.showNewRegRegForm = true;
-    //     this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
-    //     this.modalRef.result.then(
-    //         result => {
-    //             // this is the solution for the first modal losing scrollability
-    //             if (document.querySelector('body > .modal')) {
-    //                 document.body.classList.add('modal-open');
-    //             }
-    //             if (result) {this.cancelCreateRegression(); }
-    //         },
-    //         reason => {if (reason) {this.cancelCreateRegression(); }}
-    //     );
-    // }
+    public showNewRegressionRegionForm(rr?) {
+        // // shows form for creating new regression and/or citation
+
+        this._nssService.setAddRegressionRegionModal(true);
+
+        // if (rr) { // rr already exists, only want citation
+        //     this.selectedRegRegion = rr;
+        //     this.addCitation = true;
+        //     //this.uploadPolygon = true?
+        //     this.addRegReg = false;
+        // } else { // rr doesn't exist
+        //     this.addRegReg = true;
+        //     this.addCitation = false;
+        //     this.uploadPolygon = false;
+        // }
+        // if (this.selectedRegion) {this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
+        // this.showNewRegRegForm = true;
+        // this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        // this.modalRef.result.then(
+        //     result => {
+        //         // this is the solution for the first modal losing scrollability
+        //         if (document.querySelector('body > .modal')) {
+        //             document.body.classList.add('modal-open');
+        //         }
+        //         if (result) {this.cancelCreateRegression(); }
+        //     },
+        //     reason => {if (reason) {this.cancelCreateRegression(); }}
+        // );
+    }
 
     private cancelCreateRegression() {
         this.showNewRegRegForm = false;

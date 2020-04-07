@@ -3,13 +3,13 @@
   <div class="modal-header">
       <div class="col-xs-12">
           <h4 class="modal-title pull-left" *ngIf="addRegReg">New Regression Region </h4>
-          <h4 class="modal-title pull-left" *ngIf="!addRegReg">New Citation </h4>
+          <h4 class="modal-title pull-left" *ngIf="!addRegReg">Edit Regression Region </h4>
           <button class="close pull-right" (click)="d('closed')">x</button>
       </div>
   </div>
   <div class="modal-body">
       <h3 class="modal-title" *ngIf="addRegReg">New Regression Region</h3>
-      <h3 class="modal-title" *ngIf="!addRegReg">New Citation</h3>
+      <h3 class="modal-title" *ngIf="!addRegReg">Edit Regression Region</h3>
       <form *ngIf="addRegReg" [formGroup]="newRegRegForm" style="margin-bottom: 10px;">
           <!-- Regression Type Name* -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('name').valid && newRegRegForm.get('name').dirty}">

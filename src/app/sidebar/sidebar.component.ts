@@ -10,6 +10,7 @@ import { IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/a
 import { Toast } from 'angular2-toaster/src/toast';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
+import { AddRegressionRegion } from '../shared/interfaces/addregressionregion';
 
 @Component({
     selector: 'wim-sidebar',
@@ -316,7 +317,11 @@ export class SidebarComponent implements OnInit {
     }
 
     public showAddRegRegion() {
-        this._nssService.setAddRegressionRegionModal(true);
+        const addRegRegForm: AddRegressionRegion = {
+            show: true,
+            regRegionID: null
+        }
+        this._nssService.setAddRegressionRegionModal(addRegRegForm);
     }
 
     // number only allowed in Value

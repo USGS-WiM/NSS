@@ -19,6 +19,7 @@ import { Region } from '../../interfaces/region';
 import * as L from 'leaflet';
 import * as shp from 'shpjs';
 import { GeojsonService } from '../../services/geojson.service';
+import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 
 @Component({
   selector: 'addRegressionRegionModal',
@@ -190,7 +191,11 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public showAddRegRegion() {
-    this._nssService.setAddRegressionRegionModal(true);
+    const addRegRegForm: AddRegressionRegion = {
+      show: true,
+      regRegionID: null
+  }
+    this._nssService.setAddRegressionRegionModal(addRegRegForm);
   }
 
   private getDismissReason(reason: any): string {

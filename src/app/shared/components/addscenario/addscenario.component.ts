@@ -16,6 +16,7 @@ import { ConfigService } from 'app/config.service';
 import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
+import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 declare var MathJax: {
     Hub: { Queue, Config }
 };
@@ -412,7 +413,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public showAddRegRegion() {
-        this._nssService.setAddRegressionRegionModal(true);
+        const addRegRegForm: AddRegressionRegion = {
+            show: true,
+            regRegionID: null
+        }
+        this._nssService.setAddRegressionRegionModal(addRegRegForm);
     }
 
     private getDismissReason(reason: any): string {

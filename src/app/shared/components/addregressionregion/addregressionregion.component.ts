@@ -213,7 +213,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     if (rr) { // rr already exists, only want citation
       this.selectedRegRegion = rr;
       this.addCitation = true;
-      //this.uploadPolygon = true?
+      this.uploadPolygon = true;
       this.addRegReg = false;
     } else { // rr doesn't exist
       this.addRegReg = true;

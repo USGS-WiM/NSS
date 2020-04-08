@@ -1192,7 +1192,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
 
     public editRowClicked(item, rrIndex, sgIndex, idx?) {
-        alert(this.scenarios[sgIndex].regressionRegions[rrIndex].id);
         const addRegRegForm: AddRegressionRegion = {
             show: true,
             regRegionID: this.scenarios[sgIndex].regressionRegions[rrIndex].id

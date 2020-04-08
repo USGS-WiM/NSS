@@ -1194,7 +1194,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public editRowClicked(item, rrIndex, sgIndex, idx?) {
         const addRegRegForm: AddRegressionRegion = {
             show: true,
-            regRegionID: this.scenarios[sgIndex].regressionRegions[rrIndex].id
+            regRegion: this.scenarios[sgIndex].regressionRegions[rrIndex]
         }
         this._nssService.setAddRegressionRegionModal(addRegRegForm);
         // if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
@@ -1422,7 +1422,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                 if (document.querySelector('body > .modal')) {
                     document.body.classList.add('modal-open');
                 }
-               CloseResult = `Closed with: ${result}`;
+            CloseResult = `Closed with: ${result}`;
             },
             reason => {
                 CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -1559,7 +1559,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
         // // shows form for creating new regression and/or citation
         const addRegRegForm: AddRegressionRegion = {
             show: true,
-            regRegionID: rr.id
+            regRegion: rr
         }
         this._nssService.setAddRegressionRegionModal(addRegRegForm);
 

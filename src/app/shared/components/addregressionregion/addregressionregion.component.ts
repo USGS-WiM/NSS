@@ -97,7 +97,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
     this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((result: AddRegressionRegion) => {
       if (result.show) { 
-          this.showNewRegressionRegionForm(result.regRegionID);
+          this.showNewRegressionRegionForm(result.regRegion);
           this.loadMap();
         }
     });
@@ -192,7 +192,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public showAddRegRegion() {
     const addRegRegForm: AddRegressionRegion = {
       show: true,
-      regRegionID: null
+      regRegion: null
   }
     this._nssService.setAddRegressionRegionModal(addRegRegForm);
   }
@@ -215,6 +215,11 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.addCitation = true;
       this.uploadPolygon = true;
       this.addRegReg = false;
+      this.newRegRegForm.controls['name'].setValue(rr.name)
+      this.newRegRegForm.controls['description'].setValue(rr.description)
+      this.newRegRegForm.controls['code'].setValue(rr.code)
+      this.newRegRegForm.controls['location'].setValue(rr.location)
+      console.log(rr.id);
     } else { // rr doesn't exist
       this.addRegReg = true;
       this.addCitation = false;
@@ -243,8 +248,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   private createNewRegression() {
-
-    console.log(this.newRegRegForm.value.location)
 
     const regionID = this.newRegRegForm.value.state;
     this._settingsService
@@ -344,6 +347,10 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     setInterval(() => {
       this.map.invalidateSize();
     }, 100);
+  }
+
+  public editRegressionRegion(regressionRegion) {
+
   }
 }
 

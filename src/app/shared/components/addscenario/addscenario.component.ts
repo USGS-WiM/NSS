@@ -415,7 +415,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public showAddRegRegion() {
         const addRegRegForm: AddRegressionRegion = {
             show: true,
-            regRegionID: null
+            regRegion: null
         }
         this._nssService.setAddRegressionRegionModal(addRegRegForm);
     }

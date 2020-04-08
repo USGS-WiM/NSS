@@ -1,4 +1,6 @@
+import { Regressionregion } from './regressionregion';
+
 export interface AddRegressionRegion {
     show: true,
-    regRegionID?: number
+    regRegion?: Regressionregion
 }

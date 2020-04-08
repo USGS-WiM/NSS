@@ -95,9 +95,9 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         this.loggedInRole = role;
       }
     });
-    this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((show: boolean) => {
-      if (show) { 
-          this.showNewRegressionRegionForm();
+    this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((result: AddRegressionRegion) => {
+      if (result.show) { 
+          this.showNewRegressionRegionForm(result.regRegionID);
           this.loadMap();
         }
     });
@@ -113,7 +113,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
 
     this.modalElement = this.addRegressionRegionModal;
-
     this.uploadPolygon = true;
     this.loadingPolygon = false;
 

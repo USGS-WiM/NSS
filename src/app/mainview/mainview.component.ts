@@ -1192,9 +1192,10 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
 
     public editRowClicked(item, rrIndex, sgIndex, idx?) {
+        alert(this.scenarios[sgIndex].regressionRegions[rrIndex].id);
         const addRegRegForm: AddRegressionRegion = {
             show: true,
-            regRegionID: rrIndex
+            regRegionID: this.scenarios[sgIndex].regressionRegions[rrIndex].id
         }
         this._nssService.setAddRegressionRegionModal(addRegRegForm);
         // if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {

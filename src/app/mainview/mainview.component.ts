@@ -26,6 +26,7 @@ import { Config } from 'app/shared/interfaces/config';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Citation } from 'app/shared/interfaces/citation';
+import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 
 
 declare var MathJax: {
@@ -1552,8 +1553,11 @@ export class MainviewComponent implements OnInit, OnDestroy {
     //show add regression region modal
     public showNewRegressionRegionForm(rr?) {
         // // shows form for creating new regression and/or citation
-
-        this._nssService.setAddRegressionRegionModal(true);
+        const addRegRegForm: AddRegressionRegion = {
+            show: true,
+            regRegionID: rr.id
+        }
+        this._nssService.setAddRegressionRegionModal(addRegRegForm);
 
         // if (rr) { // rr already exists, only want citation
         //     this.selectedRegRegion = rr;

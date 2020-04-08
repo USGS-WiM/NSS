@@ -17,6 +17,7 @@ import { AppComponent } from './app.component';
 import { MainviewComponent } from './mainview/mainview.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SettingsComponent } from './settings/settings.component';
+import { LoaderComponent } from './shared/components/loader/loader.component';
 import { AboutModal } from './shared/components/about/about.component';
 
 import { StatisticGroupsComponent } from './settings/categories/statisticgroups/statisticgroups.component';
@@ -34,11 +35,10 @@ import { CitationFilterPipe } from './mainview/citation-filter.pipe';
 import { NSSService } from './shared/services/app.service';
 import { ConfigService } from './config.service';
 import { LoginService } from './shared/services/login.service';
-import { LoaderService } from './shared/components/loader/loader.service';
-import { LoaderComponent } from './shared/components/loader/loader.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthService } from './shared/services/auth.service';
 import { SettingsService } from './settings/settings.service';
+import { LoaderService } from './shared/services/loader.service';
 import { RegionsComponent } from './settings/categories/regions/regions.component';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { AdminGuard } from './shared/guards/admin.guard';
@@ -85,9 +85,9 @@ export function highchartsFactory() {
 
 @NgModule({
   declarations: [
-    AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, LoaderComponent, UniquePipe, StatisticGroupsComponent,
+    AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, LoaderComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,
@@ -95,9 +95,9 @@ export function highchartsFactory() {
     RouterModule.forRoot(appRoutes, {onSameUrlNavigation: 'reload'})
   ],
   providers: [
-    NSSService, { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService, LoaderService,
+    NSSService, { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService,
     { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
-    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ToasterService
+    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ToasterService, LoaderService
   ],
   bootstrap: [AppComponent],
   exports: [RouterModule]

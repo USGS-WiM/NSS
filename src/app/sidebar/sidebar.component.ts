@@ -319,7 +319,7 @@ export class SidebarComponent implements OnInit {
     public showAddRegRegion() {
         const addRegRegForm: AddRegressionRegion = {
             show: true,
-            regRegion: null
+            regRegionID: null
         }
         this._nssService.setAddRegressionRegionModal(addRegRegForm);
     }

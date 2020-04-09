@@ -1194,7 +1194,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public editRowClicked(item, rrIndex, sgIndex, idx?) {
         const addRegRegForm: AddRegressionRegion = {
             show: true,
-            regRegion: this.scenarios[sgIndex].regressionRegions[rrIndex]
+            regRegionID: this.scenarios[sgIndex].regressionRegions[rrIndex].id
         }
         this._nssService.setAddRegressionRegionModal(addRegRegForm);
         // if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
@@ -1375,6 +1375,8 @@ export class MainviewComponent implements OnInit, OnDestroy {
         });
         return count;
     }
+
+    
 
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
@@ -1559,7 +1561,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
         // // shows form for creating new regression and/or citation
         const addRegRegForm: AddRegressionRegion = {
             show: true,
-            regRegion: rr
+            regRegionID: rr
         }
         this._nssService.setAddRegressionRegionModal(addRegRegForm);
 

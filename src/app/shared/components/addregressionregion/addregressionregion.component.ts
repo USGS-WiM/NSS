@@ -20,6 +20,8 @@ import * as L from 'leaflet';
 import * as shp from 'shpjs';
 import { GeojsonService } from '../../services/geojson.service';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
+import { Citation } from 'app/shared/interfaces/citation';
+import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 
 @Component({
   selector: 'addRegressionRegionModal',
@@ -61,6 +63,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   private input;
   private file;
   private polygonLayer;
+  private selectedCitation;
 
   constructor(private _nssService: NSSService,
               private _modalService: NgbModal,
@@ -97,7 +100,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
     this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((result: AddRegressionRegion) => {
       if (result.show) { 
-          this.showNewRegressionRegionForm(result.regRegion);
+          this.showNewRegressionRegionForm(result.regRegionID);
           this.loadMap();
         }
     });
@@ -192,7 +195,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public showAddRegRegion() {
     const addRegRegForm: AddRegressionRegion = {
       show: true,
-      regRegion: null
+      regRegionID: null
   }
     this._nssService.setAddRegressionRegionModal(addRegRegForm);
   }
@@ -209,18 +212,38 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   // show add regression region modal
   public showNewRegressionRegionForm(rr?) {
-    // shows form for creating new regression and/or citation
-    if (rr) { // rr already exists, only want citation
-      this.selectedRegRegion = rr;
-      this.addCitation = true;
-      this.uploadPolygon = true;
-      this.addRegReg = false;
-      this.newRegRegForm.controls['name'].setValue(rr.name)
-      this.newRegRegForm.controls['description'].setValue(rr.description)
-      this.newRegRegForm.controls['code'].setValue(rr.code)
-      this.newRegRegForm.controls['location'].setValue(rr.location)
-      console.log(rr.id);
-    } else { // rr doesn't exist
+    // shows form for creating new regression or editing regression 
+    if (rr) { // edit existing regression region
+    this.addRegReg = false;
+    this._settingsService.getEntities(this.configSettings.regRegionURL + '/' + rr + '?getpolygon=true')
+      .subscribe((res) => {
+        this.selectedRegRegion = res;
+        this.newRegRegForm.controls['name'].setValue(this.selectedRegRegion.name);
+        this.newRegRegForm.controls['description'].setValue(this.selectedRegRegion.description);
+        this.newRegRegForm.controls['code'].setValue(this.selectedRegRegion.code);
+        this.newRegRegForm.controls['location'].setValue(this.selectedRegRegion.location);
+        if (this.selectedRegRegion.citationID) {
+          this.addCitation = true;
+          this._settingsService.getEntities(this.configSettings.citationURL + '/' + this.selectedRegRegion.citationID)
+          .subscribe(res => {
+              this.selectedCitation = res;
+              this.newCitForm.controls['title'].setValue(this.selectedCitation.title);
+              this.newCitForm.controls['author'].setValue(this.selectedCitation.author);
+              this.newCitForm.controls['citationURL'].setValue(this.selectedCitation.citationURL);
+          });
+        } else {
+          this.addCitation = false;
+        }
+        if (this.selectedRegRegion.location) {
+          this.uploadPolygon = true;
+          this.addGeojsonToMap(this.selectedRegRegion.location.geometry);
+        } else {
+          this.uploadPolygon = false;
+        }
+        
+      });
+  
+    } else { // rr doesn't exist, create new regression
       this.addRegReg = true;
       this.addCitation = false;
       this.uploadPolygon = false;
@@ -349,8 +372,33 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }, 100);
   }
 
-  public editRegressionRegion(regressionRegion) {
+  private editRegressionRegion() {
+    this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.regRegionURL).subscribe(res => {
+            if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+            } else {this._settingsService.outputWimMessages(res); }
+        }, error => {
+            if (this._settingsService.outputWimMessages(error)) {return; }
+            this._toasterService.pop('error', 'Error editing Regression Region', error._body.message || error.statusText); }
+        );
 
+        this._settingsService.postEntity(this.newCitForm.value, this.configSettings.regRegionURL + '/' + this.selectedRegRegion.id + '/' +
+        this.configSettings.citationURL)
+        .subscribe((response: any) => {
+          this.newCitForm.reset();
+          this.addCitation = false;
+          this.selectedRegRegion.citationID = response.id;
+          if (!response.headers) {
+            this._toasterService.pop('info', 'Info', 'Citation was added');
+          } else { this._settingsService.outputWimMessages(response); }
+          this.cancelCreateRegression();
+          this._nssService.setSelectedRegion(this.selectedRegion);
+        }, error => {
+          if (this._settingsService.outputWimMessages(error)) { return; }
+          this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
+        }
+        );
   }
+
+
 }
 

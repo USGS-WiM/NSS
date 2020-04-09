@@ -96,7 +96,7 @@
       <div class="modal-footer">
           <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
           <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="btn-blue">Create</button>
-          <button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion(selectedRegRegion)" [disabled]="!newRegRegForm.valid" class="btn-blue">Create</button>
+          <button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid" class="btn-blue">Create</button>
       </div>
   </div>
 </ng-template>

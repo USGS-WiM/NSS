@@ -71,7 +71,6 @@ To push tags to remote origin: `git push origin --tags`
 * **[Andrea Medenblik](https://www.usgs.gov/staff-profiles/andrea-s-medenblik)**  - *Developer* 
 * **[Harper Wavra](https://www.usgs.gov/staff-profiles/harper-wavra)**  - *Developer* 
 
-
 See also the list of [contributors](https://github.com/USGS-WiM/NSS/graphs/contributors) who participated in this project.
 
 ## License

@@ -1191,26 +1191,29 @@ export class MainviewComponent implements OnInit, OnDestroy {
         if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
     }
 
-    public editRowClicked(item, rrIndex, sgIndex, idx?) {
+    public editRegRegion(id) {
         const addRegRegForm: AddRegressionRegion = {
             show: true,
-            regRegionID: this.scenarios[sgIndex].regressionRegions[rrIndex].id
+            regRegionID: id
         }
         this._nssService.setAddRegressionRegionModal(addRegRegForm);
-        // if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
-        //     this.CancelEditRowClicked();
-        // } // if another item was being edited, cancel that
-        // this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
-        // idx >= 0 ? this.editIdx = idx : this.editIdx = null;
-        // this.editRRindex = rrIndex; this.editSGIndex = sgIndex; // setting indices because the cancel function wasn't overwriting things
-        // this.itemBeingEdited = item;
-        // item.isEditing = true;
-        // if (item.equation) {this.showMathjax(item); }
-        // if (idx === undefined) {
-        //     // do we need the citation IDs?
-        //     const rrIdx = this.regressionRegions.findIndex(rr => rr.id === item.id);
-        //     this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].citationID = this.regressionRegions[rrIdx].citationID;
-        // }
+    }
+
+    public editRowClicked(item, rrIndex, sgIndex, idx?) {
+        if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
+            this.CancelEditRowClicked();
+        } // if another item was being edited, cancel that
+        this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
+        idx >= 0 ? this.editIdx = idx : this.editIdx = null;
+        this.editRRindex = rrIndex; this.editSGIndex = sgIndex; // setting indices because the cancel function wasn't overwriting things
+        this.itemBeingEdited = item;
+        item.isEditing = true;
+        if (item.equation) {this.showMathjax(item); }
+        if (idx === undefined) {
+            // do we need the citation IDs?
+            const rrIdx = this.regressionRegions.findIndex(rr => rr.id === item.id);
+            this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex].citationID = this.regressionRegions[rrIdx].citationID;
+        }
     }
 
     public CancelEditRowClicked() {

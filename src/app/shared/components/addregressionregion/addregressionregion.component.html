@@ -73,7 +73,7 @@
               <div class="input-invalid-warning" *ngIf="!newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty">URL
                   is required</div>
           </div>
-          <button *ngIf="addCitation" type="button" class="btn-blue" (click)="addCitation = false; newCitForm.reset();">Remove Citation</button>
+          <button *ngIf="addCitation" type="button" class="btn-blue" (click)="newRegRegForm.get('citationID').setValue(null); addCitation = false; newCitForm.reset();">Remove Citation</button>
       </form>
       
       <form *ngIf="uploadPolygon">

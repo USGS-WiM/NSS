@@ -374,29 +374,27 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   private editRegressionRegion() {
     this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.regRegionURL).subscribe(res => {
-            if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+            if (!res.headers) {
+              this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+              this.modalRef.close();
             } else {this._settingsService.outputWimMessages(res); }
         }, error => {
             if (this._settingsService.outputWimMessages(error)) {return; }
             this._toasterService.pop('error', 'Error editing Regression Region', error._body.message || error.statusText); }
         );
 
-        this._settingsService.postEntity(this.newCitForm.value, this.configSettings.regRegionURL + '/' + this.selectedRegRegion.id + '/' +
+    this._settingsService.putEntity(this.selectedRegRegion.citationID, this.newCitForm.value, this.configSettings.regRegionURL + '/' + this.selectedRegRegion.id + '/' +
         this.configSettings.citationURL)
         .subscribe((response: any) => {
-          this.newCitForm.reset();
-          this.addCitation = false;
-          this.selectedRegRegion.citationID = response.id;
           if (!response.headers) {
-            this._toasterService.pop('info', 'Info', 'Citation was added');
+            this._toasterService.pop('info', 'Info', 'Citation was updated');
           } else { this._settingsService.outputWimMessages(response); }
-          this.cancelCreateRegression();
-          this._nssService.setSelectedRegion(this.selectedRegion);
         }, error => {
           if (this._settingsService.outputWimMessages(error)) { return; }
           this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
-        }
-        );
+        });
+
+        
   }
 
 

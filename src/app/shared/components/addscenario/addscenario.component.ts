@@ -32,6 +32,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     private modalSubscript;
     public appVersion: string;
     public newScenForm: FormGroup;
+    public regions;
     public regressionRegions;
     public statisticGroups;
     public regressionTypes;
@@ -42,8 +43,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public cloneParameters: any;
     public regRegion: any;
     public statisticGroup: any;
-    public clone: boolean;
+    public clone: boolean = false;
     public selectedRegion;
+    public orgRegion;
     private configSettings: Config;
     public addPredInt = false;
     public modalRef;
@@ -53,6 +55,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
         private _authService: AuthService) {
         this.newScenForm = _fb.group({
+            'regionid': new FormControl(null, Validators.required),
             'statisticGroupID': new FormControl(null, Validators.required),
             'regressionRegions': this._fb.group({
                 'ID': new FormControl(null, Validators.required),
@@ -100,10 +103,15 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
+            this.orgRegion = region;
             if (region && region.id) {this.getRegRegions(); }
         });
         this._nssService.getVersion.subscribe((v: string) => {
             this.appVersion = v;
+        });
+        this._settingsService.getEntities(this.configSettings.regionURL).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.regions = res;
         });
         this._settingsService.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
@@ -144,7 +152,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public showModal(): void {
-        if (this.selectedRegion) {this.getRegRegions(); }
+        this.selectedRegion = this.orgRegion;
+        if (this.selectedRegion) {
+            this.getRegRegions(); 
+        }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
             result => {
@@ -159,24 +170,37 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
-
         if (this.cloneParameters != " "){
             this.clearScenario();
+            this.clone = true;
             this.cloneScenario();
-        }  
+            this.newScenForm.addControl('regionid', this._fb.control('', Validators.required));
+        }else{
+            this.clearScenario();
+            this.clone = false;
+        }
     }
 
     cloneScenario(){  
+        this.regions.forEach( (element,index) => {  
+            if (element.id.toString() == this.selectedRegion.id.toString()){
+                this.newScenForm.patchValue({ regionid: this.regions[index]});
+            }
+        });
+        this.newScenForm.get('regionid').valueChanges.subscribe(item => {
+             if(item != null){
+                this.selectedRegion=item;
+                this.getRegRegions();
+             }
+        }) 
         this.unitTypes.forEach( (element,index) => {  
             if (element.id.toString() == this.cloneParameters.r.unit.id.toString()){
                 this.newScenForm.patchValue({ regressionRegions: { regressions: { unit: this.unitTypes[index]}}});
             }
         });
-
         if(!this.cloneParameters.r.equivalentYears){
             this.cloneParameters.r.equivalentYears=0;
         }
-
         this.newScenForm.patchValue({
             statisticGroupID: this.cloneParameters.statisticGroupID.toString(),
             regressionRegions: {
@@ -188,7 +212,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 } 
             }
         });
-
         //Prediction Interval
         if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null){
             this.addPredInt = true
@@ -212,7 +235,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { covarianceMatrix: this.cloneParameters.r.predictionInterval.covarianceMatrix.toString()}}}});
             }
         }
-
         //parameters
         this.cloneParameters.rr.parameters.forEach((element,index) => {
             this.addVariable();
@@ -231,7 +253,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                }
             });
         }); 
-
         this.cloneParameters.r.errors.forEach((element,index) => {
             this.addError();
             const controlArray = <FormArray> this.newScenForm.get('regressionRegions.regressions.errors');       
@@ -302,6 +323,13 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     public clearScenario(){
         this.newScenForm.reset();
+        this.selectedRegion = this.orgRegion;
+        this.regions.forEach( (element,index) => {  
+            if (element.id.toString() == this.selectedRegion.id.toString()){
+                this.newScenForm.patchValue({ regionid: this.regions[index]});
+            }
+        });
+        this.newScenForm.addControl('regionid', this._fb.control('', ));
         const errorControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         for(let i = errorControl.length-1; i >= 0; i--) {
             errorControl.removeAt(i);
@@ -314,6 +342,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     createNewScenario() {
+        this.newScenForm.removeControl('regionid');
         // adding all necessary properties, since ngValue won't work with all the nested properties
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
@@ -388,6 +417,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         const errors = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         while (errors.length !== 0) {errors.removeAt(0); }
         this.addPredInt = false;
+        this.selectedRegion = this.orgRegion;
         this.newScenForm.reset();
         this.modalRef.close();
     }

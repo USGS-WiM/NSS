@@ -388,28 +388,29 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
               this._toasterService.pop('info', 'Info', 'Regression Region was updated');
               this.modalRef.close();
             } else {this._settingsService.outputWimMessages(res); }
+
+            if (this.addCitation && this.selectedRegRegion.citationID) {
+                this._settingsService.putEntity(this.selectedRegRegion.citationID, this.newCitForm.value, this.configSettings.citationURL)
+                .subscribe((response: any) => {
+                  if (!response.headers) {
+                    this._toasterService.pop('info', 'Info', 'Citation was updated');
+                  } else { this._settingsService.outputWimMessages(response); this.cancelCreateRegression(); }
+                  this._nssService.setSelectedRegion(this.selectedRegion);
+                  this.cancelCreateRegression();
+                }, error => {
+                  if (this._settingsService.outputWimMessages(error)) { return; }
+                  this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
+                });
+            } else if (this.addCitation) {
+                this.createNewCitation(this.selectedRegRegion);
+            } else {
+                this._nssService.setSelectedRegion(this.selectedRegion);
+                this.cancelCreateRegression();
+            }
         }, error => {
             if (this._settingsService.outputWimMessages(error)) {return; }
             this._toasterService.pop('error', 'Error editing Regression Region', error._body.message || error.statusText); }
-        );
-    if (this.addCitation && this.selectedRegRegion.citationID) {
-        this._settingsService.putEntity(this.selectedRegRegion.citationID, this.newCitForm.value, this.configSettings.citationURL)
-        .subscribe((response: any) => {
-          if (!response.headers) {
-            this._toasterService.pop('info', 'Info', 'Citation was updated');
-          } else { this._settingsService.outputWimMessages(response); this.cancelCreateRegression(); }
-          this.cancelCreateRegression();
-        }, error => {
-          if (this._settingsService.outputWimMessages(error)) { return; }
-          this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
-        });
-    } else if (this.addCitation) {
-        this.createNewCitation(this.selectedRegRegion);
-    } else {
-        this.cancelCreateRegression();
-    }
-
-        
+        );        
   }
 
 

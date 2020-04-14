@@ -1391,7 +1391,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                     this.scenarios.forEach((s => {
                         s.regressionRegions.forEach(rr => {
                             const rrIdx = this.regressionRegions.findIndex(r => r.id === rr.id);
-                            rr.citationID = this.regressionRegions[rrIdx].citationID;
+                            if (rrIdx > -1) rr.citationID = this.regressionRegions[rrIdx].citationID;
                         });
                     }));
                 }

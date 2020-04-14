@@ -10,6 +10,7 @@ import { Toast } from 'angular2-toaster/src/toast';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { AddRegressionRegion } from '../shared/interfaces/addregressionregion';
+import { LoaderService } from 'app/shared/services/loader.service';
 
 @Component({
     selector: 'wim-sidebar',

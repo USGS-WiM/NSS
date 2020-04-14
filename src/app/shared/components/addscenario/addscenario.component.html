@@ -13,8 +13,8 @@
 
             <!-- Clone - choose region -->
             <div class="form-group" *ngIf="clone==true">
-                <label class="req" for="regionid">Region:</label>
-                <select class="form-control" formControlName="regionid">
+                <label class="req" for="region">Region:</label>
+                <select class="form-control" formControlName="region">
                     <option *ngFor="let r of regions" [ngValue]="r">{{r.name}}</option>
                 </select>
             </div> 

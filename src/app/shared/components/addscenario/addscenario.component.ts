@@ -43,9 +43,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public cloneParameters: any;
     public regRegion: any;
     public statisticGroup: any;
-    public clone: boolean = false;
+    public clone = false;
     public selectedRegion;
-    public orgRegion;
+    public originalRegion;
     private configSettings: Config;
     public addPredInt = false;
     public modalRef;
@@ -55,7 +55,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
         private _authService: AuthService) {
         this.newScenForm = _fb.group({
-            'regionid': new FormControl(null, Validators.required),
+            'region': new FormControl(null, Validators.required),
             'statisticGroupID': new FormControl(null, Validators.required),
             'regressionRegions': this._fb.group({
                 'ID': new FormControl(null, Validators.required),
@@ -103,7 +103,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
-            this.orgRegion = region;
+            this.originalRegion = region;
             if (region && region.id) {this.getRegRegions(); }
         });
         this._nssService.getVersion.subscribe((v: string) => {
@@ -152,7 +152,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public showModal(): void {
-        this.selectedRegion = this.orgRegion;
+        this.selectedRegion = this.originalRegion;
         if (this.selectedRegion) {
             this.getRegRegions(); 
         }
@@ -174,7 +174,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             this.clearScenario();
             this.clone = true;
             this.cloneScenario();
-            this.newScenForm.addControl('regionid', this._fb.control('', Validators.required));
+            this.newScenForm.addControl('region', this._fb.control('', Validators.required));
         }else{
             this.clearScenario();
             this.clone = false;
@@ -184,10 +184,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     cloneScenario(){  
         this.regions.forEach( (element,index) => {  
             if (element.id.toString() == this.selectedRegion.id.toString()){
-                this.newScenForm.patchValue({ regionid: this.regions[index]});
+                this.newScenForm.patchValue({ region: this.regions[index]});
             }
         });
-        this.newScenForm.get('regionid').valueChanges.subscribe(item => {
+        this.newScenForm.get('region').valueChanges.subscribe(item => {
              if(item != null){
                 this.selectedRegion=item;
                 this.getRegRegions();
@@ -323,13 +323,13 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     public clearScenario(){
         this.newScenForm.reset();
-        this.selectedRegion = this.orgRegion;
+        this.selectedRegion = this.originalRegion;
         this.regions.forEach( (element,index) => {  
             if (element.id.toString() == this.selectedRegion.id.toString()){
-                this.newScenForm.patchValue({ regionid: this.regions[index]});
+                this.newScenForm.patchValue({ region: this.regions[index]});
             }
         });
-        this.newScenForm.addControl('regionid', this._fb.control('', ));
+        this.newScenForm.addControl('region', this._fb.control('', ));
         const errorControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         for(let i = errorControl.length-1; i >= 0; i--) {
             errorControl.removeAt(i);
@@ -342,7 +342,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     createNewScenario() {
-        this.newScenForm.removeControl('regionid');
+        this.newScenForm.removeControl('region');
         // adding all necessary properties, since ngValue won't work with all the nested properties
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
@@ -417,7 +417,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         const errors = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         while (errors.length !== 0) {errors.removeAt(0); }
         this.addPredInt = false;
-        this.selectedRegion = this.orgRegion;
+        this.selectedRegion = this.originalRegion;
         this.newScenForm.reset();
         this.modalRef.close();
     }

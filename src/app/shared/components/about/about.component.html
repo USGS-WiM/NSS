@@ -8,7 +8,7 @@
     <div class="modal-body">
         <ngb-tabset>
             <ngb-tab>
-                <ng-template ngbTabTitle><i class="fa fa-question-circle"></i>&nbsp;&nbsp;About</ng-template>                    
+                <ng-template ngbTabTitle><i class="fa fa-info-circle"></i>&nbsp;&nbsp;About</ng-template>                    
                 <ng-template ngbTabContent>
                     <h2 style="padding-top:2em">About National Streamflow Statistics (NSS) client application.</h2>
                     <p>
@@ -44,6 +44,50 @@
                         The software is provided on the condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from 
                         the authorized or unauthorized use of the software.
                     </p>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab>
+                <ng-template ngbTabTitle><i class="fa fa-question-circle"></i>&nbsp;&nbsp;Help</ng-template>      
+                <ng-template ngbTabContent>
+                    <div style="padding-top: 10px;">
+                        <span>Use the form below to get support on a specific issue. Please include as much information as possible.</span>                        
+                        <form #form="ngForm" [formGroup]="newTicketForm" (ngSubmit)="submitFreshDeskTicket()"> 
+                            <div class="well well-sm">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="email">Email:</label>
+                                            <input type="email"
+                                                [class.invalid]="newTicketForm.get('email').invalid" required
+                                                pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" class="form-control" name="primaryEmail"
+                                                formControlName="email" 
+                                            />                                                
+                                        </div>
+                                        <div *ngIf="newTicketForm.get('email').dirty && !(newTicketForm.get('email').valid)">
+                                            <small class="text-danger">Please provide a valid email address</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="subject">Subject:</label>
+                                            <input class="form-control" id="subject" formControlName="subject" name ="subject" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="message">Description:</label>
+                                            <textarea class="form-control" rows="6" id="description" formControlName="description" name = "description" required></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="title">Upload an Attachment (optional):</label><br />
+                                            <span class="btn-file">
+                                                <i class="fa fa-paperclip"></i>&nbsp;&nbsp;Attach File <input type="file" ngf-select (change)="uploadFile($event)" formControlName="attachment" name="file" accept="image/*">
+                                            </span>  
+                                            <br />
+                                            <i *ngIf="file" (click)=removeFile() class="fa fa-trash">&nbsp;&nbsp;Remove File</i>
+                                        </div>
+                                        <button type="submit" [disabled]="!form.valid" class="btn-blue"><i class="fa fa-share"></i><span >&nbsp;&nbsp;Submit Support Request</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </ng-template>
             </ngb-tab>
         </ngb-tabset>

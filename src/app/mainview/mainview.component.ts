@@ -17,7 +17,6 @@ import { ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster
 import { Toast } from 'angular2-toaster/src/toast';
 import { PageScrollService, PageScrollInstance } from 'ng2-page-scroll';
 import * as Highcharts from 'highcharts';
-import { LoaderService } from '../shared/components/loader/loader.service';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Router, NavigationStart } from '@angular/router';
 import { SettingsService } from 'app/settings/settings.service';
@@ -122,7 +121,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
 
     constructor(
         private _nssService: NSSService,
-        private _loaderService: LoaderService,
         private _toasterService: ToasterService,
         @Inject(DOCUMENT) private _document: any,
         private _pageScrollService: PageScrollService,

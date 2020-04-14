@@ -9,24 +9,20 @@
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { LoaderService } from './loader.service';
+import { LoaderService } from '../../services/loader.service';
 
 @Component({
-    selector: 'loader-div',
-    template: `<div [class.loader-hidden]="!show">
-                  <div class="page-loader" id="page-loader"></div>
-                </div>`,
+    selector: 'app-loading-screen',
+    templateUrl: 'loader.component.html',
     styleUrls: ['loader.component.css']
 })
-
 export class LoaderComponent implements OnInit, OnDestroy {
-    public show = true; //start it showing until the geojson comes back
+    public show = true; // start
     private subscription: Subscription;
 
-    constructor(private _loaderService: LoaderService) { }
+    constructor(private _loaderService: LoaderService) {}
 
     ngOnInit() {
-        // subscription that updates the class on the div to show/hide it
         this.subscription = this._loaderService.loaderState.subscribe((state: boolean) => {
             this.show = state;
         });

@@ -13,7 +13,6 @@ import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@ang
 import { SettingsService } from 'app/settings/settings.service';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
-import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 declare var MathJax: {
@@ -89,7 +88,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     ngOnInit() {
         this._nssService.currentItem.subscribe(item => this.cloneParameters = item);
-
         // subscriber for logged in role
         this.loggedInRole = localStorage.getItem('loggedInRole');
         this._authService.loggedInRole().subscribe(role => {

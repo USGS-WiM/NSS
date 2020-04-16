@@ -78,7 +78,7 @@ export class SidebarComponent implements OnInit {
             this._loaderService.hideFullPageLoad();
         });
         this._nssService.selectedRegion.subscribe((r: Region) => {
-            this.selectedRegion = r;
+            if (r.id) {this.selectedRegion = this.regions.find(reg => reg.id == r.id);}
             // this.clearSelections();
         });
         // subscribe to selected regression regions

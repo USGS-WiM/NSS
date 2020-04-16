@@ -2,7 +2,7 @@
 
     <div class="sidebar-item">
         <span>Choose Region:</span>
-        <select id="regSelect" [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
+        <select id="regSelect" [(ngModel)]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
             <option selected hidden value=""></option>
             <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
         </select>

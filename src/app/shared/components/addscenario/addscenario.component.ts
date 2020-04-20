@@ -15,6 +15,7 @@ import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
+import { Scenario } from 'app/shared/interfaces/scenario';
 declare var MathJax: {
     Hub: { Queue, Config }
 };
@@ -49,6 +50,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public addPredInt = false;
     public modalRef;
     public loggedInRole;
+    public scenarios: Array<Scenario>;
 
     constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -103,6 +105,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             this.selectedRegion = region;
             this.originalRegion = region;
             if (region && region.id) {this.getRegRegions(); }
+        });
+        this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
+            this.scenarios = s;
         });
         this._nssService.getVersion.subscribe((v: string) => {
             this.appVersion = v;
@@ -383,7 +388,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         // post scenario
         this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
             .subscribe((response: any) => {
-                this._nssService.setSelectedRegion(this.selectedRegion);
+                if(this.originalRegion!=this.selectedRegion){
+                    this._nssService.setSelectedRegion(this.selectedRegion);
+                }
                 // clear form
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was added');

@@ -245,3 +245,8 @@ input {
 .equation {
     margin-bottom: 20px !important;
 }
+
+select {
+  appearance: menulist;
+  -webkit-appearance: menulist;
+  }

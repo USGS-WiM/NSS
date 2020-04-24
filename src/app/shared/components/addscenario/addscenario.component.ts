@@ -402,7 +402,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         // post scenario
         this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
             .subscribe((response: any) => {
-                this._nssService.setSelectedRegion(this.selectedRegion);
                 this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
                 this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
                 this._nssService.selectedRegressionTypes = this.tempSelectedRegType;

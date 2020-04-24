@@ -1256,7 +1256,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
             this.saveFilters();
             const sParams = '?statisticgroupID=' + sgID + '&regressionregionID=' + rrID + '&regressiontypeID=' + rID;
             this._settingsService.deleteEntity('', this.configSettings.scenariosURL, sParams).subscribe(result => {
-                this._nssService.setSelectedRegion(this.selectedRegion);
                 this.requeryFilters();
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
@@ -1271,7 +1270,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         if (check) {
             this.saveFilters();
             this._settingsService.deleteEntity(rrID, this.configSettings.regRegionURL).subscribe(result => {
-                this._nssService.setSelectedRegion(this.selectedRegion);
                 this.requeryFilters();
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
@@ -1300,7 +1298,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this._settingsService.putEntity(c.id, c, this.configSettings.citationURL)
             .subscribe((response) => {
                 c.isEditing = false;
-                this._nssService.setSelectedRegion(this.selectedRegion); // update everything
                 this.requeryFilters();
                 this._nssService.outputWimMessages(response);
             }, error => {
@@ -1315,7 +1312,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this.saveFilters();
         if (check) {
             this._settingsService.deleteEntity(id, this.configSettings.citationURL).subscribe(result => {
-                this._nssService.setSelectedRegion(this.selectedRegion);
                 this.requeryFilters();
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
@@ -1335,7 +1331,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
             regReg.citationID = null;
             this._settingsService.putEntity(rr.id, regReg, this.configSettings.regRegionURL)
                 .subscribe((response) => {
-                    this._nssService.setSelectedRegion(this.selectedRegion); // update everything
                     this.requeryFilters();
                     this._nssService.outputWimMessages(response);
                 }, error => {
@@ -1575,7 +1570,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         });
         this._settingsService.putEntity(rr.id, this.editScenarioForm.value, this.configSettings.regRegionURL).subscribe(res => {
                 this.CancelEditRowClicked();
-                this._nssService.setSelectedRegion(this.selectedRegion);
                 this.requeryFilters();
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression Region was updated');
                 } else {this._settingsService.outputWimMessages(res); }
@@ -1641,7 +1635,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
                         this.createNewCitation(response);
                     } else {
                         this.cancelCreateRegression();
-                        this._nssService.setSelectedRegion(this.selectedRegion);
                         this.requeryFilters();
                     }
                 }, error => {
@@ -1665,7 +1658,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
                     this._settingsService.outputWimMessages(res); 
                 }
                 this.cancelCreateRegression();
-                this._nssService.setSelectedRegion(this.selectedRegion);
                 this.requeryFilters();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) {return; }

@@ -1463,9 +1463,10 @@ export class MainviewComponent implements OnInit, OnDestroy {
 
     submitScenario() {
         // put edited scenario
+        this.saveFilters();
         this._settingsService.putEntity('', this.editScen, this.configSettings.scenariosURL)
             .subscribe((response) => {
-                this._nssService.setSelectedRegion(this.selectedRegion); // update everything
+                this.requeryFilters();
                 this._nssService.outputWimMessages(response);
                 this.modalRef.close();
             }, error => {

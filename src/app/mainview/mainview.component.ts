@@ -53,12 +53,14 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public selectedRegion;
     private navigationSubscription;
     public selectedRegressionRegion: Array<Regressionregion>;
-    public tempRegressionRegion: Array<Regressionregion>;
-    public tempselectedStatisticGrp: Array<Statisticgroup>;
+    public tempSelectedRegressionRegion: Array<Regressionregion>;
+
+    public tempSelectedStatisticGrp: Array<Statisticgroup>;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
-    public tempselectedRegType: Array<Regressiontype>;
+
+    public tempSelectedRegType: Array<Regressiontype>;
     public get selectedRegType(): Array<Regressiontype> {
         return this._nssService.selectedRegressionTypes;
     }
@@ -606,15 +608,15 @@ export class MainviewComponent implements OnInit, OnDestroy {
     } // end ngOnInit()
 
     public saveFilters(){
-        this.tempselectedStatisticGrp = this.selectedStatisticGrp;
-        this.tempRegressionRegion = this.selectedRegressionRegion;
-        this.tempselectedRegType = this.selectedRegType;
+        this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
+        this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
+        this.tempSelectedRegType = this.selectedRegType;
     }
 
     public requeryFilters(){
-        this._nssService.selectedStatGroups = this.tempselectedStatisticGrp;
-        this._nssService.setSelectedRegRegions(this.tempRegressionRegion);
-        this._nssService.selectedRegressionTypes = this.tempselectedRegType;
+        this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+        this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
+        this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
     }
 
     public containsObject(obj, list) {

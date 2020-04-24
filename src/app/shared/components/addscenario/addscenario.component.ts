@@ -53,12 +53,12 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public modalRef;
     public loggedInRole;
     public selectedRegressionRegion: Array<Regressionregion>;
-    public tempRegressionRegion: Array<Regressionregion>;
-    public tempselectedStatisticGrp: Array<Statisticgroup>;
+    public tempSelectedRegressionRegion: Array<Regressionregion>;
+    public tempSelectedStatisticGrp: Array<Statisticgroup>;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
-    public tempselectedRegType: Array<Regressiontype>;
+    public tempSelectedRegType: Array<Regressiontype>;
     public get selectedRegType(): Array<Regressiontype> {
         return this._nssService.selectedRegressionTypes;
     }
@@ -356,9 +356,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     createNewScenario() {
-        this.tempselectedStatisticGrp = this.selectedStatisticGrp;
-        this.tempRegressionRegion = this.selectedRegressionRegion;
-        this.tempselectedRegType = this.selectedRegType;
+        this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
+        this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
+        this.tempSelectedRegType = this.selectedRegType;
         this.newScenForm.removeControl('region');
         // adding all necessary properties, since ngValue won't work with all the nested properties
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
@@ -403,9 +403,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
             .subscribe((response: any) => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
-                this._nssService.selectedStatGroups = this.tempselectedStatisticGrp;
-                this._nssService.setSelectedRegRegions(this.tempRegressionRegion);
-                this._nssService.selectedRegressionTypes = this.tempselectedRegType;
+                this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+                this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
+                this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
                 // clear form
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was added');

@@ -26,7 +26,7 @@
             </a>
             <a (click)="showLoginModal()" [class.hidden]="isLoggedIn">
                 <span>
-                    <span class="nav-link-text">Login</span>
+                    <span class="nav-link-text">Manage</span>
                 </span>
             </a> 
             <div class="dropdown" [class.hidden]="!isLoggedIn">
@@ -47,7 +47,7 @@
 <ng-template #login let-c="close" let-d="dismiss">
     <div class="modal-header">
         <div class="col-xs-12">
-            <h4 class="modal-title pull-left">Login</h4>
+            <h4 class="modal-title pull-left">Manager Login</h4>
             <button class="close pull-right" (click)="d('closed')">x</button>
         </div>
     </div>

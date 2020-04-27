@@ -1,7 +1,8 @@
 <ng-template #addScenario let-c="close" let-d="dismiss">
     <div class="modal-header">
         <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Scenario </h4>
+            <h4 class="modal-title pull-left" *ngIf="clone==true"> Clone Scenario </h4>
+            <h4 class="modal-title pull-left" *ngIf="clone==false"> New Scenario </h4>
             <!--close and save-->
             <button class="close pull-right" (click)="c('closed')">x</button><br><br>
             
@@ -9,13 +10,22 @@
     </div>
     <div class="modal-body">
         <form [formGroup]="newScenForm">
+
+            <!-- Clone - choose region -->
+            <div class="form-group" *ngIf="clone==true">
+                <label class="req" for="region">Region:</label>
+                <select class="form-control" formControlName="region">
+                    <option *ngFor="let r of regions" [ngValue]="r">{{r.name}}</option>
+                </select>
+            </div> 
+
             <!-- Statistic Group* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty}">
                 <label class="req" for="statisticGroupID">Statistic Group:</label>
                 <select class="form-control" formControlName="statisticGroupID">
                     <option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}}</option>
                 </select>
-                <div class="input-invalid-warning" *ngIf="!newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty">Role
+                <div class="input-invalid-warning" *ngIf="!newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty">Statistic Group
                     is required</div>
             </div>
 
@@ -51,11 +61,6 @@
                         <span id="mathjaxEq"></span>
                         <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.equation').valid && newScenForm.get('regressionRegions.regressions.equation').dirty">Expression
                             is required</div>
-                    </div>
-                    <!-- Equivalent Years -->
-                    <div class="form-group">
-                        <label class="req" for="equivalentYears">Equivalent Years (optional):</label>
-                        <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="equivalentYears" >
                     </div>
                 </div>
 

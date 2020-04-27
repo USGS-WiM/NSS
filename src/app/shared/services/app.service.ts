@@ -651,7 +651,7 @@ export class NSSService {
     }
 
     public handleError(error: Response | any) {
-        if (error._body !== '') {error._body = JSON.parse(error._body); }
+        //if (error._body !== '') {error._body = JSON.parse(error._body); }
         return Observable.throw(error);
     }
 

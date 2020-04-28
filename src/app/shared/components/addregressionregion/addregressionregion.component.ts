@@ -22,6 +22,7 @@ import { GeojsonService } from '../../services/geojson.service';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 import { Citation } from 'app/shared/interfaces/citation';
 import { Regressionregion } from 'app/shared/interfaces/regressionregion';
+import { LoaderService } from 'app/shared/services/loader.service';
 
 @Component({
   selector: 'addRegressionRegionModal',
@@ -72,7 +73,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
               private _configService: ConfigService,
               private _toasterService: ToasterService,
               private _authService: AuthService,
-              private geojsonService: GeojsonService) {
+              private geojsonService: GeojsonService, 
+              private _loaderService: LoaderService) {
     this.configSettings = this._configService.getConfiguration();
     this.newRegRegForm = _fb.group({
       name: new FormControl(null, Validators.required),
@@ -211,10 +213,12 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.modalSubscript.unsubscribe();
   }
 
+
   // show add regression region modal
   public showNewRegressionRegionForm(rr?) {
     // shows form for creating new regression or editing regression 
     if (rr) { // edit existing regression region
+    this._loaderService.showFullPageLoad();
     this.addRegReg = false;
     this._settingsService.getEntities(this.configSettings.regRegionURL + '/' + rr + '?getpolygon=true')
       .subscribe((res) => {
@@ -242,7 +246,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         } else {
           this.uploadPolygon = false;
         }
-        
+        this._loaderService.hideFullPageLoad();
       });
   
     } else { // rr doesn't exist, create new regression

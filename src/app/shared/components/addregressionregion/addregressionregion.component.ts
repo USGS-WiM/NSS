@@ -383,10 +383,10 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   private editRegressionRegion() {
+    this._loaderService.showFullPageLoad();
     if (!this.uploadPolygon) {
         this.newRegRegForm.get('location').setValue(null);
     }
-
     this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.regRegionURL).subscribe(res => {
             if (!res.headers) {
               this._toasterService.pop('info', 'Info', 'Regression Region was updated');
@@ -414,9 +414,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         }, error => {
             if (this._settingsService.outputWimMessages(error)) {return; }
             this._toasterService.pop('error', 'Error editing Regression Region', error._body.message || error.statusText); }
-        );        
+        );  
   }
-
-
 }
 

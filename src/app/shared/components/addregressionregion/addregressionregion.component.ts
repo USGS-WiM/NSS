@@ -332,7 +332,9 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         fillColor: '#fc8d62'
       })
     });
-
+    setInterval(() => {
+      this.map.invalidateSize();
+    }, 100);
     this.map.addLayer(this.polygonLayer);
     this.map.fitBounds(this.polygonLayer.getBounds());
   }

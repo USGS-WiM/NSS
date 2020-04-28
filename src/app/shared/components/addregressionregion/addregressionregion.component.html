@@ -79,8 +79,8 @@
       <form *ngIf="uploadPolygon">
         <form #f="ngForm" class="ui form" (ngSubmit)="loadFile(f.value)">
             <div class="form-group">
-                <label for="location">Polygon (Shapefile .zip)</label>
-                <input type='file' id='fileinput'>
+                <label for="location">Polygon (Shapefile .zip):</label>
+                <input type='file' accept=".zip, .rar, .7zip" id='fileinput'>
                 <button type="submit" class="ui button" style="margin-top: 10px;"><div *ngIf="loadingPolygon"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;Upload File</div>Upload File</button> 
             </div>
           </form> 

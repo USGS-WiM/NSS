@@ -20,8 +20,6 @@ import * as L from 'leaflet';
 import * as shp from 'shpjs';
 import { GeojsonService } from '../../services/geojson.service';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
-import { Citation } from 'app/shared/interfaces/citation';
-import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { LoaderService } from 'app/shared/services/loader.service';
 
 @Component({
@@ -357,9 +355,11 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           })
         }
       );
+    this._loaderService.hideFullPageLoad();
   }
 
   public loadFile() {
+    this._loaderService.showFullPageLoad();
     this.input = document.getElementById('fileinput');
     if (!this.input.files[0]) {
       alert("Please select a file.");

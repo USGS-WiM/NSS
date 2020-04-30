@@ -1191,11 +1191,12 @@ export class MainviewComponent implements OnInit, OnDestroy {
         window.print();
     }
 
-    /////////////////////// Add/Edit/Delete Scenarios Section ///////////////////////////
+    /////////////////////// Add Scenarios Section ///////////////////////////
     public showAddScenarioModal() {
         this._nssService.setAddScenarioModal(true);
     }
 
+    /////////////////////// Edit Scenarios Section ///////////////////////////
     public editRegScenario() {
         this.editRegionScenario = true;
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']); // render equations into Mathjax
@@ -1206,20 +1207,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
     }
 
-    newCloneScenario(cloneScen){
-        this._nssService.changeItem(cloneScen);
-    }
-
-    public cloneRowClicked(statisticGroupID, r, rr) {
-        this.cloneScen={r,rr,statisticGroupID};
-        this.newCloneScenario(this.cloneScen);
-        this.showCloneScenarioModal();
-    }
-
-    public showCloneScenarioModal() {
-        this._nssService.setAddScenarioModal(true);
-    }
-    
     public editRegRegion(id) {
         const addRegRegForm: AddRegressionRegion = {
             show: true,
@@ -1291,7 +1278,21 @@ export class MainviewComponent implements OnInit, OnDestroy {
         }
     }
 
-    
+    /////////////////////// Clone Scenarios Section ///////////////////////////
+    newCloneScenario(cloneScen){
+        this._nssService.changeItem(cloneScen);
+    }
+
+    public cloneRowClicked(statisticGroupID, r, rr) {
+        this.cloneScen={r,rr,statisticGroupID};
+        this.newCloneScenario(this.cloneScen);
+        this.showCloneScenarioModal();
+    }
+
+    public showCloneScenarioModal() {
+        this._nssService.setAddScenarioModal(true);
+    }
+
     /////////////////////// Citations Section ///////////////////////////
     public showManageCitationsModal() {
         this._nssService.setManageCitationsModal(true);
@@ -1412,8 +1413,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         });
         return count;
     }
-
-    
 
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs

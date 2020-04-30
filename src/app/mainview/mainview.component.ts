@@ -105,6 +105,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public itemBeingEdited;
     public uniqueRegRegions;
     public editScen;
+    public cloneScen;
     public paramsNeeded;
     public getBounds: boolean;
     private modalSubscript;
@@ -1205,6 +1206,20 @@ export class MainviewComponent implements OnInit, OnDestroy {
         if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
     }
 
+    newCloneScenario(cloneScen){
+        this._nssService.changeItem(cloneScen);
+    }
+
+    public cloneRowClicked(statisticGroupID, r, rr) {
+        this.cloneScen={r,rr,statisticGroupID};
+        this.newCloneScenario(this.cloneScen);
+        this.showCloneScenarioModal();
+    }
+
+    public showCloneScenarioModal() {
+        this._nssService.setAddScenarioModal(true);
+    }
+    
     public editRegRegion(id) {
         const addRegRegForm: AddRegressionRegion = {
             show: true,

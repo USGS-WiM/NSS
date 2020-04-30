@@ -68,7 +68,7 @@
                 <div formArrayName="parameters">
                     <div *ngFor="let var of newScenForm.get('regressionRegions.parameters').controls; let varIndex = index">
                         <div class="scenDropdown">
-                            <div (click)="removeVariable(index)"><i class="ion-close"></i></div>
+                            <div (click)="removeVariable(varIndex)"><i class="ion-close"></i></div>
                             <div *ngIf="checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="hideDiv('variable' + (varIndex + 1))">Variable {{varIndex + 1}}
                                 <i class="ion-android-arrow-dropdown"></i></div>
                             <div *ngIf="!checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="showDiv('variable' + (varIndex + 1))">Variable {{varIndex + 1}}<i class="ion-android-arrow-dropright"></i></div>

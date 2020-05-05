@@ -1295,35 +1295,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this._nssService.setManageCitationsModal(true);
     }
 
-    public saveCitation(c) {
-        // put edited scenario
-        this.saveFilters();
-        this._settingsService.putEntity(c.id, c, this.configSettings.citationURL)
-            .subscribe((response) => {
-                c.isEditing = false;
-                this.requeryFilters();
-                this._nssService.outputWimMessages(response);
-            }, error => {
-                if (this._settingsService.outputWimMessages(error)) {return; }
-                this._toasterService.pop('error', 'Error editing Citation', error._body.message || error.statusText);
-            }
-        );
-    }
-
-    public deleteCitation(id) {
-        const check = confirm('Are you sure you want to delete this citation?');
-        this.saveFilters();
-        if (check) {
-            this._settingsService.deleteEntity(id, this.configSettings.citationURL).subscribe(result => {
-                this.requeryFilters();
-                if (result.headers) { this._nssService.outputWimMessages(result); }
-            }, error => {
-                if (error.headers) {this._nssService.outputWimMessages(error);
-                } else { this._nssService.handleError(error); }
-            });
-        }
-    }
-
     // remove citation from regression region (set citationID to null)
     public removeCitation(rr) {
         const check = confirm('Are you sure you want to remove this citation from ' + rr.name + '?');

@@ -719,15 +719,9 @@
                                 <tr *ngFor="let c of citations | citationfilter:rr.citationID; let cIndex = index;">
                                     <td>
                                         <div class="data-controls">
-                                            <!-- <i *ngIf="!c.isEditing" title="Edit Citation" (click)="editRowClicked(c, rrIndex, sgIndex, cIndex)" class="fa fa-pencil"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp; -->
+                                            <i *ngIf="!c.isEditing" title="Edit Citation" (click)="editRegRegion(rr.id)" class="fa fa-pencil"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp; 
                                             <i *ngIf="!c.isEditing" title="Remove Citation" (click)="removeCitation(rr)" class="fa fa-minus-circle"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                                            <!-- <i *ngIf="!c.isEditing" title="Delete Citation" (click)="deleteCitation(c.id)" class="fa fa-times"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i> -->
-                                            <i *ngIf="c.isEditing" title="Save Citation" (click)="saveCitation(c)" class="fa fa-floppy-o"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                                            <i *ngIf="c.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="fa fa-history"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                                         </div>
                                     </td>

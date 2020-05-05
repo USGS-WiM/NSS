@@ -1599,30 +1599,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
             regRegionID: rr
         }
         this._nssService.setAddRegressionRegionModal(addRegRegForm);
-
-        // if (rr) { // rr already exists, only want citation
-        //     this.selectedRegRegion = rr;
-        //     this.addCitation = true;
-        //     //this.uploadPolygon = true?
-        //     this.addRegReg = false;
-        // } else { // rr doesn't exist
-        //     this.addRegReg = true;
-        //     this.addCitation = false;
-        //     this.uploadPolygon = false;
-        // }
-        // if (this.selectedRegion) {this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
-        // this.showNewRegRegForm = true;
-        // this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
-        // this.modalRef.result.then(
-        //     result => {
-        //         // this is the solution for the first modal losing scrollability
-        //         if (document.querySelector('body > .modal')) {
-        //             document.body.classList.add('modal-open');
-        //         }
-        //         if (result) {this.cancelCreateRegression(); }
-        //     },
-        //     reason => {if (reason) {this.cancelCreateRegression(); }}
-        // );
     }
 
     private cancelCreateRegression() {

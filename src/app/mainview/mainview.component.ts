@@ -1627,7 +1627,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
                         this.requeryFilters();
                     }
                     if (this.uploadPolygon) { // if user elected to upload a polygon, send that through
-                        this.uploadNewPolygon(response);
                     } else {
                         this.cancelCreateRegression();
                         this._nssService.setSelectedRegion(this.selectedRegion);
@@ -1659,11 +1658,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
                 this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
             }
         );
-    }
-
-    public uploadNewPolygon(rr) {
-        // Upload new polygon
-        // TODO: Send polygon to services
     }
 
     private getDismissReason(reason: any): string {

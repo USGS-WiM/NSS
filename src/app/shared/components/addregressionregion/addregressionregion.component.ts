@@ -283,6 +283,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   private createNewRegression() {
+    this._loaderService.showFullPageLoad();
     const regionID = this.newRegRegForm.value.state;
     this.saveFilters();
     if (!this.uploadPolygon) {
@@ -291,21 +292,21 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._settingsService
       .postEntity(this.newRegRegForm.value, this.configSettings.regionURL + regionID + '/' + this.configSettings.regRegionURL)
       .subscribe((response:any) => {
-          response.isEditing = false;
-          if (!response.headers) {
-            this._toasterService.pop('info', 'Info', 'Regression region was added');
-          } else { this._settingsService.outputWimMessages(response); }
-          if (this.addCitation) { // if user elected to add a citation, send that through
-            this.createNewCitation(response);
-          } else {
-            this.cancelCreateRegression();
-            this.requeryFilters();
-          }
-        }, error => {
-          if (this._settingsService.outputWimMessages(error)) { return; }
-          this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText);
+        response.isEditing = false;
+        if (!response.headers) {
+          this._toasterService.pop('info', 'Info', 'Regression region was added');
+        } else { this._settingsService.outputWimMessages(response); }
+        if (this.addCitation) { // if user elected to add a citation, send that through
+          this.createNewCitation(response);
+        } else {
+          this.cancelCreateRegression();
+          this.requeryFilters();
         }
-      );
+      }, error => {
+        if (this._settingsService.outputWimMessages(error)) { return; }
+        this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText);
+      }
+    );
   }
 
   public createNewCitation(rr) {

@@ -600,9 +600,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this._settingsService.getEntities(this.configSettings.regTypeURL).subscribe(res => {
             this.regTypes = res;
         });
-        this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((show: boolean) => {
-       //     if (show) { this.showNewRegressionRegionForm(); }
-        });
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
         });

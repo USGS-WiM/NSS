@@ -141,7 +141,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public getRegRegions() {
-    // moving to own function for when new regression region is added
+    // re-query regression regions after new one is added
     this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
       .subscribe(res => {
         if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }

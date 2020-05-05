@@ -18,7 +18,6 @@ import { AuthService } from 'app/shared/services/auth.service';
 import { Region } from '../../interfaces/region';
 import * as L from 'leaflet';
 import * as shp from 'shpjs';
-import { GeojsonService } from '../../services/geojson.service';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 import { LoaderService } from 'app/shared/services/loader.service';
 
@@ -59,7 +58,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
               private _configService: ConfigService,
               private _toasterService: ToasterService,
               private _authService: AuthService,
-              private geojsonService: GeojsonService, 
               private _loaderService: LoaderService) {
     this.configSettings = this._configService.getConfiguration();
     this.newRegRegForm = _fb.group({
@@ -321,7 +319,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   async SHPtoGEOJSON(form: any) {
     const self = this;
-    await this.geojsonService.readFileContent(this.file)
+    await this._loaderService.readFileContent(this.file)
       .toPromise().then(
         res => {
           shp(res).then(function (geojson) {

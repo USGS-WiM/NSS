@@ -32,21 +32,9 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   private modalElement: any;
   public CloseResult: any;
   private modalSubscript;
-  public appVersion: string;
   public regressionRegions;
-  public statisticGroups;
-  public regressionTypes;
-  public variables;
-  public unitTypes;
-  public equation;
-  public errors;
-  public cloneParameters: any;
-  public regRegion: any;
-  public statisticGroup: any;
-  public clone: boolean;
   public selectedRegion;
   private configSettings: Config;
-  public addPredInt = false;
   public modalRef;
   public loggedInRole;
   public selectedRegRegion;
@@ -90,8 +78,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._nssService.currentItem.subscribe(item => this.cloneParameters = item);
-
     // subscriber for logged in role
     this.loggedInRole = localStorage.getItem('loggedInRole');
     this._authService.loggedInRole().subscribe(role => {
@@ -108,9 +94,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._nssService.selectedRegion.subscribe(region => {
       this.selectedRegion = region;
       if (region && region.id) { this.getRegRegions(); }
-    });
-    this._nssService.getVersion.subscribe((v: string) => {
-      this.appVersion = v;
     });
     this._nssService.regions.subscribe((regions: Array<Region>) => {
       this.regions = regions;

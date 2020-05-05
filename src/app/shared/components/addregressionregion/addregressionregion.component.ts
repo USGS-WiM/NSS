@@ -319,7 +319,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   async SHPtoGEOJSON(form: any) {
     const self = this;
-    await this._loaderService.readFileContent(this.file)
+    await this._nssService.readFileContent(this.file)
       .toPromise().then(
         res => {
           shp(res).then(function (geojson) {

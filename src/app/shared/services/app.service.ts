@@ -668,4 +668,15 @@ export class NSSService {
         }
         return false;
     }
+    
+    readFileContent(file: File) {
+        let fileReader: FileReader = new FileReader();
+        fileReader.readAsArrayBuffer(file);
+        return Observable.create(observer => {
+          fileReader.onloadend = () => {
+            observer.next(fileReader.result);
+            observer.complete();
+          };
+        });
+    }
 }

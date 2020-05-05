@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { fromEventPattern } from 'rxjs';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,14 +18,4 @@ export class LoaderService {
         this._loaderSubject.next(false);
     }
 
-    readFileContent(file: File) {
-        let fileReader: FileReader = new FileReader();
-        fileReader.readAsArrayBuffer(file);
-        return Observable.create(observer => {
-          fileReader.onloadend = () => {
-            observer.next(fileReader.result);
-            observer.complete();
-          };
-        });
-      }
 }

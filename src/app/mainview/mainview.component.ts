@@ -1601,42 +1601,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this._nssService.setAddRegressionRegionModal(addRegRegForm);
     }
 
-    private cancelCreateRegression() {
-        this.showNewRegRegForm = false;
-        this.newRegRegForm.reset();
-        this.newCitForm.reset();
-        this.modalRef.close();
-    }
-
-    private createNewRegression() {
-        this.saveFilters();
-        const regionID = this.newRegRegForm.value.state;
-        this._settingsService
-            .postEntity(this.newRegRegForm.value, this.configSettings.regionURL + regionID + '/' + this.configSettings.regRegionURL)
-            .subscribe((response:any) => {
-                    response.isEditing = false;
-                    if (!response.headers) {
-                        this._toasterService.pop('info', 'Info', 'Regression region was added');
-                    } else {
-                        this._settingsService.outputWimMessages(response); 
-                    }
-                    if (this.addCitation) { // if user elected to add a citation, send that through
-                        this.createNewCitation(response);
-                    } else {
-                        this.cancelCreateRegression();
-                        this.requeryFilters();
-                    }
-                    if (this.uploadPolygon) { // if user elected to upload a polygon, send that through
-                    } else {
-                        this.cancelCreateRegression();
-                        this._nssService.setSelectedRegion(this.selectedRegion);
-                    }
-                }, error => {
-                    if (this._settingsService.outputWimMessages(error)) {return; }
-                    this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText); }
-            );
-    }
-
     public createNewCitation(rr) {
         // add new citation
         this.saveFilters();
@@ -1651,7 +1615,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                 } else {
                     this._settingsService.outputWimMessages(res); 
                 }
-                this.cancelCreateRegression();
+                //this.cancelCreateRegression();
                 this.requeryFilters();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) {return; }

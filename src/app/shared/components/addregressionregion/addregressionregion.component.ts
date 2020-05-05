@@ -176,8 +176,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }
   }
 
-
-
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) return 'by pressing ESC';
     else if (reason === ModalDismissReasons.BACKDROP_CLICK) return 'by clicking on a backdrop';
@@ -188,48 +186,50 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.modalSubscript.unsubscribe();
   }
 
-
   // show add regression region modal
   public showNewRegressionRegionForm(rr?) {
     // shows form for creating new regression or editing regression 
     if (rr) { // edit existing regression region
-    this._loaderService.showFullPageLoad();
-    this.addRegReg = false;
-    this._settingsService.getEntities(this.configSettings.regRegionURL + '/' + rr + '?getpolygon=true')
-      .subscribe((res) => {
-        this.selectedRegRegion = res;
-        this.newRegRegForm.controls['name'].setValue(this.selectedRegRegion.name);
-        this.newRegRegForm.controls['description'].setValue(this.selectedRegRegion.description);
-        this.newRegRegForm.controls['code'].setValue(this.selectedRegRegion.code);
-        this.newRegRegForm.controls['location'].setValue(this.selectedRegRegion.location);
-        if (this.selectedRegRegion.citationID) {
-          this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
-          this.addCitation = true;
-          this._settingsService.getEntities(this.configSettings.citationURL + '/' + this.selectedRegRegion.citationID)
-          .subscribe(res => {
-              this.selectedCitation = res;
-              this.newCitForm.controls['title'].setValue(this.selectedCitation.title);
-              this.newCitForm.controls['author'].setValue(this.selectedCitation.author);
-              this.newCitForm.controls['citationURL'].setValue(this.selectedCitation.citationURL);
-          });
-        } else {
-          this.addCitation = false;
+      this._loaderService.showFullPageLoad();
+      this.addRegReg = false;
+      this._settingsService.getEntities(this.configSettings.regRegionURL + '/' + rr + '?getpolygon=true')
+        .subscribe((res) => {
+          this.selectedRegRegion = res;
+          this.newRegRegForm.controls['name'].setValue(this.selectedRegRegion.name);
+          this.newRegRegForm.controls['description'].setValue(this.selectedRegRegion.description);
+          this.newRegRegForm.controls['code'].setValue(this.selectedRegRegion.code);
+          this.newRegRegForm.controls['location'].setValue(this.selectedRegRegion.location);
+          if (this.selectedRegRegion.citationID) {
+            this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
+            this.addCitation = true;
+            this._settingsService.getEntities(this.configSettings.citationURL + '/' + this.selectedRegRegion.citationID)
+              .subscribe(res => {
+                  this.selectedCitation = res;
+                  this.newCitForm.controls['title'].setValue(this.selectedCitation.title);
+                  this.newCitForm.controls['author'].setValue(this.selectedCitation.author);
+                  this.newCitForm.controls['citationURL'].setValue(this.selectedCitation.citationURL);
+              }
+            );
+          } else {
+            this.addCitation = false;
+          }
+          if (this.selectedRegRegion.location) {
+            this.uploadPolygon = true;
+            this.addGeojsonToMap(this.selectedRegRegion.location.geometry);
+          } else {
+            this.uploadPolygon = false;
+          }
+          this._loaderService.hideFullPageLoad();
         }
-        if (this.selectedRegRegion.location) {
-          this.uploadPolygon = true;
-          this.addGeojsonToMap(this.selectedRegRegion.location.geometry);
-        } else {
-          this.uploadPolygon = false;
-        }
-        this._loaderService.hideFullPageLoad();
-      });
-  
+      );
     } else { // rr doesn't exist, create new regression
       this.addRegReg = true;
       this.addCitation = false;
       this.uploadPolygon = false;
     }
-    if (this.selectedRegion) { this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
+    if (this.selectedRegion) { 
+      this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); 
+    }
     this.showNewRegRegForm = true;
     this.modalRef = this._modalService.open(this.addRegressionRegionModal, { backdrop: 'static', keyboard: false, size: 'lg' });
     this.modalRef.result.then(
@@ -238,9 +238,15 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         if (document.querySelector('body > .modal')) {
           document.body.classList.add('modal-open');
         }
-        if (result) { this.cancelCreateRegression(); }
+        if (result) { 
+          this.cancelCreateRegression(); 
+        }
       },
-      reason => { if (reason) { this.cancelCreateRegression(); } }
+      reason => { 
+        if (reason) { 
+          this.cancelCreateRegression();
+        } 
+      }
     );
   }
 
@@ -252,7 +258,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   private createNewRegression() {
-
     const regionID = this.newRegRegForm.value.state;
     if (!this.uploadPolygon) {
         this.newRegRegForm.get('location').setValue(null);

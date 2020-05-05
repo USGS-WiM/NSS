@@ -345,8 +345,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.input = document.getElementById('fileinput');
     if (!this.input.files[0]) {
       alert("Please select a file.");
-    }
-    else {
+    } else {
       this.loadingPolygon = true;
       this.file = this.input.files[0];
       if (this.polygonLayer) this.map.removeLayer(this.polygonLayer);
@@ -360,7 +359,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.map.removeLayer(this.polygonLayer);
       this.map.setView(new L.LatLng(39.8283, -98.5795), 4);
     }
-    
     setInterval(() => {
       this.map.invalidateSize();
     }, 100);
@@ -401,4 +399,3 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         );  
   }
 }
-

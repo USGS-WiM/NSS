@@ -176,13 +176,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }
   }
 
-  public showAddRegRegion() {
-    const addRegRegForm: AddRegressionRegion = {
-      show: true,
-      regRegionID: null
-  }
-    this._nssService.setAddRegressionRegionModal(addRegRegForm);
-  }
+
 
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) return 'by pressing ESC';

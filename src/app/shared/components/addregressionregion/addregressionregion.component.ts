@@ -20,6 +20,9 @@ import * as L from 'leaflet';
 import * as shp from 'shpjs';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 import { LoaderService } from 'app/shared/services/loader.service';
+import { Regressionregion } from 'app/shared/interfaces/regressionregion';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 
 @Component({
   selector: 'addRegressionRegionModal',
@@ -50,7 +53,19 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   private file;
   private polygonLayer;
   private selectedCitation;
+  
+  public selectedRegressionRegion: Array<Regressionregion>;
+  public tempSelectedRegressionRegion: Array<Regressionregion>;
 
+  public tempSelectedStatisticGrp: Array<Statisticgroup>;
+  public get selectedStatisticGrp(): Array<Statisticgroup> {
+      return this._nssService.selectedStatGroups;
+  }
+
+  public tempSelectedRegType: Array<Regressiontype>;
+  public get selectedRegType(): Array<Regressiontype> {
+      return this._nssService.selectedRegressionTypes;
+  }
   constructor(private _nssService: NSSService,
               private _modalService: NgbModal,
               private _fb: FormBuilder,
@@ -96,13 +111,25 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._nssService.regions.subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
-
+    this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
+      this.selectedRegressionRegion = regRegions;
+    });
     this.modalElement = this.addRegressionRegionModal;
     this.uploadPolygon = true;
     this.loadingPolygon = false;
 
   }
+  public saveFilters(){
+    this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
+    this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
+    this.tempSelectedRegType = this.selectedRegType;
+  }
 
+  public requeryFilters(){
+    this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+    this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
+    this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
+  }
   public loadMap() {
     // Initialize basemap layers
     const tileLayer_topography = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
@@ -257,6 +284,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   private createNewRegression() {
     const regionID = this.newRegRegForm.value.state;
+    this.saveFilters();
     if (!this.uploadPolygon) {
         this.newRegRegForm.get('location').setValue(null);
     }
@@ -271,7 +299,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
             this.createNewCitation(response);
           } else {
             this.cancelCreateRegression();
-            this._nssService.setSelectedRegion(this.selectedRegion);
+            this.requeryFilters();
           }
         }, error => {
           if (this._settingsService.outputWimMessages(error)) { return; }
@@ -364,6 +392,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   private editRegressionRegion() {
     this._loaderService.showFullPageLoad();
+    this.saveFilters();
     if (!this.uploadPolygon) {
         this.newRegRegForm.get('location').setValue(null);
     }
@@ -379,7 +408,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
                   if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Citation was updated');
                   } else { this._settingsService.outputWimMessages(response); this.cancelCreateRegression(); }
-                  this._nssService.setSelectedRegion(this.selectedRegion);
+                  this.requeryFilters();
                   this.cancelCreateRegression();
                 }, error => {
                   if (this._settingsService.outputWimMessages(error)) { return; }
@@ -388,7 +417,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
             } else if (this.addCitation) {
                 this.createNewCitation(this.selectedRegRegion);
             } else {
-                this._nssService.setSelectedRegion(this.selectedRegion);
+                this.requeryFilters();
                 this.cancelCreateRegression();
             }
         }, error => {

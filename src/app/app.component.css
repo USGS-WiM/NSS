@@ -64,3 +64,9 @@
     border-bottom: 2px solid transparent;
     float: left;
 }
+
+.usgslogo {
+    height: 60px;
+    width: 150px;
+    margin-top: 6px;
+}

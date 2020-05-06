@@ -220,11 +220,12 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this._settingsService.getEntities(this.configSettings.regRegionURL + '/' + rr + '?getpolygon=true')
         .subscribe((res) => {
           this.selectedRegRegion = res;
+          // set values in add regression region modal
           this.newRegRegForm.controls['name'].setValue(this.selectedRegRegion.name);
           this.newRegRegForm.controls['description'].setValue(this.selectedRegRegion.description);
           this.newRegRegForm.controls['code'].setValue(this.selectedRegRegion.code);
           this.newRegRegForm.controls['location'].setValue(this.selectedRegRegion.location);
-          if (this.selectedRegRegion.citationID) {
+          if (this.selectedRegRegion.citationID) { // if there is a citation set values in modal
             this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
             this.addCitation = true;
             this._settingsService.getEntities(this.configSettings.citationURL + '/' + this.selectedRegRegion.citationID)
@@ -235,13 +236,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
                   this.newCitForm.controls['citationURL'].setValue(this.selectedCitation.citationURL);
               }
             );
-          } else {
+          } else { // no citation closes citation part of modal
             this.addCitation = false;
           }
-          if (this.selectedRegRegion.location) {
+          if (this.selectedRegRegion.location) { // if there is a polygon set values in modal
             this.uploadPolygon = true;
             this.addGeojsonToMap(this.selectedRegRegion.location.geometry);
-          } else {
+          } else {  // no polygon closes polygon part of modal
             this.uploadPolygon = false;
           }
           this._loaderService.hideFullPageLoad();
@@ -252,7 +253,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.addCitation = false;
       this.uploadPolygon = false;
     }
-    if (this.selectedRegion) { 
+    if (this.selectedRegion) { //set region in new regression region modal
       this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); 
     }
     this.showNewRegRegForm = true;
@@ -391,10 +392,11 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }, 100);
   }
 
+  // ADD COMMENTS
   private editRegressionRegion() {
     this._loaderService.showFullPageLoad();
     this.saveFilters();
-    if (!this.uploadPolygon) {
+    if (!this.uploadPolygon) { // No polygon
         this.newRegRegForm.get('location').setValue(null);
     }
     this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.regRegionURL).subscribe(res => {
@@ -402,20 +404,22 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
               this._toasterService.pop('info', 'Info', 'Regression Region was updated');
               this.modalRef.close();
             } else {this._settingsService.outputWimMessages(res); }
-
-            if (this.addCitation && this.selectedRegRegion.citationID) {
+            if (this.addCitation && this.selectedRegRegion.citationID) { // Editing citation
                 this._settingsService.putEntity(this.selectedRegRegion.citationID, this.newCitForm.value, this.configSettings.citationURL)
                 .subscribe((response: any) => {
-                  if (!response.headers) {
+                  if (!response.headers) { // Citation successfully updated
                     this._toasterService.pop('info', 'Info', 'Citation was updated');
-                  } else { this._settingsService.outputWimMessages(response); this.cancelCreateRegression(); }
+                  } else { 
+                    this._settingsService.outputWimMessages(response); 
+                    this.cancelCreateRegression(); 
+                  }
                   this.requeryFilters();
                   this.cancelCreateRegression();
                 }, error => {
                   if (this._settingsService.outputWimMessages(error)) { return; }
                   this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
                 });
-            } else if (this.addCitation) {
+            } else if (this.addCitation) { // New citation
                 this.createNewCitation(this.selectedRegRegion);
             } else {
                 this.requeryFilters();

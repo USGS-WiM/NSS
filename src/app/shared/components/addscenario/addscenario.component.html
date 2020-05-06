@@ -46,7 +46,7 @@
                 <div formArrayName="regressions">
                     <!-- Regression Type/Statistic-->
                     <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
-                        <label class="req" for="ID">Regression Type:</label>
+                        <label class="req" for="ID">Regression Variable:</label>
                         <select class="form-control" formControlName="ID">
                             <option *ngFor="let rt of regressionTypes" [value]="rt.id">{{rt.name}}</option>
                         </select>

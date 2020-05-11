@@ -115,7 +115,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this._settingsService.getEntities(this.configSettings.citationURL)
             .subscribe(res => {
                 this.citations = res;
-                this.filteredData=this.citations;
+                this.filteredData = this.citations;
             })
     }
 }

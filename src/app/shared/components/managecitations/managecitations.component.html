@@ -6,17 +6,31 @@
         </div>
     </div>
     <input type="text" #input placeholder="Search" (change)="filter(input.value)">
-    <div class="modal-body">
-        <h2 style="margin:0;padding:0">Citations</h2>
-            <div *ngFor="let l of filteredData">
-                <a *ngIf="l" [href]="l.citationURL" [target]="_blank">
-                    <div>{{l.author}}</div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-xs-5">Title</th>
+                <th class="col-xs-2">Associated Regression Regions</th>
+                <th class="col-xs-1"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let l of filteredData">
+                <td>
                     <div>{{l.title}}</div>
-                </a>
-                <br />
-            </div>
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Close</button>
-        </div>
-    </div>
+                </td>
+                <td>
+                    <div>regression regions</div>
+                </td>
+                <td>
+                    <div>delete buttons</div>
+                </td>
+ 
+            </tr>
+        </tbody>
+    </table>
+
+
 </ng-template>

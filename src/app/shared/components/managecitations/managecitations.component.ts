@@ -33,6 +33,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public loggedInRole;
     public citations: Array<Citation>;
     public scenarios: Scenario[];
+    public filteredData: Array<Citation>;
 
     constructor(private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -62,6 +63,17 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.getRegRegions(); // get list of regression regions for the region
         });
         this.modalElement = this.manageCitationsModal;
+    }
+
+    filter(input:string){
+        this.filteredData = this.citations.filter((item)=>{
+            let test = item.title.toLowerCase();
+            input = input.toLowerCase();
+            if(test.includes(input))
+                return item;
+            else 
+                return null;
+        })
     }
 
     public getRegRegions() {
@@ -103,6 +115,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this._settingsService.getEntities(this.configSettings.citationURL)
             .subscribe(res => {
                 this.citations = res;
-            });
+                this.filteredData=this.citations;
+            })
     }
 }

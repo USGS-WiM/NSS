@@ -11,6 +11,10 @@
     text-align: center;
     display: block;
 }
+.disabled-button{
+    opacity: 0.5;
+    pointer-events: none;
+}
 button {
     margin: 0px 5px 5px 0px;
 }

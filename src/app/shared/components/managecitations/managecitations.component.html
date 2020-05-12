@@ -5,12 +5,14 @@
             <button class="close pull-right" (click)="d('closed')">x</button>
         </div>
     </div>
+    <div style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px;">
     <input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
+    <div style="padding-top: 20px;">
     <table class="table">
         <thead>
             <tr>
                 <th class="col-xs-5">Title and Author</th>
-                <th class="col-xs-2">Associated Regression Region Codes</th>
+                <th class="col-xs-5">Associated Regression Regions</th>
                 <th class="col-xs-1"></th>
             </tr>
         </thead>
@@ -22,7 +24,7 @@
                 </td>
                 <td>
                     <span *ngFor="let e of l.regressionRegions; let eIndex = index">
-                        <div>{{e.code}}</div>
+                        <div>{{e.name}}</div>
                     </span>
                 </td>
                 <td>
@@ -30,8 +32,9 @@
                         <i title="Delete Citation" (click)="deleteCitation(l.id)" class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                     </div>
                 </td>
- 
             </tr>
         </tbody>
     </table>
+    </div>
+    </div>
 </ng-template>

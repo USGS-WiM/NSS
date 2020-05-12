@@ -118,4 +118,17 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
                 this.filteredData = this.citations;
             })
     }
+
+    public deleteCitation(id) {
+        const check = confirm('Are you sure you want to delete this citation?');
+        if (check) {
+            this._settingsService.deleteEntity(id, this.configSettings.citationURL).subscribe(result => {
+                this._nssService.setSelectedRegion(this.selectedRegion);
+                if (result.headers) { this._nssService.outputWimMessages(result); }
+            }, error => {
+                if (error.headers) {this._nssService.outputWimMessages(error);
+                } else { this._nssService.handleError(error); }
+            });
+        }
+    }
 }

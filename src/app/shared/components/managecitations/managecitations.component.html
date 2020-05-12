@@ -9,8 +9,8 @@
     <table class="table">
         <thead>
             <tr>
-                <th class="col-xs-5">Title</th>
-                <th class="col-xs-2">Associated Regression Regions</th>
+                <th class="col-xs-5">Title and Author</th>
+                <th class="col-xs-2">Associated Regression Region Codes</th>
                 <th class="col-xs-1"></th>
             </tr>
         </thead>
@@ -21,10 +21,12 @@
                     <div>{{l.author}}</div>
                 </td>
                 <td>
-                    <div>regression regions</div>
+                    <span *ngFor="let e of l.regressionRegions; let eIndex = index">
+                        <div>{{e.code}}</div>
+                    </span>
                 </td>
                 <td>
-                    <div>delete buttons</div>
+                    <i title="Delete Citation" (click)="deleteCitation(l.id)" class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                 </td>
  
             </tr>

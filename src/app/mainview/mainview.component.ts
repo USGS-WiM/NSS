@@ -37,7 +37,7 @@ declare var MathJax: {
     templateUrl: './mainview.component.html',
     styleUrls: ['./mainview.component.css']
 })
-export class MainviewComponent implements OnInit, OnDestroy {
+export class MainviewComponent implements OnInit {
     @ViewChildren('inputsTable', { read: ViewContainerRef }) inputTable;
     @ViewChildren('resultsTable', { read: ViewContainerRef }) resultTable;
     @ViewChild('editScenarioForm', {static: true}) editScenarioForm;
@@ -1603,9 +1603,5 @@ export class MainviewComponent implements OnInit, OnDestroy {
         } else {
             return `with: ${reason}`;
         }
-    }
-
-    ngOnDestroy() {
-        this.modalSubscript.unsubscribe();
     }
 } // end component

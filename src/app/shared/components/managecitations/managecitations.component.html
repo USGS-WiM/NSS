@@ -26,7 +26,9 @@
                     </span>
                 </td>
                 <td>
-                    <i title="Delete Citation" (click)="deleteCitation(l.id)" class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                    <div *ngIf="!l.regressionRegions?.length>0">
+                        <i title="Delete Citation" (click)="deleteCitation(l.id)" class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                    </div>
                 </td>
  
             </tr>

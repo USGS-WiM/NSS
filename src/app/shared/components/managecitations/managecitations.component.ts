@@ -88,14 +88,6 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public showModal(): void {
         if (this.selectedRegion) {this.getRegRegions(); }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
-        this.modalRef.result.then(
-            result => {
-                // this is the solution for the first modal losing scrollability
-                if (document.querySelector('body > .modal')) {
-                    document.body.classList.add('modal-open');
-                }
-            }
-        );
     }
 
     outputWimMessages(msg) {

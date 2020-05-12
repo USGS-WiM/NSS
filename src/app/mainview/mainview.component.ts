@@ -1604,4 +1604,8 @@ export class MainviewComponent implements OnInit {
             return `with: ${reason}`;
         }
     }
+    
+    ngOnDestroy() {
+        this.navigationSubscription.unsubscribe();
+    }
 } // end component

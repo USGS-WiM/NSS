@@ -34,6 +34,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public citations: Array<Citation>;
     public scenarios: Scenario[];
     public filteredData: Array<Citation>;
+    public filterText;
 
     constructor(private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -50,7 +51,11 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             }
         });
         this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((show: boolean) => {
-            if (show) { this.showModal(); }
+            if (show) { 
+                this.showModal(); 
+                this.filterText = "";
+                this.filter(this.filterText);
+            }
         });
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
@@ -65,11 +70,12 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this.modalElement = this.manageCitationsModal;
     }
 
-    filter(input:string){
+    public filter(input:string){
         this.filteredData = this.citations.filter((item)=>{
-            let test = item.title.toLowerCase();
+            let title = item.title.toLowerCase();
             input = input.toLowerCase();
-            if(test.includes(input))
+            this.filterText = input;
+            if(title.includes(input))
                 return item;
             else 
                 return null;
@@ -108,6 +114,9 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             .subscribe(res => {
                 this.citations = res;
                 this.filteredData = this.citations;
+                if(this.filterText){
+                    this.filter(this.filterText);
+                }
             })
     }
 

@@ -12,6 +12,7 @@ import { ChartModule } from 'angular2-highcharts';
 import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 import { AppComponent } from './app.component';
 import { MainviewComponent } from './mainview/mainview.component';
@@ -90,7 +91,7 @@ export function highchartsFactory() {
     ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, LoaderComponent
   ],
   imports: [
-    BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,
+    NgSelectModule, BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,
     Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule, NgbModule,
     RouterModule.forRoot(appRoutes, {onSameUrlNavigation: 'reload'})
   ],

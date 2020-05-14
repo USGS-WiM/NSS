@@ -25,6 +25,7 @@
     "@angular/platform-server": "8.2.14",
     "@angular/router": "8.2.14",
     "@ng-bootstrap/ng-bootstrap": "~4.0.0",
+    "@ng-select/ng-select": "^3.7.3",
     "angular-2-dropdown-multiselect": "^1.0.8",
     "angular-jwt": "^0.1.11",
     "angular2-highcharts": "^0.5.5",

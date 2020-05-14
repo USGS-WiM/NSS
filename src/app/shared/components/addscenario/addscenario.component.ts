@@ -144,6 +144,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             for (const unit of res) {
                 unit['unit'] = unit['name'];
                 unit['abbr'] = unit['abbreviation'];
+                // TRYING TO MAKE A COMBINED DATA POINT THAT I CAN PUT INTO THE HTML TO SHOW NAME AND ABBREVIATION BECUSE BINDLABEL ONLY DOES 1
+                unit['unitabbr'] = unit['name + abbreviation'];
             }
             this.unitTypes = res;
         });
@@ -365,8 +367,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id.toString() === scen['statisticGroupID']);
 
-        scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
+        scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id.toString() === regRegs.ID);
         regRegs['name'] = this.regressionRegions[regRegIndex].name;

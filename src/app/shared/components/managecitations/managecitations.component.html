@@ -2,16 +2,15 @@
     <div class="modal-header">
         <div class="col-xs-12">
             <h4 class="modal-title pull-left">Manage Citations </h4>
-            <button class="close pull-right" (click)="d('Closed')">x</button>
+            <button class="close pull-right" (click)="d('closed')">x</button>
         </div>
     </div>
-    <div style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px;">
+    <div class="modalbody; table">
     <input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
-    <div style="padding-top: 20px;">
     <table class="table">
         <thead>
             <tr>
-                <th class="col-xs-5">Title and Author</th>
+                <th class="col-xs-5">Citation</th>
                 <th class="col-xs-5">Associated Regression Regions</th>
                 <th class="col-xs-1"></th>
             </tr>
@@ -19,8 +18,10 @@
         <tbody>
             <tr *ngFor="let l of filteredData">
                 <td>
-                    <div>{{l.title}}</div>
-                    <div>{{l.author}}</div>
+                    <a [href]="l.citationURL" [target]="_blank">
+                        <div>{{l.title}}</div>
+                        <div><i>{{l.author}}</i></div>
+                    </a>
                 </td>
                 <td>
                     <span *ngFor="let e of l.regressionRegions; let eIndex = index">
@@ -28,16 +29,15 @@
                     </span>
                 </td>
                 <td>
-                    <div *ngIf="!l.regressionRegions?.length>0">
-                        <i title="Delete Citation" (click)="deleteCitation(l.id)" class="fa fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                    </div>
-                    <div *ngIf="l.regressionRegions?.length>0">
-                        <i title="Delete Citation" (click)="deleteCitation(l.id)" class="fa fa-times disabled-button" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                    <div>
+                        <i title="Delete Citation" (click)="deleteCitation(l.id)" class="fa fa-times" [class.disabled-icon]="l.regressionRegions?.length>0" aria-hidden="true" style="cursor:pointer"></i>
                     </div>
                 </td>
             </tr>
         </tbody>
     </table>
     </div>
+    <div class="modal-footer">
+        <button type="button" (click)="d('closed')" class="btn-black">Close</button>
     </div>
 </ng-template>

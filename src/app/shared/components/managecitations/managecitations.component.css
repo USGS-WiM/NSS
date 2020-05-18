@@ -11,10 +11,15 @@
     text-align: center;
     display: block;
 }
-.disabled-button{
+.disabled-icon{
     opacity: 0.5;
-    pointer-events: none;
+    cursor: not-allowed !important;
 }
-button {
+.button {
     margin: 0px 5px 5px 0px;
+}
+.table{
+    padding-left: 20px; 
+    padding-right: 20px; 
+    padding-bottom: 20px;
 }

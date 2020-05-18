@@ -70,12 +70,13 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this.modalElement = this.manageCitationsModal;
     }
 
-    public filter(input:string){
+    public filter(input:string) {
         this.filteredData = this.citations.filter((item)=>{
             let title = item.title.toLowerCase();
+            let author = item.author.toLowerCase();
             input = input.toLowerCase();
             this.filterText = input;
-            if(title.includes(input))
+            if (title.includes(input)||author.includes(input))
                 return item;
             else 
                 return null;
@@ -114,7 +115,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             .subscribe(res => {
                 this.citations = res;
                 this.filteredData = this.citations;
-                if(this.filterText){
+                if (this.filterText) {
                     this.filter(this.filterText);
                 }
             })

@@ -1207,11 +1207,13 @@ export class MainviewComponent implements OnInit, OnDestroy {
 
     /////////////////////// Edit Scenarios Section ///////////////////////////
     public editRegScenario() {
+        this._nssService.showCompute(false);
         this.editRegionScenario = true;
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']); // render equations into Mathjax
     }
 
     public cancelEditRegionScenario() {
+        this._nssService.showCompute(true);
         this.editRegionScenario = false;
         if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
     }
@@ -1220,7 +1222,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
             this.CancelEditRowClicked()
         } // if another item was being edited, cancel that
-        this._nssService.showCompute(false);
         this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
         idx >= 0 ? this.editIdx = idx : this.editIdx = null;
         this.editRRindex = rrIndex; this.editSGIndex = sgIndex; // setting indices because the cancel function wasn't overwriting things
@@ -1248,7 +1249,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
             equ.style.visibility = 'hidden';
             MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']);
         }
-        this._nssService.showCompute(true);
     }
 
     /////////////////////// Delete Scenarios Section ///////////////////////////
@@ -1301,7 +1301,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
             .subscribe((response) => {
                 c.isEditing = false;
                 this.requeryFilters();
-                this._nssService.showCompute(true);
                 this._nssService.outputWimMessages(response);
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) {return; }
@@ -1470,7 +1469,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this._settingsService.putEntity('', this.editScen, this.configSettings.scenariosURL)
             .subscribe((response) => {
                 this.requeryFilters();
-                this._nssService.showCompute(true);
                 this._nssService.outputWimMessages(response);
                 this.modalRef.close();
             }, error => {
@@ -1576,7 +1574,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this._settingsService.putEntity(rr.id, this.editScenarioForm.value, this.configSettings.regRegionURL).subscribe(res => {
                 this.CancelEditRowClicked();
                 this.requeryFilters();
-                this._nssService.showCompute(true);
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression Region was updated');
                 } else {this._settingsService.outputWimMessages(res); }
             }, error => {

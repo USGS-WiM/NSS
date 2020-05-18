@@ -68,19 +68,18 @@ export class NSSService {
     }
 
     private itemSource = new BehaviorSubject<any>(' ');
-    currentItem=this.itemSource.asObservable();
+    currentItem = this.itemSource.asObservable();
 
     changeItem(item: any){
         this.itemSource.next(item);
     }
 
-    //copmute button
+    //Toggle Compute Button
     private compute = new BehaviorSubject<boolean>(true);
     currentCompute = this.compute.asObservable();
 
     showCompute(bool: boolean){
         this.compute.next(bool);
-        console.log(bool)
     }
 
     // show the add scenario modal in the mainview

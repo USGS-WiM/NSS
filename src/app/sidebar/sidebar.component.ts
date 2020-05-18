@@ -10,7 +10,6 @@ import { Toast } from 'angular2-toaster/src/toast';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { LoaderService } from 'app/shared/services/loader.service'
-import { VirtualTimeScheduler } from 'rxjs';
 
 @Component({
     selector: 'wim-sidebar',
@@ -254,7 +253,6 @@ export class SidebarComponent implements OnInit {
     // submit / Compute button click
     public CalculateScenario(): void {
         this._loaderService.showFullPageLoad();
-        this._nssService.setSelectedRegion(this.selectedRegion)
         let ValueRequired = false;
         let totalWeight: number = Number(0);
         let numOfRegRegions: number = Number(0); // don't care about weights if only 1 regRegion

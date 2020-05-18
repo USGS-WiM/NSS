@@ -1220,7 +1220,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
 
     public editRowClicked(item, rrIndex, sgIndex, idx?) {
         if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.name !== item.name) {
-            this.CancelEditRowClicked()
+            this.CancelEditRowClicked();
         } // if another item was being edited, cancel that
         this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
         idx >= 0 ? this.editIdx = idx : this.editIdx = null;
@@ -1235,7 +1235,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
         }
     }
 
-    public CancelEditRowClicked() {        
+    public CancelEditRowClicked() {
         // reset item if cancelling editing
         if (this.editIdx === null) { // if regression region
             this.scenarios[this.editSGIndex].regressionRegions[this.editRRindex] = this.tempData;

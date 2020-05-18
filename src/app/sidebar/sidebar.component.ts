@@ -275,6 +275,7 @@ export class SidebarComponent implements OnInit {
                 body: 'All values are required'
             };
             this._nssService.showToast(toast);
+            this._loaderService.hideFullPageLoad();
         } /*else if (numOfRegRegions > 1 && (totalWeight < 100 || isNaN(totalWeight))) {
             const weightToast: Toast = {
                 type: 'warning',

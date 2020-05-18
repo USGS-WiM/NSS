@@ -27,6 +27,7 @@ export class SidebarComponent implements OnInit {
     public regions: Array<Region>;
     public loggedInRole;
     public region;
+    public showCompute;
 
     // regression regions
     public selectedRegRegionIDs: Array<number>; // multiselect populates this with those selected
@@ -58,6 +59,7 @@ export class SidebarComponent implements OnInit {
     constructor(private _nssService: NSSService, private _authService: AuthService, private _toasterService: ToasterService, private _loaderService: LoaderService) {}
 
     ngOnInit() {
+        this._nssService.currentCompute.subscribe(bool => this.showCompute = bool);
         this.loggedInRole = localStorage.getItem('loggedInRole');
         this._authService.loggedInRole().subscribe(role => {
             if (role === 'Administrator' || role === 'Manager') {

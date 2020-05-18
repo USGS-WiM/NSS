@@ -74,6 +74,15 @@ export class NSSService {
         this.itemSource.next(item);
     }
 
+    //copmute button
+    private compute = new BehaviorSubject<boolean>(true);
+    currentCompute = this.compute.asObservable();
+
+    showCompute(bool: boolean){
+        this.compute.next(bool);
+        console.log(bool)
+    }
+
     // show the add scenario modal in the mainview
     public get showAddScenarioModal(): any {
         return this._showHideAddScenarioModal.asObservable();

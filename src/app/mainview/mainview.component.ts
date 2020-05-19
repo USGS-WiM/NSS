@@ -1207,11 +1207,13 @@ export class MainviewComponent implements OnInit, OnDestroy {
 
     /////////////////////// Edit Scenarios Section ///////////////////////////
     public editRegScenario() {
+        this._nssService.showCompute(false);
         this.editRegionScenario = true;
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']); // render equations into Mathjax
     }
 
     public cancelEditRegionScenario() {
+        this._nssService.showCompute(true);
         this.editRegionScenario = false;
         if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
     }

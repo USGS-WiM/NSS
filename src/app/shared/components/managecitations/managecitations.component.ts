@@ -16,6 +16,7 @@ import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Citation } from 'app/shared/interfaces/citation';
+import { isNgTemplate } from '@angular/compiler';
 
 @Component({
     selector: 'manageCitationsModal',
@@ -71,16 +72,10 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
 
     public filter(input:string) {
-        this.filteredData = this.citations.filter((item)=>{
-            let title = item.title.toLowerCase();
-            let author = item.author.toLowerCase();
-            input = input.toLowerCase();
-            this.filterText = input;
-            if (title.includes(input)||author.includes(input))
-                return item;
-            else 
-                return null;
-        })
+        this.filteredData = this.citations.filter(c => 
+            c.author.toLowerCase().includes(input.toLowerCase()) || 
+            c.title.toLowerCase().includes(input.toLowerCase()) ||
+            (c.regressionRegions.filter(rr => rr.name.toLowerCase().includes(input.toLowerCase())).length > 0));
     }
 
     public getRegRegions() {

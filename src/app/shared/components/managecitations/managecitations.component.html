@@ -5,7 +5,7 @@
             <button class="close pull-right" (click)="d('closed')">x</button>
         </div>
     </div>
-    <div class="modalbody; table">
+    <div class="modal-body">
     <input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
     <table class="table">
         <thead>
@@ -19,8 +19,8 @@
             <tr *ngFor="let l of filteredData">
                 <td>
                     <a [href]="l.citationURL" [target]="_blank">
+                        <div class="half-space">{{l.author}}</div>
                         <div>{{l.title}}</div>
-                        <div><i>{{l.author}}</i></div>
                     </a>
                 </td>
                 <td>
@@ -30,7 +30,7 @@
                 </td>
                 <td>
                     <div>
-                        <i title="Delete Citation" (click)="deleteCitation(l.id)" class="fa fa-times" [class.disabled-icon]="l.regressionRegions?.length>0" aria-hidden="true" style="cursor:pointer"></i>
+                        <i title="Delete Citation" (click)="!l.regressionRegions?.length>0 && deleteCitation(l.id)" class="fa fa-times" [class.disabled-icon]="l.regressionRegions?.length>0" aria-hidden="true" style="cursor:pointer"></i>
                     </div>
                 </td>
             </tr>

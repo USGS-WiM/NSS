@@ -144,8 +144,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             for (const unit of res) {
                 unit['unit'] = unit['name'];
                 unit['abbr'] = unit['abbreviation'];
-                // TRYING TO MAKE A COMBINED DATA POINT THAT I CAN PUT INTO THE HTML TO SHOW NAME AND ABBREVIATION BECUSE BINDLABEL ONLY DOES 1
-                unit['unitabbr'] = unit['name + abbreviation'];
             }
             this.unitTypes = res;
         });

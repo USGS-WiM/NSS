@@ -24,11 +24,9 @@
                 <label class="req" for="statisticGroupID">Statistic Group:</label>
                 <ng-select 
                 formControlName="statisticGroupID"
-                [items]="statisticGroups"
                 [selectOnTab]="true"
-                [closeOnSelect]="true"
-                bindValue="id"
-                bindLabel="name">
+                [closeOnSelect]="true">
+                <ng-option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}}</ng-option>
                 </ng-select>
                 <!-- <select class="form-control" formControlName="statisticGroupID">
                     <option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}}</option>
@@ -47,11 +45,9 @@
                     </span>
                     <ng-select 
                     formControlName="ID"
-                    [items]="regressionRegions"
                     [selectOnTab]="true"
-                    [closeOnSelect]="true"
-                    bindValue="id"
-                    bindLabel="name">
+                    [closeOnSelect]="true">
+                    <ng-option *ngFor="let rr of regressionRegions" [value]="rr.id">{{rr.name}}</ng-option>
                     </ng-select>
                     <!-- <select class="form-control" formControlName="ID">
                         <option selected hidden value=""></option>
@@ -65,11 +61,9 @@
                         <label class="req" for="ID">Regression Variable:</label>
                         <ng-select 
                         formControlName="ID"
-                        [items]="regressionTypes"
                         [selectOnTab]="true"
-                        [closeOnSelect]="true"
-                        bindValue="id"
-                        bindLabel="name">
+                        [closeOnSelect]="true">
+                        <ng-option *ngFor="let rt of regressionTypes" [value]="rt.id">{{rt.name}}</ng-option>
                         </ng-select>
                         <!-- <select class="form-control" formControlName="ID">
                             <option *ngFor="let rt of regressionTypes" [value]="rt.id">{{rt.name}}</option>
@@ -255,14 +249,9 @@
                         <label class="req" for="unit">Unit Type:</label>
                         <ng-select 
                         formControlName="unit"
-                        [items]="unitTypes"
                         [selectOnTab]="true"
-                        [closeOnSelect]="true"
-                        bindValue="unit"
-                        bindLabel="name">
-                        <ng-template ng-label-tmp let-item="item">
-                            <span >{{ item.name }} ({{ item.abbr }})</span>
-                        </ng-template>
+                        [closeOnSelect]="true">
+                        <ng-option *ngFor="let ut of unitTypes" [value]="ut">{{ut.name}} ({{ut.abbr}})</ng-option>
                         </ng-select>
                         <!-- <select class="form-control" formControlName="unit">
                             <option *ngFor="let ut of unitTypes" [ngValue]="ut">{{ut.name}} ({{ut.abbr}})</option>

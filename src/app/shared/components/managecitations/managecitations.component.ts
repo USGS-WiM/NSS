@@ -16,7 +16,6 @@ import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Citation } from 'app/shared/interfaces/citation';
-import { isNgTemplate } from '@angular/compiler';
 
 @Component({
     selector: 'manageCitationsModal',
@@ -72,6 +71,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
 
     public filter(input:string) {
+        this.filterText = input;
         this.filteredData = this.citations.filter(c => 
             c.author.toLowerCase().includes(input.toLowerCase()) || 
             c.title.toLowerCase().includes(input.toLowerCase()) ||

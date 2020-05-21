@@ -33,6 +33,8 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public loggedInRole;
     public citations: Array<Citation>;
     public scenarios: Scenario[];
+    public filteredData: Array<Citation>;
+    public filterText;
 
     constructor(private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -49,7 +51,11 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             }
         });
         this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((show: boolean) => {
-            if (show) { this.showModal(); }
+            if (show) { 
+                this.showModal(); 
+                this.filterText = "";
+                this.filter(this.filterText);
+            }
         });
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
@@ -64,6 +70,14 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this.modalElement = this.manageCitationsModal;
     }
 
+    public filter(input:string) {
+        this.filterText = input;
+        this.filteredData = this.citations.filter(c => 
+            c.author.toLowerCase().includes(input.toLowerCase()) || 
+            c.title.toLowerCase().includes(input.toLowerCase()) ||
+            (c.regressionRegions.filter(rr => rr.name.toLowerCase().includes(input.toLowerCase())).length > 0));
+    }
+
     public getRegRegions() {
         // moving to own function for when new regression region is added
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
@@ -76,14 +90,6 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public showModal(): void {
         if (this.selectedRegion) {this.getRegRegions(); }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
-        this.modalRef.result.then(
-            result => {
-                // this is the solution for the first modal losing scrollability
-                if (document.querySelector('body > .modal')) {
-                    document.body.classList.add('modal-open');
-                }
-            }
-        );
     }
 
     outputWimMessages(msg) {
@@ -103,6 +109,23 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this._settingsService.getEntities(this.configSettings.citationURL)
             .subscribe(res => {
                 this.citations = res;
+                this.filteredData = this.citations;
+                if (this.filterText) {
+                    this.filter(this.filterText);
+                }
+            })
+    }
+
+    public deleteCitation(id) {
+        const check = confirm('Are you sure you want to delete this citation?');
+        if (check) {
+            this._settingsService.deleteEntity(id, this.configSettings.citationURL).subscribe(result => {
+                this._nssService.setSelectedRegion(this.selectedRegion);
+                if (result.headers) { this._nssService.outputWimMessages(result); }
+            }, error => {
+                if (error.headers) {this._nssService.outputWimMessages(error);
+                } else { this._nssService.handleError(error); }
             });
+        }
     }
 }

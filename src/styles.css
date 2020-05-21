@@ -251,3 +251,7 @@ select {
   appearance: menulist;
   -webkit-appearance: menulist;
   }
+  
+.ng-input input[type=text] {
+  padding: 0px !important;
+  }

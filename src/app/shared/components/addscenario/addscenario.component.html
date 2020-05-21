@@ -22,11 +22,7 @@
             <!-- Statistic Group* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty}">
                 <label class="req" for="statisticGroupID">Statistic Group:</label>
-                <ng-select 
-                formControlName="statisticGroupID"
-                [selectOnTab]="true"
-                [closeOnSelect]="true"
-                [clearable]="false">
+                <ng-select formControlName="statisticGroupID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                 <ng-option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}}</ng-option>
                 </ng-select>
                 <div class="input-invalid-warning" *ngIf="!newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty">Statistic Group
@@ -41,11 +37,7 @@
                         <label class="req" for="ID">Regression Region:</label>
                         <i *ngIf="loggedInRole == 'Administrator'" (click)="showAddRegRegion()" title="Add Regression Region" class="ion-plus-circled"></i>
                     </span>
-                    <ng-select 
-                    formControlName="ID"
-                    [selectOnTab]="true"
-                    [closeOnSelect]="true"
-                    [clearable]="false">
+                    <ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                     <ng-option *ngFor="let rr of regressionRegions" [value]="rr.id">{{rr.name}}</ng-option>
                     </ng-select>
                 </div>
@@ -54,11 +46,7 @@
                     <!-- Regression Type/Statistic-->
                     <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
                         <label class="req" for="ID">Regression Variable:</label>
-                        <ng-select 
-                        formControlName="ID"
-                        [selectOnTab]="true"
-                        [closeOnSelect]="true"
-                        [clearable]="false">
+                        <ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                         <ng-option *ngFor="let rt of regressionTypes" [value]="rt.id">{{rt.name}}</ng-option>
                         </ng-select>
                         <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty">Regression Type
@@ -88,11 +76,7 @@
                             <!-- Parameter ID-->
                             <div class="form-group required">
                                 <label class="req" for="code">Parameter:</label>
-                                <ng-select 
-                                formControlName="code"
-                                [selectOnTab]="true"
-                                [closeOnSelect]="true"
-                                [clearable]="false">
+                                <ng-select formControlName="code" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                                 <ng-option *ngFor="let v of variables" [value]="v.code">{{v.name}} ({{v.code}})</ng-option>
                                 </ng-select>
                             </div>
@@ -113,11 +97,7 @@
                             <!-- Parameter Unit Type-->
                             <div class="form-group required">
                                     <label class="req" for="unitType">Parameter Unit:</label>
-                                    <ng-select 
-                                    formControlName="unitType"
-                                    [selectOnTab]="true"
-                                    [closeOnSelect]="true"
-                                    [clearable]="false">
+                                    <ng-select formControlName="unitType" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                                     <ng-option *ngFor="let u of unitTypes" [value]="u">{{u.name}} ({{u.abbr}})</ng-option>
                                     </ng-select>
                                 </div>
@@ -205,12 +185,7 @@
                                 <!--Error ID-->
                                 <div class="form-group required">
                                     <label class="req" for="id">Error:</label>
-                                    <ng-select 
-                                    formControlName="id"
-                                    [selectOnTab]="true"
-                                    [closeOnSelect]="true"
-                                    [(ngModel)]="errors"
-                                    [clearable]="false">
+                                    <ng-select formControlName="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                                     <ng-option *ngFor="let e of errors" [value]="e.id">{{e.name}}</ng-option>
                                     </ng-select>
                                 </div>
@@ -253,11 +228,7 @@
                     <!-- Units-->
                     <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty}">
                         <label class="req" for="unit">Unit Type:</label>
-                        <ng-select 
-                        formControlName="unit"
-                        [selectOnTab]="true"
-                        [closeOnSelect]="true"
-                        [clearable]="false">
+                        <ng-select formControlName="unit" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                         <ng-option *ngFor="let ut of unitTypes" [value]="ut">{{ut.name}} ({{ut.abbr}})</ng-option>
                         </ng-select>
                         <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty">Unit Type

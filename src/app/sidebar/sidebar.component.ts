@@ -19,7 +19,8 @@ import { LoaderService } from 'app/shared/services/loader.service'
 export class SidebarComponent implements OnInit {
     public doShow: boolean;
     public showChart: boolean; // show the Chart: Sidebar option
-    public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; // Hydrograph, Frequency Plot
+    //public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; // Hydrograph, Frequency Plot
+    public plotTypes: Array<string> = ['Frequency Plot']; 
     public selectedPlot: string; // which chart type they selected
     // regions
     // public get selectedRegion():Region {return this._nssService.selectedRegion;};

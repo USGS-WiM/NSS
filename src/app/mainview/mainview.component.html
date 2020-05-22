@@ -746,7 +746,8 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <span *ngIf="!c.isEditing">{{ c.citationURL }}</span>
+                                        <a *ngIf="!c.isEditing" [href]="c.citationURL" [target]="_blank">
+                                            <div>{{c.citationURL}}</div></a>
                                         <span *ngIf="c.isEditing">
                                             <input type="text" name="citationURL" [(ngModel)]="c.citationURL">
                                         </span>

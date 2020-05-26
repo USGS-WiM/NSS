@@ -304,6 +304,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this.requeryFilters();
         }
       }, error => {
+        this._loaderService.hideFullPageLoad();
         if (this._settingsService.outputWimMessages(error)) { return; }
         this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText);
       }
@@ -372,6 +373,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._loaderService.showFullPageLoad();
     this.input = document.getElementById('fileinput');
     if (!this.input.files[0]) {
+      this._loaderService.hideFullPageLoad();
       alert("Please select a file.");
     } else {
       this.loadingPolygon = true;
@@ -416,6 +418,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
                   this.requeryFilters();
                   this.cancelCreateRegression();
                 }, error => {
+                  this._loaderService.hideFullPageLoad();
                   if (this._settingsService.outputWimMessages(error)) { return; }
                   this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
                 });
@@ -426,6 +429,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
                 this.cancelCreateRegression();
             }
         }, error => {
+            this._loaderService.hideFullPageLoad();
             if (this._settingsService.outputWimMessages(error)) {return; }
             this._toasterService.pop('error', 'Error editing Regression Region', error._body.message || error.statusText); }
         );  

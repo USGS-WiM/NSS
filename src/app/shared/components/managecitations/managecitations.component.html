@@ -6,21 +6,38 @@
         </div>
     </div>
     <div class="modal-body">
-        <h2 style="margin:0;padding:0">Citations</h2>
-        <div *ngFor="let sc of scenarios">
-            <div *ngIf="sc.citations">
-                <label *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</label>
-                <div *ngFor="let l of sc.citations">
-                    <a *ngIf="l" [href]="l.citationURL" [target]="_blank">
-                        <div>{{l.author}}</div>
+    <input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-xs-5">Citation</th>
+                <th class="col-xs-5">Associated Regression Regions</th>
+                <th class="col-xs-1"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let l of filteredData">
+                <td>
+                    <a [href]="l.citationURL" [target]="_blank">
+                        <div class="half-space">{{l.author}}</div>
                         <div>{{l.title}}</div>
                     </a>
-                    <br />
-                </div>
-            </div> 
-        </div>
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Close</button>
-        </div>
+                </td>
+                <td>
+                    <span *ngFor="let e of l.regressionRegions; let eIndex = index">
+                        <div>{{e.name}}</div>
+                    </span>
+                </td>
+                <td>
+                    <div>
+                        <i title="Delete Citation" (click)="!l.regressionRegions?.length>0 && deleteCitation(l.id)" class="fa fa-times" [class.disabled-icon]="l.regressionRegions?.length>0" aria-hidden="true" style="cursor:pointer"></i>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" (click)="d('closed')" class="btn-black">Close</button>
     </div>
 </ng-template>

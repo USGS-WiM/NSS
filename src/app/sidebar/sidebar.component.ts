@@ -19,7 +19,8 @@ import { LoaderService } from 'app/shared/services/loader.service'
 export class SidebarComponent implements OnInit {
     public doShow: boolean;
     public showChart: boolean; // show the Chart: Sidebar option
-    public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; // Hydrograph, Frequency Plot
+    //public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; // Hydrograph, Frequency Plot
+    public plotTypes: Array<string> = ['Frequency Plot']; 
     public selectedPlot: string; // which chart type they selected
     // regions
     // public get selectedRegion():Region {return this._nssService.selectedRegion;};
@@ -27,6 +28,7 @@ export class SidebarComponent implements OnInit {
     public regions: Array<Region>;
     public loggedInRole;
     public region;
+    public showCompute;
 
     // regression regions
     public selectedRegRegionIDs: Array<number>; // multiselect populates this with those selected
@@ -58,6 +60,7 @@ export class SidebarComponent implements OnInit {
     constructor(private _nssService: NSSService, private _authService: AuthService, private _toasterService: ToasterService, private _loaderService: LoaderService) {}
 
     ngOnInit() {
+        this._nssService.currentCompute.subscribe(bool => this.showCompute = bool);
         this.loggedInRole = localStorage.getItem('loggedInRole');
         this._authService.loggedInRole().subscribe(role => {
             if (role === 'Administrator' || role === 'Manager') {
@@ -275,6 +278,7 @@ export class SidebarComponent implements OnInit {
                 body: 'All values are required'
             };
             this._nssService.showToast(toast);
+            this._loaderService.hideFullPageLoad();
         } /*else if (numOfRegRegions > 1 && (totalWeight < 100 || isNaN(totalWeight))) {
             const weightToast: Toast = {
                 type: 'warning',

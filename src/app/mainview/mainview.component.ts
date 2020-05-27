@@ -310,7 +310,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                 let pageScrollInstance: PageScrollInstance = PageScrollInstance.simpleInstance(this._document, '#chart');
                 this._pageScrollService.start(pageScrollInstance);
             }
-            if (c == 'Hydrograph') {
+            /* if (c == 'Hydrograph') {
                 let H_areaAveraged: boolean = false;
                 this.selectedPlot = 'Hydrograph';
                 let hydroG: Hydrochart;
@@ -448,8 +448,8 @@ export class MainviewComponent implements OnInit, OnDestroy {
                     }
                 };
                 this.hydroChartsArray.push(this.hChartOptions);
-                this.hydrographs.push(hydroG);
-            } else if (c == 'Frequency Plot') {
+                this.hydrographs.push(hydroG); */
+            if (c == 'Frequency Plot') {
                 if (this.fChartValues == undefined) {
                     let F_areaAveraged: boolean = false;
                     this.fChartOptions = {};
@@ -921,7 +921,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
         });
     }
     // changed values, refresh the hydrograph with new data HYDRO
-    public refreshHydrograph(i, formValues) {
+    /* public refreshHydrograph(i, formValues) {
         // top title (updated with which recurrence interval they choose)
         this.hydroChartsArray[i].title.text = 'Hydrograph (Recurrence Interval: ' + this.hydrographs[i].recurrence + ')';
 
@@ -947,7 +947,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
             })
         ); // update data
         this.hydrographs[i].showExtraSettings = false; // just close the extra settings part
-    }
+    } */
     // show/hide additional user settings options for the chart (axis, title, etc) HYDRO
     public showHideAdditionalChartSettings(i) {
         this.hydrographs[i].showExtraSettings = !this.hydrographs[i].showExtraSettings;
@@ -1207,11 +1207,13 @@ export class MainviewComponent implements OnInit, OnDestroy {
 
     /////////////////////// Edit Scenarios Section ///////////////////////////
     public editRegScenario() {
+        this._nssService.showCompute(false);
         this.editRegionScenario = true;
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']); // render equations into Mathjax
     }
 
     public cancelEditRegionScenario() {
+        this._nssService.showCompute(true);
         this.editRegionScenario = false;
         if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
     }

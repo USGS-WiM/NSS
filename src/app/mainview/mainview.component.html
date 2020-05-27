@@ -118,7 +118,7 @@
                 <div *ngIf="sc.citations">
                     <label *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</label>
                     <div *ngFor="let l of sc.citations">
-                        <a *ngIf="l" [href]="l.citationURL" [target]="_blank">
+                        <a *ngIf="l && l != null" [href]="l.citationURL" [target]="_blank">
                             <div>{{l.author}}</div>
                             <div>{{l.title}}</div>
                         </a>
@@ -222,7 +222,7 @@
         <h2 id="citations" style="margin:0;padding:0">Citations</h2>
         <div *ngFor="let sc of scenarios">
             <div *ngFor="let c of sc.citations"><!--" | unique">-->
-            <a [href]="c.citationURL" [target]="_blank">
+            <a *ngIf="c && c != null" [href]="c.citationURL" [target]="_blank">
                 <div>{{c.author}}</div>
                 <div>{{c.title}}</div>
             </a>
@@ -746,7 +746,8 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <span *ngIf="!c.isEditing">{{ c.citationURL }}</span>
+                                        <a *ngIf="!c.isEditing" [href]="c.citationURL" [target]="_blank">
+                                            <div>{{c.citationURL}}</div></a>
                                         <span *ngIf="c.isEditing">
                                             <input type="text" name="citationURL" [(ngModel)]="c.citationURL">
                                         </span>
@@ -958,13 +959,13 @@
             <input type="number" name="lower" [(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.intervalBounds.lower" required>
 
             <!--Interval Bound Upper-->
-            <label class="req">Lower Interval Bound:</label>
+            <label class="req">Upper Interval Bound:</label>
             <input type="number" name="upper" [(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.intervalBounds.upper" required>
         </div>
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
             <!--<button type="button" (click)="!changeStatGroup ? submitScenario() : putLowFlow()" class="btn-blue">Create</button>-->
-            <button type="button" (click)="submitScenario()" class="btn-blue">Submit</button>
+            <button type="button" (click)="submitScenario()" class="btn-blue">Save</button>
         </div>
     </div>
 </ng-template>

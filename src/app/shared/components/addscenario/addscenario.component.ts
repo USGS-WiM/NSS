@@ -203,7 +203,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
         this.newScenForm.get('region').valueChanges.subscribe(item => {
              if(item != null){
-                this.selectedRegion=item;
+                this.selectedRegion = item;
                 this.getRegRegions();
              }
         }) 
@@ -216,11 +216,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             this.cloneParameters.r.equivalentYears=0;
         }
         this.newScenForm.patchValue({
-            statisticGroupID: this.cloneParameters.statisticGroupID.toString(),
+            statisticGroupID: this.cloneParameters.statisticGroupID,
             regressionRegions: {
-                ID: this.cloneParameters.rr.id.toString(),
+                ID: this.cloneParameters.rr.id,
                 regressions: {
-                    ID: this.cloneParameters.r.id.toString(),
+                    ID: this.cloneParameters.r.id,
                     equation: this.cloneParameters.r.equation.toString(),
                     equivalentYears: this.cloneParameters.r.equivalentYears.toString(),
                 } 

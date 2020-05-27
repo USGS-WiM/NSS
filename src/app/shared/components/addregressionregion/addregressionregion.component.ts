@@ -306,7 +306,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       }, error => {
         this._loaderService.hideFullPageLoad();
         if (this._settingsService.outputWimMessages(error)) { return; }
-        this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText);
+        this._toasterService.pop('error', 'Error creating Regression Region', error.message || error._body.message || error.statusText);
       }
     );
   }
@@ -325,8 +325,9 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         this.cancelCreateRegression();
         this.requeryFilters();
       }, error => {
+          this._loaderService.hideFullPageLoad();
         if (this._settingsService.outputWimMessages(error)) { return; }
-        this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
+        this._toasterService.pop('error', 'Error creating Citation', error.message || error._body.message || error.statusText);
       }
       );
   }
@@ -419,7 +420,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
                 }, error => {
                   this._loaderService.hideFullPageLoad();
                   if (this._settingsService.outputWimMessages(error)) { return; }
-                  this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
+                  this._toasterService.pop('error', 'Error creating Citation', error.message || error._body.message || error.statusText);
                 });
             } else if (this.addCitation) { // New citation
                 this.createNewCitation(this.selectedRegRegion);
@@ -430,7 +431,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         }, error => {
             this._loaderService.hideFullPageLoad();
             if (this._settingsService.outputWimMessages(error)) {return; }
-            this._toasterService.pop('error', 'Error editing Regression Region', error._body.message || error.statusText); }
+            this._toasterService.pop('error', 'Error editing Regression Region', error.message || error._body.message || error.statusText); }
         );  
   }
 }

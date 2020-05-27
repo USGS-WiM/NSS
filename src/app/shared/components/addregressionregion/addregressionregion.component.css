@@ -18,3 +18,12 @@
 .hidden {
     display: none;
 }
+
+button {
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+.newCitForm {
+    margin-bottom: 0px;
+}

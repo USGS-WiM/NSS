@@ -1564,16 +1564,6 @@ export class MainviewComponent implements OnInit {
     }
     /////////////////////// Finish Add/Edit/Delete Scenarios Section ///////////////////////////
 
-    //show add regression region modal
-    public showNewRegressionRegionForm(rr?) {
-        // // shows form for creating new regression and/or citation
-        const addRegRegForm: AddRegressionRegion = {
-            show: true,
-            regRegionID: rr
-        }
-        this._nssService.setAddRegressionRegionModal(addRegRegForm);
-    }
-
     public createNewCitation(rr) {
         // add new citation
         this.saveFilters();

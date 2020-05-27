@@ -1578,7 +1578,6 @@ export class MainviewComponent implements OnInit {
                 } else {
                     this._settingsService.outputWimMessages(res); 
                 }
-                //this.cancelCreateRegression();
                 this.requeryFilters();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) {return; }

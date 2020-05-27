@@ -79,7 +79,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       name: new FormControl(null, Validators.required),
       description: new FormControl(null),
       code: new FormControl(null, Validators.required),
-      state: new FormControl(null, Validators.required),
+      region: new FormControl(null, Validators.required),
       location: new FormControl(null),
       citationID: new FormControl(null)
     });
@@ -254,7 +254,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.uploadPolygon = false;
     }
     if (this.selectedRegion) { //set region in new regression region modal
-      this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); 
+      this.newRegRegForm.controls['region'].setValue(this.selectedRegion.id); 
     }
     this.showNewRegRegForm = true;
     this.modalRef = this._modalService.open(this.addRegressionRegionModal, { backdrop: 'static', keyboard: false, size: 'lg' });
@@ -285,7 +285,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   private createNewRegression() {
     this._loaderService.showFullPageLoad();
-    const regionID = this.newRegRegForm.value.state;
+    const regionID = this.newRegRegForm.value.region;
     this.saveFilters();
     if (!this.uploadPolygon) {
         this.newRegRegForm.get('location').setValue(null);
@@ -323,7 +323,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this._toasterService.pop('info', 'Info', 'Citation was added');
         } else { this._settingsService.outputWimMessages(response); }
         this.cancelCreateRegression();
-        this._nssService.setSelectedRegion(this.selectedRegion);
+        this.requeryFilters();
       }, error => {
         if (this._settingsService.outputWimMessages(error)) { return; }
         this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
@@ -394,7 +394,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }, 100);
   }
 
-  // ADD COMMENTS
   private editRegressionRegion() {
     this._loaderService.showFullPageLoad();
     this.saveFilters();

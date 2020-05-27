@@ -35,18 +35,15 @@
                       Code must start with "GC"</div>
           </div>
           <!-- Region* -->
-          <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('state').valid && newRegRegForm.get('state').dirty }">
-              <label class="req" for="state">Region:</label>
-              <select class="form-control" formControlName="state">
+          <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty }">
+              <label class="req" for="region">Region:</label>
+              <select class="form-control" formControlName="region">
                   <option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</option>
               </select>
-              <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('state').valid && newRegRegForm.get('state').dirty">
+              <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty">
                   Region is required
               </div>
           </div>
-          
-          <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="showMap()">Upload Polygon</button>
-          <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true" style="margin-left: 5px;">Add Citation</button>
       </form>
       
       <form *ngIf="addCitation" [formGroup]="newCitForm">
@@ -76,6 +73,9 @@
           <button *ngIf="addCitation" type="button" class="btn-blue" (click)="newRegRegForm.get('citationID').setValue(null); addCitation = false; newCitForm.reset();">Remove Citation</button>
       </form>
       
+    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true" >Add Citation</button>
+    <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="showMap()" style="margin-left: 5px;">Upload Polygon</button>        
+
       <form *ngIf="uploadPolygon">
         <form #f="ngForm" class="ui form">
             <div class="form-group">

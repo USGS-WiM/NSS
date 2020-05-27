@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild, TemplateRef } from '@angular/core';
 import { DOCUMENT } from "@angular/common";
 
 import { Region } from '../shared/interfaces/region';
@@ -1606,8 +1606,5 @@ export class MainviewComponent implements OnInit {
             return `with: ${reason}`;
         }
     }
-    
-    ngOnDestroy() {
-        this.navigationSubscription.unsubscribe();
-    }
+
 } // end component

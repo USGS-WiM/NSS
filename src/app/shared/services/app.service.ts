@@ -101,10 +101,8 @@ export class NSSService {
         return this._showHideManageCitationsModal.asObservable();
     }
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
-    private addregressionregion: AddRegressionRegion;
     private _showHideAddRegressioRegionModal: Subject<AddRegressionRegion> = new Subject<AddRegressionRegion>();
     public setAddRegressionRegionModal(val: AddRegressionRegion) {
-        this.addregressionregion = val;
         this._showHideAddRegressioRegionModal.next(val);
     }
     // show the add regression region modal in the mainview

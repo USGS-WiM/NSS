@@ -656,7 +656,7 @@
                     <label class="sgLabel">{{s.statisticGroupName}}</label>
                     <!--add option to switch statistic groups as well-->
                     <div *ngFor="let rr of s.regressionRegions; let rrIndex = index;">
-                        <i *ngIf="!rr.isEditing" title="Edit Regression Region" (click)="editRowClicked(rr, rrIndex, sgIndex)" class="fa fa-pencil"
+                        <i *ngIf="!rr.isEditing" title="Edit Regression Region" (click)="editRegRegion(rr.id)" class="fa fa-pencil"
                             aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
                         <i *ngIf="!rr.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(rr.id)" class="fa fa-times"
                             aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
@@ -697,7 +697,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <i title="Add Citation" (click)="showNewRegressionRegionForm(rr.id)" class="ion-plus-circled pull-left"
+                                            <i title="Add Citation" (click)="editRegRegion(rr.id)" class="ion-plus-circled pull-left"
                                                     aria-hidden="true" style="cursor:pointer;padding:10px 0px;"></i>
                                         </td>
                                     </tr>
@@ -719,15 +719,9 @@
                                 <tr *ngFor="let c of citations | citationfilter:rr.citationID; let cIndex = index;">
                                     <td>
                                         <div class="data-controls">
-                                            <i *ngIf="!c.isEditing" title="Edit Citation" (click)="editRowClicked(c, rrIndex, sgIndex, cIndex)" class="fa fa-pencil"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
+                                            <i *ngIf="!c.isEditing" title="Edit Citation" (click)="editRegRegion(rr.id)" class="fa fa-pencil"
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp; 
                                             <i *ngIf="!c.isEditing" title="Remove Citation" (click)="removeCitation(rr)" class="fa fa-minus-circle"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                                            <!-- <i *ngIf="!c.isEditing" title="Delete Citation" (click)="deleteCitation(c.id)" class="fa fa-times"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i> -->
-                                            <i *ngIf="c.isEditing" title="Save Citation" (click)="saveCitation(c)" class="fa fa-floppy-o"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                                            <i *ngIf="c.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="fa fa-history"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                                         </div>
                                     </td>
@@ -745,8 +739,7 @@
                                     </td>
                                     <td>
                                         <a *ngIf="!c.isEditing" [href]="c.citationURL" [target]="_blank">
-                                            <div>{{c.citationURL}}</div>
-                                        </a>
+                                            <div>{{c.citationURL}}</div></a>
                                         <span *ngIf="c.isEditing">
                                             <input type="text" name="citationURL" [(ngModel)]="c.citationURL">
                                         </span>
@@ -755,7 +748,7 @@
                             </tbody>
                         </table>
                         <div *ngIf="!rr.citationID">
-                            <p><i title="Add Citation" (click)="showNewRegressionRegionForm(rr)" class="ion-plus-circled pull-left"
+                            <p><i title="Add Citation" (click)="editRegRegion(rr.id)" class="ion-plus-circled pull-left"
                                 aria-hidden="true" style="cursor:pointer;padding:0px 10px;"></i>No citation available</p>
                         </div>
                         
@@ -834,7 +827,7 @@
                                 <tr *ngFor="let r of rr.regressions; let rIndex = index;">
                                     <td>
                                         <div class="data-controls">
-                                            <i *ngIf="!r.isEditing" title="Edit Regression" (click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="fa fa-pencil"
+                                            <i *ngIf="!r.isEditing && loggedInRole == 'Administrator'" title="Edit Regression" (click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="fa fa-pencil"
                                                 aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
                                             <i *ngIf="!r.isEditing" title="Clone Scenario" (click)="cloneRowClicked(s.statisticGroupID, r, rr)" class="fa fa-clone"
                                                 aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
@@ -843,7 +836,7 @@
                                             <i *ngIf="r.isEditing" title="Save Regression" (click)="saveRegression(r, rIndex, rrIndex, sgIndex)" class="fa fa-floppy-o"
                                                 aria-hidden="true" style="cursor:pointer;padding-right:5px;"></i>
                                             <i *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="fa fa-history"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i> 
+                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                                             <!--<i *ngIf="s.statisticGroupID === 2" title="Move to Low Flow Statistics" (click)="moveToLowFlow(r, rIndex, rrIndex, sgIndex)"
                                                 class="fa fa-exchange" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>--><!--removing for now, not working in DB-->
                                         </div>
@@ -964,92 +957,11 @@
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
             <!--<button type="button" (click)="!changeStatGroup ? submitScenario() : putLowFlow()" class="btn-blue">Create</button>-->
-            <button type="button" (click)="submitScenario()" class="btn-blue">Submit</button>
+            <button type="button" (click)="submitScenario()" class="btn-blue">Create</button>
         </div>
     </div>
 </ng-template>
 
 <!--Add regression region modal-->
-<ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left" *ngIf="addRegReg">New Regression Region </h4>
-            <h4 class="modal-title pull-left" *ngIf="!addRegReg">New Citation </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
-    </div>
-    <div class="modal-body">
-        <h3 class="modal-title" *ngIf="addRegReg">New Regression Region</h3>
-        <h3 class="modal-title" *ngIf="!addRegReg">New Citation</h3>
-        <form *ngIf="addRegReg" [formGroup]="newRegRegForm" styel="margin-bottom: 10px;">
-            <!-- Regression Type Name* -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('name').valid && newRegRegForm.get('name').dirty}">
-                <label class="req" for="name">Name:</label>
-                <input class="form-control" type="text" formControlName="name" required>
-                <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('name').valid && newRegRegForm.get('name').dirty">Regression
-                    Name is required</div>
-            </div>
-
-            <!-- Description -->
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
-            </div>
-
-            <!-- Short Name -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty || (newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC'))}">
-                <label class="req" for="code">Code (e.g. GC1234):</label>
-                <input class="form-control" type="text" formControlName="code">
-                <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty && newRegRegForm.get('code').value == ''">Code
-                    is required</div>
-                <div class="input-invalid-warning" *ngIf="newRegRegForm.get('code').value != '' && newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC')">
-                        Code must start with "GC"</div>
-            </div>
-            <!-- Region* -->
-            <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('state').valid && newRegRegForm.get('state').dirty }">
-                <label class="req" for="state">Region:</label>
-                <select class="form-control" formControlName="state">
-                    <option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</option>
-                </select>
-                <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('state').valid && newRegRegForm.get('state').dirty">
-                    Region is required
-                </div>
-            </div>
-            <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true">Add Citation</button>
-        </form>
-        <form *ngIf="addCitation" [formGroup]="newCitForm">
-            <label>Citation</label>
-            <!-- Title -->
-            <div class="form-group required">
-                <label for="title">Title:</label>
-                <textarea class="form-control" rows="3" placeholder="" formControlName="title"></textarea>
-                <div class="input-invalid-warning" *ngIf="!newCitForm.get('title').valid && newCitForm.get('title').dirty">Author
-                        is required</div>
-            </div>
-            <!-- Author* -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('author').valid && newCitForm.get('author').dirty}">
-                <label class="req" for="author">Author:</label>
-                <input class="form-control" type="text" formControlName="author" required>
-                <div class="input-invalid-warning" *ngIf="!newCitForm.get('author').valid && newCitForm.get('author').dirty">Author
-                    is required</div>
-            </div>
-
-            <!-- Short Name -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty}">
-                <label class="req" for="citationURL">Citation URL:</label>
-                <input class="form-control" type="text" formControlName="citationURL">
-                <div class="input-invalid-warning" *ngIf="!newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty">URL
-                    is required</div>
-            </div>
-            <button *ngIf="addCitation" type="button" class="btn-blue" (click)="addCitation = false; newCitForm.reset();">Remove Citation</button>
-        </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="btn-blue">Create</button>
-            <button *ngIf="!addRegReg" type="button" (click)="createNewCitation(selectedRegRegion)" [disabled]="!newCitForm.valid" class="btn-blue">Create</button>
-        </div>
-    </div>
-</ng-template>
 
 <router-outlet></router-outlet>

@@ -951,13 +951,13 @@
             <input type="number" name="lower" [(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.intervalBounds.lower" required>
 
             <!--Interval Bound Upper-->
-            <label class="req">Lower Interval Bound:</label>
+            <label class="req">Upper Interval Bound:</label>
             <input type="number" name="upper" [(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.intervalBounds.upper" required>
         </div>
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
             <!--<button type="button" (click)="!changeStatGroup ? submitScenario() : putLowFlow()" class="btn-blue">Create</button>-->
-            <button type="button" (click)="submitScenario()" class="btn-blue">Create</button>
+            <button type="button" (click)="submitScenario()" class="btn-blue">Save</button>
         </div>
     </div>
 </ng-template>

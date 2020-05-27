@@ -217,7 +217,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     if (rr) { // edit existing regression region
       this._loaderService.showFullPageLoad();
       this.addRegReg = false;
-      this._settingsService.getEntities(this.configSettings.regRegionURL + '/' + rr + '?getpolygon=true')
+      this._settingsService.getEntities(this.configSettings.regRegionURL + '/' + rr + '?includeGeometry=true')
         .subscribe((res) => {
           this.selectedRegRegion = res;
           // set values in add regression region modal

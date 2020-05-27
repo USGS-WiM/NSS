@@ -68,6 +68,9 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.getRegRegions(); // get list of regression regions for the region
         });
         this.modalElement = this.manageCitationsModal;
+
+        // Subscribe to server with '?bycitation=true'
+        // Copy settingservice getEntities on regions.component.ts file
     }
 
     public filter(input:string) {

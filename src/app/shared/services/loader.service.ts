@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { fromEventPattern } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,4 +17,5 @@ export class LoaderService {
     public hideFullPageLoad() {
         this._loaderSubject.next(false);
     }
+
 }

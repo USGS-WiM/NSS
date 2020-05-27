@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import "~leaflet/dist/leaflet.css";
+
 *{
   font-size: 98% !important;
 }
@@ -246,6 +248,10 @@ input {
     margin-bottom: 20px !important;
 }
 
+/* Fixed New Regression Region Polygon Map formatting */
+#map section {
+  margin: 0 !important;
+}
 select {
   appearance: menulist;
   -webkit-appearance: menulist;

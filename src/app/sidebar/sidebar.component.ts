@@ -9,7 +9,8 @@ import { IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/a
 import { Toast } from 'angular2-toaster/src/toast';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
-import { LoaderService } from 'app/shared/services/loader.service'
+import { AddRegressionRegion } from '../shared/interfaces/addregressionregion';
+import { LoaderService } from 'app/shared/services/loader.service';
 
 @Component({
     selector: 'wim-sidebar',
@@ -81,7 +82,7 @@ export class SidebarComponent implements OnInit {
             this._loaderService.hideFullPageLoad();
         });
         this._nssService.selectedRegion.subscribe((r: Region) => {
-            if (r.id) {this.selectedRegion = this.regions.find(reg => reg.id == r.id);}
+            if (r && r.id && this.regions) {this.selectedRegion = this.regions.find(reg => reg.id == r.id);}
             // this.clearSelections();
         });
         // subscribe to selected regression regions
@@ -325,7 +326,11 @@ export class SidebarComponent implements OnInit {
     }
 
     public showAddRegRegion() {
-        this._nssService.setAddRegressionRegionModal(true);
+        const addRegRegForm: AddRegressionRegion = {
+            show: true,
+            regRegionID: null
+        }
+        this._nssService.setAddRegressionRegionModal(addRegRegForm);
     }
 
     // number only allowed in Value

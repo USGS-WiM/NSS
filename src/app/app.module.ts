@@ -46,6 +46,7 @@ import { ProfileComponent } from './shared/components/profile/profile.component'
 import { AddScenarioModal } from './shared/components/addscenario/addscenario.component';
 import { ManageCitationsModal } from './shared/components/managecitations/managecitations.component';
 import { ToasterService} from 'angular2-toaster';
+import { AddRegressionRegionModal } from './shared/components/addregressionregion/addregressionregion.component';
 
 declare const require: any;
 
@@ -87,7 +88,7 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, LoaderComponent
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, LoaderComponent
   ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

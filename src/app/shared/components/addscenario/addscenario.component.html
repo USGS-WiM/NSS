@@ -97,7 +97,7 @@
                             <!-- Parameter Unit Type-->
                             <div class="form-group required">
                                     <label class="req" for="unitType">Parameter Unit:</label>
-                                        <ng-select formControlName="unitType" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                        <ng-select formControlName="unitType"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                                             <ng-option *ngFor="let u of unitTypes" [value]="u">{{u.name}} ({{u.abbr}})</ng-option>
                                         </ng-select>
                                 </div>
@@ -228,7 +228,7 @@
                     <!-- Units-->
                     <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty}">
                         <label class="req" for="unit">Unit Type:</label>
-                            <ng-select formControlName="unit" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                            <ng-select formControlName="unit"  bindLabel="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
                                 <ng-option *ngFor="let ut of unitTypes" [value]="ut">{{ut.name}} ({{ut.abbr}})</ng-option>
                             </ng-select>
                         <div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.unit').valid && newScenForm.get('regressionRegions.regressions.unit').dirty">Unit Type

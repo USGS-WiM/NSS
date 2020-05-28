@@ -15,6 +15,7 @@ import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
+import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
@@ -468,7 +469,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public showAddRegRegion() {
-        this._nssService.setAddRegressionRegionModal(true);
+        const addRegRegForm: AddRegressionRegion = {
+            show: true,
+            regRegionID: null
+        }
+        this._nssService.setAddRegressionRegionModal(addRegRegForm);
     }
 
     private getDismissReason(reason: any): string {

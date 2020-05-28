@@ -21,6 +21,7 @@ import { Unittype } from 'app/shared/interfaces/unitType';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { ToasterService } from 'angular2-toaster';
 import { Predictioninterval } from '../interfaces/predictioninterval';
+import { AddRegressionRegion } from '../interfaces/addregressionregion';
 
 @Injectable()
 export class NSSService {
@@ -100,8 +101,8 @@ export class NSSService {
         return this._showHideManageCitationsModal.asObservable();
     }
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
-    private _showHideAddRegressioRegionModal: Subject<boolean> = new Subject<boolean>();
-    public setAddRegressionRegionModal(val: any) {
+    private _showHideAddRegressioRegionModal: Subject<AddRegressionRegion> = new Subject<AddRegressionRegion>();
+    public setAddRegressionRegionModal(val: AddRegressionRegion) {
         this._showHideAddRegressioRegionModal.next(val);
     }
     // show the add regression region modal in the mainview
@@ -672,5 +673,16 @@ export class NSSService {
             return true;
         }
         return false;
+    }
+    
+    readFileContent(file: File) {
+        let fileReader: FileReader = new FileReader();
+        fileReader.readAsArrayBuffer(file);
+        return Observable.create(observer => {
+          fileReader.onloadend = () => {
+            observer.next(fileReader.result);
+            observer.complete();
+          };
+        });
     }
 }

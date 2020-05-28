@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild, TemplateRef } from '@angular/core';
 import { DOCUMENT } from "@angular/common";
 
 import { Region } from '../shared/interfaces/region';
@@ -25,6 +25,7 @@ import { Config } from 'app/shared/interfaces/config';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Citation } from 'app/shared/interfaces/citation';
+import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 
 
 declare var MathJax: {
@@ -36,7 +37,7 @@ declare var MathJax: {
     templateUrl: './mainview.component.html',
     styleUrls: ['./mainview.component.css']
 })
-export class MainviewComponent implements OnInit, OnDestroy {
+export class MainviewComponent implements OnInit {
     @ViewChildren('inputsTable', { read: ViewContainerRef }) inputTable;
     @ViewChildren('resultsTable', { read: ViewContainerRef }) resultTable;
     @ViewChild('editScenarioForm', {static: true}) editScenarioForm;
@@ -114,6 +115,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
     public CloseResult;
     public regions;
     public addCitation: boolean;
+    public uploadPolygon: boolean;
     public editSGIndex; public editRRindex; public editIdx;
     public config: ToasterConfig = new ToasterConfig({timeout: 0});
     public regressionRegions;
@@ -176,7 +178,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
             if (region) { this.showRegion = true; }
             window.scrollTo(0, 0);
         });
-
         this.loggedInRole = localStorage.getItem('loggedInRole');
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJaxLoad']); // preload mathjax
         // this is based on a behaviorSubject, so it gets an initial notification of [].
@@ -598,9 +599,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         // get all regression types (use for options in edit/add scenario selects)
         this._settingsService.getEntities(this.configSettings.regTypeURL).subscribe(res => {
             this.regTypes = res;
-        });
-        this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((show: boolean) => {
-            if (show) { this.showNewRegressionRegionForm(); }
         });
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
@@ -1190,19 +1188,9 @@ export class MainviewComponent implements OnInit, OnDestroy {
         window.print();
     }
 
-    /////////////////////// Clone Scenarios Section ///////////////////////////
-    public showCloneScenarioModal() {
+    /////////////////////// Add Scenarios Section ///////////////////////////
+    public showAddScenarioModal() {
         this._nssService.setAddScenarioModal(true);
-    }
-
-    newCloneScenario(cloneScen){
-        this._nssService.changeItem(cloneScen);
-    }
-
-    public cloneRowClicked(statisticGroupID, r, rr) {
-        this.cloneScen={r,rr,statisticGroupID};
-        this.newCloneScenario(this.cloneScen);
-        this.showCloneScenarioModal();
     }
 
     /////////////////////// Edit Scenarios Section ///////////////////////////
@@ -1216,6 +1204,14 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this._nssService.showCompute(true);
         this.editRegionScenario = false;
         if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
+    }
+
+    public editRegRegion(id) {
+        const addRegRegForm: AddRegressionRegion = {
+            show: true,
+            regRegionID: id
+        }
+        this._nssService.setAddRegressionRegionModal(addRegRegForm);
     }
 
     public editRowClicked(item, rrIndex, sgIndex, idx?) {
@@ -1281,46 +1277,24 @@ export class MainviewComponent implements OnInit, OnDestroy {
         }
     }
 
-    
+    /////////////////////// Clone Scenarios Section ///////////////////////////
+    newCloneScenario(cloneScen){
+        this._nssService.changeItem(cloneScen);
+    }
+
+    public cloneRowClicked(statisticGroupID, r, rr) {
+        this.cloneScen={r,rr,statisticGroupID};
+        this.newCloneScenario(this.cloneScen);
+        this.showCloneScenarioModal();
+    }
+
+    public showCloneScenarioModal() {
+        this._nssService.setAddScenarioModal(true);
+    }
+
     /////////////////////// Citations Section ///////////////////////////
     public showManageCitationsModal() {
         this._nssService.setManageCitationsModal(true);
-    }
-
-    public getCitations() {
-        this._settingsService.getEntities(this.configSettings.citationURL)
-            .subscribe(res => {
-                this.citations = res;
-            });
-    }
-
-    public saveCitation(c) {
-        // put edited scenario
-        this.saveFilters();
-        this._settingsService.putEntity(c.id, c, this.configSettings.citationURL)
-            .subscribe((response) => {
-                c.isEditing = false;
-                this.requeryFilters();
-                this._nssService.outputWimMessages(response);
-            }, error => {
-                if (this._settingsService.outputWimMessages(error)) {return; }
-                this._toasterService.pop('error', 'Error editing Citation', error._body.message || error.statusText);
-            }
-        );
-    }
-
-    public deleteCitation(id) {
-        const check = confirm('Are you sure you want to delete this citation?');
-        this.saveFilters();
-        if (check) {
-            this._settingsService.deleteEntity(id, this.configSettings.citationURL).subscribe(result => {
-                this.requeryFilters();
-                if (result.headers) { this._nssService.outputWimMessages(result); }
-            }, error => {
-                if (error.headers) {this._nssService.outputWimMessages(error);
-                } else { this._nssService.handleError(error); }
-            });
-        }
     }
 
     // remove citation from regression region (set citationID to null)
@@ -1341,11 +1315,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
                 }
             );
         }
-    }
-    
-    /////////////////////// Add Scenarios Section ///////////////////////////
-    public showAddScenarioModal() {
-        this._nssService.setAddScenarioModal(true);
     }
 
     public saveParameter(p, rrIndex, sgIndex) {
@@ -1427,10 +1396,17 @@ export class MainviewComponent implements OnInit, OnDestroy {
                     this.scenarios.forEach((s => {
                         s.regressionRegions.forEach(rr => {
                             const rrIdx = this.regressionRegions.findIndex(r => r.id === rr.id);
-                            rr.citationID = this.regressionRegions[rrIdx].citationID;
+                            if (rrIdx > -1) rr.citationID = this.regressionRegions[rrIdx].citationID;
                         });
                     }));
                 }
+            });
+    }
+
+    public getCitations() {
+        this._settingsService.getEntities(this.configSettings.citationURL)
+            .subscribe(res => {
+                this.citations = res;
             });
     }
 
@@ -1454,7 +1430,7 @@ export class MainviewComponent implements OnInit, OnDestroy {
                 if (document.querySelector('body > .modal')) {
                     document.body.classList.add('modal-open');
                 }
-               CloseResult = `Closed with: ${result}`;
+            CloseResult = `Closed with: ${result}`;
             },
             reason => {
                 CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -1549,7 +1525,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
         this.changeStatGroup = true;
         this.showInputModal();
     }
-
     putLowFlow() {
         console.log(this.editScen);
         console.log(JSON.stringify(this.editScen));
@@ -1589,63 +1564,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
     }
     /////////////////////// Finish Add/Edit/Delete Scenarios Section ///////////////////////////
 
-    // show add regression region modal
-    public showNewRegressionRegionForm(rr?) {
-        // shows form for creating new regression and/or citation
-        if (rr) { // rr already exists, only want citation
-            this.selectedRegRegion = rr;
-            this.addCitation = true;
-            this.addRegReg = false;
-        } else { // rr doesn't exist
-            this.addRegReg = true;
-            this.addCitation = false;
-        }
-        if (this.selectedRegion) {this.newRegRegForm.controls['state'].setValue(this.selectedRegion.id); }
-        this.showNewRegRegForm = true;
-        this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
-        this.modalRef.result.then(
-            result => {
-                // this is the solution for the first modal losing scrollability
-                if (document.querySelector('body > .modal')) {
-                    document.body.classList.add('modal-open');
-                }
-                if (result) {this.cancelCreateRegression(); }
-            },
-            reason => {if (reason) {this.cancelCreateRegression(); }}
-        );
-    }
-
-    private cancelCreateRegression() {
-        this.showNewRegRegForm = false;
-        this.newRegRegForm.reset();
-        this.newCitForm.reset();
-        this.modalRef.close();
-    }
-
-    private createNewRegression() {
-        this.saveFilters();
-        const regionID = this.newRegRegForm.value.state;
-        this._settingsService
-            .postEntity(this.newRegRegForm.value, this.configSettings.regionURL + regionID + '/' + this.configSettings.regRegionURL)
-            .subscribe((response:any) => {
-                    response.isEditing = false;
-                    if (!response.headers) {
-                        this._toasterService.pop('info', 'Info', 'Regression region was added');
-                    } else {
-                        this._settingsService.outputWimMessages(response); 
-                    }
-                    if (this.addCitation) { // if user elected to add a citation, send that through
-                        this.createNewCitation(response);
-                    } else {
-                        this.cancelCreateRegression();
-                        this.requeryFilters();
-                    }
-                }, error => {
-                    if (this._settingsService.outputWimMessages(error)) {return; }
-                    this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText); }
-            );
-    }
-
     public createNewCitation(rr) {
         // add new citation
         this.saveFilters();
@@ -1660,7 +1578,6 @@ export class MainviewComponent implements OnInit, OnDestroy {
                 } else {
                     this._settingsService.outputWimMessages(res); 
                 }
-                this.cancelCreateRegression();
                 this.requeryFilters();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) {return; }
@@ -1679,7 +1596,4 @@ export class MainviewComponent implements OnInit, OnDestroy {
         }
     }
 
-    ngOnDestroy() {
-        this.modalSubscript.unsubscribe();
-    }
 } // end component

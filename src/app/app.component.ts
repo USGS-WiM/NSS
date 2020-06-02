@@ -11,6 +11,7 @@ import { LoginService } from './shared/services/login.service';
 import { Manager } from './shared/interfaces/manager';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
+import { SettingsService } from './settings/settings.service';
 
 @Component({
     selector: 'app-root',
@@ -29,15 +30,18 @@ export class AppComponent implements OnInit, OnDestroy {
     public LoginForm: FormGroup;
     public modalRef;
     public title;
+    public loginBoolean;
     loading = false;
     returnUrl: string;
     isLoggedIn: boolean;
+    isloginShow: boolean;
     public loginError = false;
     constructor(
         private _nssService: NSSService,
         public router: Router,
         private _authService: AuthService,
         private _loginService: LoginService,
+        public _settingsservice: SettingsService,
         private _fb: FormBuilder,
         private _toasterService: ToasterService,
         private _modalService: NgbModal
@@ -56,6 +60,10 @@ export class AppComponent implements OnInit, OnDestroy {
             if (role === 'Administrator' || role === 'Manager') {
                 this.loggedInRole = role;
             }
+        });
+
+        this._loginService.isloginShow().subscribe(loginShow => {
+            this.isloginShow = loginShow;
         });
 
         this._loginService.isLoggedIn().subscribe(loggedIn => {

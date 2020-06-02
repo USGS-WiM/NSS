@@ -22,6 +22,7 @@ export class LoginService {
     private configSettings: Config;
 
     public _loggedInSubject: BehaviorSubject<boolean> = <BehaviorSubject<boolean>>new BehaviorSubject(false);
+    public _loginShowSubject: BehaviorSubject<boolean>;
 
     constructor(private http: HttpClient, private _authService: AuthService, private _configService: ConfigService) {
         this.configSettings = this._configService.getConfiguration();
@@ -29,6 +30,11 @@ export class LoginService {
 
     public isLoggedIn(): Observable<boolean> {
         return this._loggedInSubject.asObservable();
+    }
+
+    public isloginShow(): Observable<boolean> {
+        this._loginShowSubject = <BehaviorSubject<boolean>>new BehaviorSubject(this.configSettings.loginShow);
+        return this._loginShowSubject.asObservable();
     }
 
     // log in

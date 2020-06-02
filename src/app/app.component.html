@@ -24,7 +24,7 @@
                     <span class="nav-link-text">About</span>
                 </span>
             </a>
-            <a (click)="showLoginModal()" [class.hidden]="isLoggedIn">
+            <a (click)="showLoginModal()" [class.hidden]="isLoggedIn||!isloginShow">
                 <span>
                     <span class="nav-link-text">Manage</span>
                 </span>

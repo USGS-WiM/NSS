@@ -12,5 +12,6 @@
     "statisticGrpURL": "StatisticGroups",
     "unitsURL": "Units",
     "unitSystemsURL": "UnitsSystems",
-    "variablesURL": "Variables"
+    "variablesURL": "Variables",
+    "loginShow": true
 }

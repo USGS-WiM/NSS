@@ -12,12 +12,41 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=AM_HTMLorMML-full"></script>
 <!--  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script> -->
 
-<link rel="stylesheet" href="styles.03ce42bc79bf7b49a453.css"></head>
+<style>
+  body,html{
+      margin: 0;
+      padding: 0;
+  }
+  .initial-loader {
+      position: fixed!important;
+      width:100%;
+      height: 100%;
+      opacity: 1;
+      z-index: 5000;
+      background-color: #101010;
+      background-image:url('https://wim.usgs.gov/website-assets/branding/usgsanimated.svg');
+      display: block !important;
+      background-repeat: no-repeat;
+      background-size: 120px auto;
+      background-position: center 58.5%;
+  }
+  .initial-loader:after{
+      content: 'Loading...';
+      position: fixed;
+      top: 63.75%;
+      font-size: 22px;
+      color: white;
+      width: 100%;
+      text-align: center;
+      z-index: 5001;
+  }
+</style>
+
+<link rel="stylesheet" href="styles.89a2478ae7bb16b9b9c3.css"></head>
 <body>
   <app-root>
-      <div class="loading-wrapper">
-        <div>Loading...</div>
+      <div class="initial-loader">
       </div>
   </app-root>
-<script type="text/javascript" src="runtime.ec2944dd8b20ec099bf3.js"></script><script type="text/javascript" src="polyfills.a7c59a772d13d6f80b6c.js"></script><script type="text/javascript" src="scripts.76dbb051a5fcaec9e270.js"></script><script type="text/javascript" src="main.9bd0f8830d8bd315d327.js"></script></body>
+<script src="runtime-es2015.0490a89c5a5eb593b13c.js" type="module"></script><script src="polyfills-es2015.6d00bb90fb9e7801c57e.js" type="module"></script><script src="runtime-es5.6e22a52c3a6df157596b.js" nomodule defer></script><script src="polyfills-es5.1c3054510cfdcde94261.js" nomodule defer></script><script src="scripts.76dbb051a5fcaec9e270.js" defer></script><script src="main-es2015.69036f08b9f1733789af.js" type="module"></script><script src="main-es5.43092654f528e2151a60.js" nomodule defer></script></body>
 </html>

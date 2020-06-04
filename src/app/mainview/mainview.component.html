@@ -80,7 +80,7 @@
                         <td>{{p.code}}</td>
                         <td>
                             <div class="col-xs-10" style="margin-left:0;padding-left:0;">
-                                <input class="form-control" style="display:inline" [ngClass]="{'reqError':p.missingVal}" type="text"
+                                <input class="form-control" style="display:inline" [ngClass]="{'reqError':p.missingVal}" type="number"
                                         (keypress)="_keyPress($event)" (blur)="compareValue(p)" [(ngModel)]="p.value" name="Value-{{pInd}}" required>
                                 (<span [innerHTML]="setSuperScript(p.unitType.abbr)" style="display:inline;"></span>)
                             </div>

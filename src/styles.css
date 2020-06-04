@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@ng-select/ng-select/themes/default.theme.css";
 
 @import "~leaflet/dist/leaflet.css";
 
@@ -255,4 +256,8 @@ input {
 select {
   appearance: menulist;
   -webkit-appearance: menulist;
+  }
+  
+.ng-input input[type=text] {
+  padding: 0px !important;
   }

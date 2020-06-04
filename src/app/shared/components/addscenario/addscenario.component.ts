@@ -204,7 +204,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
         this.newScenForm.get('region').valueChanges.subscribe(item => {
              if(item != null){
-                this.selectedRegion=item;
+                this.selectedRegion = item;
                 this.getRegRegions();
              }
         }) 
@@ -217,11 +217,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             this.cloneParameters.r.equivalentYears=0;
         }
         this.newScenForm.patchValue({
-            statisticGroupID: this.cloneParameters.statisticGroupID.toString(),
+            statisticGroupID: this.cloneParameters.statisticGroupID,
             regressionRegions: {
-                ID: this.cloneParameters.rr.id.toString(),
+                ID: this.cloneParameters.rr.id,
                 regressions: {
-                    ID: this.cloneParameters.r.id.toString(),
+                    ID: this.cloneParameters.r.id,
                     equation: this.cloneParameters.r.equation.toString(),
                     equivalentYears: this.cloneParameters.r.equivalentYears.toString(),
                 } 
@@ -364,16 +364,16 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         // adding all necessary properties, since ngValue won't work with all the nested properties
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
-        const statGroupIndex = this.statisticGroups.findIndex(item => item.id.toString() === scen['statisticGroupID']);
+        const statGroupIndex = this.statisticGroups.findIndex(item => item.id === scen['statisticGroupID']);
 
-        scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
+        scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         // add regression region name/code
-        const regRegIndex = this.regressionRegions.findIndex(item => item.id.toString() === regRegs.ID);
+        const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);
         regRegs['name'] = this.regressionRegions[regRegIndex].name;
         regRegs['code'] = this.regressionRegions[regRegIndex].code;
         // add regression code/name/description
-        const regIndex = this.regressionTypes.findIndex(item => item.id.toString() === regs.ID);
+        const regIndex = this.regressionTypes.findIndex(item => item.id === regs.ID);
         regs.code = this.regressionTypes[regIndex].code;
         regs.name = this.regressionTypes[regIndex].name;
         regs.description = this.regressionTypes[regIndex].description;
@@ -422,7 +422,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }, error => {
                 if (!this._settingsService.outputWimMessages(error)) {                                       
-                    this._toasterService.pop('error', 'Error creating Scenario', error._body.message || error.statusText);
+                    this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
                 }
             }
         );

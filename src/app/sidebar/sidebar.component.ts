@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { URLSearchParams } from '@angular/http';
 import { NSSService } from '../shared/services/app.service';
 import { Region } from '../shared/interfaces/region';
 import { Scenario } from '../shared/interfaces/scenario';
@@ -10,7 +9,8 @@ import { IMultiSelectSettings, IMultiSelectTexts } from '../../../node_modules/a
 import { Toast } from 'angular2-toaster/src/toast';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
-import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { AddRegressionRegion } from '../shared/interfaces/addregressionregion';
+import { LoaderService } from 'app/shared/services/loader.service';
 
 @Component({
     selector: 'wim-sidebar',
@@ -20,7 +20,8 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 export class SidebarComponent implements OnInit {
     public doShow: boolean;
     public showChart: boolean; // show the Chart: Sidebar option
-    public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; // Hydrograph, Frequency Plot
+    //public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; // Hydrograph, Frequency Plot
+    public plotTypes: Array<string> = ['Frequency Plot']; 
     public selectedPlot: string; // which chart type they selected
     // regions
     // public get selectedRegion():Region {return this._nssService.selectedRegion;};
@@ -28,6 +29,7 @@ export class SidebarComponent implements OnInit {
     public regions: Array<Region>;
     public loggedInRole;
     public region;
+    public showCompute;
 
     // regression regions
     public selectedRegRegionIDs: Array<number>; // multiselect populates this with those selected
@@ -56,9 +58,10 @@ export class SidebarComponent implements OnInit {
     // scenario
     public scenarios: Array<Scenario>;
 
-    constructor(private _nssService: NSSService, private _authService: AuthService, private _toasterService: ToasterService) {}
+    constructor(private _nssService: NSSService, private _authService: AuthService, private _toasterService: ToasterService, private _loaderService: LoaderService) {}
 
     ngOnInit() {
+        this._nssService.currentCompute.subscribe(bool => this.showCompute = bool);
         this.loggedInRole = localStorage.getItem('loggedInRole');
         this._authService.loggedInRole().subscribe(role => {
             if (role === 'Administrator' || role === 'Manager') {
@@ -76,9 +79,10 @@ export class SidebarComponent implements OnInit {
                 this._toasterService.clear();
                 this._toasterService.pop('error', 'You have no assigned regions. Contact your administrator to add new regions.');
             }
+            this._loaderService.hideFullPageLoad();
         });
         this._nssService.selectedRegion.subscribe((r: Region) => {
-            this.selectedRegion = r;
+            if (r && r.id && this.regions) {this.selectedRegion = this.regions.find(reg => reg.id == r.id);}
             // this.clearSelections();
         });
         // subscribe to selected regression regions
@@ -148,6 +152,7 @@ export class SidebarComponent implements OnInit {
                     });
                 } else { this.showChart = false; }
             });
+            this._loaderService.hideFullPageLoad();
         });
         // settings for multiselect.. added max-width and font-size to the library's ts file directly
         this.myRRSettings = {
@@ -197,10 +202,11 @@ export class SidebarComponent implements OnInit {
 
     // select Region. get regressionRegions, regressionTypes, StatisticGroups
     public onRegSelect(r: Region) {
+        this._loaderService.showFullPageLoad();
         this.selectedRegRegionIDs = [];
         this.selectedStatGrpIDs = [];
         this.selectedRegTypeIDs = [];
-        this.region=r;
+        this.region = r;
         this._nssService.setSelectedRegion(r);
     }
 
@@ -248,6 +254,7 @@ export class SidebarComponent implements OnInit {
 
     // submit / Compute button click
     public CalculateScenario(): void {
+        this._loaderService.showFullPageLoad();
         let ValueRequired = false;
         let totalWeight: number = Number(0);
         let numOfRegRegions: number = Number(0); // don't care about weights if only 1 regRegion
@@ -272,6 +279,7 @@ export class SidebarComponent implements OnInit {
                 body: 'All values are required'
             };
             this._nssService.showToast(toast);
+            this._loaderService.hideFullPageLoad();
         } /*else if (numOfRegRegions > 1 && (totalWeight < 100 || isNaN(totalWeight))) {
             const weightToast: Toast = {
                 type: 'warning',
@@ -294,14 +302,14 @@ export class SidebarComponent implements OnInit {
             });
             // now post the scenario to get the results to pass to mainview
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
-            const sParams: URLSearchParams = new URLSearchParams();
-            sParams.set('regressiontypes', regTypesIDstring);
+            const sParams = '?regressiontypes=' + regTypesIDstring;
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
         }
     }
 
     // clear all selected stat groups, reg regions and reg types
     public clearSelections() {
+        this._loaderService.showFullPageLoad();
         this.selectedStatGrpIDs = [];
         this.selectedRegRegionIDs = [];
         this.selectedRegTypeIDs = [];
@@ -318,7 +326,11 @@ export class SidebarComponent implements OnInit {
     }
 
     public showAddRegRegion() {
-        this._nssService.setAddRegressionRegionModal(true);
+        const addRegRegForm: AddRegressionRegion = {
+            show: true,
+            regRegionID: null
+        }
+        this._nssService.setAddRegressionRegionModal(addRegRegForm);
     }
 
     // number only allowed in Value

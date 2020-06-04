@@ -8,13 +8,12 @@
 
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs/Subject';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
-import { Manager } from '../interfaces/manager';
 import { Router } from '@angular/router';
 
 @Injectable()
@@ -22,7 +21,7 @@ export class AuthService {
     public redirectUrl: string; // store the URL so we can redirect after logging in
     public role: string;
 
-    constructor(private _http: Http, public _router: Router) {}
+    constructor(private _http: HttpClient, public _router: Router) {}
 
     // store loggedIn parts (loggedInRole, loggedInName, loggedInUserName, loggedInID)
     private _loggedInRole: Subject<string> = new Subject<string>();

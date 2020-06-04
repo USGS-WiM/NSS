@@ -8,7 +8,10 @@ export interface Regressionregion {
     id: number;
     name: string;
     code: string;
+    description: string;
     citationID?: number;
+    locationID?: number;
+    location?: [];
     isEditing?: boolean;
     parameters?: Array<Parameter>; // for scenario rrs
     extensions?: [];

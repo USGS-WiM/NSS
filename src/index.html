@@ -12,11 +12,40 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=AM_HTMLorMML-full"></script>
 <!--  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script> -->
 
+<style>
+  body,html{
+      margin: 0;
+      padding: 0;
+  }
+  .initial-loader {
+      position: fixed!important;
+      width:100%;
+      height: 100%;
+      opacity: 1;
+      z-index: 5000;
+      background-color: #101010;
+      background-image:url('https://wim.usgs.gov/website-assets/branding/usgsanimated.svg');
+      display: block !important;
+      background-repeat: no-repeat;
+      background-size: 120px auto;
+      background-position: center 58.5%;
+  }
+  .initial-loader:after{
+      content: 'Loading...';
+      position: fixed;
+      top: 63.75%;
+      font-size: 22px;
+      color: white;
+      width: 100%;
+      text-align: center;
+      z-index: 5001;
+  }
+</style>
+
 </head>
 <body>
   <app-root>
-      <div class="loading-wrapper">
-        <div>Loading...</div>
+      <div class="initial-loader">
       </div>
   </app-root>
 </body>

@@ -1,4 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+@import "~leaflet/dist/leaflet.css";
 
 *{
   font-size: 98% !important;
@@ -110,11 +113,12 @@ input[type="radio"]{
 .mobile-nav-toggle:before{
   width: 45px !important;
 }
-.mobile-nav-toggle:focus:before, .mobile-nav-toggle:active:before{
+.mobile-nav-toggle:focus:before{
   content: '\f20e' !important;
-  transform: rotate(0deg) !important;
-  -webkit-transform: rotate(0deg) !important;
-  opacity: 0.6 !important;
+} 
+.mobile-nav-toggle:focus {
+  transform: none !important;
+  -webkit-transform: none !important;
 }
 .identification{
   font-size: 10px !important;
@@ -124,7 +128,13 @@ input[type="radio"]{
   font-weight: bolder;
   opacity: 0.5;
 }
+#wimSidebar {
+  display: block;
+}
 @media (max-width: 800px) {
+  #wimSidebar {
+    display: none;
+  }
   .wim-sidebar{
     display: none;
     position: fixed;
@@ -238,3 +248,16 @@ input {
 .equation {
     margin-bottom: 20px !important;
 }
+
+/* Fixed New Regression Region Polygon Map formatting */
+#map section {
+  margin: 0 !important;
+}
+select {
+  appearance: menulist;
+  -webkit-appearance: menulist;
+  }
+  
+.ng-input input[type=text] {
+  padding: 0px !important;
+  }

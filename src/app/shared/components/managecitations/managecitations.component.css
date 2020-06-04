@@ -11,6 +11,13 @@
     text-align: center;
     display: block;
 }
+.disabled-icon{
+    opacity: 0.5;
+    cursor: not-allowed !important;
+}
 button {
     margin: 0px 5px 5px 0px;
+}
+.half-space{
+    padding-bottom: 10px;
 }

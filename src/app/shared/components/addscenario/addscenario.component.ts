@@ -13,9 +13,12 @@ import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@ang
 import { SettingsService } from 'app/settings/settings.service';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
-import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
+import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
+import { Regressionregion } from 'app/shared/interfaces/regressionregion';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 declare var MathJax: {
     Hub: { Queue, Config }
 };
@@ -26,12 +29,13 @@ declare var MathJax: {
     styleUrls: ['./addscenario.component.css']
 })
 export class AddScenarioModal implements OnInit, OnDestroy {
-    @ViewChild('addScenario') public addScenarioModal; // : ModalDirective;  //modal for validator
+    @ViewChild('addScenario', {static: true}) public addScenarioModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
     public CloseResult: any;
     private modalSubscript;
     public appVersion: string;
     public newScenForm: FormGroup;
+    public regions;
     public regressionRegions;
     public statisticGroups;
     public regressionTypes;
@@ -42,17 +46,29 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public cloneParameters: any;
     public regRegion: any;
     public statisticGroup: any;
-    public clone: boolean;
+    public clone = false;
     public selectedRegion;
+    public originalRegion;
     private configSettings: Config;
     public addPredInt = false;
     public modalRef;
     public loggedInRole;
-
+    public selectedRegressionRegion: Array<Regressionregion>;
+    public tempSelectedRegressionRegion: Array<Regressionregion>;
+    public tempSelectedStatisticGrp: Array<Statisticgroup>;
+    public get selectedStatisticGrp(): Array<Statisticgroup> {
+        return this._nssService.selectedStatGroups;
+    }
+    public tempSelectedRegType: Array<Regressiontype>;
+    public get selectedRegType(): Array<Regressiontype> {
+        return this._nssService.selectedRegressionTypes;
+    }
+    
     constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
         private _authService: AuthService) {
         this.newScenForm = _fb.group({
+            'region': new FormControl(null, Validators.required),
             'statisticGroupID': new FormControl(null, Validators.required),
             'regressionRegions': this._fb.group({
                 'ID': new FormControl(null, Validators.required),
@@ -86,7 +102,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     ngOnInit() {
         this._nssService.currentItem.subscribe(item => this.cloneParameters = item);
-
         // subscriber for logged in role
         this.loggedInRole = localStorage.getItem('loggedInRole');
         this._authService.loggedInRole().subscribe(role => {
@@ -98,12 +113,20 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.modalSubscript = this._nssService.showAddScenarioModal.subscribe((show: boolean) => {
             if (show) { this.showModal(); }
         });
+        this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
+            this.selectedRegressionRegion = regRegions;
+        });
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
+            this.originalRegion = region;
             if (region && region.id) {this.getRegRegions(); }
         });
         this._nssService.getVersion.subscribe((v: string) => {
             this.appVersion = v;
+        });
+        this._settingsService.getEntities(this.configSettings.regionURL).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.regions = res;
         });
         this._settingsService.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
@@ -144,7 +167,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public showModal(): void {
-        if (this.selectedRegion) {this.getRegRegions(); }
+        this.selectedRegion = this.originalRegion;
+        if (this.selectedRegion) {
+            this.getRegRegions(); 
+        }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
             result => {
@@ -159,60 +185,71 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
-
         if (this.cloneParameters != " "){
             this.clearScenario();
+            this.clone = true;
             this.cloneScenario();
-        }  
+            this.newScenForm.addControl('region', this._fb.control('', Validators.required));
+        }else{
+            this.clearScenario();
+            this.clone = false;
+        }
     }
 
     cloneScenario(){  
-        this.unitTypes.forEach( (element,index) => {  
-            if (element.id.toString() == this.cloneParameters.r.unit.id.toString()){
-                this.newScenForm.patchValue({regressionRegions: {regressions:{unit:this.unitTypes[index]}}});
+        this.regions.forEach( (element,index) => {  
+            if (element.id.toString() == this.selectedRegion.id.toString()){
+                this.newScenForm.patchValue({ region: this.regions[index]});
             }
         });
-
+        this.newScenForm.get('region').valueChanges.subscribe(item => {
+             if(item != null){
+                this.selectedRegion = item;
+                this.getRegRegions();
+             }
+        }) 
+        this.unitTypes.forEach( (element,index) => {  
+            if (element.id.toString() == this.cloneParameters.r.unit.id.toString()){
+                this.newScenForm.patchValue({ regressionRegions: { regressions: { unit: this.unitTypes[index]}}});
+            }
+        });
         if(!this.cloneParameters.r.equivalentYears){
             this.cloneParameters.r.equivalentYears=0;
         }
-
         this.newScenForm.patchValue({
-            statisticGroupID: this.cloneParameters.statisticGroupID.toString(),
+            statisticGroupID: this.cloneParameters.statisticGroupID,
             regressionRegions: {
-                ID: this.cloneParameters.rr.id.toString(),
-                regressions:{
-                    ID: this.cloneParameters.r.id.toString(),
+                ID: this.cloneParameters.rr.id,
+                regressions: {
+                    ID: this.cloneParameters.r.id,
                     equation: this.cloneParameters.r.equation.toString(),
                     equivalentYears: this.cloneParameters.r.equivalentYears.toString(),
                 } 
             }
         });
-
         //Prediction Interval
         if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {biasCorrectionFactor: this.cloneParameters.r.predictionInterval.biasCorrectionFactor.toString()}}}});
+            this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { biasCorrectionFactor: this.cloneParameters.r.predictionInterval.biasCorrectionFactor.toString()}}}});
         } 
         if (this.cloneParameters.r.predictionInterval.student_T_Statistic != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {student_T_Statistic: this.cloneParameters.r.predictionInterval.student_T_Statistic.toString()}}}});
+            this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { student_T_Statistic: this.cloneParameters.r.predictionInterval.student_T_Statistic.toString()}}}});
         }
         if (this.cloneParameters.r.predictionInterval.variance != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {variance: this.cloneParameters.r.predictionInterval.variance.toString()}}}});
+            this.newScenForm.patchValue({ regressionRegions: { regressions:{ predictionInterval: { variance: this.cloneParameters.r.predictionInterval.variance.toString()}}}});
         }
         if (this.cloneParameters.r.predictionInterval.xiRowVector != null){
             this.addPredInt = true
-            this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {xiRowVector: this.cloneParameters.r.predictionInterval.xiRowVector.toString()}}}});
+            this.newScenForm.patchValue({ regressionRegions: { regressions : { predictionInterval: { xiRowVector: this.cloneParameters.r.predictionInterval.xiRowVector.toString()}}}});
         }
         if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null){
             if (this.cloneParameters.r.predictionInterval.covarianceMatrix != "null"){
                 this.addPredInt = true
-                this.newScenForm.patchValue({regressionRegions: {regressions:{predictionInterval: {covarianceMatrix: this.cloneParameters.r.predictionInterval.covarianceMatrix.toString()}}}});
+                this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { covarianceMatrix: this.cloneParameters.r.predictionInterval.covarianceMatrix.toString()}}}});
             }
         }
-
         //parameters
         this.cloneParameters.rr.parameters.forEach((element,index) => {
             this.addVariable();
@@ -231,7 +268,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                }
             });
         }); 
-
         this.cloneParameters.r.errors.forEach((element,index) => {
             this.addError();
             const controlArray = <FormArray> this.newScenForm.get('regressionRegions.regressions.errors');       
@@ -302,6 +338,13 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     public clearScenario(){
         this.newScenForm.reset();
+        this.selectedRegion = this.originalRegion;
+        this.regions.forEach( (element,index) => {  
+            if (element.id.toString() == this.selectedRegion.id.toString()){
+                this.newScenForm.patchValue({ region: this.regions[index]});
+            }
+        });
+        this.newScenForm.addControl('region', this._fb.control('', ));
         const errorControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         for(let i = errorControl.length-1; i >= 0; i--) {
             errorControl.removeAt(i);
@@ -314,19 +357,23 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     createNewScenario() {
+        this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
+        this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
+        this.tempSelectedRegType = this.selectedRegType;
+        this.newScenForm.removeControl('region');
         // adding all necessary properties, since ngValue won't work with all the nested properties
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
-        const statGroupIndex = this.statisticGroups.findIndex(item => item.id.toString() === scen['statisticGroupID']);
+        const statGroupIndex = this.statisticGroups.findIndex(item => item.id === scen['statisticGroupID']);
 
-        scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
+        scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         // add regression region name/code
-        const regRegIndex = this.regressionRegions.findIndex(item => item.id.toString() === regRegs.ID);
+        const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);
         regRegs['name'] = this.regressionRegions[regRegIndex].name;
         regRegs['code'] = this.regressionRegions[regRegIndex].code;
         // add regression code/name/description
-        const regIndex = this.regressionTypes.findIndex(item => item.id.toString() === regs.ID);
+        const regIndex = this.regressionTypes.findIndex(item => item.id === regs.ID);
         regs.code = this.regressionTypes[regIndex].code;
         regs.name = this.regressionTypes[regIndex].name;
         regs.description = this.regressionTypes[regIndex].description;
@@ -355,8 +402,17 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
         // post scenario
         this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
-            .subscribe((response) => {
-                this._nssService.setSelectedRegion(this.selectedRegion);
+            .subscribe((response: any) => {
+                if(this.originalRegion==this.selectedRegion){
+                    this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+                    this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
+                    this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
+                }else{
+                    this._nssService.setSelectedRegion(this.selectedRegion);
+                    this._nssService.selectedStatGroups = [];
+                    this._nssService.setSelectedRegRegions([]);
+                    this._nssService.selectedRegressionTypes = [];
+                }
                 // clear form
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was added');
@@ -366,7 +422,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }, error => {
                 if (!this._settingsService.outputWimMessages(error)) {                                       
-                    this._toasterService.pop('error', 'Error creating Scenario', error._body.message || error.statusText);
+                    this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
                 }
             }
         );
@@ -388,6 +444,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         const errors = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         while (errors.length !== 0) {errors.removeAt(0); }
         this.addPredInt = false;
+        this.selectedRegion = this.originalRegion;
         this.newScenForm.reset();
         this.modalRef.close();
     }
@@ -412,7 +469,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public showAddRegRegion() {
-        this._nssService.setAddRegressionRegionModal(true);
+        const addRegRegForm: AddRegressionRegion = {
+            show: true,
+            regRegionID: null
+        }
+        this._nssService.setAddRegressionRegionModal(addRegRegForm);
     }
 
     private getDismissReason(reason: any): string {

@@ -1,5 +1,4 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
-// import { NavbarComponent } from './navbar/navbar.component';
 import { MainviewComponent } from './mainview/mainview.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { PageScrollConfig } from 'ng2-page-scroll';
@@ -12,6 +11,7 @@ import { LoginService } from './shared/services/login.service';
 import { Manager } from './shared/interfaces/manager';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
+import { SettingsService } from './settings/settings.service';
 
 @Component({
     selector: 'app-root',
@@ -21,7 +21,7 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
 export class AppComponent implements OnInit, OnDestroy {
 
     public loggedInRole = '';
-    @ViewChild('login') public loginModal; // : ModalDirective;  //modal for validator
+    @ViewChild('login', {static: true}) public loginModal; // : ModalDirective;  //modal for validator
     private modalElement: any;
     public closeResult: any;
     private modalSubscript;
@@ -30,15 +30,18 @@ export class AppComponent implements OnInit, OnDestroy {
     public LoginForm: FormGroup;
     public modalRef;
     public title;
+    public loginBoolean;
     loading = false;
     returnUrl: string;
     isLoggedIn: boolean;
+    isloginShow: boolean;
     public loginError = false;
     constructor(
         private _nssService: NSSService,
         public router: Router,
         private _authService: AuthService,
         private _loginService: LoginService,
+        public _settingsservice: SettingsService,
         private _fb: FormBuilder,
         private _toasterService: ToasterService,
         private _modalService: NgbModal
@@ -52,10 +55,15 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+
         this._authService.loggedInRole().subscribe(role => {
             if (role === 'Administrator' || role === 'Manager') {
                 this.loggedInRole = role;
             }
+        });
+
+        this._loginService.isloginShow().subscribe(loginShow => {
+            this.isloginShow = loginShow;
         });
 
         this._loginService.isLoggedIn().subscribe(loggedIn => {
@@ -70,7 +78,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
 
         this._nssService.showLoginModal.subscribe(show => {
-            if (show) {this.showLoginModal(); }
+            if (show) { this.showLoginModal(); }
         });
 
         // get return url from route parameters or default to '/'
@@ -78,10 +86,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.modalElement = this.loginModal;
         this.loginError = false;
+
+        // Ensures sidebar will appear if screen changes size
+        window.onresize = function (event) {
+            var sidebar = document.getElementById("wimSidebar");
+            if (window.innerWidth > 800) {
+                sidebar.style.display = "block";
+            } else {
+                sidebar.style.display = "none";
+            }
+        };
+
     }
     // @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
-    @ViewChild(SidebarComponent) sidebarComponent: SidebarComponent;
-    @ViewChild(MainviewComponent) mainviewCommponent: MainviewComponent;
+    @ViewChild(SidebarComponent, {static: true}) sidebarComponent: SidebarComponent;
+    @ViewChild(MainviewComponent, {static: true}) mainviewCommponent: MainviewComponent;
     public showAbout() {
         this._nssService.setAboutModal(true);
     }
@@ -136,7 +155,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 window.location.reload();
             },
             error => {
-                this._toasterService.pop('error', 'Error logging in', error._body.message || error.statusText);
+                this._toasterService.pop('error', 'Error logging in',  error.statusText|| error._body.message);
                 this.loading = false;
             }
         );
@@ -162,21 +181,24 @@ export class AppComponent implements OnInit, OnDestroy {
         const now: number = new Date().getTime();
         const setupTime: number = Number(localStorage.getItem('setupTime'));
         if (now - setupTime > twentyFourHours) {
-          // is it greater than 12 hours
-          tooOld = true;
-          localStorage.clear();
+            // is it greater than 12 hours
+            tooOld = true;
+            localStorage.clear();
         }
 
         return tooOld;
     }
 
-    public toggleSidebar(){
+    public toggleSidebar() {
         // should allow sidebar to go in and come back out
         var sidebar = document.getElementById("wimSidebar");
-        if (sidebar.style.display === "none") {
+        if (sidebar.style.display == "") {
+            sidebar.style.display = "block";
+        } else if (sidebar.style.display === "none") {
             sidebar.style.display = "block";
         } else {
             sidebar.style.display = "none";
         }
     }
+
 }

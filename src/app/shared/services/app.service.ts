@@ -22,6 +22,7 @@ import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { ToasterService } from 'angular2-toaster';
 import { Predictioninterval } from '../interfaces/predictioninterval';
 import { AddRegressionRegion } from '../interfaces/addregressionregion';
+import { LoaderService } from './loader.service';
 
 @Injectable()
 export class NSSService {
@@ -35,7 +36,7 @@ export class NSSService {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('auth') || ''
     });
-    constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {
+    constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService, private _loaderService: LoaderService) {
         this.configSettings = this._configService.getConfiguration();
         this.getRegions();
     }
@@ -634,13 +635,21 @@ export class NSSService {
                                 c => {
                                     if (!(c.length === 1 && c[0] === null)) { scen.citations = c; }
                                 },
-                                error => { this.handleError(error); }
+                                error => {
+                                    this._loaderService.hideFullPageLoad();
+                                    if (error.headers) {this.outputWimMessages(error);
+                                    } else { this.handleError(error); }
+                                }
                             );
                         }
                     });
                     this._scenarioSubject.next(sResult);
                 },
-                error => { this.handleError(error); }
+                error => {
+                    this._loaderService.hideFullPageLoad();
+                    if (error.headers) {this.outputWimMessages(error);
+                    } else { this.handleError(error); }
+                }
             );
     }
 

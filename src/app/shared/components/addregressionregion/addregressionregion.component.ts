@@ -194,10 +194,15 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   outputWimMessages(msg) {
     // output messages from http request to toast
+    const existingMsgs = [];
     for (const key of Object.keys(msg)) {
-      for (const item of msg[key]) {
-        this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
-      }
+        for (const item of msg[key]) {
+            // skip duplicate messages
+            if (existingMsgs.indexOf(item) == -1) {
+                existingMsgs.push(item);
+                this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+            }
+        }
     }
   }
 

@@ -94,14 +94,14 @@
                         </td>
                         <td>
                             <span *ngFor="let l of p.limitArray">
-                            <span *ngIf="l.min!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.outOfRange}">{{l != undefined ? sigFigures(l.min): "--"}}
+                            <span *ngIf="l.min!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.outOfRange}">{{l != undefined ? l.min: "--"}}
                                 (<span [innerHTML]="setSuperScript(p.unitType.abbr)"></span>)
                                 <br/>
                             </span>
                         </span></td>
                         <td>
                             <span *ngFor="let l of p.limitArray">
-                                <span *ngIf="l.max!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.outOfRange}">{{l != undefined ? sigFigures(l.max) : "--"}} (
+                                <span *ngIf="l.max!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.outOfRange}">{{l != undefined ? l.max : "--"}} (
                                     <span [innerHTML]="setSuperScript(p.unitType.abbr)"></span>)
                                     <br/>
                                 </span>
@@ -145,7 +145,7 @@
                         </div>
                     </div>
                     <br />
-                    <div class="row">
+                    <div class="row" *ngIf="rr.results.length > 0">
                         <div class="col-xs-12">
                             <!--<a class="hidden-print" (click)="exportTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>-->
                             <span>[SEe, Standard Error of Estimate; SEp, Standard Error of Prediction; SE, Standard Error (other -- see report)]</span>
@@ -170,9 +170,9 @@
                                 <tbody>
                                     <tr *ngFor="let result of rr.results">
                                         <td>{{result.description}} ({{result.code}})</td>
-                                        <td>{{sigFigures(result.value)}}</td>
-                                        <td *ngIf="rr.results[0].intervalBounds">{{result.intervalBounds != undefined && result.intervalBounds.lower != "NaN" ? sigFigures(result.intervalBounds.lower) : '---'}}</td>
-                                        <td *ngIf="rr.results[0].intervalBounds">{{result.intervalBounds != undefined && result.intervalBounds.upper != "NaN" ? sigFigures(result.intervalBounds.upper) : '---'}}</td>
+                                        <td>{{result.value}}</td>
+                                        <td *ngIf="rr.results[0].intervalBounds">{{result.intervalBounds != undefined && result.intervalBounds.lower != "NaN" ? result.intervalBounds.lower : '---'}}</td>
+                                        <td *ngIf="rr.results[0].intervalBounds">{{result.intervalBounds != undefined && result.intervalBounds.upper != "NaN" ? result.intervalBounds.upper : '---'}}</td>
                                         <td *ngFor="let e of result?.errors">{{e.value}}</td>
                                         <td *ngIf="rr.results[0].equivalentYears>0">{{result.equivalentYears > 0 && result.equivalentYears !== 999 ? result.equivalentYears : 'N/A'}}</td>
                                     </tr>
@@ -205,7 +205,7 @@
                                 <tbody>
                                     <tr *ngFor="let result of rr.results">
                                         <td>{{result.description}} ({{result.code}})</td>
-                                        <td>{{sigFigures(result.value)}}</td>
+                                        <td>{{result.value}}</td>
                                         <td *ngIf="rr.results[0].equivalentYears>0">{{result.equivalentYears}}</td>
                                     </tr>
                                 </tbody>

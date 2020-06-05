@@ -673,10 +673,15 @@ export class NSSService {
     public outputWimMessages(res) {
         this._toasterService.clear();
         const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
+        const existingMsgs = [];
         if (wimMessages) {
             for (const key of Object.keys(wimMessages)) {
                 for (const item of wimMessages[key]) {
-                    if (item.indexOf('Count:') === -1) {this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item); }
+                    // skip duplicates and counts
+                    if (item.indexOf('Count:') === -1 && existingMsgs.indexOf(item) == -1) {
+                        existingMsgs.push(item);
+                        this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+                    }
                 }
             }
             return true;

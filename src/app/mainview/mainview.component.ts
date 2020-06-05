@@ -395,7 +395,7 @@ export class MainviewComponent implements OnInit {
                     series: [
                         {
                             data: this.DIMLESS_ARRAY.map(p => {
-                                return [p[0] * 1, this.sigFigures(p[1] * rec)];
+                                return [p[0] * 1, p[1] * rec];
                             }),
                             name: H_areaAveraged ? 'Computed Points (Area-weighted average)' : 'Computed Points',
                             states: {
@@ -490,7 +490,7 @@ export class MainviewComponent implements OnInit {
                                     this.frequencyPlotChart.curveLabel = 'Computed Points (Area-weighted average)';
                                     rr.results.forEach(R => {
                                         let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                                        freqDataArray.push([x, this.sigFigures(R.value)]);
+                                        freqDataArray.push([x, R.value]);
                                     });
                                 }
                             });
@@ -498,7 +498,7 @@ export class MainviewComponent implements OnInit {
                             s.regressionRegions.forEach(rr => {
                                 rr.results.forEach(R => {
                                     let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                                    freqDataArray.push([x, this.sigFigures(R.value)]);
+                                    freqDataArray.push([x, R.value]);
                                 });
                             });
                         }
@@ -627,12 +627,12 @@ export class MainviewComponent implements OnInit {
     }
 
     // round all parameters and statistic values to 3 significant figures
-    public sigFigures(n) {
+    /* public sigFigures(n) {
         if (n > 0) {
             var mult = Math.pow(10, 3 - Math.floor(Math.log(n) / Math.LN10) - 1);
             return Math.round(n * mult) / mult;
         } else return n;
-    }
+    } */
     // add backticks around parameter code to escape in equation
     private buildEquation(p: Parameter[], equation: string): string {
         let fullEquation: string = '';
@@ -1456,9 +1456,14 @@ export class MainviewComponent implements OnInit {
 
     outputWimMessages(msg) {
         // takes messages from http requests and outputs into toast
+        const existingMsgs = [];
         for (const key of Object.keys(msg)) {
             for (const item of msg[key]) {
-                this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+                // skip duplicate messages
+                if (existingMsgs.indexOf(item) == -1) {
+                    existingMsgs.push(item);
+                    this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+                }
             }
         }
     }

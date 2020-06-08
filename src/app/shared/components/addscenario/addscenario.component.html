@@ -36,7 +36,6 @@
                     <span>
                         <label class="req" for="ID">Regression Region:</label>
                         <i *ngIf="loggedInRole == 'Administrator'" (click)="showAddRegRegion()" title="Add Regression Region" class="ion-plus-circled"></i>
-                        <i *ngIf="loggedInRole == 'Administrator'" (click)="getRegRegions()" title="Refresh Regression Regions" class="ion-refresh"></i>
                     </span>
                     <ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                         <ng-option *ngFor="let rr of regressionRegions" [value]="rr.id">{{rr.name}}</ng-option>

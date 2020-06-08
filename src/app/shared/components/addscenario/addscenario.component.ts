@@ -119,8 +119,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
             this.originalRegion = region;
-            if (region && region.id) {this.getRegRegions(); }
         });
+        this._nssService.regressionRegions.subscribe(res => {
+             if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
+             this.regressionRegions = res;
+         });
         this._nssService.getVersion.subscribe((v: string) => {
             this.appVersion = v;
         });
@@ -157,19 +160,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     }
 
-    public getRegRegions() {
-        // moving to own function for when new regression region is added
-        this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
-            .subscribe(res => {
-            if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
-            this.regressionRegions = res;
-        });
-    }
-
     public showModal(): void {
         this.selectedRegion = this.originalRegion;
         if (this.selectedRegion) {
-            this.getRegRegions(); 
         }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
@@ -205,7 +198,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.newScenForm.get('region').valueChanges.subscribe(item => {
              if(item != null){
                 this.selectedRegion = item;
-                this.getRegRegions();
              }
         }) 
         this.unitTypes.forEach( (element,index) => {  

@@ -106,8 +106,11 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
     this._nssService.selectedRegion.subscribe(region => {
       this.selectedRegion = region;
-      if (region && region.id) { this.getRegRegions(); }
     });
+    this._nssService.regressionRegions.subscribe(res => {
+      if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
+      this.regressionRegions = res;
+  });
     this._nssService.regions.subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
@@ -165,17 +168,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   }
 
-  public getRegRegions() {
-    // re-query regression regions after new one is added
-    this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
-      .subscribe(res => {
-        if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
-        this.regressionRegions = res;
-      });
-  }
 
   public showModal(): void {
-    if (this.selectedRegion) { this.getRegRegions(); }
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
     this.modalRef.result.then(
       result => {

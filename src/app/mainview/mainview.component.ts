@@ -1294,6 +1294,7 @@ export class MainviewComponent implements OnInit {
 
     /////////////////////// Citations Section ///////////////////////////
     public showManageCitationsModal() {
+        this._nssService.showAddCitations(true);
         this._nssService.setManageCitationsModal(true);
     }
 

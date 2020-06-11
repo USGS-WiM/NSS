@@ -35,6 +35,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public scenarios: Scenario[];
     public filteredData: Array<Citation>;
     public filterText;
+    public showAddCitations;
 
     constructor(private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -67,6 +68,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.getCitations(); // get full list of citations
             this.getRegRegions(); // get list of regression regions for the region
         });
+        this._nssService.currentAddCitations.subscribe(bool => this.showAddCitations = bool);
         this.modalElement = this.manageCitationsModal;
 
         // Subscribe to server with '?bycitation=true'
@@ -88,6 +90,10 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
             this.regressionRegions = res;
         });
+    }
+
+    public addExistingCitation(citation){
+        this._nssService.addExistingCitation(citation);   
     }
 
     public showModal(): void {

@@ -101,6 +101,20 @@ export class NSSService {
     public get showManageCitationsModal(): any {
         return this._showHideManageCitationsModal.asObservable();
     }
+    // Toggle Add/Delete Citation in managecitations modal
+    private addCitations = new BehaviorSubject<boolean>(true);
+    currentAddCitations = this.addCitations.asObservable();
+
+    showAddCitations(bool: boolean){
+        this.addCitations.next(bool);
+    }
+    // add existing citation
+    private citationSource = new BehaviorSubject<any>(' ');
+    currentCitation = this.citationSource.asObservable();
+
+    addExistingCitation(item: any){
+        this.citationSource.next(item);
+    }
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
     private _showHideAddRegressioRegionModal: Subject<AddRegressionRegion> = new Subject<AddRegressionRegion>();
     public setAddRegressionRegionModal(val: AddRegressionRegion) {

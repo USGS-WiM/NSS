@@ -53,6 +53,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   private file;
   private polygonLayer;
   private selectedCitation;
+  public currentCitation;
   
   public selectedRegressionRegion: Array<Regressionregion>;
   public tempSelectedRegressionRegion: Array<Regressionregion>;
@@ -116,6 +117,12 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
     this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
       this.selectedRegressionRegion = regRegions;
+    });
+    this._nssService.currentCitation.subscribe(item => {
+      this.currentCitation = item
+      if (this.currentCitation) {
+        this.addExistingCitation();
+      }
     });
     this.modalElement = this.addRegressionRegionModal;
     this.uploadPolygon = true;
@@ -186,6 +193,17 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     );
   }
 
+  public showManageCitationsModal() {
+    this._nssService.showAddCitations(false);
+    this._nssService.setManageCitationsModal(true);
+  }
+
+  public addExistingCitation(){
+    this.newCitForm.controls['title'].setValue(this.currentCitation.title);
+    this.newCitForm.controls['author'].setValue(this.currentCitation.author);
+    this.newCitForm.controls['citationURL'].setValue(this.currentCitation.citationURL);
+  }
+  
   outputWimMessages(msg) {
     // output messages from http request to toast
     const existingMsgs = [];

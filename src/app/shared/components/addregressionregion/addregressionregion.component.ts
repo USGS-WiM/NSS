@@ -54,7 +54,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   private polygonLayer;
   private selectedCitation;
   public currentCitation;
-  
   public selectedRegressionRegion: Array<Regressionregion>;
   public tempSelectedRegressionRegion: Array<Regressionregion>;
 
@@ -120,7 +119,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
     this._nssService.currentCitation.subscribe(item => {
       this.currentCitation = item
-      if (this.currentCitation) {
+      if (this.currentCitation != " ") {
         this.addExistingCitation();
       }
     });
@@ -199,9 +198,10 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public addExistingCitation(){
+    this.newRegRegForm.controls['citationID'].setValue(this.currentCitation.id);
     this.newCitForm.controls['title'].setValue(this.currentCitation.title);
     this.newCitForm.controls['author'].setValue(this.currentCitation.author);
-    this.newCitForm.controls['citationURL'].setValue(this.currentCitation.citationURL);
+    this.newCitForm.controls['citationURL'].setValue(this.currentCitation.citationURL);  
   }
   
   outputWimMessages(msg) {
@@ -315,7 +315,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this._toasterService.pop('info', 'Info', 'Regression region was added');
         } else { this._settingsService.outputWimMessages(response); }
         if (this.addCitation) { // if user elected to add a citation, send that through
-          this.createNewCitation(response);
+          if (this.newRegRegForm.value.citationID != this.currentCitation.id || !this.newRegRegForm.value.citationID) {
+            this.createNewCitation(this.selectedRegRegion);
+          } else {
+            this._loaderService.hideFullPageLoad();
+            this.requeryFilters();
+            this.cancelCreateRegression();
+          }
         } else {
           this.cancelCreateRegression();
           this.requeryFilters();
@@ -326,6 +332,52 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         this._toasterService.pop('error', 'Error creating Regression Region', error.message || error._body.message || error.statusText);
       }
     );
+  }
+
+  private editRegressionRegion() {
+    this._loaderService.showFullPageLoad();
+    this.saveFilters();
+    if (!this.uploadPolygon) { // No polygon
+        this.newRegRegForm.get('location').setValue(null);
+    }
+    this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.regRegionURL).subscribe(res => {
+            if (!res.headers) {
+              this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+              this.modalRef.close();
+            } else {this._settingsService.outputWimMessages(res); }
+            if (this.addCitation && this.selectedRegRegion.citationID) { // Editing citation
+                this._settingsService.putEntity(this.selectedRegRegion.citationID, this.newCitForm.value, this.configSettings.citationURL)
+                .subscribe((response: any) => {
+                  if (!response.headers) { // Citation successfully updated
+                    this._toasterService.pop('info', 'Info', 'Citation was updated');
+                  } else { 
+                    this._settingsService.outputWimMessages(response); 
+                    this.cancelCreateRegression(); 
+                  }
+                  this.requeryFilters();
+                  this.cancelCreateRegression();
+                }, error => {
+                  this._loaderService.hideFullPageLoad();
+                  if (this._settingsService.outputWimMessages(error)) { return; }
+                  this._toasterService.pop('error', 'Error creating Citation', error.message || error._body.message || error.statusText);
+                });
+            } else if (this.addCitation) { // New citation
+              if (this.newRegRegForm.value.citationID != this.currentCitation.id || !this.newRegRegForm.value.citationID) {
+                this.createNewCitation(this.selectedRegRegion);
+              } else {
+                this._loaderService.hideFullPageLoad();
+                this.requeryFilters();
+                this.cancelCreateRegression();
+              }
+            } else {
+                this.requeryFilters();
+                this.cancelCreateRegression();
+            }
+        }, error => {
+            this._loaderService.hideFullPageLoad();
+            if (this._settingsService.outputWimMessages(error)) {return; }
+            this._toasterService.pop('error', 'Error editing Regression Region', error.message || error._body.message || error.statusText); }
+        );  
   }
 
   public createNewCitation(rr) {
@@ -348,6 +400,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       }
       );
   }
+
 
   public addGeojsonToMap(polygon: any) {
     this.polygonLayer = L.geoJSON(polygon, {
@@ -412,43 +465,5 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }, 100);
   }
 
-  private editRegressionRegion() {
-    this._loaderService.showFullPageLoad();
-    this.saveFilters();
-    if (!this.uploadPolygon) { // No polygon
-        this.newRegRegForm.get('location').setValue(null);
-    }
-    this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.regRegionURL).subscribe(res => {
-            if (!res.headers) {
-              this._toasterService.pop('info', 'Info', 'Regression Region was updated');
-              this.modalRef.close();
-            } else {this._settingsService.outputWimMessages(res); }
-            if (this.addCitation && this.selectedRegRegion.citationID) { // Editing citation
-                this._settingsService.putEntity(this.selectedRegRegion.citationID, this.newCitForm.value, this.configSettings.citationURL)
-                .subscribe((response: any) => {
-                  if (!response.headers) { // Citation successfully updated
-                    this._toasterService.pop('info', 'Info', 'Citation was updated');
-                  } else { 
-                    this._settingsService.outputWimMessages(response); 
-                    this.cancelCreateRegression(); 
-                  }
-                  this.requeryFilters();
-                  this.cancelCreateRegression();
-                }, error => {
-                  this._loaderService.hideFullPageLoad();
-                  if (this._settingsService.outputWimMessages(error)) { return; }
-                  this._toasterService.pop('error', 'Error creating Citation', error.message || error._body.message || error.statusText);
-                });
-            } else if (this.addCitation) { // New citation
-                this.createNewCitation(this.selectedRegRegion);
-            } else {
-                this.requeryFilters();
-                this.cancelCreateRegression();
-            }
-        }, error => {
-            this._loaderService.hideFullPageLoad();
-            if (this._settingsService.outputWimMessages(error)) {return; }
-            this._toasterService.pop('error', 'Error editing Regression Region', error.message || error._body.message || error.statusText); }
-        );  
-  }
+  
 }

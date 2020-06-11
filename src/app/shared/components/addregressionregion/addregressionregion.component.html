@@ -74,7 +74,7 @@
       </form>
       
     <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true">Add New Citation</button>
-    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="showManageCitationsModal();addCitation = true">Find Existing Citation</button>
+    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="showManageCitationsModal(); addCitation = true">Find Existing Citation</button>
     <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="showMap()">Upload Polygon</button>        
 
       <form *ngIf="uploadPolygon">

@@ -23,6 +23,7 @@ import { LoaderService } from 'app/shared/services/loader.service';
 import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
+import { __core_private_testing_placeholder__ } from '@angular/core/testing';
 
 @Component({
   selector: 'addRegressionRegionModal',
@@ -56,6 +57,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public currentCitation;
   public selectedRegressionRegion: Array<Regressionregion>;
   public tempSelectedRegressionRegion: Array<Regressionregion>;
+  public newCitation: boolean;
+  public rr;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
@@ -100,6 +103,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
     this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((result: AddRegressionRegion) => {
       if (result.show) { 
+          this.rr = result.regRegionID
           this.showNewRegressionRegionForm(result.regRegionID);
           this.loadMap();
         }
@@ -315,7 +319,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this._toasterService.pop('info', 'Info', 'Regression region was added');
         } else { this._settingsService.outputWimMessages(response); }
         if (this.addCitation) { // if user elected to add a citation, send that through
-          if (this.newRegRegForm.value.citationID != this.currentCitation.id || !this.newRegRegForm.value.citationID) {
+          if (this.newCitation == true) {
             this.createNewCitation(this.selectedRegRegion);
           } else {
             this._loaderService.hideFullPageLoad();
@@ -362,7 +366,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
                   this._toasterService.pop('error', 'Error creating Citation', error.message || error._body.message || error.statusText);
                 });
             } else if (this.addCitation) { // New citation
-              if (this.newRegRegForm.value.citationID != this.currentCitation.id || !this.newRegRegForm.value.citationID) {
+             
+              if (this.newCitation == true) {
                 this.createNewCitation(this.selectedRegRegion);
               } else {
                 this._loaderService.hideFullPageLoad();
@@ -378,6 +383,31 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
             if (this._settingsService.outputWimMessages(error)) {return; }
             this._toasterService.pop('error', 'Error editing Regression Region', error.message || error._body.message || error.statusText); }
         );  
+  }
+
+  public removeCitation(){
+    this.saveFilters();
+        const idx = this.regressionRegions.findIndex(r => r.id === this.rr);
+        const regReg = this.regressionRegions[idx];
+        regReg.citationID = null;
+        this._settingsService.putEntity(this.rr, regReg, this.configSettings.regRegionURL)
+            .subscribe((response) => {
+                this.requeryFilters();
+                this._nssService.outputWimMessages(response);
+            }, error => {
+                if (this._settingsService.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error removing Citation', error._body.message || error.statusText);
+            }
+        );
+        this.selectedRegRegion.citationID=null;
+        this.newRegRegForm.controls['citationID'].setValue(null);
+        this.newCitForm.controls['title'].setValue(null);
+        this.newCitForm.controls['author'].setValue(null);
+        this.newCitForm.controls['citationURL'].setValue(null);
+      
+      this.addCitation = false; 
+      this.newCitForm.reset(); 
+      this.newCitation = true
   }
 
   public createNewCitation(rr) {

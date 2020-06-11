@@ -51,14 +51,14 @@
           <!-- Title -->
           <div class="form-group required">
               <label for="title">Title:</label>
-              <textarea class="form-control" rows="3" placeholder="" formControlName="title"></textarea>
+              <textarea [readonly]="!newCitation" class="form-control" rows="3" placeholder="" formControlName="title"></textarea>
               <div class="input-invalid-warning" *ngIf="!newCitForm.get('title').valid && newCitForm.get('title').dirty">Author
                       is required</div>
           </div>
           <!-- Author* -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('author').valid && newCitForm.get('author').dirty}">
               <label class="req" for="author">Author:</label>
-              <input class="form-control" type="text" formControlName="author" required>
+              <input [readonly]="!newCitation" class="form-control" type="text" formControlName="author" required>
               <div class="input-invalid-warning" *ngIf="!newCitForm.get('author').valid && newCitForm.get('author').dirty">Author
                   is required</div>
           </div>
@@ -66,15 +66,15 @@
           <!-- Short Name -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty}">
               <label class="req" for="citationURL">Citation URL:</label>
-              <input class="form-control" type="text" formControlName="citationURL">
+              <input [readonly]="!newCitation" class="form-control" type="text" formControlName="citationURL">
               <div class="input-invalid-warning" *ngIf="!newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty">URL
                   is required</div>
           </div>
-          <button *ngIf="addCitation" type="button" class="btn-blue" (click)="newRegRegForm.get('citationID').setValue(null); addCitation = false; newCitForm.reset();">Remove Citation</button>
+          <button *ngIf="addCitation" type="button" class="btn-blue" (click)="removeCitation()">Remove Citation</button>
       </form>
       
-    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true">Add New Citation</button>
-    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="showManageCitationsModal(); addCitation = true">Find Existing Citation</button>
+    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true; newCitation=true">Add New Citation</button>
+    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="showManageCitationsModal(); addCitation = true; newCitation=false">Find Existing Citation</button>
     <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="showMap()">Upload Polygon</button>        
 
       <form *ngIf="uploadPolygon">

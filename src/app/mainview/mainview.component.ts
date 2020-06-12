@@ -26,6 +26,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Citation } from 'app/shared/interfaces/citation';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
+import { ManageCitation } from 'app/shared/interfaces/managecitations';
 
 
 declare var MathJax: {
@@ -1294,8 +1295,11 @@ export class MainviewComponent implements OnInit {
 
     /////////////////////// Citations Section ///////////////////////////
     public showManageCitationsModal() {
-        this._nssService.showAddCitations(true);
-        this._nssService.setManageCitationsModal(true);
+        const addManageCitationForm: ManageCitation = {
+            show: true,
+            addCitation: true
+        }
+        this._nssService.setManageCitationsModal(addManageCitationForm);
     }
 
     // remove citation from regression region (set citationID to null)

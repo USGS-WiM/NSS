@@ -16,6 +16,7 @@ import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Citation } from 'app/shared/interfaces/citation';
+import { ManageCitation } from 'app/shared/interfaces/managecitations';
 
 @Component({
     selector: 'manageCitationsModal',
@@ -68,7 +69,11 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.getCitations(); // get full list of citations
             this.getRegRegions(); // get list of regression regions for the region
         });
-        this._nssService.currentAddCitations.subscribe(bool => this.showAddCitations = bool);
+        this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((result: ManageCitation) => {
+            if (result.show) { 
+                this.showAddCitations = result.addCitation;
+              }
+          });
         this.modalElement = this.manageCitationsModal;
 
         // Subscribe to server with '?bycitation=true'

@@ -23,6 +23,7 @@ import { LoaderService } from 'app/shared/services/loader.service';
 import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
+import { ManageCitation } from 'app/shared/interfaces/managecitations';
 
 @Component({
   selector: 'addRegressionRegionModal',
@@ -196,8 +197,11 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public showManageCitationsModal() {
-    this._nssService.showAddCitations(false);
-    this._nssService.setManageCitationsModal(true);
+    const addManageCitationForm: ManageCitation = {
+      show: true,
+      addCitation: false
+    }
+    this._nssService.setManageCitationsModal(addManageCitationForm);
   }
 
   public addExistingCitation(){

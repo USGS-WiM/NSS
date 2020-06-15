@@ -82,8 +82,11 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
     public filter(input:string) {
         this.filterText = input;
-        this.filteredData = this.citations.filter(c => 
-            c.author.toLowerCase().includes(input.toLowerCase()) || 
+        this.filteredData = this.citations.filter(function (filter) {
+            return filter != null;
+        });
+        this.filteredData = this.filteredData.filter(c => 
+            c.author.toLowerCase().includes(input.toLowerCase()) ||
             c.title.toLowerCase().includes(input.toLowerCase()) ||
             (c.regressionRegions.filter(rr => rr.name.toLowerCase().includes(input.toLowerCase())).length > 0));
     }
@@ -128,7 +131,9 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this._settingsService.getEntities(this.configSettings.citationURL)
             .subscribe(res => {
                 this.citations = res;
-                this.filteredData = this.citations;
+                this.filteredData = this.citations.filter(function (filter) {
+                    return filter != null;
+                });
                 if (this.filterText) {
                     this.filter(this.filterText);
                 }

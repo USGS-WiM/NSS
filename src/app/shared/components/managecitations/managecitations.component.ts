@@ -17,6 +17,7 @@ import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Citation } from 'app/shared/interfaces/citation';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'manageCitationsModal',
@@ -32,13 +33,13 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     private configSettings: Config;
     public modalRef;
     public loggedInRole;
-    public citations: Array<Citation>;
+    public citations
     public scenarios: Scenario[];
-    public filteredData: Array<Citation>;
+    public filteredData;
     public filterText;
     public showAddCitations;
 
-    constructor(private _nssService: NSSService, private _modalService: NgbModal,
+    constructor(private http: HttpClient, private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
         private _authService: AuthService) {
         this.configSettings = this._configService.getConfiguration();
@@ -128,9 +129,13 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
 
     public getCitations() {
-        this._settingsService.getEntitiesCitations(this.configSettings.citationURL)
+        const header: HttpHeaders = new HttpHeaders({
+            'Content-Type': 'application/json',
+        });
+
+        this.http.get(this.configSettings.baseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
             .subscribe(res => {
-                this.citations = res;
+                this.citations = res.body;
                 this.filteredData = this.citations.filter(function (filter) {
                     return filter != null;
                 });

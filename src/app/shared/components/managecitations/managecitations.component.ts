@@ -33,13 +33,13 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     private configSettings: Config;
     public modalRef;
     public loggedInRole;
-    public citations
+    public citations;
     public scenarios: Scenario[];
     public filteredData;
     public filterText;
     public showAddCitations;
 
-    constructor(private http: HttpClient, private _nssService: NSSService, private _modalService: NgbModal,
+    constructor(private _http: HttpClient, private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
         private _authService: AuthService) {
         this.configSettings = this._configService.getConfiguration();
@@ -83,13 +83,11 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
     public filter(input:string) {
         this.filterText = input;
-        this.filteredData = this.citations.filter(function (filter) {
-            return filter != null;
-        });
         this.filteredData = this.filteredData.filter(c => 
-            c.author.toLowerCase().includes(input.toLowerCase()) ||
+            c != null &&
+            (c.author.toLowerCase().includes(input.toLowerCase()) ||
             c.title.toLowerCase().includes(input.toLowerCase()) ||
-            (c.regressionRegions.filter(rr => rr.name.toLowerCase().includes(input.toLowerCase())).length > 0));
+            (c.regressionRegions.filter(rr => rr.name.toLowerCase().includes(input.toLowerCase())).length > 0)));
     }
 
     public getRegRegions() {
@@ -133,7 +131,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             'Content-Type': 'application/json',
         });
 
-        this.http.get(this.configSettings.baseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
+        this._http.get(this.configSettings.baseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
             .subscribe(res => {
                 this.citations = res.body;
                 this.filteredData = this.citations.filter(function (filter) {

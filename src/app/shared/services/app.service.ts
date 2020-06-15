@@ -23,6 +23,7 @@ import { ToasterService } from 'angular2-toaster';
 import { Predictioninterval } from '../interfaces/predictioninterval';
 import { AddRegressionRegion } from '../interfaces/addregressionregion';
 import { LoaderService } from './loader.service';
+import { ManageCitation } from '../interfaces/managecitations';
 
 @Injectable()
 export class NSSService {
@@ -93,13 +94,19 @@ export class NSSService {
         return this._showHideCloneScenarioModal.asObservable();
     }
     // -+-+-+-+-+-+-+-+-+ manage citations modal -+-+-+-+-+-+-+-+
-    private _showHideManageCitationsModal: Subject<boolean> = new Subject<boolean>();
-    public setManageCitationsModal(val: any) { 
+    private _showHideManageCitationsModal: Subject<ManageCitation> = new Subject<ManageCitation>();
+    public setManageCitationsModal(val: ManageCitation) { 
         this._showHideManageCitationsModal.next(val);
     }
     // show the manage citations modal in the mainview
     public get showManageCitationsModal(): any {
         return this._showHideManageCitationsModal.asObservable();
+    }
+    // add existing citation
+    private citationSource = new BehaviorSubject<any>(' ');
+    currentCitation = this.citationSource.asObservable();
+    addExistingCitation(item: any){
+        this.citationSource.next(item);
     }
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
     private _showHideAddRegressioRegionModal: Subject<AddRegressionRegion> = new Subject<AddRegressionRegion>();

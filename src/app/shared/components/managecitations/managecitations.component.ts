@@ -83,7 +83,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
     public filter(input:string) {
         this.filterText = input;
-        this.filteredData = this.filteredData.filter(c => 
+        this.filteredData = this.citations.filter(c => 
             c != null &&
             (c.author.toLowerCase().includes(input.toLowerCase()) ||
             c.title.toLowerCase().includes(input.toLowerCase()) ||

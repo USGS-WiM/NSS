@@ -886,7 +886,7 @@
                                     <td>
                                         <span *ngIf="!r.isEditing && (r.predictionInterval.biasCorrectionFactor || r.predictionInterval.student_T_Statistic || r.predictionInterval.variance 
                                         || r.predictionInterval.xiRowVector || r.predictionInterval.covarianceMatrix)">
-                                            Bias Correction Factor: {{r.predictionInterval.biasCorrectionFactor}}<br>
+                                            <div [class.hidden]="loggedInRole != 'Administrator'">Bias Correction Factor: {{r.predictionInterval.biasCorrectionFactor}}<br></div>
                                             Student T Statistic: {{r.predictionInterval.student_T_Statistic}}<br>
                                             Variance: {{r.predictionInterval.variance}}<br>
                                             XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
@@ -894,9 +894,9 @@
                                         </span>
                                         <span *ngIf="!r.isEditing && !r.predictionInterval.biasCorrectionFactor && !r.predictionInterval.student_T_Statistic && !r.predictionInterval.variance 
                                             && !r.predictionInterval.xiRowVector && !r.predictionInterval.covarianceMatrix">None</span>
-                                        <span *ngIf="r.isEditing && r.predictionInterval"> <!--need option to 'add prediction interval' if doens't exist-->
-                                            <label>Bias Correction Factor:</label>
-                                            <input [readonly]="loggedInRole != 'Administrator'" type="number" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.biasCorrectionFactor">
+                                        <span *ngIf="r.isEditing && r.predictionInterval">
+                                            <div [class.hidden]="loggedInRole != 'Administrator'"><label>Bias Correction Factor:</label>
+                                            <input type="number" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.biasCorrectionFactor"></div>
                                             <label>Student T Statistic:</label>
                                             <input type="number" name="student_T_Statistic" [(ngModel)]="r.predictionInterval.student_T_Statistic">
                                             <label>Variance:</label>

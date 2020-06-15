@@ -1333,7 +1333,7 @@ export class MainviewComponent implements OnInit {
                 this.editScen.regressionRegions[0].regressions = [reg];
                 reg.expected = {value: '', parameters: {}, intervalBounds: null};
                 // if regression has prediction interval, need to ask for expected bounds
-                if (!reg.predictionInterval.biasCorrectionFactor || !reg.predictionInterval.student_T_Statistic || !reg.predictionInterval.variance
+                if (!reg.predictionInterval.student_T_Statistic || !reg.predictionInterval.variance
                     || !reg.predictionInterval.xiRowVector || !reg.predictionInterval.covarianceMatrix) {reg.predictionInterval = null;
                 } else {
                     this.getBounds = true;

@@ -827,7 +827,7 @@
                                 <tr *ngFor="let r of rr.regressions; let rIndex = index;">
                                     <td>
                                         <div class="data-controls">
-                                            <i *ngIf="!r.isEditing && loggedInRole == 'Administrator'" title="Edit Regression" (click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="fa fa-pencil"
+                                            <i *ngIf="!r.isEditing" title="Edit Regression" (click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="fa fa-pencil"
                                                 aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
                                             <i *ngIf="!r.isEditing" title="Clone Scenario" (click)="cloneRowClicked(s.statisticGroupID, r, rr)" class="fa fa-clone"
                                                 aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
@@ -896,7 +896,7 @@
                                             && !r.predictionInterval.xiRowVector && !r.predictionInterval.covarianceMatrix">None</span>
                                         <span *ngIf="r.isEditing && r.predictionInterval"> <!--need option to 'add prediction interval' if doens't exist-->
                                             <label>Bias Correction Factor:</label>
-                                            <input type="number" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.biasCorrectionFactor">
+                                            <input [readonly]="loggedInRole != 'Administrator'" type="number" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.biasCorrectionFactor">
                                             <label>Student T Statistic:</label>
                                             <input type="number" name="student_T_Statistic" [(ngModel)]="r.predictionInterval.student_T_Statistic">
                                             <label>Variance:</label>

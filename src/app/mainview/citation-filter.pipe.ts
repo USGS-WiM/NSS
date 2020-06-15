@@ -12,6 +12,6 @@ export class CitationFilterPipe implements PipeTransform {
         }
         // filter citations array, citations which match and return true will be
         // kept, false will be filtered out
-        return citations.filter(item => item.id === filter);
+        return citations.filter(item => item !== null &&  item.id === filter);
     }
 }

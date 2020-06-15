@@ -29,8 +29,11 @@
                     </span>
                 </td>
                 <td>
-                    <div>
+                    <div [class.hidden]="!showAddCitations">
                         <i title="Delete Citation" (click)="!l.regressionRegions?.length>0 && deleteCitation(l.id)" class="fa fa-times" [class.disabled-icon]="l.regressionRegions?.length>0" aria-hidden="true" style="cursor:pointer"></i>
+                    </div>
+                    <div [class.hidden]="showAddCitations"> 
+                        <i title="Add Citation" (click)="addExistingCitation(l);d('closed')" class="fa fa-plus" aria-hidden="true" style="cursor:pointer"></i>
                     </div>
                 </td>
             </tr>

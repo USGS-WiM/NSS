@@ -16,6 +16,7 @@ import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Citation } from 'app/shared/interfaces/citation';
+import { ManageCitation } from 'app/shared/interfaces/managecitations';
 
 @Component({
     selector: 'manageCitationsModal',
@@ -35,6 +36,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public scenarios: Scenario[];
     public filteredData: Array<Citation>;
     public filterText;
+    public showAddCitations;
 
     constructor(private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -67,6 +69,11 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.getCitations(); // get full list of citations
             this.getRegRegions(); // get list of regression regions for the region
         });
+        this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((result: ManageCitation) => {
+            if (result.show) { 
+                this.showAddCitations = result.addCitation;
+              }
+          });
         this.modalElement = this.manageCitationsModal;
 
         // Subscribe to server with '?bycitation=true'
@@ -88,6 +95,10 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
             this.regressionRegions = res;
         });
+    }
+
+    public addExistingCitation(citation){
+        this._nssService.addExistingCitation(citation);   
     }
 
     public showModal(): void {

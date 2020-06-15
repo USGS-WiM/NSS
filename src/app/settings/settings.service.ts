@@ -33,6 +33,10 @@ export class SettingsService {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('auth') || ''
     });
+    public citationHeader: HttpHeaders = new HttpHeaders({
+        'Content-Type': 'application/json',
+        //Authorization: localStorage.getItem('auth') || ''
+    });
     private configSettings: Config;
     // SUBJECTS //////////////////////////////////////
     private _regionSubject: BehaviorSubject<Array<Region>> = <BehaviorSubject<Region[]>>new BehaviorSubject([]);
@@ -97,6 +101,12 @@ export class SettingsService {
             .catch(this.errorHandler);
     }
 
+    public getEntitiesCitations(url: string) {
+        return this._http
+            .get(this.configSettings.baseURL + url, { headers: this.citationHeader })
+            .map(res => { if (res) {return <Array<any>>res }})
+            .catch(this.errorHandler);
+    }
     // ------------ POSTS ------------------------------
     public postEntity(entity: object, url: string) {
         return this._http

@@ -128,7 +128,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
 
     public getCitations() {
-        this._settingsService.getEntities(this.configSettings.citationURL)
+        this._settingsService.getEntitiesCitations(this.configSettings.citationURL)
             .subscribe(res => {
                 this.citations = res;
                 this.filteredData = this.citations.filter(function (filter) {

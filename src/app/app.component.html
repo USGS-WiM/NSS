@@ -2,48 +2,70 @@
 <addScenarioModal></addScenarioModal>
 <addRegressionRegionModal></addRegressionRegionModal>
 <manageCitationsModal></manageCitationsModal>
-<nav class="wim-nav hidden-print">
-    <div class="container" style="width: 100%;">
-        <button class="mobile-nav-toggle" (click)="toggleSidebar()"></button>
-        <a href="https://usgs.gov">
-            <img src="https://wim.usgs.gov/src/images/usgs.png" class="usgslogo"/>
+
+
+<!-- Top Nav bar -->
+<nav id="main">
+	<!-- Mobile menu toggle -->
+	<button class="sidebar-toggle" (click)="toggleSidebar()"></button>
+
+	<!-- Logo and name -->
+	<div class="branding">
+		<a href="https://usgs.gov">
+            <img src="https://wim.usgs.gov/src/images/usgs.png"/>
         </a>
-        <span class="nav-title">
+        <span class="app-title">
             {{title}}
         </span>
-        <div class="nav-links">
-            <a routerLink="" routerLinkActive="active">
-                <span class="nav-link-text">Home</span>
-            </a>
-            <a [class.hidden]="!isLoggedIn || loggedInRole !== 'Administrator'" routerLink="settings" routerLinkActive="active">
-                <span class="nav-link-text">Settings</span>
-            </a>
-            <a (click)="showAbout()">
-                <span>
-                    <i class="ion-information-circled"></i>
-                    <span class="nav-link-text">About</span>
-                </span>
-            </a>
-            <a (click)="showLoginModal()" [class.hidden]="isLoggedIn||!isloginShow">
-                <span>
-                    <span class="nav-link-text">Manage</span>
-                </span>
-            </a> 
-            <div class="dropdown" [class.hidden]="!isLoggedIn">
-                <a class="dropbtn nav-link-text">
-                    <i class="ion-person"></i>
-                    <i class="ion-arrow-dropdown"></i>
-                </a>
-                <div class="dropdown-content">
-                    <a (click)="logout(true)">Logout</a>
-                    <a routerLink="profile" routerLinkActive="active">Profile</a>
-                </div>
-            </div>
-        </div>
-    </div>
+	</div>
+
+	<!-- Links -->
+	<div class="nav-links">
+		<a routerLink="" routerLinkActive="active">
+			<span>Home</span>
+		</a>
+		<a [class.hidden]="!isLoggedIn || loggedInRole !== 'Administrator'" routerLink="settings" routerLinkActive="active">
+			<span>Settings</span>
+		</a>
+		<a (click)="showAbout()">
+			<!-- <i class="ion-information-circled"></i> -->
+			<span>About</span>
+		</a>
+		<a (click)="showLoginModal()" [class.hidden]="isLoggedIn||!isloginShow">
+			<span>Manage</span>
+		</a> 
+
+		<div class="dropdown">
+		<!-- <div class="dropdown" [class.hidden]="!isLoggedIn"> -->
+			<a class="dropbtn nav-link-text">
+				<i class="ion-person"></i>
+				<i class="ion-arrow-dropdown"></i>
+			</a>
+			<div class="dropdown-content">
+				<a (click)="logout(true)">Logout</a>
+				<a routerLink="profile" routerLinkActive="active">Profile</a>
+			</div>
+		</div>
+
+	</div>
+
 </nav>
-<wim-sidebar *ngIf="router.url.indexOf('/settings') === -1 && router.url.indexOf('/profile') === -1"></wim-sidebar>
+
+<div class="app-body">
+	<!-- Sidebar -->
+	<wim-sidebar *ngIf="router.url.indexOf('/settings') === -1 && router.url.indexOf('/profile') === -1"></wim-sidebar>
+	
+	<!-- Main content -->
+	<div class="app-content">
+		<!-- Routes -->
+		<router-outlet></router-outlet>
+	</div>
+</div>
+
+<!-- Loading Screen -->
 <app-loading-screen></app-loading-screen>
+
+<!-- Login modal -->
 <ng-template #login let-c="close" let-d="dismiss">
     <div class="modal-header">
         <div class="col-xs-12">
@@ -77,4 +99,4 @@
         </form>
     </div>
 </ng-template>
-<router-outlet></router-outlet>
+

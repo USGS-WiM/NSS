@@ -22,7 +22,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 @Component({
     selector: 'manageCitationsModal',
     templateUrl: './managecitations.component.html',
-    styleUrls: ['./managecitations.component.css']
+    styleUrls: ['./managecitations.component.scss']
 })
 export class ManageCitationsModal implements OnInit, OnDestroy {
     @ViewChild('manageCitations', {static: true}) public manageCitationsModal; // : ModalDirective;  //modal for validator

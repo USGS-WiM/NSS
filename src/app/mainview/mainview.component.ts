@@ -34,9 +34,9 @@ declare var MathJax: {
 };
 
 @Component({
-    selector: 'wim-mainview',
+	selector: 'wim-mainview',
     templateUrl: './mainview.component.html',
-    styleUrls: ['./mainview.component.css']
+    styleUrls: ['./mainview.component.scss']
 })
 export class MainviewComponent implements OnInit {
     @ViewChildren('inputsTable', { read: ViewContainerRef }) inputTable;

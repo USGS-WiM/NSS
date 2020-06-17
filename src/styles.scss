@@ -1,10 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
 @import "~@ng-select/ng-select/themes/default.theme.css";
-
 @import "~leaflet/dist/leaflet.css";
 
+@import "styles/variables.scss";
+@import "styles/base.scss";
+@import "styles/forms.scss";
+@import "styles/typography.scss";
+
+
 *{
-  font-size: 98% !important;
 }
 /*
     Multiselect
@@ -100,71 +103,10 @@ input[type="radio"]{
   text-decoration: underline;
 }
 
-.mainPage{
-  box-sizing: border-box;
-  margin-left: 0 !important;
-  padding-left: 345px;
-}
-.mobile-nav-toggle{
-  font-size: 32px !important;
-  width: 45px !important;
-  min-width: 45px !important;
-}
-.mobile-nav-toggle:before{
-  width: 45px !important;
-}
-.mobile-nav-toggle:focus:before{
-  content: '\f20e' !important;
-} 
-.mobile-nav-toggle:focus {
-  transform: none !important;
-  -webkit-transform: none !important;
-}
-.identification{
-  font-size: 10px !important;
-}
-.footer-links a{
-  font-size: 9px !important;
-  font-weight: bolder;
-  opacity: 0.5;
-}
-#wimSidebar {
-  display: block;
-}
-@media (max-width: 800px) {
-  #wimSidebar {
-    display: none;
-  }
-  .wim-sidebar{
-    display: none;
-    position: fixed;
-    max-width: 280px;
-    box-shadow: 0 19px 38px rgba(0,0,0,0.20), 0 15px 12px rgba(0,0,0,0.12);
-    width: 90%;
-  }
-  .mainPage{
-    padding-left: 15px;
-  }
-  .wim-nav .container .nav-branding img{
-    height: 24px !important;
-  }
-}
-@media (max-width: 400px) {
-  .wim-nav .container .nav-title{
-    font-size: 12px !important;
-    line-height: 12px !important;
-  }
-}
 
 
-input{
-  margin: 5px !important;
-}
 
-button:disabled:hover{
-  background-color: #F4F5F6;
-  color: #a0a9b1;
-}
+
 
 input[type="checkbox"],
 input[type="radio"]{
@@ -261,3 +203,6 @@ select {
 .ng-input input[type=text] {
   padding: 0px !important;
   }
+
+
+

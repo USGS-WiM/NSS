@@ -14,7 +14,7 @@ import { LoaderService } from '../../services/loader.service';
 @Component({
     selector: 'app-loading-screen',
     templateUrl: 'loader.component.html',
-    styleUrls: ['loader.component.css']
+    styleUrls: ['loader.component.scss']
 })
 export class LoaderComponent implements OnInit, OnDestroy {
     public show = true; // start

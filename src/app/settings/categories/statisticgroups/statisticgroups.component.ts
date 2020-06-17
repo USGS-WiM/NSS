@@ -24,7 +24,7 @@ import { ConfigService } from 'app/config.service';
 @Component({
     moduleId: module.id,
     templateUrl: 'statisticgroups.component.html',
-    styleUrls: ['../../settings.component.css']
+    styleUrls: ['../../settings.component.scss']
 })
 
 export class StatisticGroupsComponent implements OnInit, OnDestroy {

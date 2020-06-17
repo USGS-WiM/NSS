@@ -16,7 +16,7 @@ import { SettingsService } from './settings/settings.service';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
+    styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
 
@@ -87,15 +87,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.modalElement = this.loginModal;
         this.loginError = false;
 
-        // Ensures sidebar will appear if screen changes size
-        window.onresize = function (event) {
-            var sidebar = document.getElementById("wimSidebar");
-            if (window.innerWidth > 800) {
-                sidebar.style.display = "block";
-            } else {
-                sidebar.style.display = "none";
-            }
-        };
+    
 
     }
     // @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;

@@ -21,7 +21,7 @@
 
 	<!-- Links -->
 	<div class="nav-links">
-		<a routerLink="" routerLinkActive="active">
+		<a routerLink="" [class.active]="router.url == '/'">
 			<span>Home</span>
 		</a>
 		<a [class.hidden]="!isLoggedIn || loggedInRole !== 'Administrator'" routerLink="settings" routerLinkActive="active">
@@ -61,37 +61,34 @@
 <app-loading-screen></app-loading-screen>
 
 <!-- Login modal -->
-<ng-template #login let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">Manager Login</h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="LoginForm">
-            <!-- Username* -->
-            <div class="form-group" [ngClass]="{'form-invalid': !LoginForm.get('username').valid && LoginForm.get('username').dirty}">
-                <label class="req" for="username">Username:</label>
-                <input class="form-control" type="text" formControlName="username" required>
-            </div>
-    
-            <!-- Password* -->
-            <div class="form-group" [ngClass]="{'form-invalid': !LoginForm.get('password').valid && LoginForm.get('password').dirty}">
-                <label class="req" for="password">Password:</label>
-                <input class="form-control" type="password" formControlName="password">
-            </div>
+<ng-template #login let-c="close" let-d="dismiss" id="loginModal">
+	<div class="modal-header">
+		<div class="title">Manager Login</div>  
+		<button (click)="d('closed')">&times;</button>                
+	</div>
+	<div class="modal-body">
+		<form [formGroup]="LoginForm" id="loginForm">
+			<!-- Username* -->
+			<div class="form-group" [ngClass]="{'form-invalid': !LoginForm.get('username').valid && LoginForm.get('username').dirty}">
+				<label class="req" for="username">Username:</label>
+				<input class="form-control" type="text" formControlName="username" required>
+			</div>
+	
+			<!-- Password* -->
+			<div class="form-group" [ngClass]="{'form-invalid': !LoginForm.get('password').valid && LoginForm.get('password').dirty}">
+				<label class="req" for="password">Password:</label>
+				<input class="form-control" type="password" formControlName="password">
+			</div>
 
-            <div [class.hidden]="!loginError" id="loginError">
-                Username or Password incorrect.
-            </div>
+			<div [class.hidden]="!loginError" id="loginError">
+				Username or Password incorrect.
+			</div>
 
-            <div>
-                <button [disabled]="loading || !LoginForm.valid" class="btn btn-primary" (click)="loginRun()">Login</button>
-                <!--<img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />-->
-                <!--<a [routerLink]="['/register']" class="btn btn-link">Register</a>-->
-            </div>
-        </form>
-    </div>
+			<button [disabled]="loading || !LoginForm.valid" class="button blue mbottom-sm" (click)="loginRun()">
+				<span>Login</span>
+			</button>
+			<!--<img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />-->
+			<!--<a [routerLink]="['/register']" class="btn btn-link">Register</a>-->
+		</form>
+	</div>
 </ng-template>
-

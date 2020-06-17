@@ -1,8 +1,9 @@
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Variable Types</legend>
-</div>
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewVariableForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New Variable Type</button>
+<h3 class="mbottom-md">Variable Types</h3>
+
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="button blue" (click)="showNewVariableForm()">
+	<i class="fa fa-plus" aria-hidden="true"></i> 
+	<span>Add New Variable Type</span>
+</button>
 
 <form #VariableTypeForm="ngForm">
     <div class="form-group" *ngIf="variableTypes">
@@ -50,14 +51,11 @@
 
 <!-- new variable type form -->
 <ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Variable Type </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
-    </div>
+	<div class="modal-header">
+		<div class="title">New Variable Type</div>  
+		<button (click)="d('closed')">&times;</button>                
+	</div>
     <div class="modal-body">
-        <h3 class="modal-title">New Variable Type</h3>
         <form [formGroup]="newVarForm">
             <!-- Variable Type Name* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('name').valid && newVarForm.get('name').dirty}">
@@ -84,8 +82,8 @@
         </form>
 
         <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewVariableType()" [disabled]="!newVarForm.valid" class="btn-blue">Create</button>
+            <button type="button" (click)="d('closed')" class="button">Cancel</button>
+            <button type="button" (click)="createNewVariableType()" [disabled]="!newVarForm.valid" class="button blue">Create</button>
         </div>
     </div>
 </ng-template>

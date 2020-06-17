@@ -74,14 +74,26 @@
                                             <textarea class="form-control" rows="6" id="description" formControlName="description" name = "description" required></textarea>
                                         </div>
                                         <div class="form-group">
-                                            <label for="title">Upload an Attachment (optional):</label><br />
-                                            <span class="btn-file">
-                                                <i class="fa fa-paperclip"></i>&nbsp;&nbsp;Attach File <input type="file" ngf-select (change)="uploadFile($event)" formControlName="attachment" name="file" accept="image/*">
-                                            </span>  
-                                            <br />
-                                            <i *ngIf="file" (click)=removeFile() class="fa fa-trash">&nbsp;&nbsp;Remove File</i>
-                                        </div>
-                                        <button type="submit" [disabled]="!form.valid" class="btn-blue"><i class="fa fa-share"></i><span >&nbsp;&nbsp;Submit Support Request</span></button>
+											<label for="title">Upload an Attachment (optional):</label>
+											<div  *ngIf="!file">
+												<label class="button small black" style="padding-top: 3px;" for="supportRequestFile">
+													<i class="fa fa-paperclip"></i>
+													<span>Attach File</span> 
+												</label>  
+												<input type="file" ngf-select (change)="uploadFile($event)" formControlName="attachment" name="file" accept="image/*" id="supportRequestFile" hidden>
+											</div>
+											<div  *ngIf="file">
+												<button class="button small red" (click)=removeFile()>
+													<i  class="fa fa-trash"></i>
+													<span>Remove File</span>
+												</button>
+											</div>
+										</div>
+										<!-- Submit -->
+                                        <button type="submit" [disabled]="!form.valid" class="button blue mtop-sm">
+											<i class="fa fa-share"></i>
+											<span>Submit Support Request</span>
+										</button>
                                     </div>
                                 </div>
                             </div>

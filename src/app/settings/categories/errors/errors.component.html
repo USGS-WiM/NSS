@@ -1,8 +1,9 @@
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Errors</legend>
-</div>
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewErrorForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New Error</button>
+<h3 class="mbottom-md">Errors</h3>
+
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="button blue small" (click)="showNewErrorForm()">
+	<i class="fa fa-plus" aria-hidden="true"></i> 
+	<span>Add New Error</span>
+</button>
 
 <form #ErrorForm="ngForm">
     <div class="form-group" *ngIf="errors">
@@ -45,14 +46,11 @@
 
 <!-- new error form -->
 <ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Error </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
+	<div class="modal-header">
+		<div class="title">New Error</div>  
+		<button (click)="d('closed')">&times;</button>                
     </div>
     <div class="modal-body">
-        <h3 class="modal-title">New Error</h3>
         <form [formGroup]="newErrForm">
             <!-- Name -->
             <div class="form-group required">
@@ -72,8 +70,8 @@
         </form>
 
         <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewError()" [disabled]="!newErrForm.valid" class="btn-blue">Create</button>
+            <button type="button" (click)="d('closed')" class="button">Cancel</button>
+            <button type="button" (click)="createNewError()" [disabled]="!newErrForm.valid" class="button blue">Create</button>
         </div>
     </div>
 </ng-template>

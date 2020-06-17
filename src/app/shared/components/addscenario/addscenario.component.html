@@ -1,13 +1,9 @@
 <ng-template #addScenario let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left" *ngIf="clone==true"> Clone Scenario </h4>
-            <h4 class="modal-title pull-left" *ngIf="clone==false"> New Scenario </h4>
-            <!--close and save-->
-            <button class="close pull-right" (click)="c('closed')">x</button><br><br>
-            
-        </div>
-    </div>
+	<div class="modal-header">
+		<div class="title" *ngIf="clone==true">Clone Scenario</div>  
+		<div class="title" *ngIf="clone==false">New Scenario</div>  
+		<button (click)="d('closed')">&times;</button>                
+	</div>
     <div class="modal-body">
         <form [formGroup]="newScenForm">
 
@@ -110,7 +106,7 @@
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn-blue" (click)="addVariable()">Add Parameter</button>
+                <button type="button" class="button small blue" (click)="addVariable()">Add Parameter</button>
 
                 <div formArrayName="regressions">
                     <!--Prediction Interval-->
@@ -169,11 +165,11 @@
                             </div>
                         </div>
                     </div>
-                    <button *ngIf="!addPredInt" type="button" class="btn-blue" (click)="addPredInt = true">Add Prediction Interval</button>
+                    <button *ngIf="!addPredInt" type="button" class="button small blue" (click)="addPredInt = true">Add Prediction Interval</button>
 
                     <!-- Errors-->
                      <div formArrayName="errors">
-                        <button type="button" class="btn-blue" (click)="addError()">Add Error</button>
+                        <button type="button" class="button small blue" (click)="addError()">Add Error</button>
                         <div *ngFor="let err of newScenForm.get('regressionRegions.regressions.errors').controls; let errIndex = index">
                             <div class="scenDropdown">
                                 <div (click)="removeError(errIndex)"><i class="ion-close"></i></div>
@@ -240,9 +236,9 @@
 
         <div class="modal-footer">
             <!--close and save-->
-            <button type="button" (click)="clearScenario()" class="btn-black">Clear All</button>
-            <button type="button" (click)="c('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="btn-blue">Create</button>
+            <button type="button" (click)="clearScenario()" class="button red">Clear All</button>
+            <button type="button" (click)="c('closed')" class="button black">Cancel</button>
+            <button type="button" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="button blue">Create</button>
         </div>
     </div>
 </ng-template>

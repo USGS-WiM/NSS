@@ -22,6 +22,7 @@
 // Labels
 label{
 	padding: 2px 0 6px 0px;
+	margin: 0 !important;
 	letter-spacing: 0px;
 	display: block;
 	color: var(--text);
@@ -112,6 +113,7 @@ input[type='search'],
 input[type='tel'],
 input[type='url'],
 select,
+.dropdown,
 textarea{
 	max-width: 100%;
 	width: 100%;
@@ -194,6 +196,17 @@ select{
 	-moz-appearance: none;
 }
 
+// Dropdown plugin styles
+.dropdown-menu{
+	box-sizing: border-box;
+	max-width: 269px !important;
+	width: 269px !important;
+
+	.dropdown-item{
+		box-sizing: border-box;
+		padding: 1px 10px !important;
+	}
+}
 
 ////////////////////////
 //      Buttons      //
@@ -227,6 +240,11 @@ button{
 	@media (max-width: $screenMD) {
 		letter-spacing: 0.4px;
 		padding: 2px 14px 2px 14px;
+	}
+
+	&.full{
+		width: 100%;
+		text-align: center;
 	}
 
 	// States
@@ -375,17 +393,20 @@ button{
 
 	// Disabled
 	&:disabled{
-		background-color: var(--inputDisabled);
-		color: var(--inputDisabledText);
-		border-color: var(--border);
+		background-color: #BFC6D2;
+		color: #434A52;
+		border-color: transparent;
 		opacity: 0.8;
 
 		&:hover{
 			cursor: default;
-			background-color: var(--inputDisabled);
-			color: var(--inputDisabledText);
+			background-color: #BFC6D2;
+			color: #434A52;
 			opacity: 0.8;
 			text-decoration:none;
+			span{
+				text-decoration: none;
+			}
 		}
 	}
 

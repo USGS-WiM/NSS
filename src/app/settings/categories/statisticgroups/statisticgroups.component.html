@@ -1,6 +1,5 @@
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Statistic Groups</legend>
-</div>
+<h3 class="mbottom-md">Sttistic Groups</h3>
+
 <div class="regSelect">
     Filter By Region:
     <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
@@ -9,8 +8,9 @@
     </select>
 </div>
 
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewStatGroupForm()">
-    <i class="fa fa-plus" aria-hidden="tru"></i> Add New Statistic Group
+<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="button blue small" (click)="showNewStatGroupForm()">
+	<i class="fa fa-plus" aria-hidden="true"></i>
+	<span>Add New Statistic Group</span>
 </button>
 
 <form #StatGroupForm="ngForm">
@@ -79,14 +79,11 @@
 
 <!-- new statistic group form -->
 <ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Statistic Group</h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
-    </div>
+	<div class="modal-header">
+		<div class="title">New Statistic Group</div>  
+		<button (click)="d('closed')">&times;</button>                
+	</div>
     <div class="modal-body">
-        <h3 class="modal-title">New Statistic Group</h3>
         <form [formGroup]="newStatGroupForm">
             <!-- Statistic Group Name* -->
             <div
@@ -114,8 +111,8 @@
         </form>
 
         <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewStatGroup()" [disabled]="!newStatGroupForm.valid" class="btn-blue">Create</button>
+            <button type="button" (click)="d('closed')" class="button">Cancel</button>
+            <button type="button" (click)="createNewStatGroup()" [disabled]="!newStatGroupForm.valid" class="button blue">Create</button>
         </div>
     </div>
 </ng-template>

@@ -4,7 +4,7 @@
 <div class="sidebar-content">
 
     <div class="sidebar-item">
-        <span>Choose Region:</span>
+        <label>Choose Region:</label>
         <select id="regSelect" [(ngModel)]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
             <option selected hidden value=""></option>
             <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
@@ -14,7 +14,7 @@
 
     <div class="sidebar-item" *ngIf="statisticGroups">
         <span>
-            <span>Limit by Statistic Group(s):</span>
+            <label>Limit by Statistic Group(s):</label>
             <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>
         <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedStatGrpIDs"
@@ -25,7 +25,7 @@
 
     <div class="sidebar-item" *ngIf="regressionRegions">
         <span>
-            <span>Limit by Hydrologic Region(s):</span>
+            <label>Limit by Hydrologic Region(s):</label>
             <i *ngIf="loggedInRole == 'Administrator'" (click)="showAddRegRegion()" title="Add Regression Region" class="ion-plus-circled"></i>
             <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>
@@ -37,7 +37,7 @@
 
     <div class="sidebar-item" *ngIf="regressionTypes">
         <span>
-            <span>Limit by Statistic(s):</span>
+            <label>Limit by Statistic(s):</label>
             <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>
         <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="mySGSettings" name="selectedRegTypeIDs"
@@ -47,15 +47,18 @@
 
 
     <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].regressionRegions.length > 0">
-        <label>Calculate Statistic:</label>
-        <button style="margin-top: 6px" [disabled]="scenarios[0].regressionRegions[0].Results != undefined || showCompute==false" type="button"
-            class="btn-black" (click)="CalculateScenario()">Compute</button>
+		<label class="block">Calculate Statistic:</label>
+		<div>
+			<button [disabled]="scenarios[0].regressionRegions[0].Results != undefined || showCompute==false" type="button"class="button full" (click)="CalculateScenario()">
+				<span>Compute</span>
+			</button>
+    	</div>  
     </div> <!-- end sidebar-item-->
 
     <div class="sidebar-item" *ngIf="(selectedRegRegionIDs && selectedRegRegionIDs.length > 0) || (selectedRegTypeIDs && selectedRegTypeIDs.length > 0)
         || (selectedStatGrpIDs && selectedStatGrpIDs.length > 0)">
         <button style="margin-top: 6px" type="button"
-            class="btn-wim-primary" (click)="clearSelections()">Reset Region Filters</button>
+            class="button blue small" (click)="clearSelections()">Reset Region Filters</button>
     </div> <!-- end sidebar-item-->
 
     <div class="sidebar-item" *ngIf="showChart">

@@ -50,7 +50,7 @@ nav#main{
 		a{
 			display: block;
 			height: 100%;
-			margin-left: 12px;
+			margin-left: 15px;
 
 			&.hidden{
 				display: none;
@@ -76,6 +76,19 @@ nav#main{
 
 			&.logout span{
 				color: var(--red);
+			}
+			&.active{
+
+				span{
+					text-decoration: underline;
+					font-weight: 700;
+				}
+
+				&:hover{
+					cursor: default;
+					span{
+					}
+				}
 			}
 		}
 	}
@@ -120,6 +133,28 @@ nav#main{
 	}
 	
 }
+
+
+#loginModal .modal-dislog{
+	background-color: red;
+}
+// Login Form Wrapper
+#loginForm{
+	display: block;
+	max-width: 300px;
+	margin: 0 auto;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,10 +1,8 @@
 <ng-template #manageCitations let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">Manage Citations </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
-    </div>
+	<div class="modal-header">
+		<div class="title">Manage Citations</div>  
+		<button (click)="d('closed')">&times;</button>                
+	</div>
     <div class="modal-body">
     <input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
     <table class="table">
@@ -41,6 +39,6 @@
     </table>
     </div>
     <div class="modal-footer">
-        <button type="button" (click)="d('closed')" class="btn-black">Close</button>
+        <button type="button" (click)="d('closed')" class="button black">Close</button>
     </div>
 </ng-template>

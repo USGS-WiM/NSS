@@ -1,4 +1,42 @@
- .page-padding { 
+.settings-page{
+	display: flex;
+	height: 100%;
+	max-height: 100%;
+
+	.setting-sidebar{
+		width: 300px;
+		min-width: 300px;
+
+		.sidebar-links{
+			display: block;
+			list-style-type: none;
+			padding: 0;
+			margin: 0;
+
+			li{
+				display: block;
+				padding: 1px 0 0 15px;
+				font-size: 14px;
+				color: var(--blue);
+
+				a{
+					color: var(--blue);
+				}
+			}
+		}
+	}
+
+	.settings-page-content{
+		flex-grow: 3;
+		box-sizing: border-box;
+		padding: 15px;
+		overflow: auto;
+	}
+}
+
+
+
+.page-padding { 
     display: block;
     width: 100%;
     box-sizing: border-box;

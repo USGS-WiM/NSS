@@ -197,9 +197,6 @@ form{
     margin-bottom: 55px;
 }
 
-.open>.dropdown-menu{
-  /*max-width: 100% !important;*/
-}
 .wim-sidebar{
   overflow: visible !important;
 }
@@ -307,10 +304,6 @@ input[type="radio"]{
 }
 .dropdown-item.check-control{
   padding-left: 15px !important;
-}
-
-.dropdown-menu{
-  max-width: 280px !important;
 }
 
 .hidden-print {

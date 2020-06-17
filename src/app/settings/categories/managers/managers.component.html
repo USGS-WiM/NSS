@@ -1,9 +1,9 @@
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Managers</legend>
-</div>
+<h3 class="mbottom-md">Managers</h3>
 
-<button type="button" class="btn-blue" (click)="showNewUserForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New Manager</button>
+<button type="button" class="button small blue" (click)="showNewUserForm()">
+	<i class="fa fa-plus" aria-hidden="true"></i> 
+	<span>Add New Manager</span>
+</button>
 
 <form #User TypeForm="ngForm">
     <div class="form-group" *ngIf="managers">
@@ -64,14 +64,11 @@
 
 <!-- new user form -->
 <ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Manager </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
+	<div class="modal-header">
+		<div class="title">New Manager</div>  
+		<button (click)="d('closed')">&times;</button>                
     </div>
     <div class="modal-body">
-        <h3 class="modal-title">New Manager</h3>
         <form [formGroup]="newUserForm">
             <!-- UserName* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('username').valid && newUserForm.get('username').dirty}">
@@ -124,8 +121,8 @@
         </form>
 
         <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewUser()" [disabled]="!newUserForm.valid" class="btn-blue">Create</button>
+            <button type="button" (click)="d('closed')" class="button">Cancel</button>
+            <button type="button" (click)="createNewUser()" [disabled]="!newUserForm.valid" class="button blue">Create</button>
         </div>
     </div>
 </ng-template>

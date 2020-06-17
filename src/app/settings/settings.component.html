@@ -2,24 +2,24 @@
 <toaster-container [toasterconfig]="config"></toaster-container>
 <!-- / toaster directive -->
 
-<div class="page-padding">
-    <div id="resource-list">
-        <div id="sidebar-wrapper">
-            <h1>Lookups</h1>
-            <ul class="settings-links">
-                <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['errors']" routerLinkActive="active">Errors</a></li>
-                <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['managers']" routerLinkActive="active">Managers</a></li>
-                <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['regions']"  routerLinkActive="active">Regions</a></li>
-                <li><a [routerLink]="['regressiontypes']" routerLinkActive="active">Regression Types (Statistics)</a></li>
-                <li><a [routerLink]="['statisticgroups']" routerLinkActive="active">Statistic Groups</a></li>
-                <li><a [routerLink]="['unittypes']" routerLinkActive="active">Unit Types</a></li>
-                <li><a [routerLink]="['unitsystems']" routerLinkActive="active">Unit Systems</a></li>
-                <li><a [routerLink]="['variabletypes']"  routerLinkActive="active">Variable Types</a></li>
-            </ul>
-        </div>
-    
-        <div id="page-content-wrapper" class="pull-right">
-            <router-outlet></router-outlet>
-        </div>
-    </div>
+<div class="settings-page">
+
+	<!-- Sidebar -->
+	<div class="setting-sidebar">
+		<h3>Lookups</h3>
+		<ul class="sidebar-links">
+			<li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['errors']" routerLinkActive="active">Errors</a></li>
+			<li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['managers']" routerLinkActive="active">Managers</a></li>
+			<li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['regions']"  routerLinkActive="active">Regions</a></li>
+			<li><a [routerLink]="['regressiontypes']" routerLinkActive="active">Regression Types (Statistics)</a></li>
+			<li><a [routerLink]="['statisticgroups']" routerLinkActive="active">Statistic Groups</a></li>
+			<li><a [routerLink]="['unittypes']" routerLinkActive="active">Unit Types</a></li>
+			<li><a [routerLink]="['unitsystems']" routerLinkActive="active">Unit Systems</a></li>
+			<li><a [routerLink]="['variabletypes']"  routerLinkActive="active">Variable Types</a></li>
+		</ul>
+	</div>
+
+	<div class="settings-page-content">
+		<router-outlet></router-outlet>
+	</div>
 </div>

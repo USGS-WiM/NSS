@@ -13,14 +13,14 @@
 
 	<!-- Region -->
 	<div *ngIf="showRegion" class="app-body-section">
-		<label class="padding-none margin-none">Region:</label>
-		<h5 class="padding-none margin-none">{{selectedRegion.name}}</h5>
+		<label>Region:</label>
+		<h5>{{selectedRegion.name}}</h5>
 	</div>
 
 
 	<!-- Statistic Group -->
 	<div class="app-body-section" *ngIf="selectedStatisticGrp?.length>0">
-		<label class="padding-none margin-none">Statistic Group(s):</label>
+		<label>Statistic Group(s):</label>
 		<div>
 			<span *ngFor="let st of selectedStatisticGrp;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{st.name}}{{isLast ? "" : ", "}}</span>
 		</div>
@@ -28,7 +28,7 @@
 
 	<!-- Regression Regions -->
     <div class="app-body-section" *ngIf="selectedRegressionRegion?.length>0">
-		<label class="padding-none margin-none">Regression Region(s):</label>
+		<label>Regression Region(s):</label>
 		<div>
 			<span *ngFor="let rr of selectedRegressionRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.name}}{{isLast ? "" : ", "}}</span>
 		</div>
@@ -42,7 +42,7 @@
 		<button *ngIf="loggedInRole && showRegion && !editRegionScenario" type="button" class="button small mright-xs" (click)="editRegScenario()">
 			<span>Edit Scenario</span>
 		</button>
-		<button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="button small mright-xs" (click)="cancelEditRegionScenario()">
+		<button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="button small blue mright-xs" (click)="cancelEditRegionScenario()">
 			<span>Finish Editing</span>
 		</button>
 		<button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="button small" (click)="showManageCitationsModal()">
@@ -144,7 +144,7 @@
             <h2 class="mtop-lg">Citations</h2>
             <div *ngFor="let sc of scenarios">
                 <div *ngIf="sc.citations">
-                    <label *ngIf="sc.citations" class="padding-none margin-none">{{sc.statisticGroupName}} Citations</label>
+                    <label *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</label>
                     <div *ngFor="let l of sc.citations">
                         <a *ngIf="l && l != null" [href]="l.citationURL" [target]="_blank" class="citation">
                             <div>{{l.author}}</div>
@@ -158,8 +158,12 @@
 
      <!-- resultsBack-->
     <div *ngIf="resultsBack && !editRegionScenario">
-        <button type="button" class="btn-wim-primary hidden-print" style="margin: 0px 0px 15px 0px;" (click)="editScenario()">Edit Scenario Parameters</button>
-        <div *ngFor="let s of scenarios">
+		<!-- Edit -->
+        <button type="button" class="button small hidden-print mbottom-xs" (click)="editScenario()">
+			<span>Edit Scenario Parameters</span>
+		</button>
+		
+		<div *ngFor="let s of scenarios">
             <h3>{{s.statisticGroupName}}</h3>
             <div *ngFor="let rr of s.regressionRegions;let r = index">
                 <div *ngIf="rr.id > 0"> 
@@ -672,8 +676,9 @@
             </div>
         </div>
         <br clear="all"/>
-        <button type="button" class="btn btn-wim-primary hidden-print" (click)="printPage()">Print Report</button>
-        <br/><br/><br/>
+        <button type="button" class="button blue mbottom-xs hidden-print" (click)="printPage()">
+			<span>Print Report</span>
+		</button>
     </div><!-- end results back -->
     </div>
 
@@ -947,14 +952,11 @@
 </div>
 <!--expected value inputs for editing scenarios-->
 <ng-template #values let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">Expected Values </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
+	<div class="modal-header">
+		<div class="title">Expected Values</div>  
+		<button (click)="d('closed')">&times;</button>                
     </div>
     <div class="modal-body">
-        <h3 class="modal-title">Expected Values</h3>
         <span>The equation is: <span MathJax id="mathJaxEq">{{editScen.regressionRegions[0].regressions[0].equationMathJax}}</span></span>
         <p>Inputs are needed to check that the equation yields the expected results.</p>
         <!-- Expected Value* -->
@@ -984,9 +986,13 @@
             <input type="number" name="upper" [(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.intervalBounds.upper" required>
         </div>
         <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+            <button type="button" (click)="d('closed')" class="button small">
+				<span>Cancel</span>
+			</button>
             <!--<button type="button" (click)="!changeStatGroup ? submitScenario() : putLowFlow()" class="btn-blue">Create</button>-->
-            <button type="button" (click)="submitScenario()" class="btn-blue">Save</button>
+            <button type="button" (click)="submitScenario()" class="button small blue">
+				<span>Save</span>
+			</button>
         </div>
     </div>
 </ng-template>

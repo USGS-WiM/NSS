@@ -1,13 +1,32 @@
 // MainView
 // Main content area
 
+.app-body-section{
+	margin-top: 25px;
+}
 
+// Misc styles
 
+// Citation link
+.citation{
+	display: block;
+	font-size: 13px;
+	line-height: 16px;
+	margin: 10px 0;
+	font-weight: 500;
+	box-sizing: border-box;
+	padding-left: 15px;
+}
+
+// Small red warning text
 .warning-text{
     color:red;
     font-style: italic;
     font-size: small;
 }
+
+
+
 .reqError {
     background-color: #efe1e1!important;
     border: 1px solid #a94442!important;

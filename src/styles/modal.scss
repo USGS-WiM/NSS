@@ -1,0 +1,44 @@
+// Modal Styles
+
+.modal-dialog{
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;	
+	margin: 0 auto !important;
+	padding: 0;
+}
+
+.modal-header{
+	display: flex;
+	justify-content: space-between;
+
+	.title{
+		flex-grow: 3;
+		font-size: 18px;
+		font-weight: 500;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		line-height: 20px;
+		font-weight: 600;
+	}
+
+	button{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		font-size: 30px;
+		color: var(--textLight);
+
+		&:hover{
+			cursor: pointer;
+			color: var(--black);
+		}
+	}
+}
+
+.modal-body{
+	max-height: 60vh;
+	overflow: auto;
+}

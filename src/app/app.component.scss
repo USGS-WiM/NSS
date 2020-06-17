@@ -52,6 +52,10 @@ nav#main{
 			height: 100%;
 			margin-left: 12px;
 
+			&.hidden{
+				display: none;
+			}
+
 			i,span{
 				display: flex;
 				flex-direction: column;
@@ -69,10 +73,10 @@ nav#main{
 					text-decoration: underline;
 				}
 			}
-		}
 
-		.dropdown{
-			display: none;
+			&.logout span{
+				color: var(--red);
+			}
 		}
 	}
 }
@@ -111,6 +115,8 @@ nav#main{
 		flex-grow: 3;
 		box-sizing: border-box;
 		padding: 15px;
+		height: 100%;
+		overflow: auto;
 	}
 	
 }
@@ -121,9 +127,7 @@ nav#main{
     margin-bottom: 12px !important;
 }
 
-.hidden {
-    display: none;
-}
+
 
 .modal-content {
     height: 400px;

@@ -4,59 +4,88 @@
     <toaster-container [toasterconfig]="config"></toaster-container>
     <!-- / toaster directive -->
 
-    <div><h3 style="font-size: 32px !important; font-weight: bolder !important;">{{title}}</h3></div>
-    <div style="margin-bottom: 5px; opacity: 0.5; letter-spacing: 0.6px;">{{timestamp | date:"MMMM d, y hh:mma"}}</div>
-    <span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span>
-    <div class="col-md-6" style="padding: 0;">
-        <div *ngIf="showRegion">
-            <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Region:</label>
-            <div style="font-weight: bolder !important; font-size: 18px !important;">{{selectedRegion.name}}</div>
-        </div>
-        <div *ngIf="selectedStatisticGrp?.length>0">
-            <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Statistic Group(s):</label>
-            <div>
-                <span *ngFor="let st of selectedStatisticGrp;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{st.name}}{{isLast ? "" : ", "}}</span>
-            </div>
-        </div>
-        <div *ngIf="selectedRegressionRegion?.length>0" style="padding: 0;">
-            <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Regression Region(s):</label>
-            <div>
-                <span *ngFor="let rr of selectedRegressionRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.name}}{{isLast ? "" : ", "}}</span>
-            </div>
-        </div>
-        <div class="hidden-print">
-            <button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showAddScenarioModal()">Add Scenario</button>
-            <button *ngIf="loggedInRole && showRegion && !editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="editRegScenario()">Edit Scenario</button>
-            <button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="cancelEditRegionScenario()">Finish Editing</button>
-            <button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showManageCitationsModal()">Manage Citations</button>
-        </div>
-    </div>
+	<h3 style="font-size: 32px !important; font-weight: bolder !important;">{{title}}</h3>
+	
+	<h4>{{timestamp | date:"MMMM d, y hh:mma"}}</h4>
+	
+	<span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span>
+
+
+	<!-- Region -->
+	<div *ngIf="showRegion" class="app-body-section">
+		<label class="padding-none margin-none">Region:</label>
+		<h5 class="padding-none margin-none">{{selectedRegion.name}}</h5>
+	</div>
+
+
+	<!-- Statistic Group -->
+	<div class="app-body-section" *ngIf="selectedStatisticGrp?.length>0">
+		<label class="padding-none margin-none">Statistic Group(s):</label>
+		<div>
+			<span *ngFor="let st of selectedStatisticGrp;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{st.name}}{{isLast ? "" : ", "}}</span>
+		</div>
+	</div>
+
+	<!-- Regression Regions -->
+    <div class="app-body-section" *ngIf="selectedRegressionRegion?.length>0">
+		<label class="padding-none margin-none">Regression Region(s):</label>
+		<div>
+			<span *ngFor="let rr of selectedRegressionRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.name}}{{isLast ? "" : ", "}}</span>
+		</div>
+	</div>
+
+	<!-- Buttons -->
+    <div class="app-body-section hidden-print" *ngIf="loggedInRole">
+		<button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="button small mright-xs" (click)="showAddScenarioModal()">
+			<span>Add Scenario</span>
+		</button>
+		<button *ngIf="loggedInRole && showRegion && !editRegionScenario" type="button" class="button small mright-xs" (click)="editRegScenario()">
+			<span>Edit Scenario</span>
+		</button>
+		<button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="button small mright-xs" (click)="cancelEditRegionScenario()">
+			<span>Finish Editing</span>
+		</button>
+		<button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="button small" (click)="showManageCitationsModal()">
+			<span>Manage Citations</span>
+		</button>
+	</div>
+	
+
     <br clear="all"/>
 
      <!-- scenarios && !resultsBack-->
-    <div class="hidden-print" *ngIf="scenarios && !resultsBack && !editRegionScenario">
+    <div class="hidden-print app-body-section" *ngIf="scenarios && !resultsBack && !editRegionScenario">
         <label>Equation Variables</label>
-        <br/>
-        <div *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</div>
-        <form #scenarioForm="ngForm" *ngIf="scenarios.length > 0">
-            <div class="row">
-                <div class="col-xs-12" *ngFor="let sc of scenarios;let sInd = index">
-                    <h3>{{sc.statisticGroupName}}</h3>
-                    <div class="col-xs-12" *ngIf="sc.regressionRegions?.length > 0">
-                        <table class="table">
-                            <tr *ngFor="let rr of sc.regressionRegions;let rInd = index">
-                                <td style="vertical-align:middle;">{{rr.name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_Code: {{rr.code}})</span></td>
-                                <!-- <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
-                                <td *ngIf="showWeights" class="col-xs-2">
-                                    <input style="display:inline;" type="text" class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.percentWeight">
-                                </td> -->
-                            </tr>
-                        </table>
-                    </div><!-- end length > 0-->
-                    <div *ngIf="sc.regressionRegions.length == 0"><h3>There are no Results for your selection. Please try another .... </h3></div>
-                </div>  <!-- end ngFor scenarios -->
-            </div>
-            <table *ngIf="scenarios[0].regressionRegions.length > 0" style="border:solid 1px gray" class="table">
+        <p *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</p>
+		
+		<form #scenarioForm="ngForm" *ngIf="scenarios.length > 0">
+			<div *ngFor="let sc of scenarios;let sInd = index">
+				<h4>{{sc.statisticGroupName}}</h4>
+				<div *ngIf="sc.regressionRegions?.length > 0">
+					<table class="table">
+						<tr *ngFor="let rr of sc.regressionRegions;let rInd = index">
+							<td style="vertical-align:middle;">
+								{{rr.name}} 
+								<span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_Code: {{rr.code}})</span>
+							</td>
+							<!-- <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
+							<td *ngIf="showWeights" class="col-xs-2">
+								<input style="display:inline;" type="text" class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.percentWeight">
+							</td> -->
+						</tr>
+					</table>
+				</div><!-- end length > 0-->
+
+				<!-- No results -->
+				<div *ngIf="sc.regressionRegions.length == 0">
+					<h3>There are no Results for your selection. Please try another...</h3>
+				</div>
+			</div>  <!-- end ngFor scenarios -->
+
+
+
+			<!-- Table -->
+            <table *ngIf="scenarios[0].regressionRegions.length > 0" class="table mtop-lg">
                 <thead>
                     <tr>
                         <th class="col-xs-4">Parameter</th>
@@ -111,16 +140,16 @@
                 </tbody>
             </table>
 
-            <h2 style="margin:0;padding:0">Citations</h2>
+			<!-- Citations -->
+            <h2 class="mtop-lg">Citations</h2>
             <div *ngFor="let sc of scenarios">
                 <div *ngIf="sc.citations">
-                    <label *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</label>
+                    <label *ngIf="sc.citations" class="padding-none margin-none">{{sc.statisticGroupName}} Citations</label>
                     <div *ngFor="let l of sc.citations">
-                        <a *ngIf="l && l != null" [href]="l.citationURL" [target]="_blank">
+                        <a *ngIf="l && l != null" [href]="l.citationURL" [target]="_blank" class="citation">
                             <div>{{l.author}}</div>
                             <div>{{l.title}}</div>
                         </a>
-                        <br />
                     </div>
                 </div>
             </div><!--end foreach scenario (for citations) {{l != undefined ? l.rrID : ''}}-->

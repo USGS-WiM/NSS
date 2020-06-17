@@ -34,18 +34,13 @@
 		<a (click)="showLoginModal()" [class.hidden]="isLoggedIn||!isloginShow">
 			<span>Manage</span>
 		</a> 
+		<a routerLink="profile" routerLinkActive="active" [class.hidden]="!isLoggedIn">
+			<span>Profile</span>
+		</a> 
+		<a (click)="logout(true)" [class.hidden]="!isLoggedIn" class="logout">
+			<span>Logout</span>
+		</a> 
 
-		<div class="dropdown">
-		<!-- <div class="dropdown" [class.hidden]="!isLoggedIn"> -->
-			<a class="dropbtn nav-link-text">
-				<i class="ion-person"></i>
-				<i class="ion-arrow-dropdown"></i>
-			</a>
-			<div class="dropdown-content">
-				<a (click)="logout(true)">Logout</a>
-				<a routerLink="profile" routerLinkActive="active">Profile</a>
-			</div>
-		</div>
 
 	</div>
 

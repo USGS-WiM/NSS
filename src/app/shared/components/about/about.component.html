@@ -1,9 +1,7 @@
 <ng-template #about let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">About National Streamflow Statistics client application v{{appVersion}}</h4>  
-            <button class="close pull-right" (click)="d('closed')">x</button>                
-        </div>  
+		<div class="title">About National Streamflow Statistics client application v{{appVersion}}</div>  
+		<button (click)="d('closed')">&times;</button>                
     </div>
     <div class="modal-body">
         <ngb-tabset>
@@ -94,9 +92,9 @@
         </ngb-tabset>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn-black" (click)="d('closed')">
+        <button type="button" class="button" (click)="d('closed')">
             <i class="fa fa-close"></i>
-            <span>&nbsp;&nbsp;Close</span>
+            <span>Close</span>
         </button>
     </div>
 </ng-template>

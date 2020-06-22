@@ -1395,8 +1395,8 @@ export class MainviewComponent implements OnInit {
         this.regressionRegions.forEach(x=> {
             this.scenarios.forEach(s=> {
                 s.regressionRegions.forEach(rr => {
-                    if(x.id == rr.id) {
-                            this.regRegionsScenarios.push(x)
+                    if (x.id == rr.id) {
+                        this.regRegionsScenarios.push(x)
                     }
                 });
             });

@@ -123,6 +123,8 @@ export class MainviewComponent implements OnInit {
     public addRegReg: boolean;
     public selectedRegRegion;
     public modalRef;
+    public regRegionsScenarios = [];
+    public unusedRegRegions;
     // public changeStatGroup = false;
     public citations: Array<Citation>;
 
@@ -1389,6 +1391,19 @@ export class MainviewComponent implements OnInit {
         return count;
     }
 
+    public getUnusedRegRegions(){
+        this.regressionRegions.forEach(x=> {
+            this.scenarios.forEach(s=> {
+                s.regressionRegions.forEach(rr => {
+                    if(x.id == rr.id) {
+                            this.regRegionsScenarios.push(x)
+                    }
+                });
+            });
+        });
+        this.unusedRegRegions = this.regressionRegions.filter(entry1 => !this.regRegionsScenarios.some(entry2 => entry1.id === entry2.id));
+    }
+    
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
@@ -1397,6 +1412,7 @@ export class MainviewComponent implements OnInit {
                     res.sort((a, b) => a.name.localeCompare(b.name)); 
                 }
                 this.regressionRegions = res;
+                this.getUnusedRegRegions();
                 if (this.scenarios) {
                     this.scenarios.forEach((s => {
                         s.regressionRegions.forEach(rr => {

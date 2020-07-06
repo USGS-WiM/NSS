@@ -196,15 +196,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
         });
         this.newScenForm.get('region').valueChanges.subscribe(item => {
-             if(item != null){
-                this.selectedRegion = item;
+            if(item != null){
+                this._nssService.setSelectedRegion(item)
                 this.newScenForm.patchValue({regressionRegions: { ID: null}});
-                this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
-                    .subscribe(res => {
-                    if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
-                    this.regressionRegions = res;
-                });
-             }
+            }
         }) 
         this.unitTypes.forEach( (element,index) => {  
             if (element.id.toString() == this.cloneParameters.r.unit.id.toString()){

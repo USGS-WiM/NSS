@@ -912,6 +912,14 @@
                         </table>
                     </div>
                 </div>
+                <label class="sgLabel">Unused Regression Regions</label>
+                <div *ngFor="let u of unusedRegRegions">
+                    <i *ngIf="!u.isEditing" title="Edit Regression Region" (click)="editRegRegion(u.id)" class="fa fa-pencil"
+                        aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
+                    <i *ngIf="!u.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(u.id)" class="fa fa-times"
+                        aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
+                    <label *ngIf="!u.isEditing" class="rrLabel">{{u.name}} (RG_Code: {{u.code}})</label>
+                </div>    
             </div>
         </form>
     </div>

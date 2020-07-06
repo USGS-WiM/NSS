@@ -397,9 +397,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public removeCitation(){
-    if (this.selectedRegRegion) { // if creating new regression region cannot set citationID to null
-      this.selectedRegRegion.citationID = null
-    }
+    this.newRegRegForm.controls['citationID'].setValue(null);
     this.removeCit = true;
     this.addCitation = false; 
     this.newCitForm.reset(); 

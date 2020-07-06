@@ -1392,6 +1392,7 @@ export class MainviewComponent implements OnInit {
     }
 
     public getUnusedRegRegions(){
+        this.regRegionsScenarios = [];
         this.regressionRegions.forEach(x=> {
             this.scenarios.forEach(s=> {
                 s.regressionRegions.forEach(rr => {

@@ -59,7 +59,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public tempSelectedRegressionRegion: Array<Regressionregion>;
   public newCitation: boolean = false;
   public rr;
-  public removeCit: boolean;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
@@ -368,23 +367,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         );
       } else if (this.addCitation && this.newCitation == true) { // New citation
         this.createNewCitation(this.selectedRegRegion);
-      } else if (this.removeCit == true) { // Remove citation
-        const idx = this.regressionRegions.findIndex(r => r.id === this.rr);
-        if (idx != -1) {
-          const regReg = this.regressionRegions[idx];
-          regReg.citationID = null;
-          this._settingsService.putEntity(this.rr, regReg, this.configSettings.regRegionURL)
-            .subscribe((response) => {
-              this.requeryFilters();
-              this._nssService.outputWimMessages(response);
-            }, error => {
-              if (this._settingsService.outputWimMessages(error)) {return; }
-              this._toasterService.pop('error', 'Error removing Citation', error._body.message || error.statusText);
-            }
-          );
-          this.selectedRegRegion.citationID = null;
-          this.cancelCreateRegression();
-        }
       } else { // add existing citation
         this.requeryFilters();
         this.cancelCreateRegression();
@@ -397,8 +379,10 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public removeCitation(){
+    if (this.selectedRegRegion) { // if creating new regression region cannot set citationID to null
+      this.selectedRegRegion.citationID = null
+    }
     this.newRegRegForm.controls['citationID'].setValue(null);
-    this.removeCit = true;
     this.addCitation = false; 
     this.newCitForm.reset(); 
     this.newCitation = false;

@@ -57,7 +57,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public currentCitation;
   public selectedRegressionRegion: Array<Regressionregion>;
   public tempSelectedRegressionRegion: Array<Regressionregion>;
-  public newCitation: boolean;
+  public newCitation: boolean = false;
   public rr;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
@@ -322,7 +322,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this._toasterService.pop('info', 'Info', 'Regression region was added');
         } else { this._settingsService.outputWimMessages(response); }
         if (this.addCitation && this.newCitation == true){ // if user elected to add a citation, send that through
-            this.createNewCitation(this.selectedRegRegion);
+          this.createNewCitation(response);
         } else {
           this.cancelCreateRegression();
           this.requeryFilters();
@@ -339,60 +339,53 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._loaderService.showFullPageLoad();
     this.saveFilters();
     if (!this.uploadPolygon) { // No polygon
-        this.newRegRegForm.get('location').setValue(null);
+      this.newRegRegForm.get('location').setValue(null);
     }
     this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.regRegionURL).subscribe(res => {
-            if (!res.headers) {
-              this._toasterService.pop('info', 'Info', 'Regression Region was updated');
-              this.modalRef.close();
-            } else {this._settingsService.outputWimMessages(res); }
-            if (this.addCitation && this.selectedRegRegion.citationID) { // Editing citation
-                this._settingsService.putEntity(this.selectedRegRegion.citationID, this.newCitForm.value, this.configSettings.citationURL)
-                .subscribe((response: any) => {
-                  if (!response.headers) { // Citation successfully updated
-                    this._toasterService.pop('info', 'Info', 'Citation was updated');
-                  } else { 
-                    this._settingsService.outputWimMessages(response); 
-                    this.cancelCreateRegression(); 
-                  }
-                  this.requeryFilters();
-                  this.cancelCreateRegression();
-                }, error => {
-                  this._loaderService.hideFullPageLoad();
-                  if (this._settingsService.outputWimMessages(error)) { return; }
-                  this._toasterService.pop('error', 'Error creating Citation', error.message || error._body.message || error.statusText);
-                });
-            } else if (this.addCitation && this.newCitation == true) {
-                this.createNewCitation(this.selectedRegRegion);
+      if (!res.headers) {
+        this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+        this.modalRef.close();
+      } else {
+        this._settingsService.outputWimMessages(res); 
+      }
+      if (this.addCitation && this.selectedRegRegion.citationID) { // Editing existing citation (moving into manage citaion modal)
+        this._settingsService.putEntity(this.selectedRegRegion.citationID, this.newCitForm.value, this.configSettings.citationURL)
+          .subscribe((response: any) => {
+            if (!response.headers) { // Citation successfully updated
+              this._toasterService.pop('info', 'Info', 'Citation was updated');
             } else {
-                this.requeryFilters();
-                this.cancelCreateRegression();
+              this._settingsService.outputWimMessages(response);
+              this.cancelCreateRegression();
             }
-        }, error => {
+            this.requeryFilters();
+            this.cancelCreateRegression();
+          }, error => {
             this._loaderService.hideFullPageLoad();
-            if (this._settingsService.outputWimMessages(error)) {return; }
-            this._toasterService.pop('error', 'Error editing Regression Region', error.message || error._body.message || error.statusText); }
-        );  
+            if (this._settingsService.outputWimMessages(error)) { return; }
+            this._toasterService.pop('error', 'Error creating Citation', error.message || error._body.message || error.statusText);
+          }
+        );
+      } else if (this.addCitation && this.newCitation == true) { // New citation
+        this.createNewCitation(this.selectedRegRegion);
+      } else { // add existing citation
+        this.requeryFilters();
+        this.cancelCreateRegression();
+      }
+    }, error => {
+      this._loaderService.hideFullPageLoad();
+      if (this._settingsService.outputWimMessages(error)) { return; }
+      this._toasterService.pop('error', 'Error editing Regression Region', error.message || error._body.message || error.statusText); }
+    );  
   }
 
   public removeCitation(){
-    this.saveFilters();
-    const idx = this.regressionRegions.findIndex(r => r.id === this.rr);
-    const regReg = this.regressionRegions[idx];
-    regReg.citationID = null;
-    this._settingsService.putEntity(this.rr, regReg, this.configSettings.regRegionURL)
-        .subscribe((response) => {
-            this.requeryFilters();
-            this._nssService.outputWimMessages(response);
-        }, error => {
-            if (this._settingsService.outputWimMessages(error)) {return; }
-            this._toasterService.pop('error', 'Error removing Citation', error._body.message || error.statusText);
-        }
-    );
-    this.selectedRegRegion.citationID=null;
+    if (this.selectedRegRegion) { // if creating new regression region cannot set citationID to null
+      this.selectedRegRegion.citationID = null
+    }
+    this.newRegRegForm.controls['citationID'].setValue(null);
     this.addCitation = false; 
     this.newCitForm.reset(); 
-    this.newCitation = true;
+    this.newCitation = false;
   }
 
   public createNewCitation(rr) {
@@ -414,6 +407,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         this._toasterService.pop('error', 'Error creating Citation', error.message || error._body.message || error.statusText);
       }
       );
+      this.newCitation = false;
   }
 
 

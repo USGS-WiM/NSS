@@ -73,8 +73,8 @@
           <button *ngIf="addCitation" type="button" class="btn-blue" (click)="removeCitation()">Remove Citation</button>
       </form>
       
-    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true; newCitation=true">Add New Citation</button>
-    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="showManageCitationsModal(); addCitation = true; newCitation=false">Find Existing Citation</button>
+    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation=true; newCitation=true">Add New Citation</button>
+    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="showManageCitationsModal(); addCitation=true; newCitation=false">Find Existing Citation</button>
     <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="showMap()">Upload Polygon</button>        
 
       <form *ngIf="uploadPolygon">

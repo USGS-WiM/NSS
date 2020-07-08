@@ -36,6 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
     isLoggedIn: boolean;
     isloginShow: boolean;
     public loginError = false;
+    public showMobileMenu = false;
     constructor(
         private _nssService: NSSService,
         public router: Router,
@@ -181,16 +182,5 @@ export class AppComponent implements OnInit, OnDestroy {
         return tooOld;
     }
 
-    public toggleSidebar() {
-        // should allow sidebar to go in and come back out
-        var sidebar = document.getElementById("wimSidebar");
-        if (sidebar.style.display == "") {
-            sidebar.style.display = "block";
-        } else if (sidebar.style.display === "none") {
-            sidebar.style.display = "block";
-        } else {
-            sidebar.style.display = "none";
-        }
-    }
 
 }

@@ -7,6 +7,12 @@
 	justify-content: center;	
 	margin: 0 auto !important;
 	padding: 0;
+
+	@media (max-width: 730px) {
+		justify-content: flex-end;
+		border-bottom-right-radius: 0;
+		border-bottom-left-radius: 0;
+	}
 }
 
 .modal-header{

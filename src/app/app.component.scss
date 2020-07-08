@@ -15,7 +15,14 @@ nav#main{
 
 	// Mobile menu button
 	.sidebar-toggle{
+		color: white;
 		display: none;
+		font-size: 24px;
+		margin-right: 10px;
+
+		@media (max-width: 800px) {
+			display: block;
+		}
 	}
 
 	.branding{
@@ -118,8 +125,39 @@ nav#main{
 		overflow: auto;
 
 		@media (max-width: 800px) {
-		
-		
+			display: block;
+			position: fixed;
+			left: -300px;
+			width: 94%;
+			max-width: 300px;
+			max-height: calc(100vh - 60px);
+			transition: left 0.15s ease-in-out;
+			height: calc(100vh - 60px);
+			z-index: 35;
+		}
+			
+		&.visible{
+			left: 0px;
+			transition: left 0.15s ease-in-out;
+		}
+	}
+	// Lightbox behind menu on mobile
+	#sidebarLightbox{
+		display: block;
+		position: fixed;
+		top: 60px;
+		left: 0;
+		opacity: 0;
+		height: 100vh;
+		width: 100vw;
+		background-color: rgba(0,0,30,0.3);
+		z-index: 30;
+		transition: opacity 0.15s ease 0.01s, display 0s ease 0.15s;
+
+		&.visible{
+			display: block;
+			opacity: 1;
+			transition: opacity 0.15s ease 0.01s, display 0s;
 		}
 	}
 

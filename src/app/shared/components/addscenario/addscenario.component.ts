@@ -196,9 +196,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
         });
         this.newScenForm.get('region').valueChanges.subscribe(item => {
-             if(item != null){
-                this.selectedRegion = item;
-             }
+            if(item != null){
+                this._nssService.setSelectedRegion(item)
+                this.newScenForm.patchValue({regressionRegions: { ID: null}});
+            }
         }) 
         this.unitTypes.forEach( (element,index) => {  
             if (element.id.toString() == this.cloneParameters.r.unit.id.toString()){
@@ -206,7 +207,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
         });
         if(!this.cloneParameters.r.equivalentYears){
-            this.cloneParameters.r.equivalentYears=0;
+            this.cloneParameters.r.equivalentYears = 0;
         }
         this.newScenForm.patchValue({
             statisticGroupID: this.cloneParameters.statisticGroupID,

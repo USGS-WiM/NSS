@@ -8,6 +8,11 @@
     display: block;
 }
 
+.example-text {
+    color: #6f7697;
+    padding: 0!important;
+    font-size: 11px!important;
+}
 .scenFormGroup {
     margin-left: 5px;
 }
@@ -43,6 +48,10 @@ button {
     padding-left: 0;
 }
 
+.ion-information-circled {
+    margin: 0px 5px;
+    cursor: pointer;
+}
 .ion-plus-circled {
     margin: 0px 5px;
     cursor: pointer;

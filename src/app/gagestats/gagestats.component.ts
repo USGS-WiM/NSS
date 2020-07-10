@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { GagestatsService } from './gagestats.service';
+
 @Component({
   selector: 'app-gagestats',
   templateUrl: './gagestats.component.html',
@@ -7,9 +9,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GagestatsComponent implements OnInit {
 
-  constructor() { }
+  loggedInRole;
+
+  constructor(private gagestatsService: GagestatsService) {  }
 
   ngOnInit() {
+    this.loggedInRole = localStorage.getItem('loggedInRole');
+
+  }
+
+  showAddStationModal(): void{
+    
+    this.gagestatsService.addStation();
+  }
+
+  bulkUpload(): void{
+    console.log("bulk upload clicked, does nothing else @ this time.")
+  }
+
+  export(): void{
+    console.log("export clicked, does nothing else")
   }
 
 }

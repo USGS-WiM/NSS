@@ -48,6 +48,7 @@ import { AddScenarioModal } from './shared/components/addscenario/addscenario.co
 import { ManageCitationsModal } from './shared/components/managecitations/managecitations.component';
 import { ToasterService} from 'angular2-toaster';
 import { AddRegressionRegionModal } from './shared/components/addregressionregion/addregressionregion.component';
+import { GagestatsComponent } from './gagestats/gagestats.component';
 
 declare const require: any;
 
@@ -69,7 +70,8 @@ const appRoutes: Routes = [
     runGuardsAndResolvers: 'always'
   },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
-  { path: '', component: MainviewComponent, pathMatch: 'full' }
+  { path: '', component: MainviewComponent, pathMatch: 'full' },
+  { path: 'gagestats', component: GagestatsComponent}
 ];
 
 export function ConfigLoader(configService: ConfigService) {
@@ -89,7 +91,7 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, LoaderComponent
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, LoaderComponent, GagestatsComponent
   ],
   imports: [
     NgSelectModule, BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

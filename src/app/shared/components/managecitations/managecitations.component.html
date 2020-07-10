@@ -7,6 +7,7 @@
     </div>
     <div class="modal-body">
     <input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
+    <div style="overflow: auto">
     <table class="table">
         <thead>
             <tr>
@@ -52,6 +53,7 @@
             </tr>
         </tbody>
     </table>
+    </div>
     </div>
     <div class="modal-footer">
         <button type="button" (click)="d('closed')" class="btn-black">Close</button>

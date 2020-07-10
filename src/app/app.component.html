@@ -13,7 +13,10 @@
         </span>
         <div class="nav-links">
             <a routerLink="" routerLinkActive="active">
-                <span class="nav-link-text">Home</span>
+                <span class="nav-link-text">NSS</span>
+            </a>
+            <a routerLink="gagestats">
+                <span class="nav-link-text">Gagestats</span>
             </a>
             <a [class.hidden]="!isLoggedIn || loggedInRole !== 'Administrator'" routerLink="settings" routerLinkActive="active">
                 <span class="nav-link-text">Settings</span>

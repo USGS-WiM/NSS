@@ -50,7 +50,7 @@ import { ToasterService} from 'angular2-toaster';
 import { AddRegressionRegionModal } from './shared/components/addregressionregion/addregressionregion.component';
 import { GagestatsComponent } from './gagestats/gagestats.component';
 import { GagestatsService } from './gagestats/gagestats.service';
-import { AddStationComponent } from './shared/add-station/add-station.component';
+
 
 declare const require: any;
 

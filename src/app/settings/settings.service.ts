@@ -25,6 +25,7 @@ import { Manager } from 'app/shared/interfaces/manager';
 import { UnitSystem } from 'app/shared/interfaces/unitsystems';
 import { Citation } from 'app/shared/interfaces/citation';
 import { Error } from 'app/shared/interfaces/error';
+import { Agency } from 'app/shared/interfaces/agencies';
 import { ToasterService } from 'angular2-toaster';
 
 @Injectable()
@@ -46,6 +47,7 @@ export class SettingsService {
     private _managersSubject: BehaviorSubject<Array<Manager>> = <BehaviorSubject<Manager[]>>new BehaviorSubject([]);
     private _citationsSubject: BehaviorSubject<Array<Citation>> = <BehaviorSubject<Citation[]>>new BehaviorSubject([]);
     private _errorsSubject: BehaviorSubject<Array<Error>> = <BehaviorSubject<Error[]>>new BehaviorSubject([]);
+    private _agenciesSubject: BehaviorSubject<Array<Agency>> = <BehaviorSubject<Agency[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -86,13 +88,16 @@ export class SettingsService {
     public errors(): Observable<Array<Error>> {
         return this._errorsSubject.asObservable();
     }
+    public agencies(): Observable<Array<Agency>> {
+        return this._agenciesSubject.asObservable();
+    }
 
     // HTTP REQUESTS ////////////////////////////////////
 
     // ------------ GETS ---------------------------
     public getEntities(url: string) {
         return this._http
-            .get(this.configSettings.baseURL + url, { headers: this.authHeader })
+            .get(this.configSettings.nssBaseURL + url, { headers: this.authHeader })
             .map(res => { if (res) {return <Array<any>>res }})
             .catch(this.errorHandler);
     }
@@ -100,7 +105,7 @@ export class SettingsService {
     // ------------ POSTS ------------------------------
     public postEntity(entity: object, url: string) {
         return this._http
-            .post(this.configSettings.baseURL + url, entity, { headers: this.authHeader, observe: 'response' })
+            .post(this.configSettings.nssBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => {
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
                 } else {this.outputWimMessages(res); }
@@ -113,7 +118,7 @@ export class SettingsService {
     public putEntity(id, entity, url: string) {
         if (id !== '') {url += '/' + id; }
         return this._http
-            .put(this.configSettings.baseURL + url, entity, { headers: this.authHeader, observe: 'response' })
+            .put(this.configSettings.nssBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => res)
             .catch(this.errorHandler);
     }
@@ -122,7 +127,7 @@ export class SettingsService {
     public deleteEntity(id, url: string, params?: string) {
         if (id !== '') {url += '/' + id; }
         if (params) {url += params; }
-        return this._http.delete(this.configSettings.baseURL + url, { headers: this.authHeader, observe: 'response'})
+        return this._http.delete(this.configSettings.nssBaseURL + url, { headers: this.authHeader, observe: 'response'})
             .catch(this.errorHandler);
     }
 
@@ -183,5 +188,8 @@ export class SettingsService {
     }
     public setErrors(e: Array<Error>) {
         this._errorsSubject.next(e);
+    }
+    public setAgencies(a: Array<Agency>) {
+        this._agenciesSubject.next(a);
     }
 }

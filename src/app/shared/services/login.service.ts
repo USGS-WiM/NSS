@@ -42,7 +42,7 @@ export class LoginService {
         const headers: HttpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
         });
-        return this.http.post(this.configSettings.baseURL + this.configSettings.loginURL, user, { headers: headers, observe: "response"})
+        return this.http.post(this.configSettings.nssBaseURL + this.configSettings.loginURL, user, { headers: headers, observe: "response"})
             .map((response:HttpResponse<null>) => {
                 // login successful if there's a jwt token in the response
                 user = response.body;

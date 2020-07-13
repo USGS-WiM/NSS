@@ -1,3 +1,4 @@
+
 // ------------------------------------------------------------------------------
 // ----- settings.service..ts -----------------------------------------------
 // ------------------------------------------------------------------------------
@@ -26,6 +27,7 @@ import { UnitSystem } from 'app/shared/interfaces/unitsystems';
 import { Citation } from 'app/shared/interfaces/citation';
 import { Error } from 'app/shared/interfaces/error';
 import { ToasterService } from 'angular2-toaster';
+import { Stationtype } from 'app/shared/interfaces/stationtype';
 
 @Injectable()
 export class SettingsService {
@@ -46,6 +48,7 @@ export class SettingsService {
     private _managersSubject: BehaviorSubject<Array<Manager>> = <BehaviorSubject<Manager[]>>new BehaviorSubject([]);
     private _citationsSubject: BehaviorSubject<Array<Citation>> = <BehaviorSubject<Citation[]>>new BehaviorSubject([]);
     private _errorsSubject: BehaviorSubject<Array<Error>> = <BehaviorSubject<Error[]>>new BehaviorSubject([]);
+    private _stationTypeSubject: BehaviorSubject<Array<Stationtype>> = <BehaviorSubject<Stationtype[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -85,6 +88,9 @@ export class SettingsService {
     }
     public errors(): Observable<Array<Error>> {
         return this._errorsSubject.asObservable();
+    }
+    public stationType(): Observable<Array<Stationtype>> {
+        return this._stationTypeSubject.asObservable();
     }
 
     // HTTP REQUESTS ////////////////////////////////////

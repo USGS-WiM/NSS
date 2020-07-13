@@ -24,6 +24,8 @@ import { Predictioninterval } from '../interfaces/predictioninterval';
 import { AddRegressionRegion } from '../interfaces/addregressionregion';
 import { LoaderService } from './loader.service';
 import { ManageCitation } from '../interfaces/managecitations';
+import { Stationtype } from 'app/shared/interfaces/stationtype';
+import { Agency } from 'app/shared/interfaces/stationtype';
 
 @Injectable()
 export class NSSService {
@@ -210,6 +212,64 @@ export class NSSService {
             });
     }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
+    private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use
+    private _selectedStationType: BehaviorSubject<Stationtype> = new BehaviorSubject<any>(''); // selectedstationtype
+
+    public get stationType(): Observable<Array<Stationtype>> {
+        // getter (station type)
+        return this._stationTypeSubject.asObservable();
+    }
+
+    // clear selected
+
+    // setter (selectedStationType)
+    
+    // getter (selectedStationType)
+    public get selectedStationType(): Observable<Stationtype> {
+        return this._selectedStationType.asObservable();
+    }
+    // get all station types
+    public getStationTypes(): void {
+        this._http
+            .get(this.configSettings.gsURL + this.configSettings.stationTypeURL, { headers: this.jsonHeader })
+            .map(res => <Array<Stationtype>>res)
+            .catch(this.handleError)
+            .subscribe(r => {
+                this._stationTypeSubject.next(r);
+            });
+    }
+    // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
+    private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
+    private _selectedAgency: BehaviorSubject<Agency> = new BehaviorSubject<any>(''); // selectedAgency
+
+    public get agency(): Observable<Array<Agency>> {
+        // getter (agency)
+        return this._agencySubject.asObservable();
+    }
+
+    // clear selected
+
+    // setter (selectedAgency)
+    
+    // getter (selectedAgency)
+    public get selectedAgency(): Observable<Agency> {
+        return this._selectedAgency.asObservable();
+    }
+    // get all station types
+    public getAgencies(): void {
+        this._http
+            .get(this.configSettings.gsURL + this.configSettings.agencyURL, { headers: this.jsonHeader })
+            .map(res => <Array<Agency>>res)
+            .catch(this.handleError)
+            .subscribe(r => {
+                this._agencySubject.next(r);
+            });
+    }
+    // -+-+-+-+-+-+ end agency section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ regressionregion -+-+-+-+-+-+-+
     private _regressionRegionSubject: Subject<Array<Regressionregion>> = new Subject<Array<Regressionregion>>();
@@ -548,6 +608,17 @@ export class NSSService {
         return this._http
             .get(this.configSettings.baseURL + url, { headers: this.jsonHeader })
             .map(res => <Array<Variabletype>>res);
+    }
+
+    // get station types
+    public getStationType(params?: string) {
+        let url = this.configSettings.variablesURL
+        if (params) {
+            url += params; 
+        }
+        return this._http
+            .get(this.configSettings.baseURL + url, { headers: this.jsonHeader })
+            .map(res => <Array<Stationtype>>res);
     }
 
     // get regressionRegions by region

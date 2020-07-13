@@ -1,0 +1,26 @@
+<form class="gs-sidebar" id="gsSidebar">
+    <div class="sidebar-item">
+        <span>Choose Region:</span>
+        <select id="regSelect" [(ngModel)]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
+            <option selected hidden value=""></option>
+            <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
+        </select>
+    </div>
+
+    <div class="sidebar-item">
+        <span>Limit by Station Type:</span>
+        <select>
+            <option selected hidden value=""></option>
+            <option [ngValue]="i" *ngFor="let i of stationType">{{i.name}}</option>
+        </select>
+    </div>
+    
+    <div class="sidebar-item">
+        <span>Limit by Agency:</span>
+        <select>
+            <option selected hidden value=""></option>
+            <option [ngValue]="i" *ngFor="let i of agency">{{i.name}}</option>
+        </select>
+    </div>
+</form>
+

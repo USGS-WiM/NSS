@@ -1,7 +1,9 @@
 {
-   "baseURL": "https://test.streamstats.usgs.gov/nssservices/",
+    "agencyURL": "Agencies",
+    "baseURL": "https://test.streamstats.usgs.gov/nssservices/",
     "citationURL": "Citations",
     "errorsURL": "Errors",
+    "gsURL": "https://test.streamstats.usgs.gov/gagestatsservices/",
     "loginURL": "authenticate",
     "managersURL": "Managers",
     "regionURL": "Regions/",
@@ -9,6 +11,7 @@
     "regTypeURL": "RegressionTypes",
     "rolesURL": "Roles",
     "scenariosURL": "Scenarios",
+    "stationTypeURL": "StationTypes",
     "statisticGrpURL": "StatisticGroups",
     "unitsURL": "Units",
     "unitSystemsURL": "UnitsSystems",

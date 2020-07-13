@@ -7,9 +7,11 @@
 // purpose: interface for the externally referenced config file holding baseUrl
 
 export interface Config {
+    agencyURL: string;
     baseURL: string;
     citationURL: string;
     errorsURL: string;
+    gsURL: string;
     loginURL: string;
     managersURL: string;
     regionURL: string;
@@ -17,6 +19,7 @@ export interface Config {
     regTypeURL: string;
     rolesURL: string;
     scenariosURL: string;
+    stationTypeURL: string;
     statisticGrpURL: string;
     unitsURL: string;
     unitSystemsURL: string;

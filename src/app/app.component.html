@@ -45,7 +45,8 @@
         </div>
     </div>
 </nav>
-<wim-sidebar *ngIf="router.url.indexOf('/settings') === -1 && router.url.indexOf('/profile') === -1"></wim-sidebar>
+<wim-sidebar *ngIf="router.url.indexOf('/settings') === -1 && router.url.indexOf('/profile') === -1 && router.url.indexOf('/gagestats') === -1"></wim-sidebar>
+<gs-sidebar *ngIf="router.url.indexOf('/gagestats') > -1"></gs-sidebar>
 <app-loading-screen></app-loading-screen>
 <ng-template #login let-c="close" let-d="dismiss">
     <div class="modal-header">

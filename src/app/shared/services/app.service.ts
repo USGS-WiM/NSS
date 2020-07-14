@@ -25,7 +25,8 @@ import { AddRegressionRegion } from '../interfaces/addregressionregion';
 import { LoaderService } from './loader.service';
 import { ManageCitation } from '../interfaces/managecitations';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
-import { Agency } from 'app/shared/interfaces/stationtype';
+import { Agency } from 'app/shared/interfaces/agency';
+import { GSRegion } from 'app/shared/interfaces/gsregion';
 
 @Injectable()
 export class NSSService {
@@ -212,6 +213,39 @@ export class NSSService {
             });
     }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ gsregion section -+-+-+-+-+-+-+
+    private _gsregionSubject: Subject<Array<GSRegion>> = new Subject<Array<GSRegion>>(); // array of gsregions that sidebar and mainview use
+    private _selectedGSRegion: BehaviorSubject<GSRegion> = new BehaviorSubject<any>(''); // selectedgsregion
+
+    public get gsregions(): Observable<Array<GSRegion>> {
+        // getter (gsregions)
+        return this._gsregionSubject.asObservable();
+    }
+
+    // clear selected
+    
+    
+    // setter (selectedGSRegion)
+        public setSelectedGSRegion(v: GSRegion) {
+        this._selectedGSRegion.next(v);
+    }
+
+    // getter (selectedGSRegion)
+    public get selectedGSRegion(): Observable<GSRegion> {
+        return this._selectedGSRegion.asObservable();
+    }
+    // get all gsregions
+    public getGSRegions(): void {
+        this._http
+            .get(this.configSettings.baseURL + this.configSettings.regionURL, { headers: this.jsonHeader })
+            .map(res => <Array<GSRegion>>res)
+            .catch(this.handleError)
+            .subscribe(g => {
+                this._gsregionSubject.next(g);
+            });
+    }
+    // -+-+-+-+-+-+ end gsregion section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
     private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use

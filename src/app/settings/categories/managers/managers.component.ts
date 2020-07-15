@@ -91,7 +91,7 @@ export class ManagersComponent implements OnInit {
             this.regionIDs.forEach(y=> {
                 this.regions.forEach(z=> {
                     if (y === z.id) {
-                        this.regionNames.push(z.name + '\n')
+                        this.regionNames.push(z.name + '\n');
                     }
                 });
             });

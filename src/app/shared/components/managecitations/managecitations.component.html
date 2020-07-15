@@ -21,17 +21,17 @@
                 <td>
                     <div class="half-space">
                         <span *ngIf="!c.isEditing">{{ c.author }}</span>
-                        <span *ngIf="c.isEditing"><input type="text" name="author" [(ngModel)]="c.author" required></span>
+                        <span *ngIf="c.isEditing"><textarea class='break' name="author" [(ngModel)]="c.author" required></textarea></span>
                     </div>
                     <div>
                         <span *ngIf="!c.isEditing">{{ c.title }}</span>
-                        <span *ngIf="c.isEditing"><input type="text" name="title" [(ngModel)]="c.title" required></span>
+                        <span *ngIf="c.isEditing"><textarea class='break' name="title" [(ngModel)]="c.title" required></textarea></span>
                     </div>
                     <div>
                         <a *ngIf="!c.isEditing" [href]="c.citationURL" [target]="_blank">
                             <span *ngIf="!c.isEditing">{{ c.citationURL }}</span>
                         </a>
-                        <span *ngIf="c.isEditing"><input type="text" name="citationURL" [(ngModel)]="c.citationURL" required></span>
+                        <span *ngIf="c.isEditing"><textarea  class='break' name="citationURL" [(ngModel)]="c.citationURL" required></textarea></span>
                     </div>
                 </td>
                 <td>

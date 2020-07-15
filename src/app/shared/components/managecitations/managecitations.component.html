@@ -7,30 +7,44 @@
     </div>
     <div class="modal-body">
     <input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
+    <div style="overflow: auto">
     <table class="table">
         <thead>
             <tr>
-                <th class="col-xs-5">Citation</th>
-                <th class="col-xs-5">Associated Regression Regions</th>
-                <th class="col-xs-1"></th>
+                <th class="col">Citation</th>
+                <th class="col">Associated Regression Regions</th>
+                <th class="col"></th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let l of filteredData">
+            <tr *ngFor="let c of filteredData; let cIndex = index">
                 <td>
-                    <a [href]="l.citationURL" [target]="_blank">
-                        <div class="half-space">{{l.author}}</div>
-                        <div>{{l.title}}</div>
-                    </a>
+                    <div class="half-space">
+                        <span *ngIf="!c.isEditing">{{ c.author }}</span>
+                        <span *ngIf="c.isEditing"><textarea class='break' name="author" [(ngModel)]="c.author" required></textarea></span>
+                    </div>
+                    <div>
+                        <span *ngIf="!c.isEditing">{{ c.title }}</span>
+                        <span *ngIf="c.isEditing"><textarea class='break' name="title" [(ngModel)]="c.title" required></textarea></span>
+                    </div>
+                    <div>
+                        <a *ngIf="!c.isEditing" [href]="c.citationURL" [target]="_blank">
+                            <span *ngIf="!c.isEditing">{{ c.citationURL }}</span>
+                        </a>
+                        <span *ngIf="c.isEditing"><textarea  class='break' name="citationURL" [(ngModel)]="c.citationURL" required></textarea></span>
+                    </div>
                 </td>
                 <td>
-                    <span *ngFor="let e of l.regressionRegions; let eIndex = index">
+                    <span *ngFor="let e of c.regressionRegions">
                         <div>{{e.name}}</div>
                     </span>
                 </td>
                 <td>
                     <div [class.hidden]="!showAddCitations">
-                        <i title="Delete Citation" (click)="!l.regressionRegions?.length>0 && deleteCitation(l.id)" class="fa fa-times" [class.disabled-icon]="l.regressionRegions?.length>0" aria-hidden="true" style="cursor:pointer"></i>
+                        <i *ngIf="!c.isEditing" title="Edit Citation"  (click)="editRowClicked(c, cIndex)" class="fa fa-pencil" aria-hidden="true" style="cursor:pointer"></i>&nbsp; 
+                        <i *ngIf="c.isEditing" title="Save Citation" (click)="saveCitation(c)" class="fa fa-floppy-o" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        <i *ngIf="c.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="fa fa-history" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                        <i *ngIf="!c.isEditing" title="Delete Citation" (click)="!c.regressionRegions?.length>0 && deleteCitation(c.id)" class="fa fa-times" [class.disabled-icon]="c.regressionRegions?.length>0" aria-hidden="true" style="cursor:pointer"></i>
                     </div>
                     <div [class.hidden]="showAddCitations"> 
                         <i title="Add Citation" (click)="addExistingCitation(l); d('closed')" class="fa fa-plus" aria-hidden="true" style="cursor:pointer"></i>
@@ -39,6 +53,7 @@
             </tr>
         </tbody>
     </table>
+    </div>
     </div>
     <div class="modal-footer">
         <button type="button" (click)="d('closed')" class="btn-black">Close</button>

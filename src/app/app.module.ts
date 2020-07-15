@@ -48,6 +48,9 @@ import { AddScenarioModal } from './shared/components/addscenario/addscenario.co
 import { ManageCitationsModal } from './shared/components/managecitations/managecitations.component';
 import { ToasterService} from 'angular2-toaster';
 import { AddRegressionRegionModal } from './shared/components/addregressionregion/addregressionregion.component';
+import { GagestatsComponent } from './gagestats/gagestats.component';
+import { GagestatsService } from './gagestats/gagestats.service';
+
 
 declare const require: any;
 
@@ -69,7 +72,8 @@ const appRoutes: Routes = [
     runGuardsAndResolvers: 'always'
   },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
-  { path: '', component: MainviewComponent, pathMatch: 'full' }
+  { path: '', component: MainviewComponent, pathMatch: 'full' },
+  { path: 'gagestats', component: GagestatsComponent}
 ];
 
 export function ConfigLoader(configService: ConfigService) {
@@ -89,7 +93,7 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, LoaderComponent
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, LoaderComponent, GagestatsComponent
   ],
   imports: [
     NgSelectModule, BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,
@@ -99,7 +103,7 @@ export function highchartsFactory() {
   providers: [
     NSSService, { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService,
     { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
-    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ToasterService, LoaderService
+    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ToasterService, LoaderService, GagestatsService
   ],
   bootstrap: [AppComponent],
   exports: [RouterModule]

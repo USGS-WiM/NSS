@@ -1,0 +1,7 @@
+<div id="printArea" class="mainPage scrollable">
+    <div class="hidden-print">
+        <button *ngIf="loggedInRole" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showAddStationModal()">Add Station</button>
+        <button *ngIf="loggedInRole" style="margin: 15px 5px;" (click)="bulkUpload()">Bulk Upload</button>
+        <button *ngIf="loggedInRole" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="export()">Export</button>
+    </div>
+</div>

@@ -63,7 +63,7 @@ export class ManagersComponent implements OnInit {
             firstName: new FormControl(null, Validators.required),
             lastName: new FormControl(null, Validators.required),
             role: new FormControl(null, Validators.required),
-            regionManagers: this._fb.array([]),
+            regionManagers: this._fb.array([])
         });
         this.configSettings = this._configService.getConfiguration();
     }
@@ -80,13 +80,12 @@ export class ManagersComponent implements OnInit {
         });
     }
 
-    public getRegionNames(m){
+    public getRegionNames(m) {
         this.regionIDs = [];
         this.regionNames = [];
         if (m.regionManagers.length != 0) {
             m.regionManagers.forEach(x => this.regionIDs.push(x.regionID));    
         }
-    
         if (this.regions) {
             this.regionIDs.forEach(y=> {
                 this.regions.forEach(z=> {
@@ -99,7 +98,7 @@ export class ManagersComponent implements OnInit {
         }
     }
 
-    public addRegion(){
+    public addRegion() {
         const control = <FormArray>this.newUserForm.get('regionManagers');
         control.push(this._fb.group({
             regionID: new FormControl(null, Validators.required)
@@ -156,7 +155,7 @@ export class ManagersComponent implements OnInit {
     }
 
     private createNewUser() {
-        if(this.newUserForm.value.role == "Administrator"){
+        if (this.newUserForm.value.role == "Administrator") {
             this.newUserForm.value.regionManagers.forEach(x => this.removeRegion(x));
         }
         const newUser = this.newUserForm.value;

@@ -28,4 +28,27 @@
         </div>
     </div>
     <br clear="all"/>
+
+    <div class="hidden-print" *ngIf="showGSRegion">
+        <table style="border:solid 1px gray" class="table"> 
+            <thead>
+                <tr>
+                    <th class="col-xs-1">Type</th>
+                    <th class="col-xs-2">Agency</th>
+                    <th class="col-xs-1">Code</th>
+                    <th class="col-xs-4">Name</th>
+                    <th class="col-xs-1">Latitude</th>
+                    <th class="col-xs-1">Longitude</th>
+                    <th class="col-xs-1">Regulated</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let r of showGSRegion">
+                    <td>
+                        {{r.name}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

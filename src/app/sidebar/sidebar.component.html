@@ -72,6 +72,7 @@
         <label>Chart:</label>
 		<div *ngFor="let pt of plotTypes">
 			<button class="button small black" (click)="selectChart(pt)">
+				<i class="far fa-chart-network"></i>
 				<span>{{pt}}</span>
 			</button>
 		</div>

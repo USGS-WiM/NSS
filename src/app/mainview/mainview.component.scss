@@ -82,6 +82,30 @@
 }
 
 
+// Charts
+.charts-header{
+	display: flex;
+	justify-content: flex-start;
+	height: 60px;
+
+	.header-button{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		margin: 0 0 0 25px;
+
+		.button{
+			margin: 2px 0 0 0;
+		}
+	}
+
+	h2{
+		display: flex;
+		margin: 0 !important;
+		flex-direction: column;
+		justify-content: center;
+	}
+}
 
 
 
@@ -119,15 +143,6 @@
     height: 30px;
 }
 
-.charts-header{
-	font-size: 32px !important;
-	letter-spacing: 0 !important;
-	display: inline-block;
-	margin-right: 42px;
-	margin-bottom: 0 !important;
-	position: relative;
-	top: 8px;
-  }
   
   .chart-wrapper{
 	border: 1px solid rgba(0,0,0,0.3);

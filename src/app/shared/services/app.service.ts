@@ -24,6 +24,7 @@ import { Predictioninterval } from '../interfaces/predictioninterval';
 import { AddRegressionRegion } from '../interfaces/addregressionregion';
 import { LoaderService } from './loader.service';
 import { ManageCitation } from '../interfaces/managecitations';
+//import { Agency } from '../interfaces/agencies';
 
 @Injectable()
 export class NSSService {
@@ -583,16 +584,16 @@ export class NSSService {
             .map(res => <Statisticgroup[]>res);
     }
 
-    // get agencies
-    private getAgency(id: number, params?: string) {
-        let url = this.configSettings.agenciesURL
-        if (params) {
-            url += params; 
-        }
-        return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
-            .map(res => <Statisticgroup[]>res);
-    }
+    // // get agencies
+    // private getAgency(params?: string) {
+    //     let url = this.configSettings.agenciesURL
+    //     if (params) {
+    //         url += params; 
+    //     }
+    //     return this._http
+    //         .get(this.configSettings.gageBaseURL + url, { headers: this.jsonHeader })
+    //         .map(res => <Array<Agency>>res);
+    // }
 
     // get scenarios by region
     private getRegionScenario(id: number, params?: string) {

@@ -7,6 +7,7 @@
         <div id="sidebar-wrapper">
             <h1>Lookups</h1>
             <ul class="settings-links">
+                <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['agencies']" routerLinkActive="active">Agencies</a></li>
                 <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['errors']" routerLinkActive="active">Errors</a></li>
                 <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['managers']" routerLinkActive="active">Managers</a></li>
                 <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['regions']"  routerLinkActive="active">Regions</a></li>

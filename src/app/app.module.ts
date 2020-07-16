@@ -50,6 +50,7 @@ import { ToasterService} from 'angular2-toaster';
 import { AddRegressionRegionModal } from './shared/components/addregressionregion/addregressionregion.component';
 import { GagestatsComponent } from './gagestats/gagestats.component';
 import { GagestatsService } from './gagestats/gagestats.service';
+import { AgenciesComponent } from './settings/categories/agencies/agencies.component';
 
 
 declare const require: any;
@@ -67,7 +68,8 @@ const appRoutes: Routes = [
       { path: 'unitsystems', component: UnitSystemsComponent },
       { path: 'variabletypes', component: VariableTypesComponent },
       { path: 'managers', component: ManagersComponent },
-      { path: 'errors', component: ErrorsComponent}
+      { path: 'errors', component: ErrorsComponent},
+      { path: 'agencies', component: AgenciesComponent}
     ],
     runGuardsAndResolvers: 'always'
   },
@@ -93,7 +95,8 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, LoaderComponent, GagestatsComponent
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, 
+    LoaderComponent, GagestatsComponent, AgenciesComponent
   ],
   imports: [
     NgSelectModule, BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

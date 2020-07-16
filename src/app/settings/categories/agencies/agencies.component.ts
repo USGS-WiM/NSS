@@ -30,6 +30,11 @@ export class AgenciesComponent implements OnInit, OnDestroy {
     public addRef: TemplateRef<any>;
     @ViewChild('AgencyForm', {static: true}) 
     agencyForm;
+    public selectedRegion;
+    public regions;
+    public selectedRegRegionIDs;
+    public selectedStatGroupIDs;
+    public selectedRegTypeIDs;
     public newAgencyForm: FormGroup;
     public showAgencyForm: boolean;
     public agencies: Array<Agency>;
@@ -65,10 +70,11 @@ export class AgenciesComponent implements OnInit, OnDestroy {
         }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.agenciesURL).subscribe(res => {
+        this._settingsservice.getEntitiesGage(this.configSettings.agenciesURL).subscribe(res => {
             this.agencies = res;
         });
 
+        // get new agencies when new one posted/edited
         this._settingsservice.agencies().subscribe(res => {
             this.agencies = res;
         });
@@ -155,7 +161,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
                 (resp) => {
                     u.isEditing = false;
                     this.agencies[i] = u;
-                    this._settingsservice.setErrors(this.agencies);
+                    this._settingsservice.setAgencies(this.agencies);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.agencyForm.form.dirty) { this.agencyForm.reset(); }
@@ -177,7 +183,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
             this._settingsservice.deleteEntity(deleteID, this.configSettings.agenciesURL)
                 .subscribe(result => {
                     this.agencies.splice(index, 1);
-                    this._settingsservice.setErrors(this.agencies); // update service
+                    this._settingsservice.setAgencies(this.agencies); // update service
                     this._settingsservice.outputWimMessages(result);
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }

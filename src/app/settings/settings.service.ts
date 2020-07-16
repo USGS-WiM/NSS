@@ -102,10 +102,28 @@ export class SettingsService {
             .catch(this.errorHandler);
     }
 
+    public getEntitiesGage(url: string) {
+        return this._http
+            .get(this.configSettings.gageBaseURL + url, { headers: this.authHeader })
+            .map(res => { if (res) {return <Array<any>>res }})
+            .catch(this.errorHandler);
+    }
+
     // ------------ POSTS ------------------------------
     public postEntity(entity: object, url: string) {
         return this._http
             .post(this.configSettings.nssBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
+            .map(res => {
+                if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
+                } else {this.outputWimMessages(res); }
+                return res.body;
+            })
+            .catch(this.errorHandler);
+    }
+
+    public postEntityGage(entity: object, url: string) {
+        return this._http
+            .post(this.configSettings.gageBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => {
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
                 } else {this.outputWimMessages(res); }

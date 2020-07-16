@@ -35,9 +35,16 @@
 
 
 
-
-
-
+#toast-container{
+	top: 80px;
+}
+.toast{
+	box-shadow: var(--shadow);
+	opacity: 1;
+}
+.toast:hover{
+	box-shadow: var(--shadow);
+}
 
 
 
@@ -63,27 +70,6 @@
 // .wim-sidebar{
 //   overflow-x: scroll !important;
 // }
-
-
-
-.simple-btn{
-  padding: 6px 11px;
-  background-color: #10152C;
-  color: white !important;
-  border-radius: 4px;
-  margin-bottom: 6px !important;
-  display: inline-block;
-  margin-right: 8px;
-}
-.simple-btn-link{
-  padding: 0 0 0 15px;
-  color: #10152C !important;
-  margin-bottom: 6px !important;
-  display: inline-block;
-  margin-bottom: 3px !important;
-  margin-right: 8px;
-  text-decoration: underline;
-}
 
 
 

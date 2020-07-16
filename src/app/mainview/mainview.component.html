@@ -44,7 +44,7 @@
 			<i class="far fa-pencil-alt"></i>
 			<span>Edit Scenario</span>
 		</button>
-		<button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="button small blue mright-xs" (click)="cancelEditRegionScenario()">
+		<button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="button small green mright-xs" (click)="cancelEditRegionScenario()">
 			<i class="far fa-check"></i>
 			<span>Finish Editing</span>
 		</button>
@@ -64,11 +64,11 @@
 			<div *ngFor="let sc of scenarios;let sInd = index">
 				<h4>{{sc.statisticGroupName}}</h4>
 				<div *ngIf="sc.regressionRegions?.length > 0">
-					<table class="table">
+					<table class="custom-table">
 						<tr *ngFor="let rr of sc.regressionRegions;let rInd = index">
-							<td style="vertical-align:middle;">
+							<td>
 								{{rr.name}} 
-								<span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_Code: {{rr.code}})</span>
+								<small *ngIf="multipleRegRegions">(RG_Code: {{rr.code}})</small>
 							</td>
 							<!-- <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
 							<td *ngIf="showWeights" class="col-xs-2">
@@ -195,7 +195,7 @@
             <div *ngFor="let rr of s.regressionRegions;let r = index">
                 <div *ngIf="rr.id > 0"> 
 					<!-- Download Button -->
-					<div class="download-divider">
+					<div class="download-divider hidden-print">
 						<div class="controls">
 							<button class="button small grey" (click)="exportInputTable(r)">
 								<span>Download</span>
@@ -206,7 +206,7 @@
 					</div>
 					
 					<!-- Table -->
-					<table #inputsTable class="custom-table mtop-xs">
+					<table #inputsTable class="custom-table table-borderless mtop-xs">
 						<tr>
 							<td>{{rr.name}} Region</td>
 						</tr>
@@ -265,7 +265,7 @@
                     <br />
                     <div class="row">
                         <div class="col-xs-12">
-                            <table #resultsTable style="border:solid 1px gray" class="table">
+                            <table #resultsTable style="border:solid 1px gray" class="custom-table">
                                 <thead>
                                     <tr>
                                         <th class="col-xs-6">Description</th>
@@ -288,15 +288,16 @@
         </div> <!-- end for each Scenario-->
 
         <!-- Citations -->
-        <h2 id="citations">Citations</h2>
+        <h2 id="citations" class="ptop-xs">Citations</h2>
         <div *ngFor="let sc of scenarios">
-            <div *ngFor="let c of sc.citations"><!--" | unique">-->
-            <a *ngIf="c && c != null" [href]="c.citationURL" [target]="_blank">
-                <div>{{c.author}}</div>
-                <div>{{c.title}}</div>
-            </a>
-            <br />
-        </div>
+			<div *ngFor="let c of sc.citations"><!--" | unique">-->
+				<a *ngIf="c && c != null" [href]="c.citationURL" [target]="_blank" class="citation">
+					<div>{{c.author}}</div>
+					<div>{{c.title}}</div>
+				</a>
+			</div>
+
+
         <!-- ngfor each chart being added show here
             //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
             //if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show" -->
@@ -337,7 +338,7 @@
                                 </div>
 
                                 <br clear="all" />
-                                <div class="hidden-print"><a class="hidden-print simple-btn" (click)="showHideAdditionalChartSettings(i)" style="cursor: pointer; margin-left: 15px;">More options</a></div>
+                                <div class="hidden-print"><a class="hidden-print button small black" (click)="showHideAdditionalChartSettings(i)" style="cursor: pointer; margin-left: 15px;">More options</a></div>
                                 <br clear="all" />
                                 <div *ngIf="hydrographs[i]?.showExtraSettings" [hidden]="!hydrographs[i].showExtraSettings" class="panel panel-default hidden-print" style="border: none !important;">
                                     <div class="panel-body">
@@ -501,7 +502,7 @@
                         </div>
                         <div style="flex-grow: 4;">
                             <br clear="all" />
-                            <div class="hidden-print"><a (click)="showHideAddFChartSettings()" class="simple-btn" style="cursor: pointer; margin-left: 15px;">More options</a></div>
+                            <div class="hidden-print"><a (click)="showHideAddFChartSettings()" class="button small black" style="cursor: pointer; margin-left: 15px;">More options</a></div>
                             <br clear="all" />
                             <div *ngIf="showExtraFREQSettings" [hidden]="!showExtraFREQSettings" class="panel panel-default hidden-print" style="border: none !important;">
                                 <div class="panel-body">
@@ -653,68 +654,79 @@
                 </div>
             </div>
         </div>
-        <br clear="all"/>
 
-        <!-- appendix section for equation -->
-        <a class="hidden-print" (click)="exportAppendix()" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
-        <h2 style="margin:0;padding:0" id="appendix">Appendix</h2>
+		<!-- appendix section for equation -->
+		<!-- Download Button -->
+		<div class="download-divider hidden-print">
+			<div class="controls">
+				<button class="button small grey" (click)="exportAppendix()">
+					<span>Download</span>
+					<i class="far fa-download"></i>
+				</button>
+			</div>
+			<div class="divider"></div>
+		</div>
 
-        <h4>Equations</h4>
-        <div class="row">
-            <div *ngFor="let e of equationResults" class="col-xs-10">
-            <table style="border:solid 1px gray" class="table">
-                    <tr><td colspan="2">{{e.name}}</td><tr>
-                    <tr *ngFor="let c of e.formulas">
-                        <td>{{c.Code}} = </td>
-                        <td><span [MathJax] id="mathjax">{{c.Equation}}</span></td>
-                    </tr>
-            </table>
-            </div><!--End equations-->
-        </div>
-        <br clear="all"/>
+        <h2 id="appendix" class="ptop-xs">Appendix</h2>
 
-        <h4>Parameter Definitions</h4>
-        <div class="row">
-            <div class="col-xs-8">
-                <table style="border:solid 1px gray" class="table">
-                    <thead>
-                        <tr>
-                            <th class="col-xs-3">Name</th>
-                            <th class="col-xs-1">Abbrev</th>
-                            <th class="col-xs-8">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let p of uniqueParameters">
-                            <td>{{p.name}}</td>
-                            <td>{{p.code}}</td>
-                            <td>{{p.description}}</td>
-                        </tr>
-                    </tbody>
-            </table>
-            </div>
-        </div>
-        <br clear="all"/>
-        <h4>Unit Types</h4>
-        <div class="row">
-            <div class="col-xs-8">
-                <table style="border:solid 1px gray" class="table">
-                    <thead><tr>
-                            <th class="col-xs-1">Abbrev</th>
-                            <th class="col-xs-8">Unit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let u of uniqueUnitTypes">
-                            <td>(<span [innerHTML]="setSuperScript(u.abbr)"></span>)</td>
-                            <td>{{u.unit}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <br clear="all"/>
-        <button type="button" class="button blue mbottom-xs hidden-print" (click)="printPage()">
+		<h5 class="ptop-xs">Equations</h5>
+		
+		<div class="equation-wrapper">
+			<div *ngFor="let e of equationResults" class="equation-table">
+				<table class="custom-table">
+					<thead>
+						<tr>
+							<th colspan="2">{{e.name}}</th>
+						<tr>
+					</thead>
+					<tr *ngFor="let c of e.formulas">
+						<td>
+							<span class="nowrap">{{c.Code}} = </span>
+						</td>
+						<td>
+							<span [MathJax] id="mathjax">{{c.Equation}}</span>
+						</td>
+					</tr>
+				</table>
+			</div><!--End equations-->
+		</div>
+
+        <h5 class="block ptop-xs">Parameter Definitions</h5>
+		<table class="custom-table max-600">
+			<thead>
+				<tr>
+					<th class="width-30">Name</th>
+					<th class="width-20">Abbrev</th>
+					<th class="width-50">Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let p of uniqueParameters">
+					<td>{{p.name}}</td>
+					<td>{{p.code}}</td>
+					<td>{{p.description}}</td>
+				</tr>
+			</tbody>
+		</table>
+		
+        <h5 class="ptop-xs block">Unit Types</h5>
+		<table class="custom-table max-400">
+			<thead>
+				<tr>
+					<th class="width-30">Abbrev</th>
+					<th class="width-70">Unit</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let u of uniqueUnitTypes">
+					<td>(<span [innerHTML]="setSuperScript(u.abbr)"></span>)</td>
+					<td>{{u.unit}}</td>
+				</tr>
+			</tbody>
+		</table>
+		
+        <button type="button" class="button blue mbottom-lg hidden-print" (click)="printPage()">
+			<i class="far fa-print"></i>
 			<span>Print Report</span>
 		</button>
     </div><!-- end results back -->
@@ -725,33 +737,44 @@
         <form #editScenarioForm="ngForm">
             <div>
                 <div *ngFor="let s of scenarios; let sgIndex = index;">
-                    <label class="sgLabel">{{s.statisticGroupName}}</label>
+
+					<label class="big mtop-sm mbottom-sm">{{s.statisticGroupName}}</label>
+
                     <!--add option to switch statistic groups as well-->
                     <div *ngFor="let rr of s.regressionRegions; let rrIndex = index;">
-                        <i *ngIf="!rr.isEditing" title="Edit Regression Region" (click)="editRegRegion(rr.id)" class="far fa-pencil"
-                            aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                        <i *ngIf="!rr.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(rr.id)" class="far fa-times"
-                            aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                        <label *ngIf="!rr.isEditing" class="rrLabel">{{rr.name}} (RG_Code: {{rr.code}})</label>
-                        <table *ngIf="rr.isEditing" class="table">
+						<!-- Edit reg region -->
+                        <button *ngIf="!rr.isEditing" title="Edit Regression Region" (click)="editRegRegion(rr.id)" class="icon-button mright-sm" aria-hidden="true">
+							<i class="far fa-pencil"></i>
+						</button>
+						<!-- Delete Reg Region -->
+                        <button *ngIf="!rr.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(rr.id)" class="icon-button mright-sm" aria-hidden="true">
+							<i class="far fa-times"></i>
+						</button>
+
+						<!-- Regression region label -->
+                        <label *ngIf="!rr.isEditing" class="big">{{rr.name}} (RG_Code: {{rr.code}})</label>
+						
+						<table *ngIf="rr.isEditing" class="custom-table">
                                 <thead>
                                     <tr>
-                                        <th class="col-xs-1"></th>
-                                        <th class="col-xs-4">Name</th>
-                                        <th class="col-xs-4">Description</th>
-                                        <th class="col-xs-1">Code</th>
-                                        <th class="col-xs-1">Citation ID</th>
-                                        <th class="col-xs-1"></th>
+                                        <th class="width-5"></th>
+                                        <th class="width-25">Name</th>
+                                        <th class="width-40">Description</th>
+                                        <th class="width-10">Code</th>
+                                        <th class="width-10">Citation ID</th>
+                                        <th class="width-10"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <div class="data-controls">
-                                                <i title="Save Regression Region" (click)="saveRegReg(rr)" class="far fa-floppy-o"
-                                                    aria-hidden="true" style="cursor:pointer;padding:15px 5px;"></i>
-                                                <i title="Cancel Edit" (click)="CancelEditRowClicked()" class="far fa-history"
-                                                    aria-hidden="true" style="cursor:pointer;padding:15px 5px;"></i>
+                                            <div class="table-icon-buttons">
+                                                <button title="Save Regression Region" (click)="saveRegReg(rr)" class="icon-button" aria-hidden="true">
+													<i class="far fa-floppy-o"></i>
+												</button>
+                                                <button title="Cancel Edit" (click)="CancelEditRowClicked()" class="icon-button" aria-hidden="true">
+													<i class="far fa-history"></i>
+												</button>
                                             </div>
                                         </td>
                                         <td>
@@ -778,24 +801,26 @@
                         </table>
 
                         <!--Citation table-->
-                        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Citation</legend>
-                        <table *ngIf="rr.citationID" class="table">
+                        <label class="big block mtop-sm">Citation</label>
+                        <table *ngIf="rr.citationID" class="custom-table">
                             <thead>
                                 <tr>
-                                    <th class="col-xs-1"></th>
-                                    <th class="col-xs-4">Title</th>
-                                    <th class="col-xs-3">Author</th>
-                                    <th class="col-xs-4">Citation URL</th>
+                                    <th class="width-5"></th>
+                                    <th class="width-35">Title</th>
+                                    <th class="width-25">Author</th>
+                                    <th class="width-35">Citation URL</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let c of citations | citationfilter:rr.citationID; let cIndex = index;">
                                     <td>
-                                        <div class="data-controls">
-                                            <i *ngIf="!c.isEditing" title="Edit Citation" (click)="editRegRegion(rr.id)" class="far fa-pencil"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp; 
-                                            <i *ngIf="!c.isEditing" title="Remove Citation" (click)="removeCitation(rr)" class="far fa-minus-circle"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+                                        <div class="table-icon-buttons">
+                                            <button *ngIf="!c.isEditing" title="Edit Citation" (click)="editRegRegion(rr.id)" class="icon-button"  aria-hidden="true">
+												<i class="far fa-pencil"></i>
+											</button> 
+                                            <button *ngIf="!c.isEditing" title="Remove Citation" (click)="removeCitation(rr)" class="icon-button" aria-hidden="true">
+												<i class="far fa-minus-circle"></i>
+											</button>
                                         </div>
                                     </td>
                                     <td>
@@ -827,30 +852,31 @@
                         </div>
                         
                         <!--Parameter table-->
-                        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Parameters</legend>
-                        <table class="table">
+                        <label class="big block mtop-sm">Parameters</label>
+                        <table class="custom-table">
                             <thead>
                                 <tr>
-                                    <th class="col-xs-1"></th>
-                                    <th class="col-xs-2">Name</th>
-                                    <th class="col-xs-1">Code</th>
-                                    <th class="col-xs-4">Description</th>
-                                    <th class="col-xs-2">Unit</th>
-                                    <th class="col-xs-1">Min Limit</th>
-                                    <th class="col-xs-1">Max Limit</th>
+                                    <th class="width-5"></th>
+                                    <th class="width-10">Name</th>
+                                    <th class="width-10">Code</th>
+                                    <th class="width-40">Description</th>
+                                    <th class="width-15">Unit</th>
+                                    <th class="width-10">Min Limit</th>
+                                    <th class="width-10">Max Limit</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let p of rr.parameters; let pIndex = index;">
-                                    <td>
-                                        <div class="data-controls">
-                                            <i *ngIf="!p.isEditing" title="Edit Parameter" (click)="editRowClicked(p, rrIndex, sgIndex, pIndex)" class="far fa-pencil"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                                            <i *ngIf="p.isEditing" title="Save Parameter" (click)="saveParameter(p, rrIndex, sgIndex)" class="far fa-floppy-o"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                                            <i *ngIf="p.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="far fa-history"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                                        </div>
+                                    <td class="table-icon-buttons">
+										<button *ngIf="!p.isEditing" title="Edit Parameter" (click)="editRowClicked(p, rrIndex, sgIndex, pIndex)" class="icon-button" aria-hidden="true">
+											<i class="far fa-pencil"></i>
+										</button>
+										<button *ngIf="p.isEditing" title="Save Parameter" (click)="saveParameter(p, rrIndex, sgIndex)" class="icon-button" aria-hidden="true">
+											<i class="far fa-floppy-o"></i>
+										</button>
+										<button *ngIf="p.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="icon-button" aria-hidden="true">
+											<i class="far fa-history"></i>
+										</button>
                                     </td>
                                     <td>
                                         <span>{{ p.name }}</span>
@@ -883,37 +909,40 @@
 
                         
                         <!--Regression table-->
-                        <legend style="margin-bottom:20px;margin-top:20px;font-size:15px !important;">Regressions</legend>
-                        <table class="table">
+                        <label class="big block mtop-sm">Regressions</label>
+                        <table class="custom-table">
                             <thead>
                                 <tr>
-                                    <th class="col-xs-1"></th>
-                                    <th class="col-xs-1">Name (Code)</th>
-                                    <th class="col-xs-2">Description</th>
-                                    <th class="col-xs-1">Unit</th>
-                                    <th class="col-xs-2">Errors</th>
-                                    <th class="col-xs-2">Equation</th>
-                                    <th class="col-xs-1">Equivalent Years</th>
-                                    <th class="col-xs-2">Prediction Interval</th>
+                                    <th class="width-5"></th>
+                                    <th class="width-10">Name (Code)</th>
+                                    <th class="width-20">Description</th>
+                                    <th class="width-10">Unit</th>
+                                    <th class="width-15">Errors</th>
+                                    <th class="width-10">Equation</th>
+                                    <th class="width-10">Equivalent Years</th>
+                                    <th class="width-20">Prediction Interval</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let r of rr.regressions; let rIndex = index;">
-                                    <td>
-                                        <div class="data-controls">
-                                            <i *ngIf="!r.isEditing" title="Edit Regression" (click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="far fa-pencil"
-                                                aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
-                                            <i *ngIf="!r.isEditing" title="Clone Scenario" (click)="cloneRowClicked(s.statisticGroupID, r, rr)" class="far fa-clone"
-                                                aria-hidden="true" style="cursor:pointer;"></i>&nbsp;
-                                            <i *ngIf="!r.isEditing" title="Delete Regression" (click)="deleteRegression(s.statisticGroupID, rr.id, r.id)" class="far fa-times"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                                            <i *ngIf="r.isEditing" title="Save Regression" (click)="saveRegression(r, rIndex, rrIndex, sgIndex)" class="far fa-floppy-o"
-                                                aria-hidden="true" style="cursor:pointer;padding-right:5px;"></i>
-                                            <i *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="far fa-history"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                                            <!--<i *ngIf="s.statisticGroupID === 2" title="Move to Low Flow Statistics" (click)="moveToLowFlow(r, rIndex, rrIndex, sgIndex)"
-                                                class="far fa-exchange" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>--><!--removing for now, not working in DB-->
-                                        </div>
+                                    <td class="table-icon-buttons">
+										<button *ngIf="!r.isEditing" title="Edit Regression" (click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="icon-button" aria-hidden="true">
+											<i class="far fa-pencil"></i>
+										</button>
+										<button *ngIf="!r.isEditing" title="Clone Scenario" (click)="cloneRowClicked(s.statisticGroupID, r, rr)" class="icon-button" aria-hidden="true">
+											<i class="far fa-clone"></i>
+										</button>
+										<button *ngIf="!r.isEditing" title="Delete Regression" (click)="deleteRegression(s.statisticGroupID, rr.id, r.id)" class="icon-button" aria-hidden="true">
+											<i class="far fa-times"></i>
+										</button>
+										<button *ngIf="r.isEditing" title="Save Regression" (click)="saveRegression(r, rIndex, rrIndex, sgIndex)" class="icon-button" aria-hidden="true">
+											<i class="far fa-floppy-o"></i>
+										</button>
+										<button *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="icon-button" aria-hidden="true">
+											<i class="far fa-history"></i>
+										</button>
+										<!--<i *ngIf="s.statisticGroupID === 2" title="Move to Low Flow Statistics" (click)="moveToLowFlow(r, rIndex, rrIndex, sgIndex)"
+											class="far fa-exchange" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>--><!--removing for now, not working in DB-->
                                     </td>
                                     <td>
                                         <span>{{ r.name }} ({{r.code}})</span>
@@ -931,7 +960,7 @@
                                     </td>
                                     <td>
                                         <span *ngFor="let e of r.errors; let eIndex = index">
-                                            <label style="margin-right: 5px;">Error {{eIndex + 1}}: </label>
+                                            <label class="block bold small">Error {{eIndex + 1}}: </label>
                                             <i *ngIf="r.isEditing" title="Remove Error" class="far fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;" (click)="r.errors.splice(eIndex, 1)"></i>
                                             <span *ngIf="!r.isEditing">{{e.name}}, value: {{e.value}}</span>
                                             <span *ngIf="r.isEditing">
@@ -945,11 +974,11 @@
                                         <br *ngIf="r.errors.length > 0">
                                         <button *ngIf="r.isEditing" class="addErrorButton" (click)="addError(r.errors)">Add Error</button>
                                     </td>
-                                    <td>
+                                    <td class="equation-cell">
                                         <span *ngIf="!r.isEditing" MathJax id="mathJax1">{{ r.equationMathJax }}</span>
                                         <span>
                                             <input *ngIf="r.isEditing" type="text" name="equation" [(ngModel)]="r.equation" required (ngModelChange)="showMathjax(r)">
-                                            <span [id]="'mathjaxEq' + r.id"></span>
+                                            <span class="math-jax" [id]="'mathjaxEq' + r.id"></span>
                                         </span>
                                     </td>
                                     <td>
@@ -985,8 +1014,11 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-                <label class="sgLabel">Unused Regression Regions</label>
+				</div>
+				
+				<!-- Unused Regression Regions -->
+				<label class="big">Unused Regression Regions</label>
+									
                 <div *ngFor="let u of unusedRegRegions">
                     <i *ngIf="!u.isEditing" title="Edit Regression Region" (click)="editRegRegion(u.id)" class="far fa-pencil"
                         aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;

@@ -35,11 +35,13 @@
 		border: 1px solid var(--border);
 		padding: 6px 6px;
 		box-sizing: border-box;
+		vertical-align: middle;
 	}
 
 	td {
 		border: 1px solid var(--border);
-		padding: 8px;
+		vertical-align: middle;
+		padding: 6px;
 		box-sizing: border-box;
 	}
 
@@ -151,6 +153,52 @@
 		}
 	}
 
+	// Borderless table
+	&.table-borderless{
+		font-weight: bold;
+		th {
+			border: none;
+			padding: 6px 0;
+		}
+	
+		td {
+			padding: 6px 0;
+			border: none;
+		}
+	}
+
+
+
+	// td with several icon buttons
+	.table-icon-buttons{
+		padding: 0 !important;
+
+		.icon-button{
+			width: 100%;
+			text-align: center;
+			margin-bottom: 4px;
+			padding: 4px 4px;
+
+			i{
+				font-size: 18px;
+			}
+
+			&:hover{
+				color: var(--blue);
+				i{
+					color: var(--blue);
+				}
+			}
+		}
+	}
+
+
+	// Cells that scroll horizontally
+	.equation-cell{
+		max-width: 300px;
+    	overflow-y: auto;
+	}
+
 }
 
 // Width class shortcuts to use in tables
@@ -174,3 +222,9 @@
 .width-90{width: 90%;}
 .width-95{width: 95%;}
 .width-100{width: 100%;}
+
+// Max-widths
+.max-600{max-width: 600px;}
+.max-500{width: 500px;}
+.max-400{width: 400px;}
+.max-300{width: 300px;}

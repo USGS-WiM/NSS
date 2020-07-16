@@ -70,19 +70,19 @@
 
     <div class="sidebar-item" *ngIf="showChart">
         <label>Chart:</label>
-        <ul style="padding: 0px !important;">
-            <div *ngFor="let pt of plotTypes" (click)="selectChart(pt)">
-                <li style="list-style: none; cursor: pointer" class="simple-btn">{{pt}}</li>
-            </div>
-        </ul>
+		<div *ngFor="let pt of plotTypes">
+			<button class="button small black" (click)="selectChart(pt)">
+				<span>{{pt}}</span>
+			</button>
+		</div>
     </div> <!-- end sidebar-item-->
 
     <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].regressionRegions.length > 0 && scenarios[0].regressionRegions[0].results != undefined">
         <label>Go To:</label>
-        <ul style="padding: 0 !important;">
-            <li style="list-style:none"><a pageScroll href="#citations" class="simple-btn-link">Citations</a></li>
-            <li *ngIf="showChart" style="list-style:none"><a pageScroll href="#chart" class="simple-btn-link">Charts</a></li>
-            <li style="list-style:none"><a pageScroll href="#appendix" class="simple-btn-link">Appendix</a></li>
+        <ul class="go-to-links">
+            <li><a href="#citations">Citations</a></li>
+            <li *ngIf="showChart"><a href="#chart">Charts</a></li>
+            <li><a href="#appendix">Appendix</a></li>
         </ul>
 	</div> <!-- end sidebar-item-->
 	

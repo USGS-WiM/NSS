@@ -1,6 +1,17 @@
 // MainView
 // Main content area
 
+// Math Jax
+.math-jax{
+	// display: block;
+   	// max-width: 300px;
+    // word-break: break-all;
+    // white-space: pre-wrap;
+    // overflow-x: auto;
+    // padding: 10px 0;
+    // overflow-y: hidden;
+}
+
 .app-body-section{
 	margin-top: 25px;
 }
@@ -21,6 +32,7 @@
 .download-divider{
 	display: flex;
 	height: 30px;
+	margin-top: 40px;
 
 	.controls{
 	}
@@ -38,23 +50,36 @@
 			font-size: 0;
 			height: 3px;
 			background-color: var(--grey);
+			margin-left: 20px;
 		}
-		&:after{
+		&:before{
 			content: '\f0d7';
-			font-size: 32px;
+			font-size: 36px;
 			position: absolute;
 			right: 0;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
 			font-family: var(--fontAwesome);
-			font-size: 0;
 			height: 3px;
-			background-color: var(--grey);
+			color: var(--grey);
+			font-weight: bolder;
+			top: 18px;
 		}
 	}
 }
 
+
+// Equations
+.equation-wrapper{
+	display: flex;
+	flex-wrap: wrap;
+
+	.equation-table{
+		width: 350px;
+		margin-right: 25px;
+	}
+}
 
 
 
@@ -88,15 +113,6 @@
     }
 }
 
-.sgLabel {
-    font-size: 1.2rem !important;
-    border-bottom: 1px black solid;
-}
-
-.rrLabel {
-    font-size: 1.2rem !important;
-    padding-top: 25px;
-}
 
 .addErrorButton {
     padding: 5px;
@@ -121,3 +137,4 @@
 	padding: 0 !important;
   }
   
+

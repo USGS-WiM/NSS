@@ -41,14 +41,14 @@
 			<span>Manage</span>
 		</a> 
 
-		<div class="dropdown" [class.hidden]="!isLoggedIn">
-			<a class="dropbtn nav-link-text">
-				<i class="ion-person"></i>
-				<i class="ion-arrow-dropdown"></i>
-			</a>
-			<div class="dropdown-content">
-				<a (click)="logout(true)">Logout</a>
+
+		<div [class.hidden]="!isLoggedIn" class="nav-dropdown">
+			<i class="far fa-user"></i>
+			<i class="far fa-angle-down"></i>
+
+			<div class="nav-dropdown-body">
 				<a routerLink="profile" routerLinkActive="active">Profile</a>
+				<a (click)="logout(true)" class="logout">Logout</a>
 			</div>
 		</div>
 

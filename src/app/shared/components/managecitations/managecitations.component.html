@@ -1,56 +1,79 @@
 <ng-template #manageCitations let-c="close" let-d="dismiss">
-
-	<div class="modal-header">
-		<div class="title">Manage Citations</div>  
-		<button (click)="d('closed')">&times;</button>                
-	</div>
-
-    <div class="modal-body modal-body-fixed">
-		<!-- Search Input -->
-		<div>
-			<input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
+	<div>
+		<div class="modal-header">
+			<div class="title">Manage Citations</div>  
+			<button (click)="d('closed')">&times;</button>                
 		</div>
-		
-		<!-- Manage Citation Table -->
-		<table class="custom-table table-striped table-scroll mtop-sm">
-			<thead>
-				<tr>
-					<th class="width-60">Citation</th>
-					<th class="width-35">Associated Regression Regions</th>
-					<th class="width-5"></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr *ngFor="let l of filteredData">
-					<!-- Col 1, Citation -->
-					<td class="width-60">
-						<a [href]="l.citationURL" [target]="_blank" class="cell-citation">
-							{{l.author}}
-							<small>{{l.title}}</small>
-						</a>
-					</td>
-					<!-- Col 2, Associated Regression Region -->
-					<td class="width-35">
-						<div *ngFor="let e of l.regressionRegions; let eIndex = index" class="cell-block">
-							{{e.name}}
-						</div>
-					</td>
-					<!-- Col 3 - Buttons -->
-					<td class="width-5">
-						<div class="cell-buttons">
-							<button [class.hidden]="!showAddCitations" class="icon-button hover-red" (click)="!l.regressionRegions?.length>0 && deleteCitation(l.id)" [disabled]="l.regressionRegions?.length>0" aria-label="Delete Citation">
-								<i class="fas fa-times"></i>
-							</button>
-							<button [class.hidden]="showAddCitations" class="icon-button hover-blue" (click)="addExistingCitation(l); d('closed')" aria-label="Add Citation"> 
-								<i class="fas fa-plus"></i>
-							</button>
-						</div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-    </div>
-    <div class="modal-footer">
-        <button type="button" (click)="d('closed')" class="button black">Close</button>
-    </div>
+
+		<div class="modal-body modal-body-fixed">
+			<!-- Search Input -->
+			<div>
+				<input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
+			</div>
+
+			<table class="custom-table table-striped table-scroll mtop-sm">
+				<thead>
+					<tr>
+						<th class="width-60">Citation</th>
+						<th class="width-35">Associated Regression Regions</th>
+						<th class="width-5"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let c of filteredData; let cIndex = index">
+						<!-- Col 1, Citation -->
+						<td class="width-60">
+							<div class="half-space">
+								<span *ngIf="!c.isEditing">{{ c.author }}</span>
+								<span *ngIf="c.isEditing"><textarea class='break' name="author" [(ngModel)]="c.author" required></textarea></span>
+							</div>
+							<div>
+								<span *ngIf="!c.isEditing">{{ c.title }}</span>
+								<span *ngIf="c.isEditing"><textarea class='break' name="title" [(ngModel)]="c.title" required></textarea></span>
+							</div>
+							<div>
+								<a *ngIf="!c.isEditing" [href]="c.citationURL" [target]="_blank">
+									<span *ngIf="!c.isEditing">{{ c.citationURL }}</span>
+								</a>
+								<span *ngIf="c.isEditing"><textarea  class='break' name="citationURL" [(ngModel)]="c.citationURL" required></textarea></span>
+							</div>
+						</td>
+						<!-- Col 2, Associated Regression Region -->
+						<td class="width-35">
+							<span *ngFor="let e of c.regressionRegions">
+								<div>{{e.name}}</div>
+							</span>
+						</td>
+						<!-- Col 3 - Buttons -->
+						<td class="width-5">
+							<!-- Editing -->
+							<div [class.hidden]="!showAddCitations" class="cell-buttons">
+								<button *ngIf="!c.isEditing" title="Edit Citation"  (click)="editRowClicked(c, cIndex)" class="icon-button" aria-hidden="true">
+									<i class="fa fa-pencil"></i>
+								</button> 
+								<button *ngIf="c.isEditing" title="Save Citation" (click)="saveCitation(c)" class="icon-button" aria-hidden="true">
+									<i class="fa fa-floppy-o"></i>
+								</button>
+								<button *ngIf="c.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="icon-button" aria-hidden="true">
+									<i class="fa fa-history"></i>
+								</button>
+								<button *ngIf="!c.isEditing" title="Delete Citation" (click)="!c.regressionRegions?.length>0 && deleteCitation(c.id)" class="icon-button" [class.disabled-icon]="c.regressionRegions?.length>0" aria-hidden="true">
+									<i class="fa fa-times"></i>
+								</button>
+							</div>
+							<!-- Not editing -->
+							<div [class.hidden]="showAddCitations" class="cell-buttons"> 
+								<button title="Add Citation" (click)="addExistingCitation(l); d('closed')" class="icon-button" aria-hidden="true">
+									<i class="fa fa-plus"></i>
+								</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="modal-footer">
+			<button type="button" (click)="d('closed')" class="button black">Close</button>
+		</div>
+	</div>
 </ng-template>

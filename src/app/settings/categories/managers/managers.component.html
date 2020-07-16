@@ -15,7 +15,8 @@
                     <th class="col-xs-2">Email</th>
                     <th class="col-xs-2">First name</th>
                     <th class="col-xs-2">Last Name</th>
-                    <th class="col-xs-1">Role</th>
+                    <th class="col-xs-2">Role</th>
+                    <th class="col-xs-1">Regions</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,6 +55,9 @@
                             <select [(ngModel)]="m.role" name="role">
                                 <option *ngFor="let role of roles" [value]="role">{{role}}</option>
                             </select></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{getRegionNames(m)}}</span>
                     </td>
                 </tr>
             </tbody>
@@ -111,12 +115,28 @@
             <!-- Role* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('role').valid && newUserForm.get('role').dirty}">
                 <label class="req" for="role">Role:</label>
-                <select class="form-control" formControlName="role">
+                <select class="form-control" formControlName="role" #role>
                     <option *ngFor="let role of roles" [value]="role">{{role}}</option>
                 </select>
                 <div class="input-invalid-warning" *ngIf="!newUserForm.get('role').valid && newUserForm.get('role').dirty">Role
                     is required</div>
             </div>
+            <!-- Regions* -->
+            <div formArrayName="regionManagers"  *ngIf="role.value == 'Manager'">
+                <div *ngFor="let var of newUserForm.get('regionManagers').controls; let varIndex = index">
+                    <div (click)="removeRegion(varIndex)"><i class="ion-close"></i><span class="ml-1">Region {{varIndex + 1}}</span></div>
+                    <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)">
+                        <div class="form-group">
+                            <label class="req" for="regionID">Regions:</label>
+                            <select class="form-control" formControlName="regionID">
+                                <option *ngFor="let region of regions" [value]="region.id">{{region.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button *ngIf="role.value == 'Manager'" type="button" class="btn-blue" (click)="addRegion()">Add Region</button>
 
         </form>
 

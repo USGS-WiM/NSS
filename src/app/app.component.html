@@ -24,8 +24,11 @@
 
 	<!-- Links -->
 	<div class="nav-links">
-		<a routerLink="" [class.active]="router.url == '/'">
-			<span>Home</span>
+		<a routerLink="" [class.active]="router.url == ''">
+			<span>NSS</span>
+		</a>
+		<a routerLink="gagestats" [class.active]="router.url == ''">
+			<span>Gagestats</span>
 		</a>
 		<a [class.hidden]="!isLoggedIn || loggedInRole !== 'Administrator'" routerLink="settings" routerLinkActive="active">
 			<span>Settings</span>
@@ -37,12 +40,17 @@
 		<a (click)="showLoginModal()" [class.hidden]="isLoggedIn||!isloginShow">
 			<span>Manage</span>
 		</a> 
-		<a routerLink="profile" routerLinkActive="active" [class.hidden]="!isLoggedIn">
-			<span>Profile</span>
-		</a> 
-		<a (click)="logout(true)" [class.hidden]="!isLoggedIn" class="logout">
-			<span>Logout</span>
-		</a> 
+
+		<div class="dropdown" [class.hidden]="!isLoggedIn">
+			<a class="dropbtn nav-link-text">
+				<i class="ion-person"></i>
+				<i class="ion-arrow-dropdown"></i>
+			</a>
+			<div class="dropdown-content">
+				<a (click)="logout(true)">Logout</a>
+				<a routerLink="profile" routerLinkActive="active">Profile</a>
+			</div>
+		</div>
 
 
 	</div>

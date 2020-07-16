@@ -7,28 +7,30 @@
 
 <form #VariableTypeForm="ngForm">
     <div class="form-group" *ngIf="variableTypes">
-        <table class="table">
+        <table class="custom-table mtop-sm">
             <thead>
                 <tr>
-                    <th class="col-xs-1"></th>
-                    <th class="col-xs-4">Name</th>
-                    <th>Description</th>
-                    <th class="col-xs-1">Code</th>
+                    <th class="width-5"></th>
+                    <th class="width-40">Name</th>
+                    <th class="width-45">Description</th>
+                    <th class="col-xs-10">Code</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let v of variableTypes; let i = index">
-                    <td>
-                        <div class="data-controls">
-                            <i *ngIf="!v.isEditing" title="Edit Variable Type" (click)="EditRowClicked(i)" class="far fa-pencil"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                            <i *ngIf="!v.isEditing" title="Delete Variable Type" (click)="deleteVariable(v.id)" class="far fa-times"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="v.isEditing" title="Save Variable Type" (click)="saveVariable(v,i)" class="far fa-floppy-o"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="far fa-history"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                        </div>
+                    <td class="table-icon-buttons">
+						<button *ngIf="!v.isEditing" title="Edit Variable Type" (click)="EditRowClicked(i)" class="icon-button">
+							<i class="far fa-pencil"></i>
+						</button>
+						<button *ngIf="!v.isEditing" title="Delete Variable Type" (click)="deleteVariable(v.id)" class="icon-button">
+							<i class="far fa-times"></i>
+						</button>
+						<button *ngIf="v.isEditing" title="Save Variable Type" (click)="saveVariable(v,i)" class="icon-button">
+							<i class="far fa-floppy-o"></i>
+						</button>
+						<button *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button">
+							<i class="far fa-history"></i>
+						</button>
                     </td>
                     <td>
                         <span *ngIf="!v.isEditing">{{ v.name }}</span>

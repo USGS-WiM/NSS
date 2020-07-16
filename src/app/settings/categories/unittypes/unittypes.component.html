@@ -7,28 +7,30 @@
 
 <form #UnitTypeForm="ngForm">
     <div class="form-group" *ngIf="unitTypes">
-        <table class="table">
+        <table class="custom-table mtop-sm">
             <thead>
                 <tr>
-                    <th class="col-xs-1"></th>
-                    <th>Name</th>
-                    <th class="col-xs-4">Abbreviation</th>
-                    <th class="col-xs-4">Unit System Type ID</th>
+                    <th class="width-5"></th>
+                    <th class="width-55">Name</th>
+                    <th class="width-25">Abbreviation</th>
+                    <th class="width-25">Unit System Type ID</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let u of unitTypes; let i = index">
-                    <td>
-                        <div class="data-controls">
-                            <i *ngIf="!u.isEditing" title="Edit Unit Type" (click)="EditRowClicked(i)" class="far fa-pencil"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                            <i *ngIf="!u.isEditing" title="Delete Unit Type" (click)="deleteUnit(u.id)" class="far fa-times"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="u.isEditing" title="Save Unit Type" (click)="saveUnit(u,i)" class="far fa-floppy-o"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="u.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="far fa-history"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                        </div>
+                    <td class="table-icon-buttons">
+						<button *ngIf="!u.isEditing" title="Edit Unit Type" (click)="EditRowClicked(i)" class="icon-button">
+							<i class="far fa-pencil"></i>
+						</button>
+						<button *ngIf="!u.isEditing" title="Delete Unit Type" (click)="deleteUnit(u.id)" class="icon-button">
+							<i class="far fa-times"></i>
+						</button>
+						<button *ngIf="u.isEditing" title="Save Unit Type" (click)="saveUnit(u,i)" class="icon-button">
+							<i class="far fa-floppy-o"></i>
+						</button>
+						<button *ngIf="u.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button">
+							<i class="far fa-history"></i>
+						</button>
                     </td>
                     <td>
                         <span *ngIf="!u.isEditing">{{ u.name }}</span>

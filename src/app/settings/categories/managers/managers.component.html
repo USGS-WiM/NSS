@@ -7,31 +7,33 @@
 
 <form #User TypeForm="ngForm">
     <div class="form-group" *ngIf="managers">
-        <table class="table">
+        <table class="custom-table mtop-sm">
             <thead>
                 <tr>
-                    <th class="col-xs-1"></th>
-                    <th class="col-xs-2">Username</th>
-                    <th class="col-xs-2">Email</th>
-                    <th class="col-xs-2">First name</th>
-                    <th class="col-xs-2">Last Name</th>
-                    <th class="col-xs-2">Role</th>
-                    <th class="col-xs-1">Regions</th>
+                    <th class="width-5"></th>
+                    <th class="width-15">Username</th>
+                    <th class="width-15">Email</th>
+                    <th class="width-15">First name</th>
+                    <th class="width-15">Last Name</th>
+                    <th class="width-15">Role</th>
+                    <th class="width-20">Regions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let m of managers; let i = index">
-                    <td>
-                        <div class="data-controls">
-                            <!--<i *ngIf="!m.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="far fa-pencil"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;-->
-                            <i *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.id)" class="far fa-times"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="m.isEditing" title="Save Manager" (click)="saveManager(m,i)" class="far fa-floppy-o"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="m.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="far fa-history"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                        </div> 
+                    <td class="table-icon-buttons">
+						<!--<button *ngIf="!m.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="icon-button" aria-hidden="true">
+							<i class="far fa-pencil"></i>
+						</button>-->
+						<button *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.id)" class="icon-button" aria-hidden="true">
+							<i class="far fa-times"></i>
+						</button>
+						<button *ngIf="m.isEditing" title="Save Manager" (click)="saveManager(m,i)" class="icon-button" aria-hidden="true">
+							<i class="far fa-floppy-o"></i>
+						</button>
+						<button *ngIf="m.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button" aria-hidden="true">
+							<i class="far fa-history"></i>
+						</button>
                     </td>
                     <td>
                         <span *ngIf="!m.isEditing">{{ m.username }}</span>

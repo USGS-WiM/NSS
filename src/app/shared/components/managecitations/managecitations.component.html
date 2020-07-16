@@ -49,22 +49,22 @@
 							<!-- Editing -->
 							<div [class.hidden]="!showAddCitations" class="cell-buttons">
 								<button *ngIf="!c.isEditing" title="Edit Citation"  (click)="editRowClicked(c, cIndex)" class="icon-button" aria-hidden="true">
-									<i class="fa fa-pencil"></i>
+									<i class="far fa-pencil"></i>
 								</button> 
 								<button *ngIf="c.isEditing" title="Save Citation" (click)="saveCitation(c)" class="icon-button" aria-hidden="true">
-									<i class="fa fa-floppy-o"></i>
+									<i class="far fa-floppy-o"></i>
 								</button>
 								<button *ngIf="c.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="icon-button" aria-hidden="true">
-									<i class="fa fa-history"></i>
+									<i class="far fa-history"></i>
 								</button>
 								<button *ngIf="!c.isEditing" title="Delete Citation" (click)="!c.regressionRegions?.length>0 && deleteCitation(c.id)" class="icon-button" [class.disabled-icon]="c.regressionRegions?.length>0" aria-hidden="true">
-									<i class="fa fa-times"></i>
+									<i class="far fa-times"></i>
 								</button>
 							</div>
 							<!-- Not editing -->
 							<div [class.hidden]="showAddCitations" class="cell-buttons"> 
 								<button title="Add Citation" (click)="addExistingCitation(l); d('closed')" class="icon-button" aria-hidden="true">
-									<i class="fa fa-plus"></i>
+									<i class="far fa-plus"></i>
 								</button>
 							</div>
 						</td>

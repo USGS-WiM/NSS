@@ -13,5 +13,5 @@
     "unitsURL": "Units",
     "unitSystemsURL": "UnitsSystems",
     "variablesURL": "Variables",
-    "loginShow": true
+    "loginShow": false
 }

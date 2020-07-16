@@ -29,10 +29,12 @@
             <div formArrayName="regressionRegions">
                 <!-- Regression Region -->
                 <div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.ID').valid && newScenForm.get('regressionRegions.ID').dirty}">
-                    <span>
-                        <label class="req" for="ID">Regression Region:</label>
-                        <i *ngIf="loggedInRole == 'Administrator'" (click)="showAddRegRegion()" title="Add Regression Region" class="ion-plus-circled"></i>
-                    </span>
+                    <div class="xs-f-btw">
+						<label class="req" for="ID">Regression Region:</label>
+						<button class="icon-button" *ngIf="loggedInRole == 'Administrator'" (click)="showAddRegRegion()" title="Add Regression Region">
+							<i class="far fa-plus-circle"></i>
+						</button>
+					</div>
                     <ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                         <ng-option *ngFor="let rr of regressionRegions" [value]="rr.id">{{rr.name}}</ng-option>
                     </ng-select>
@@ -64,10 +66,12 @@
                 <div formArrayName="parameters">
                     <div *ngFor="let var of newScenForm.get('regressionRegions.parameters').controls; let varIndex = index">
                         <div class="scenDropdown">
-                            <div (click)="removeVariable(varIndex)"><i class="ion-close"></i></div>
+							<button class="icon-button hover-blue" (click)="removeVariable(varIndex)">
+								<i class="far fa-times"></i>
+							</button>
                             <div *ngIf="checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="hideDiv('variable' + (varIndex + 1))">Variable {{varIndex + 1}}
-                                <i class="ion-android-arrow-dropdown"></i></div>
-                            <div *ngIf="!checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="showDiv('variable' + (varIndex + 1))">Variable {{varIndex + 1}}<i class="ion-android-arrow-dropright"></i></div>
+                                <i class="far fa-chevron-double-down"></i></div>
+                            <div *ngIf="!checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="showDiv('variable' + (varIndex + 1))">Variable {{varIndex + 1}}<i class="far fa-chevron-double-right"></i></div>
                         </div>
                         <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
                             <!-- Parameter ID-->
@@ -82,13 +86,13 @@
                                 <!-- Parameter Min-->
                                 <div class="form-group required col-md-6">
                                     <label class="req" for="min">Parameter Min:</label>
-                                    <i class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Minimum value used in regression equation development" triggers="click"></i>
+                                    <i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="Minimum value used in regression equation development" triggers="click"></i>
                                     <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="min" required>
                                 </div>
                                 <!-- Parameter Max-->
                                 <div class="form-group required col-md-6">
                                     <label class="req" for="max">Parameter Max:</label>
-                                    <i class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Maximum value used in regression equation development" triggers="click"></i>
+                                    <i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="Maximum value used in regression equation development" triggers="click"></i>
                                     <input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="max" required>
                                 </div>
                             </div>
@@ -114,10 +118,10 @@
                 <div formArrayName="regressions">
                     <!--Prediction Interval-->
                     <div *ngIf="addPredInt" class="scenDropdown">
-                        <div (click)="addPredInt = false"><i class="ion-close"></i></div>
+                        <div (click)="addPredInt = false"><i class="far fa-times"></i></div>
                         <div *ngIf="checkDiv('predInt')" class="showHideScen" (click)="hideDiv('predInt')">Prediction Interval
-                            <i class="ion-android-arrow-dropdown"></i></div>
-                        <div *ngIf="!checkDiv('predInt')" class="showHideScen" (click)="showDiv('predInt')">Prediction Interval<i class="ion-android-arrow-dropright"></i></div>
+                            <i class="far fa-chevron-down"></i></div>
+                        <div *ngIf="!checkDiv('predInt')" class="showHideScen" (click)="showDiv('predInt')">Prediction Interval<i class="far fa-chevron-right"></i></div>
                     </div>
                     <div id="predInt" *ngIf="addPredInt">
                         <div formGroupName="predictionInterval">
@@ -177,10 +181,10 @@
                         <button type="button" class="button small blue" (click)="addError()">Add Error</button>
                         <div *ngFor="let err of newScenForm.get('regressionRegions.regressions.errors').controls; let errIndex = index">
                             <div class="scenDropdown">
-                                <div (click)="removeError(errIndex)"><i class="ion-close"></i></div>
+                                <div (click)="removeError(errIndex)"><i class="far fa-times"></i></div>
                                 <div *ngIf="checkDiv('error' + (errIndex + 1))" class="showHideScen" (click)="hideDiv('error' + (errIndex + 1))">Error {{errIndex + 1}}
-                                    <i class="ion-android-arrow-dropdown"></i></div>
-                                <div *ngIf="!checkDiv('error' + (errIndex + 1))" class="showHideScen" (click)="showDiv('error' + (errIndex + 1))">Error {{errIndex + 1}}<i class="ion-android-arrow-dropright"></i></div>
+                                    <i class="far fa-chevron-down"></i></div>
+                                <div *ngIf="!checkDiv('error' + (errIndex + 1))" class="showHideScen" (click)="showDiv('error' + (errIndex + 1))">Error {{errIndex + 1}}<i class="far fa-chevron-right"></i></div>
                             </div>
                             <div [formGroupName]=errIndex [id]="'error' + (errIndex + 1)" class="scenFormGroup">
                                 <!--Error ID-->

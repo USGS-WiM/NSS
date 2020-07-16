@@ -9,13 +9,13 @@
 	<!-- Mobile menu toggle -->
 	<button class="sidebar-toggle" (click)="showMobileMenu = !showMobileMenu">
 	<!-- <button class="sidebar-toggle" (click)="toggleSidebar()"> -->
-		<i class="fa fa-bars"></i>
+		<i class="far fa-bars"></i>
 	</button>
 
 	<!-- Logo and name -->
 	<div class="branding">
 		<a href="https://usgs.gov">
-            <img src="https://wim.usgs.gov/src/images/usgs.png"/>
+            <img src="assets/img/usgs-logo.png"/>
         </a>
         <span class="app-title">
             {{title}}
@@ -31,7 +31,7 @@
 			<span>Settings</span>
 		</a>
 		<a (click)="showAbout()">
-			<!-- <i class="ion-information-circled"></i> -->
+			<!-- <i class="far fa-info-circle"></i> -->
 			<span>About</span>
 		</a>
 		<a (click)="showLoginModal()" [class.hidden]="isLoggedIn||!isloginShow">
@@ -51,13 +51,13 @@
 
 <div class="app-body">
 	<!-- Sidebar -->
-	<wim-sidebar *ngIf="router.url.indexOf('/settings') === -1 && router.url.indexOf('/profile') === -1" [class.visible]="showMobileMenu"></wim-sidebar>
+	<wim-sidebar *ngIf="!router.url.startsWith('/settings') && !router.url.startsWith('/profile')" [class.visible]="showMobileMenu"></wim-sidebar>
 	<!-- Lightbox behind menu -->
 	<div id="sidebarLightbox" [class.visible]="showMobileMenu" (click)="showMobileMenu = false"></div>
 
 
 	<!-- Main content -->
-	<div class="app-content">
+	<div class="app-content" [class.no-padding]="router.url.startsWith('/settings') || router.url.startsWith('/profile')">
 		<!-- Routes -->
 		<router-outlet></router-outlet>
 	</div>

@@ -68,10 +68,12 @@
           </div>
           <button *ngIf="addCitation" type="button" class="button small blue" (click)="removeCitation()">Remove Citation</button>
       </form>
-      
-    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation=true; newCitation=true">Add New Citation</button>
-    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="showManageCitationsModal(); addCitation=true; newCitation=false">Find Existing Citation</button>
-    <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="showMap()">Upload Polygon</button>        
+	  
+	  <div class="xs-f-start pbottom-xs">
+		<button *ngIf="!addCitation" type="button" class="button mright-xs" (click)="addCitation=true; newCitation=true">Add New Citation</button>
+		<button *ngIf="!addCitation" type="button" class="button mright-xs" (click)="showManageCitationsModal(); addCitation=true; newCitation=false">Find Existing Citation</button>
+		<button *ngIf="!uploadPolygon" type="button" class="button mright-xs" (click)="showMap()">Upload Polygon</button>        
+	  </div>
 
       <form *ngIf="uploadPolygon">
         <form #f="ngForm" class="ui form">

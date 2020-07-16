@@ -47,6 +47,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+		
         if (localStorage.getItem('auth') === undefined) {
             this.router.navigate(['/']);
         }

@@ -47,4 +47,71 @@
 .modal-body{
 	max-height: 60vh;
 	overflow: auto;
+
+	&.modal-body-fixed{
+		max-height: 60vh;
+		min-height: 60vh;
+		height: 60vh;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+
+		table{
+			flex-grow: 3;
+			height: 300px;
+			max-height: 100%;
+		}
+	}
+}
+
+// Tab plugin styles
+.fixed-tabs{
+	display: flex;
+	flex-direction: column;
+	max-height: 100%;
+
+	.tab-content{
+		overflow-x: hidden;
+		flex-grow: 3;
+		box-sizing: border-box;
+		padding: 25px 15px;
+	}
+}
+// Styles
+.nav-tabs{
+	padding-bottom: 0;
+	.nav-item{
+		padding: 0;
+
+		.nav-link{
+			border-top-right-radius: var(--borderRadius);
+			border-top-left-radius: var(--borderRadius);
+			padding: 8px 14px;
+			color: var(--blue);
+			font-size: 15px;
+			letter-spacing: 0;
+			font-weight: 600;
+			transition: var(--transition);
+
+			i{
+				margin-right: 8px;
+				transform: scale(1.2);
+			}
+
+			&:hover{
+				color: var(--text);
+				transition: var(--transition);
+			}
+
+			&.active{
+				background-color: var(--grey);
+				color: var(--text);
+
+				&:hover{
+					color: var(--text);
+				}
+			}
+
+		}
+	}
 }

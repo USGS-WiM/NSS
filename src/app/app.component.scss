@@ -81,8 +81,17 @@ nav#main{
 				}
 			}
 
-			&.logout span{
-				color: var(--red);
+			&.logout{
+				background-color: var(--red);
+				height: 60%;
+				padding: 8px;
+				border-radius: var(--borderRadius);
+				top: 20%;
+				position: relative;
+				margin-left: 30px;
+				span{
+					color: var(--white);
+				}
 			}
 			&.active{
 
@@ -169,6 +178,10 @@ nav#main{
 		padding: 15px;
 		height: 100%;
 		overflow: auto;
+
+		&.no-padding{
+			padding: 0;
+		}
 	}
 	
 }

@@ -3,7 +3,7 @@
 <!-- / toaster directive -->
 
 <div class="profile-page">
-    <h2 class="pbottom-xs">Profile</h2>
+    <h2 class="pbottom-xs bold">Profile</h2>
     <form #UserInfo TypeForm="ngForm">
         <div *ngIf="userInfo" class="userInfo">
 			<!-- Username -->
@@ -56,15 +56,15 @@
 			
 			<!-- Buttons -->
             <button *ngIf="!userInfo.isEditing" (click)="editUser()" class="button blue">
-				<i class="fa fa-pencil"></i>
+				<i class="far fa-pencil"></i>
 				<span>Edit User Info</span>
 			</button>
 			<button *ngIf="userInfo.isEditing" (click)="saveUser()" class="button blue">
-				<i class="fa fa-floppy-o"></i>
+				<i class="far fa-floppy-o"></i>
 				<span>Save</span>
 			</button>
             <button *ngIf="userInfo.isEditing" (click)="cancelEdit()" class="button black mleft-sm">
-				<i class="fa fa-history"></i>
+				<i class="far fa-history"></i>
 				<span>Cancel</span>
 			</button>
         </div>

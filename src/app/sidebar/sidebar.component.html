@@ -15,7 +15,7 @@
     <div class="sidebar-item" *ngIf="statisticGroups">
         <span>
             <label>Limit by Statistic Group(s):</label>
-            <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
+            <i *ngIf="loggedInRole != 'Administrator'" class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>
         <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedStatGrpIDs"
             [(ngModel)]="selectedStatGrpIDs" (ngModelChange)="onStatGrpSelect($event)">
@@ -24,11 +24,15 @@
 
 
     <div class="sidebar-item" *ngIf="regressionRegions">
-        <span>
-            <label>Limit by Hydrologic Region(s):</label>
-            <i *ngIf="loggedInRole == 'Administrator'" (click)="showAddRegRegion()" title="Add Regression Region" class="ion-plus-circled"></i>
-            <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
-        </span>
+        <div class="xs-f-btw">
+			<label>Limit by Hydrologic Region(s):</label>
+			<button class="icon-button hover-blue" (click)="showAddRegRegion()" *ngIf="loggedInRole == 'Administrator'" aria-label="Add Regression Region" >
+				<i class="far fa-plus-circle"></i>
+			</button>
+			<button class="icon-button hover-blue" *ngIf="loggedInRole != 'Administrator'" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click">
+				<i class="far fa-info-circle"></i>
+			</button>
+        </div>
         <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"
             [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)"> 
         </ss-multiselect-dropdown>
@@ -38,7 +42,7 @@
     <div class="sidebar-item" *ngIf="regressionTypes">
         <span>
             <label>Limit by Statistic(s):</label>
-            <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
+            <i *ngIf="loggedInRole != 'Administrator'" class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>
         <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="mySGSettings" name="selectedRegTypeIDs"
             [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
@@ -50,15 +54,18 @@
 		<label class="block">Calculate Statistic:</label>
 		<div>
 			<button [disabled]="scenarios[0].regressionRegions[0].Results != undefined || showCompute==false" type="button"class="button full" (click)="CalculateScenario()">
+				<i class="far fa-check"></i>
 				<span>Compute</span>
 			</button>
     	</div>  
     </div> <!-- end sidebar-item-->
 
-    <div class="sidebar-item" *ngIf="(selectedRegRegionIDs && selectedRegRegionIDs.length > 0) || (selectedRegTypeIDs && selectedRegTypeIDs.length > 0)
+    <div class="sidebar-item center" *ngIf="(selectedRegRegionIDs && selectedRegRegionIDs.length > 0) || (selectedRegTypeIDs && selectedRegTypeIDs.length > 0)
         || (selectedStatGrpIDs && selectedStatGrpIDs.length > 0)">
-        <button style="margin-top: 6px" type="button"
-            class="button blue small" (click)="clearSelections()">Reset Region Filters</button>
+        <button type="button" class="button blue small" (click)="clearSelections()">
+			<i class="far fa-times"></i>
+			<span>Reset Region Filters</span>
+		</button>
     </div> <!-- end sidebar-item-->
 
     <div class="sidebar-item" *ngIf="showChart">
@@ -86,7 +93,7 @@
 
 	<!-- Footer, USGS Links -->
     <div class="sidebar-footer">
-        <div class="identification">Powered by <a href="https://wim.usgs.gov/" target="_blank">WIM</a></div>
+        <div class="identification">Powered by <a href="https://wim.usgs.gov/" target="_blank">WIM <img src="assets/img/favicon-pin.png"/></a></div>
 		
 		<div class="sidebar-footer-links">
 			<a href="https://usgs.gov" target="_blank">USGS Home</a><a href="https://answers.usgs.gov" target="_blank">Contact

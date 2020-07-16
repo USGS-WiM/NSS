@@ -1,26 +1,116 @@
+@import "styles/variables.scss";
+
+
 .settings-page{
 	display: flex;
 	height: 100%;
 	max-height: 100%;
 
+	// Full width mobile
+	@media (max-width: $screenLG) {
+		flex-direction: column
+	}
+
 	.setting-sidebar{
 		width: 300px;
 		min-width: 300px;
+		background-color: var(--layer);
+		border-right: 1px solid var(--border);
+		box-sizing: border-box;
+		padding: 15px;
+
+		// Full width mobile
+		@media (max-width: $screenLG) {
+			min-width: 100%;
+			height: auto;
+			border-bottom: 1px solid var(--border);
+			border-right: none;
+		}
+		
 
 		.sidebar-links{
 			display: block;
 			list-style-type: none;
-			padding: 0;
+			padding: 10px 0 0 0;
 			margin: 0;
 
+			// Horizontal links small screens
+			@media (max-width: $screenLG) {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: flex-start;
+				border-bottom: 1px solid var(--border);
+				padding-bottom: 15px;
+			}
+
 			li{
-				display: block;
-				padding: 1px 0 0 15px;
-				font-size: 14px;
+				padding: 6px 0 6px 10px;
+				font-size: 18px;
 				color: var(--blue);
 
+				// Remove padding mobile
+				@media (max-width: $screenLG) {
+					padding: 0 0 15px 0;
+				}
+
+
 				a{
-					color: var(--blue);
+					color: var(--text);
+					font-weight: 600;
+					position: relative;
+					width: 100%;
+					box-sizing: border-box;
+					padding: 0 40px 0 0;
+					display: flex;
+					justify-content: space-between;
+					letter-spacing: 0;
+
+					&:after{
+						display: flex;
+						flex-direction: column;
+						justify-content: center;
+						content: '\f105';
+						font-family: var(--fontAwesome);
+						position: absolute;
+						right: 0;
+						height: 100%;
+						opacity: 0.2;
+						transition: var(--transition);
+					}
+
+					&:hover{
+						&:after{
+							opacity: 1;
+							transition: var(--transition);
+						}
+					}
+
+					&.active{
+						color: var(--blue);
+						font-weight: 700;
+
+						&:hover{
+							cursor: default;
+						}
+
+						&:after{
+							display: none;
+						}
+					}
+
+					// Smaller screens
+					@media (max-width: $screenLG) {
+						padding: 3px 6px;
+						margin: 0 15px 0 0;
+						width: auto;
+
+						&.active{
+							border-bottom: 3px solid var(--blue);
+						}
+						&:after{
+							display: none;
+						}
+					}
 				}
 			}
 		}
@@ -31,6 +121,12 @@
 		box-sizing: border-box;
 		padding: 15px;
 		overflow: auto;
+
+		// Full width mobile
+		@media (max-width: $screenLG) {
+			width: 100%;
+			padding: 15px;
+		}
 	}
 }
 

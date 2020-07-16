@@ -6,24 +6,60 @@
 }
 
 // Misc styles
-
 // Citation link
 .citation{
 	display: block;
-	font-size: 13px;
-	line-height: 16px;
-	margin: 10px 0;
+	font-size: 15px;
+	line-height: 17px;
+	margin: 15px 0;
 	font-weight: 500;
 	box-sizing: border-box;
 	padding-left: 15px;
 }
 
-// Small red warning text
-.warning-text{
-    color:red;
-    font-style: italic;
-    font-size: small;
+
+.download-divider{
+	display: flex;
+	height: 30px;
+
+	.controls{
+	}
+
+	.divider{
+		flex-grow: 3;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		position: relative;
+
+		&:after{
+			content: 'x';
+			font-size: 0;
+			height: 3px;
+			background-color: var(--grey);
+		}
+		&:after{
+			content: '\f0d7';
+			font-size: 32px;
+			position: absolute;
+			right: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			font-family: var(--fontAwesome);
+			font-size: 0;
+			height: 3px;
+			background-color: var(--grey);
+		}
+	}
 }
+
+
+
+
+
+
 
 
 
@@ -31,9 +67,7 @@
     background-color: #efe1e1!important;
     border: 1px solid #a94442!important;
 }
-.redFont {
-    color:red;
-}
+
 [hidden] { display: none !important;}
 [type="radio"] {
     position: initial !important;
@@ -68,3 +102,22 @@
     padding: 5px;
     height: 30px;
 }
+
+.charts-header{
+	font-size: 32px !important;
+	letter-spacing: 0 !important;
+	display: inline-block;
+	margin-right: 42px;
+	margin-bottom: 0 !important;
+	position: relative;
+	top: 8px;
+  }
+  
+  .chart-wrapper{
+	border: 1px solid rgba(0,0,0,0.3);
+	display:inline-block;
+	margin-bottom:65px !important;
+	max-height: 460px !important;
+	padding: 0 !important;
+  }
+  

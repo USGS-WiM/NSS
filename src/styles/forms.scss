@@ -11,8 +11,10 @@
 // 		input elements & textarea
 // 		buttons
 // 			- colors: default (primary), .red, .green, .yellow, .purple, .grey
+// 		Icon button
 // 		Checkboxes, Radios, Toggle Switches
 // 		Range
+//		Hint (tooltip)
 // 
 
 
@@ -45,6 +47,17 @@ label{
 		font-weight: 500;
 		letter-spacing: 0.1px;
 		color: var(--text);
+	}
+	// Bigger
+	&.big{
+		font-size: 18px;
+		padding-bottom: 8px;
+		font-weight: 500;
+		color: var(--text);
+		// Make smaller on mobile
+		@media (max-width: $screenMD) {
+			font-size: 16px;
+		}
 	}
 
 }
@@ -196,7 +209,14 @@ select{
 	-moz-appearance: none;
 }
 
-// Dropdown plugin styles
+.input-small{
+	max-width: 300px;
+}
+
+////////////////////////////////
+//   Multiselect Plugin      //
+//////////////////////////////
+// Additional styling for multiselect plugin
 .dropdown-menu{
 	box-sizing: border-box;
 	max-width: 269px !important;
@@ -205,7 +225,25 @@ select{
 	.dropdown-item{
 		box-sizing: border-box;
 		padding: 1px 10px !important;
+		font-size: 14px !important;
+
+		&.check-control{
+			font-weight: bolder;
+		}
 	}
+}
+.dropdown-toggle{
+	overflow: hidden;
+}
+.dropdown,
+.dropup,
+.dropdown-inline[_ngcontent-c4]{
+    width: 100% !important;
+}
+.dropdown .btn,
+.dropup .btn{
+    display: block;
+    width: 100%;
 }
 
 ////////////////////////
@@ -233,7 +271,7 @@ button{
 	box-sizing: border-box;
 	transform: translateY(0px);
 	font-family: var(--systemFont);
-	border: var(--borderWidth) solid var(--black);
+	border: var(--borderWidth) solid rgba(0,0,0,0.4);
 	border-bottom-width: 2px;
 
 	// Increase size on mobile
@@ -416,22 +454,81 @@ button{
 	}
 }
 
+// Icon button
+// Button element - but no border, background, etc
+// Just an icon inside
+.icon-button{
+	border: none;
+	padding: 0;
+	margin: 0;
+	background-color: transparent;
+	color: var(--black);
+	opacity: 0.75;
+	transition: var(--transition);
+
+	i{
+		font-size: 16px;
+	}
+
+	&:hover{
+		cursor: pointer;
+		opacity: 1;
+		transition: var(--transition);
+	}
+
+	&.hover-red:hover{
+		color: var(--red);
+	}
+	&.hover-blue:hover{
+		color: var(--blue);
+	}
+
+	// Disabled
+	&:disabled,
+	&.hover-blue:disabled,
+	&.hover-red:disabled{
+		opacity: 0.4;
+		color: var(--black);
+
+		&:hover{
+			cursor: not-allowed;
+			opacity: 0.4;
+			color: var(--black);
+		}
+	}
+}
+
 /////////////////////////
 //     Checkboxes     //
 ///////////////////////
-input[type="checkbox"] {
+// input[type="checkbox"]{
+// 	-webkit-appearance: checkbox !important;
+// 	   -moz-appearance: checkbox !important;
+// 	   -ms-appearance: checkbox !important;
+// 	   -o-appearance: checkbox !important;
+// 	   appearance: checkbox !important;
+//   }
+//   input[type="radio"]{
+// 	-webkit-appearance: radio !important;
+// 	   -moz-appearance: radio !important;
+// 	   -ms-appearance: radio !important;
+// 	   -o-appearance: radio !important;
+// 	   appearance: radio !important;
+//   }
+
+// Turn into checks
+input[type="checkbox"],
+input[type="radio"]{
+  width: auto;
+  margin-right: 5px;
+}
+.check {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
 	-webkit-tap-highlight-color: transparent;
 	cursor: pointer;
-}
-input[type="checkbox"]:focus {
-	outline: 0;
-}
 
-// Turn into checks
-.check {
 	height: 28px;
 	min-height: 28px;
 	max-height: 28px;
@@ -456,6 +553,7 @@ input[type="checkbox"]:focus {
 	&:hover,
 	&:focus{
 		transition: all 0.2s ease;
+		outline: 0;
 		// Lighter border mobile
 	}
 	
@@ -616,4 +714,46 @@ input[type="range"] {
 
 input[type=range]::-moz-focus-outer {
 	border: 0;
+}
+
+//////////////////////
+//     Hint        //
+////////////////////
+.hint{
+	position: relative;
+	display: inline-block;
+
+	i{
+
+	}
+
+
+	.hint-text{
+		display: none;
+		position: absolute;
+		bottom: 0;
+		background: #0C141E;
+		color: white;
+		border-radius: 4px;
+		box-sizing: border-box;
+		padding: 6px;
+		font-size: 13.5px;
+		line-height: 15px;
+		left: 110%;
+		width: 164px;
+
+		a{
+			text-decoration: underline;
+			color: white;
+		}
+	}
+
+	// Hover to show text
+	&:hover{
+		cursor: help;
+
+		.hint-text{
+			display: block;
+		}
+	}
 }

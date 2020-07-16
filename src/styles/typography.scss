@@ -15,14 +15,19 @@
 // 			- .quote-header - Split header with large text/quote and small text
 //
 
-// Set font, disable text selection
+// MathJax sizing
+.MathJax{
+	font-size: 140% !important;
+}
+
+
+// Set font
 h1,h2,h3,h4,h5,h6,a{
 	font-family: var(--sans);
 }
 label,a,p{
 	font-family: var(--systemFont);
 }
-
 
 ///////////////////
 //   Headings   //
@@ -157,6 +162,16 @@ p{
 			line-height: 26px;
 		}
 	}
+
+	// Warning text
+	&.error{
+		color: var(--red);
+		font-size: 13px;
+		line-height: 14px;
+		padding: 0;
+		margin: 12px 0 0 0;
+		font-style: italic;
+	}
 	
 	// Bold
 	b{
@@ -214,8 +229,23 @@ ul{
 .text-fade{
 	color: var(--textLight);
 }
+.text-red{
+	color: var(--red);
+}
 .text-bright{
 	color: var(--text);
+}
+.center{
+	text-align: center;
+}
+.align-right{
+	text-align: right;
+}
+.nowrap{
+	white-space: pre;
+}
+.bold{
+	font-weight: bold;
 }
 
 // Horizontal Rule

@@ -1,7 +1,7 @@
 <h3 class="mbottom-md">Errors</h3>
 
 <button [hidden]="loggedInRole !== 'Administrator'" type="button" class="button blue small" (click)="showNewErrorForm()">
-	<i class="fa fa-plus" aria-hidden="true"></i> 
+	<i class="far fa-plus" aria-hidden="true"></i> 
 	<span>Add New Error</span>
 </button>
 
@@ -19,13 +19,13 @@
                 <tr *ngFor="let v of errors; let i = index">
                     <td>
                         <div class="data-controls">
-                            <i *ngIf="!v.isEditing" title="Edit Error" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                            <i *ngIf="!v.isEditing" title="Edit Error" (click)="EditRowClicked(i)" class="far fa-pencil"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                            <i *ngIf="!v.isEditing" title="Delete Error" (click)="deleteError(v.id)" class="fa fa-times"
+                            <i *ngIf="!v.isEditing" title="Delete Error" (click)="deleteError(v.id)" class="far fa-times"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="v.isEditing" title="Save Error" (click)="saveError(v,i)" class="fa fa-floppy-o"
+                            <i *ngIf="v.isEditing" title="Save Error" (click)="saveError(v,i)" class="far fa-floppy-o"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
+                            <i *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="far fa-history"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                         </div>
                     </td>

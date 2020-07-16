@@ -1,236 +1,70 @@
+// This file imports all other global stylesheets
+// There shouldn't be any CSS added here.
+// Try to find the correct partial stylesheet (below) to fit it in
+
+// If it's styles for a specific element in a specific component, put it in the the *.component.scss file instead
+// These are for global styles use throughout the project.
+
 @import "~@ng-select/ng-select/themes/default.theme.css";
 @import "~leaflet/dist/leaflet.css";
 
+// Clears default browser styles
 @import "styles/reset.scss";
+
+// Defines variables to use in SCSS Files
 @import "styles/variables.scss";
+
+// Base project styles, including <html> and <body> properties
 @import "styles/base.scss";
+
+// Form elements - inputs, buttons, labels, etc
 @import "styles/forms.scss";
+
+// Typography and text - headers, paragraphs, etc
 @import "styles/typography.scss";
+
+// Modal-specific styles
 @import "styles/modal.scss";
 
+// Data-specific styles - tables, graphs, etc
+@import "styles/data.scss";
 
-
-
-// Spacing Helpers
-.mtop-none{margin-top:0}
-.mright-none{margin-right:0}
-.mbottom-none{margin-bottom:0}
-.mleft-none{margin-left:0}
-.margin-none{margin:0}
-.ptop-none{box-sizing:border-box;padding-top:0}
-.pright-none{box-sizing:border-box;padding-right:0}
-.pbottom-none{box-sizing:border-box;padding-bottom:0}
-.pleft-none{box-sizing:border-box;padding-left:0}
-.padding-none{box-sizing:border-box;padding:0}
-.mtop-xs{margin-top:10px}
-.mright-xs{margin-right:10px}
-.mbottom-xs{margin-bottom:10px}
-.mleft-xs{margin-left:10px}
-.margin-xs{margin:10px}
-.ptop-xs{box-sizing:border-box;padding-top:10px}
-.pright-xs{box-sizing:border-box;padding-right:10px}
-.pbottom-xs{box-sizing:border-box;padding-bottom:10px}
-.pleft-xs{box-sizing:border-box;padding-left:10px}
-.padding-xs{box-sizing:border-box;padding:10px}
-.mtop-sm{margin-top:20px}
-.mright-sm{margin-right:20px}
-.mbottom-sm{margin-bottom:20px}
-.mleft-sm{margin-left:20px}
-.margin-sm{margin:20px}
-.ptop-sm{box-sizing:border-box;padding-top:20px}
-.pright-sm{box-sizing:border-box;padding-right:20px}
-.pbottom-sm{box-sizing:border-box;padding-bottom:20px}
-.pleft-sm{box-sizing:border-box;padding-left:20px}
-.padding-sm{box-sizing:border-box;padding:20px}
-.mtop-md{margin-top:35px}
-.mright-md{margin-right:35px}
-.mbottom-md{margin-bottom:35px}
-.mleft-md{margin-left:35px}
-.margin-md{margin:35px}
-.ptop-md{box-sizing:border-box;padding-top:35px}
-.pright-md{box-sizing:border-box;padding-right:35px}
-.pbottom-md{box-sizing:border-box;padding-bottom:35px}
-.pleft-md{box-sizing:border-box;padding-left:35px}
-.padding-md{box-sizing:border-box;padding:35px}
-.mtop-lg{margin-top:60px}
-.mright-lg{margin-right:60px}
-.mbottom-lg{margin-bottom:60px}
-.mleft-lg{margin-left:60px}
-.margin-lg{margin:60px}
-.ptop-lg{box-sizing:border-box;padding-top:60px}
-.pright-lg{box-sizing:border-box;padding-right:60px}
-.pbottom-lg{box-sizing:border-box;padding-bottom:60px}
-.pleft-lg{box-sizing:border-box;padding-left:60px}
-.padding-lg{box-sizing:border-box;padding:60px}
-.mtop-xl{margin-top:100px}
-.mright-xl{margin-right:100px}
-.mbottom-xl{margin-bottom:100px}
-.mleft-xl{margin-left:100px}
-.margin-xl{margin:100px}
-.ptop-xl{box-sizing:border-box;padding-top:100px}
-.pright-xl{box-sizing:border-box;padding-right:100px}
-.pbottom-xl{box-sizing:border-box;padding-bottom:100px}
-.pleft-xl{box-sizing:border-box;padding-left:100px}
-.padding-xl{box-sizing:border-box;padding:100px}
-.mtop-xxl{margin-top:180px}
-.mright-xxl{margin-right:180px}
-.mbottom-xxl{margin-bottom:180px}
-.mleft-xxl{margin-left:180px}
-.margin-xxl{margin:180px}
-.ptop-xxl{box-sizing:border-box;padding-top:180px}
-.pright-xxl{box-sizing:border-box;padding-right:180px}
-.pbottom-xxl{box-sizing:border-box;padding-bottom:180px}
-.pleft-xxl{box-sizing:border-box;padding-left:180px}
-.padding-xxl{box-sizing:border-box;padding:180px}
-@media (max-width: 780px) {
-.mtop-none{margin-top:0}
-.mright-none{margin-right:0}
-.mbottom-none{margin-bottom:0}
-.mleft-none{margin-left:0}
-.margin-none{margin:0}
-.ptop-none{box-sizing:border-box;padding-top:0}
-.pright-none{box-sizing:border-box;padding-right:0}
-.pbottom-none{box-sizing:border-box;padding-bottom:0}
-.pleft-none{box-sizing:border-box;padding-left:0}
-.padding-none{box-sizing:border-box;padding:0}
-.mtop-xs{margin-top:8px}
-.mright-xs{margin-right:8px}
-.mbottom-xs{margin-bottom:8px}
-.mleft-xs{margin-left:8px}
-.margin-xs{margin:8px}
-.ptop-xs{box-sizing:border-box;padding-top:8px}
-.pright-xs{box-sizing:border-box;padding-right:8px}
-.pbottom-xs{box-sizing:border-box;padding-bottom:8px}
-.pleft-xs{box-sizing:border-box;padding-left:8px}
-.padding-xs{box-sizing:border-box;padding:8px}
-.mtop-sm{margin-top:16px}
-.mright-sm{margin-right:16px}
-.mbottom-sm{margin-bottom:16px}
-.mleft-sm{margin-left:16px}
-.margin-sm{margin:16px}
-.ptop-sm{box-sizing:border-box;padding-top:16px}
-.pright-sm{box-sizing:border-box;padding-right:16px}
-.pbottom-sm{box-sizing:border-box;padding-bottom:16px}
-.pleft-sm{box-sizing:border-box;padding-left:16px}
-.padding-sm{box-sizing:border-box;padding:16px}
-.mtop-md{margin-top:30px}
-.mright-md{margin-right:30px}
-.mbottom-md{margin-bottom:30px}
-.mleft-md{margin-left:30px}
-.margin-md{margin:30px}
-.ptop-md{box-sizing:border-box;padding-top:30px}
-.pright-md{box-sizing:border-box;padding-right:30px}
-.pbottom-md{box-sizing:border-box;padding-bottom:30px}
-.pleft-md{box-sizing:border-box;padding-left:30px}
-.padding-md{box-sizing:border-box;padding:30px}
-.mtop-lg{margin-top:50px}
-.mright-lg{margin-right:50px}
-.mbottom-lg{margin-bottom:50px}
-.mleft-lg{margin-left:50px}
-.margin-lg{margin:50px}
-.ptop-lg{box-sizing:border-box;padding-top:50px}
-.pright-lg{box-sizing:border-box;padding-right:50px}
-.pbottom-lg{box-sizing:border-box;padding-bottom:50px}
-.pleft-lg{box-sizing:border-box;padding-left:50px}
-.padding-lg{box-sizing:border-box;padding:50px}
-.mtop-xl{margin-top:80px}
-.mright-xl{margin-right:80px}
-.mbottom-xl{margin-bottom:80px}
-.mleft-xl{margin-left:80px}
-.margin-xl{margin:80px}
-.ptop-xl{box-sizing:border-box;padding-top:80px}
-.pright-xl{box-sizing:border-box;padding-right:80px}
-.pbottom-xl{box-sizing:border-box;padding-bottom:80px}
-.pleft-xl{box-sizing:border-box;padding-left:80px}
-.padding-xl{box-sizing:border-box;padding:80px}
-.mtop-xxl{margin-top:140px}
-.mright-xxl{margin-right:140px}
-.mbottom-xxl{margin-bottom:140px}
-.mleft-xxl{margin-left:140px}
-.margin-xxl{margin:140px}
-.ptop-xxl{box-sizing:border-box;padding-top:140px}
-.pright-xxl{box-sizing:border-box;padding-right:140px}
-.pbottom-xxl{box-sizing:border-box;padding-bottom:140px}
-.pleft-xxl{box-sizing:border-box;padding-left:140px}
-.padding-xxl{box-sizing:border-box;padding:140px}
-}
+// Helper classes - classes that can be added to an element to adjust styles/spacing/margin/padding/etc
+@import "styles/helpers.scss";
 
 
 
 
-*{
-}
-/*
-    Multiselect
-    Styling
-*/
-.dropdown,
-.dropup,
-.dropdown-inline[_ngcontent-c4]{
-    width: 100% !important;
-}
-.dropdown .btn,
-.dropup .btn{
-    display: block;
-    width: 100%;
-}
 
-/*
-    Results
-    Table
-    Styling
-*/
-.table-condensed{
-    display: block;
-    width: 95%;
-}
 
-.MathJax{
-  font-size: 140% !important;
-}
 
-/*
-    Results
-    Form Styling
-*/
-form{
-    margin-bottom: 55px;
-}
 
-.wim-sidebar{
-  overflow: visible !important;
-}
 
-.modal {
-    z-index: 5000!important;
-}
 
-/*11/21 changes*/
-.dropdown-toggle{
-  overflow: hidden;
-}
-.dropdown-toggle .caret{
-  display: none !important;
-}
 
-.wim-sidebar{
-  overflow-x: scroll !important;
-}
 
-input[type="checkbox"]{
-  -webkit-appearance: checkbox !important;
-     -moz-appearance: checkbox !important;
-     -ms-appearance: checkbox !important;
-     -o-appearance: checkbox !important;
-     appearance: checkbox !important;
-}
-input[type="radio"]{
-  -webkit-appearance: radio !important;
-     -moz-appearance: radio !important;
-     -ms-appearance: radio !important;
-     -o-appearance: radio !important;
-     appearance: radio !important;
-}
+
+// .wim-sidebar{
+//   overflow: visible !important;
+// }
+
+// .modal {
+//     z-index: 5000!important;
+// }
+
+// /*11/21 changes*/
+// .dropdown-toggle{
+//   overflow: hidden;
+// }
+// .dropdown-toggle .caret{
+//   display: none !important;
+// }
+
+// .wim-sidebar{
+//   overflow-x: scroll !important;
+// }
+
+
 
 .simple-btn{
   padding: 6px 11px;
@@ -256,55 +90,13 @@ input[type="radio"]{
 
 
 
-input[type="checkbox"],
-input[type="radio"]{
-  width: auto !important;
-  margin-right: 5px !important;
-}
-
-.loading-wrapper{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  width: 100vw;
-  height: 100vh;
-  font-size: 28px;
-  letter-spacing: 1px;
-  background-color: #FFF;
-  color: #10152C;
-}
-
-.charts-header{
-  font-size: 32px !important;
-  letter-spacing: 0 !important;
-  display: inline-block;
-  margin-right: 42px;
-  margin-bottom: 0 !important;
-  position: relative;
-  top: 8px;
-}
-
-.chart-wrapper{
-  border: 1px solid rgba(0,0,0,0.3);
-  display:inline-block;
-  margin-bottom:65px !important;
-  max-height: 460px !important;
-  padding: 0 !important;
-}
 
 
-.dropdown-item{
-  padding-left: 0 !important;
-  font-size: 12px !important;
-  letter-spacing: -0.5px !important;
-}
-.dropdown-item a{
-  padding-left: 0 !important;
-}
-.dropdown-item.check-control{
-  padding-left: 15px !important;
-}
+
+
+
+
+
 
 .hidden-print {
   margin-top: 15px;

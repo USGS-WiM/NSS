@@ -1,42 +1,54 @@
 <ng-template #manageCitations let-c="close" let-d="dismiss">
+
 	<div class="modal-header">
 		<div class="title">Manage Citations</div>  
 		<button (click)="d('closed')">&times;</button>                
 	</div>
-    <div class="modal-body">
-    <input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="col-xs-5">Citation</th>
-                <th class="col-xs-5">Associated Regression Regions</th>
-                <th class="col-xs-1"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let l of filteredData">
-                <td>
-                    <a [href]="l.citationURL" [target]="_blank">
-                        <div class="half-space">{{l.author}}</div>
-                        <div>{{l.title}}</div>
-                    </a>
-                </td>
-                <td>
-                    <span *ngFor="let e of l.regressionRegions; let eIndex = index">
-                        <div>{{e.name}}</div>
-                    </span>
-                </td>
-                <td>
-                    <div [class.hidden]="!showAddCitations">
-                        <i title="Delete Citation" (click)="!l.regressionRegions?.length>0 && deleteCitation(l.id)" class="fa fa-times" [class.disabled-icon]="l.regressionRegions?.length>0" aria-hidden="true" style="cursor:pointer"></i>
-                    </div>
-                    <div [class.hidden]="showAddCitations"> 
-                        <i title="Add Citation" (click)="addExistingCitation(l); d('closed')" class="fa fa-plus" aria-hidden="true" style="cursor:pointer"></i>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+
+    <div class="modal-body modal-body-fixed">
+		<!-- Search Input -->
+		<div>
+			<input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
+		</div>
+		
+		<!-- Manage Citation Table -->
+		<table class="custom-table table-striped table-scroll mtop-sm">
+			<thead>
+				<tr>
+					<th class="width-60">Citation</th>
+					<th class="width-35">Associated Regression Regions</th>
+					<th class="width-5"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let l of filteredData">
+					<!-- Col 1, Citation -->
+					<td class="width-60">
+						<a [href]="l.citationURL" [target]="_blank" class="cell-citation">
+							{{l.author}}
+							<small>{{l.title}}</small>
+						</a>
+					</td>
+					<!-- Col 2, Associated Regression Region -->
+					<td class="width-35">
+						<div *ngFor="let e of l.regressionRegions; let eIndex = index" class="cell-block">
+							{{e.name}}
+						</div>
+					</td>
+					<!-- Col 3 - Buttons -->
+					<td class="width-5">
+						<div class="cell-buttons">
+							<button [class.hidden]="!showAddCitations" class="icon-button hover-red" (click)="!l.regressionRegions?.length>0 && deleteCitation(l.id)" [disabled]="l.regressionRegions?.length>0" aria-label="Delete Citation">
+								<i class="fas fa-times"></i>
+							</button>
+							<button [class.hidden]="showAddCitations" class="icon-button hover-blue" (click)="addExistingCitation(l); d('closed')" aria-label="Add Citation"> 
+								<i class="fas fa-plus"></i>
+							</button>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
     </div>
     <div class="modal-footer">
         <button type="button" (click)="d('closed')" class="button black">Close</button>

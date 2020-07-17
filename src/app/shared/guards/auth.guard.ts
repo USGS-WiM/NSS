@@ -14,7 +14,7 @@ import { AuthService } from 'app/shared/services/auth.service';
 export class AuthGuard implements CanActivate {
     constructor(private _router: Router, private _authService: AuthService) {}
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    canActivate(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) {
         return this.checkLogin();
     }
     canActivateChild(_actRoute: ActivatedRouteSnapshot, _state: RouterStateSnapshot): boolean {
@@ -23,6 +23,9 @@ export class AuthGuard implements CanActivate {
 
     private checkLogin(): boolean {
         if (localStorage.getItem('auth') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime()) {
+            return true;
+        }
+        if (localStorage.getItem('authGage') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime()) {
             return true;
         }
         // if it gets here..they are not logged in
@@ -39,10 +42,10 @@ export class AuthGuard implements CanActivate {
     private checkSetupTime(): boolean {
         let tooOld = false;
 
-        const twentyFourHours: number = 12 * 60 * 60 * 1000;
+        const twelveHours: number = 12 * 60 * 60 * 1000;
         const now: number = new Date().getTime();
         const setupTime: number = Number(localStorage.getItem('setupTime'));
-        if (now - setupTime > twentyFourHours) {
+        if (now - setupTime > twelveHours) {
             // is it greater than 12 hours
             tooOld = true;
             this._authService.removeUserInfo();

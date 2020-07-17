@@ -28,6 +28,7 @@ import { UnitSystemsComponent } from './settings/categories/unitsystems/unitsyst
 import { VariableTypesComponent } from './settings/categories/variabletypes/variabletypes.component';
 import { ManagersComponent } from './settings/categories/managers/managers.component';
 import { ErrorsComponent } from './settings/categories/errors/errors.component';
+import { AgenciesComponent } from './settings/categories/agencies/agencies.component';
 
 import { environment } from '../environments/environment';
 import { UniquePipe } from './mainview/unique.pipe';
@@ -50,7 +51,6 @@ import { ToasterService} from 'angular2-toaster';
 import { AddRegressionRegionModal } from './shared/components/addregressionregion/addregressionregion.component';
 import { GagestatsComponent } from './gagestats/gagestats.component';
 import { GagestatsService } from './gagestats/gagestats.service';
-import { AgenciesComponent } from './settings/categories/agencies/agencies.component';
 
 
 declare const require: any;

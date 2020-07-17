@@ -23,6 +23,10 @@ export class AdminGuard implements CanActivate {
             localStorage.getItem('loggedInRole') === 'Administrator') {
             return true;
         }
+        if (localStorage.getItem('authGage') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime() &&
+            localStorage.getItem('loggedInRole') === 'Administrator') {
+            return true;
+        }
         // if it gets here it means they're not an admin
         // navigate to the settings page
         this._router.navigate(['/settings']);
@@ -33,10 +37,10 @@ export class AdminGuard implements CanActivate {
     private checkSetupTime(): boolean {
         let tooOld = false;
 
-        const twentyFourHours: number = 12 * 60 * 60 * 1000;
+        const twelveHours: number = 12 * 60 * 60 * 1000;
         const now: number = new Date().getTime();
         const setupTime: number = Number(localStorage.getItem('setupTime'));
-        if (now - setupTime > twentyFourHours) {
+        if (now - setupTime > twelveHours) {
             // is it greater than 12 hours
             tooOld = true;
             this._authService.removeUserInfo();

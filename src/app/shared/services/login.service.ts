@@ -7,7 +7,7 @@
 // purpose: login service that logs user in (http) and stores creds, passes user info on to authservice
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -68,7 +68,7 @@ export class LoginService {
                 if (user) {
                     this._loggedInSubject.next(true);
                     // store user creds in localStorage and details in service for retrieval
-                    localStorage.setItem('auth', 'Bearer ' + user.token);
+                    localStorage.setItem('authGage', 'Bearer ' + user.token);
                     this._authService.storeUserInfo(user);
                 }
             })

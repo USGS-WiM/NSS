@@ -119,7 +119,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
 
     private createNewAgency() {
         const newItem = this.newAgencyForm.value;
-        this._settingsservice.postEntity(newItem, this.configSettings.agenciesURL)
+        this._settingsservice.postEntityGage(newItem, this.configSettings.agenciesURL)
             .subscribe((response: Agency) => {
                 response.isEditing = false;
                 this.agencies.push(response);
@@ -157,7 +157,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Agency', 'Name and Code are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.agenciesURL).subscribe(
+            this._settingsservice.putEntityGage(u.id, u, this.configSettings.agenciesURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.agencies[i] = u;
@@ -180,7 +180,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.agencies.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.agenciesURL)
+            this._settingsservice.deleteEntityGage(deleteID, this.configSettings.agenciesURL)
                 .subscribe(result => {
                     this.agencies.splice(index, 1);
                     this._settingsservice.setAgencies(this.agencies); // update service

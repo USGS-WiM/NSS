@@ -37,7 +37,7 @@ export class LoginService {
         return this._loginShowSubject.asObservable();
     }
 
-    // log in
+    // log in for NSSservices
     public login(user: any){
         const headers: HttpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
@@ -55,6 +55,26 @@ export class LoginService {
             })
             .catch(this.handleError);
     }
+
+    // log in for GageStatsServices
+    public loginGage(user: any){
+        const headers: HttpHeaders = new HttpHeaders({
+            'Content-Type': 'application/json',
+        });
+        return this.http.post(this.configSettings.gageBaseURL + this.configSettings.loginURL, user, { headers: headers, observe: "response"})
+            .map((response:HttpResponse<null>) => {
+                // login successful if there's a jwt token in the response
+                user = response.body;
+                if (user) {
+                    this._loggedInSubject.next(true);
+                    // store user creds in localStorage and details in service for retrieval
+                    localStorage.setItem('auth', 'Bearer ' + user.token);
+                    this._authService.storeUserInfo(user);
+                }
+            })
+            .catch(this.handleError);
+    }
+    
     // log out and clear everything
     public logout() {
         this._loggedInSubject.next(false);

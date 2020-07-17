@@ -1,5 +1,4 @@
 {
-   "baseURL": "https://test.streamstats.usgs.gov/nssservices/",
    "nssBaseURL": "https://test.streamstats.usgs.gov/nssservices/",
    "gageBaseURL": "https://test.streamstats.usgs.gov/gagestatsservices/",
     "agenciesURL": "Agencies",

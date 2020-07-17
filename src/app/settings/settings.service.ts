@@ -125,7 +125,7 @@ export class SettingsService {
         return this._http
             .post(this.configSettings.gageBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => {
-                if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
+                if (!res.headers) {this._toasterService.pop('info', 'Info', 'New item was added');
                 } else {this.outputWimMessages(res); }
                 return res.body;
             })
@@ -141,11 +141,26 @@ export class SettingsService {
             .catch(this.errorHandler);
     }
 
+    public putEntityGage(id, entity, url: string) {
+        if (id !== '') {url += '/' + id; }
+        return this._http
+            .put(this.configSettings.gageBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
+            .map(res => res)
+            .catch(this.errorHandler);
+    }
+
     // ------------ DELETES ------------------------------
     public deleteEntity(id, url: string, params?: string) {
         if (id !== '') {url += '/' + id; }
         if (params) {url += params; }
         return this._http.delete(this.configSettings.nssBaseURL + url, { headers: this.authHeader, observe: 'response'})
+            .catch(this.errorHandler);
+    }
+
+    public deleteEntityGage(id, url: string, params?: string) {
+        if (id !== '') {url += '/' + id; }
+        if (params) {url += params; }
+        return this._http.delete(this.configSettings.gageBaseURL + url, { headers: this.authHeader, observe: 'response'})
             .catch(this.errorHandler);
     }
 

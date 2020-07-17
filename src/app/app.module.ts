@@ -29,6 +29,7 @@ import { VariableTypesComponent } from './settings/categories/variabletypes/vari
 import { ManagersComponent } from './settings/categories/managers/managers.component';
 import { ErrorsComponent } from './settings/categories/errors/errors.component';
 import { AgenciesComponent } from './settings/categories/agencies/agencies.component';
+import { StationTypesComponent } from './settings/categories/stationtypes/stationtypes.component';
 
 import { environment } from '../environments/environment';
 import { UniquePipe } from './mainview/unique.pipe';
@@ -69,7 +70,8 @@ const appRoutes: Routes = [
       { path: 'variabletypes', component: VariableTypesComponent },
       { path: 'managers', component: ManagersComponent },
       { path: 'errors', component: ErrorsComponent},
-      { path: 'agencies', component: AgenciesComponent}
+      { path: 'agencies', component: AgenciesComponent},
+      { path: 'stationtypes', component: StationTypesComponent}
     ],
     runGuardsAndResolvers: 'always'
   },
@@ -96,7 +98,7 @@ export function highchartsFactory() {
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
     ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, 
-    LoaderComponent, GagestatsComponent, AgenciesComponent
+    LoaderComponent, GagestatsComponent, AgenciesComponent, StationTypesComponent
   ],
   imports: [
     NgSelectModule, BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

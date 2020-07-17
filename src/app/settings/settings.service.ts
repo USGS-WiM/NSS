@@ -27,6 +27,7 @@ import { Citation } from 'app/shared/interfaces/citation';
 import { Error } from 'app/shared/interfaces/error';
 import { Agency } from 'app/shared/interfaces/agencies';
 import { ToasterService } from 'angular2-toaster';
+import { StationType } from 'app/shared/interfaces/stationtypes';
 
 @Injectable()
 export class SettingsService {
@@ -52,6 +53,7 @@ export class SettingsService {
     private _citationsSubject: BehaviorSubject<Array<Citation>> = <BehaviorSubject<Citation[]>>new BehaviorSubject([]);
     private _errorsSubject: BehaviorSubject<Array<Error>> = <BehaviorSubject<Error[]>>new BehaviorSubject([]);
     private _agenciesSubject: BehaviorSubject<Array<Agency>> = <BehaviorSubject<Agency[]>>new BehaviorSubject([]);
+    private _stationTypeSubject: BehaviorSubject<Array<StationType>> = <BehaviorSubject<StationType[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -94,6 +96,9 @@ export class SettingsService {
     }
     public agencies(): Observable<Array<Agency>> {
         return this._agenciesSubject.asObservable();
+    }
+    public stationTypes(): Observable<Array<StationType>> {
+        return this._stationTypeSubject.asObservable();
     }
 
     // HTTP REQUESTS ////////////////////////////////////
@@ -228,5 +233,8 @@ export class SettingsService {
     }
     public setAgencies(a: Array<Agency>) {
         this._agenciesSubject.next(a);
+    }
+    public setStationTypes(a: Array<StationType>) {
+        this._stationTypeSubject.next(a);
     }
 }

@@ -59,6 +59,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public tempSelectedRegressionRegion: Array<Regressionregion>;
   public newCitation: boolean = false;
   public rr;
+  public status;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
@@ -81,6 +82,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.newRegRegForm = _fb.group({
       name: new FormControl(null, Validators.required),
       description: new FormControl(null),
+      statusID: new FormControl(null, Validators.required),
       code: new FormControl(null, Validators.required),
       region: new FormControl(null, Validators.required),
       location: new FormControl(null),
@@ -114,12 +116,16 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._nssService.regressionRegions.subscribe(res => {
       if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
       this.regressionRegions = res;
-  });
+    });
     this._nssService.regions.subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
     this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
       this.selectedRegressionRegion = regRegions;
+    });
+    // get all status types (use for options in edit/add scenario selects)
+    this._settingsService.getEntities(this.configSettings.statusURL).subscribe(res => {
+      this.status = res;
     });
     this._nssService.currentCitation.subscribe(item => {
       this.currentCitation = item;
@@ -130,8 +136,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.modalElement = this.addRegressionRegionModal;
     this.uploadPolygon = true;
     this.loadingPolygon = false;
-
   }
+
   public saveFilters(){
     this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
     this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
@@ -143,6 +149,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
     this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
   }
+
   public loadMap() {
     // Initialize basemap layers
     const tileLayer_topography = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
@@ -175,9 +182,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
     // Add basemap control to the map
     L.control.layers(baseMaps).addTo(this.map);
-
   }
-
 
   public showModal(): void {
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
@@ -249,6 +254,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this.newRegRegForm.controls['description'].setValue(this.selectedRegRegion.description);
           this.newRegRegForm.controls['code'].setValue(this.selectedRegRegion.code);
           this.newRegRegForm.controls['location'].setValue(this.selectedRegRegion.location);
+          this.newRegRegForm.controls['statusID'].setValue(this.selectedRegRegion.statusID);
           if (this.selectedRegRegion.citationID) { // if there is a citation set values in modal
             this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
             this.addCitation = true;
@@ -276,6 +282,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.addRegReg = true;
       this.addCitation = false;
       this.uploadPolygon = false;
+      this.newRegRegForm.controls['statusID'].setValue(2);
     }
     if (this.selectedRegion) { //set region in new regression region modal
       this.newRegRegForm.controls['region'].setValue(this.selectedRegion.id); 

@@ -1,10 +1,10 @@
 // ------------------------------------------------------------------------------
-// ----- regions.component.ts -----------------------------------------------
+// ----- unittypes.component.ts -----------------------------------------------
 // ------------------------------------------------------------------------------
 
 // copyright:   2017 WiM - USGS
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
-// purpose: regions crud in admin settings page
+// purpose: unit types crud in admin settings page
 
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';

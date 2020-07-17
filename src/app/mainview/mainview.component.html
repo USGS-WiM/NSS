@@ -719,8 +719,6 @@
                                 <tr *ngFor="let c of citations | citationfilter:rr.citationID; let cIndex = index;">
                                     <td>
                                         <div class="data-controls">
-                                            <i *ngIf="!c.isEditing" title="Edit Citation" (click)="editRegRegion(rr.id)" class="fa fa-pencil"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp; 
                                             <i *ngIf="!c.isEditing" title="Remove Citation" (click)="removeCitation(rr)" class="fa fa-minus-circle"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                                         </div>

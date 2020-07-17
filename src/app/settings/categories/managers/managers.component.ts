@@ -15,7 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from '../../settings.service';
 
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 import { Manager } from 'app/shared/interfaces/manager';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -45,6 +45,8 @@ export class ManagersComponent implements OnInit {
     public rowBeingEdited: number;
     public tempData;
     public modalRef;
+    public regionIDs = [];
+    public regionNames = [];
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -60,18 +62,52 @@ export class ManagersComponent implements OnInit {
             email: new FormControl(null, Validators.required),
             firstName: new FormControl(null, Validators.required),
             lastName: new FormControl(null, Validators.required),
-            role: new FormControl(null, Validators.required)
+            role: new FormControl(null, Validators.required),
+            regionManagers: this._fb.array([])
         });
         this.configSettings = this._configService.getConfiguration();
     }
 
     ngOnInit() {
+        this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(regions => {
+            this.regions = regions;
+        });
         this._settingsservice.getEntities(this.configSettings.managersURL).subscribe(managers => {
             this.managers = managers;
         });
         this._settingsservice.getEntities(this.configSettings.rolesURL).subscribe(roles => {
             this.roles = roles;
         });
+    }
+
+    public getRegionNames(m) {
+        this.regionIDs = [];
+        this.regionNames = [];
+        if (m.regionManagers.length != 0) {
+            m.regionManagers.forEach(x => this.regionIDs.push(x.regionID));    
+        }
+        if (this.regions) {
+            this.regionIDs.forEach(y=> {
+                this.regions.forEach(z=> {
+                    if (y === z.id) {
+                        this.regionNames.push(z.name + '\n');
+                    }
+                });
+            });
+            return (this.regionNames.join(''));
+        }
+    }
+
+    public addRegion() {
+        const control = <FormArray>this.newUserForm.get('regionManagers');
+        control.push(this._fb.group({
+            regionID: new FormControl(null, Validators.required)
+        }));
+    }
+
+    public removeRegion(i) {
+        const control = <FormArray>this.newUserForm.get('regionManagers');
+        control.removeAt(i);
     }
 
     showNewUserForm() {
@@ -119,6 +155,9 @@ export class ManagersComponent implements OnInit {
     }
 
     private createNewUser() {
+        if (this.newUserForm.value.role == "Administrator") {
+            this.newUserForm.value.regionManagers.forEach(x => this.removeRegion(x));
+        }
         const newUser = this.newUserForm.value;
         this._settingsservice.postEntity(newUser, this.configSettings.managersURL).subscribe(
             (response: Manager) => {

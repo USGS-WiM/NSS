@@ -58,6 +58,8 @@ export class MainviewComponent implements OnInit {
     public tempSelectedRegressionRegion: Array<Regressionregion>;
 
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
+    public tempStatusID;
+    public tempStatusName;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -101,6 +103,7 @@ export class MainviewComponent implements OnInit {
     public configSettings: Config;
     public units;
     public errors;
+    public status;
     public regTypes;
     public tempData;
     public itemBeingEdited;
@@ -606,6 +609,10 @@ export class MainviewComponent implements OnInit {
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
         });
+        this._settingsService.getEntities(this.configSettings.statusURL).subscribe(res => {
+            this.status = res;
+        });
+
     } // end ngOnInit()
 
     public saveFilters(){
@@ -1405,6 +1412,18 @@ export class MainviewComponent implements OnInit {
         this.unusedRegRegions = this.regressionRegions.filter(entry1 => !this.regRegionsScenarios.some(entry2 => entry1.id === entry2.id));
     }
     
+    public getStatusDescription(s) {
+        this.tempStatusID = "";
+        this.tempStatusName = "";
+        this.tempStatusID = s;    
+        this.status.forEach(z=> {
+            if (this.tempStatusID === z.id) {
+                this.tempStatusName = z.name;
+            }
+        });
+        return (this.tempStatusName);
+    }
+
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)

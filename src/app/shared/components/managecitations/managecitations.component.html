@@ -12,8 +12,8 @@
         <thead>
             <tr>
                 <th class="col">Citation</th>
-                <th class="col">Associated Regression Regions</th>
                 <th class="col"></th>
+                <th class="col">Associated Regression Regions</th>
             </tr>
         </thead>
         <tbody>
@@ -35,11 +35,6 @@
                     </div>
                 </td>
                 <td>
-                    <span *ngFor="let e of c.regressionRegions">
-                        <div>{{e.name}}</div>
-                    </span>
-                </td>
-                <td>
                     <div [class.hidden]="!showAddCitations">
                         <i *ngIf="!c.isEditing" title="Edit Citation"  (click)="editRowClicked(c, cIndex)" class="fa fa-pencil" aria-hidden="true" style="cursor:pointer"></i>&nbsp; 
                         <i *ngIf="c.isEditing" title="Save Citation" (click)="saveCitation(c)" class="fa fa-floppy-o" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
@@ -49,6 +44,15 @@
                     <div [class.hidden]="showAddCitations"> 
                         <i title="Add Citation" (click)="addExistingCitation(l); d('closed')" class="fa fa-plus" aria-hidden="true" style="cursor:pointer"></i>
                     </div>
+                </td>
+                <td>
+                    <span *ngFor="let e of c.regressionRegions">
+                        <div>{{e.name}}
+                        <span [class.hidden]="!showAddCitations">
+                            <i title="Edit Regression Region" (click)="editRegRegion(e.id)" class="fa fa-pencil" aria-hidden="true" style="cursor:pointer"></i>
+                        </span>
+                    </div>
+                    </span>
                 </td>
             </tr>
         </tbody>

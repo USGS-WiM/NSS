@@ -18,6 +18,7 @@ import { AuthService } from 'app/shared/services/auth.service';
 import { Citation } from 'app/shared/interfaces/citation';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 
 @Component({
     selector: 'manageCitationsModal',
@@ -106,6 +107,14 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this._nssService.addExistingCitation(citation);   
     }
 
+    public editRegRegion(id) {
+        const addRegRegForm: AddRegressionRegion = {
+            show: true,
+            regRegionID: id
+        }
+        this._nssService.setAddRegressionRegionModal(addRegRegForm);
+    }
+    
     public showModal(): void {
         if (this.selectedRegion) {this.getRegRegions(); }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });

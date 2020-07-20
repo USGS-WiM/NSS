@@ -94,7 +94,11 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
+<<<<<<< HEAD
     ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, LoaderComponent, GagestatsComponent, AddStationModal
+=======
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, LoaderComponent, GagestatsComponent
+>>>>>>> dev
   ],
   imports: [
     NgSelectModule, BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

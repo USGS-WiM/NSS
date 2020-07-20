@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { GagestatsService } from './gagestats.service';
+import { NSSService } from 'app/shared/services/app.service';
 
 @Component({
   selector: 'app-gagestats',
@@ -11,7 +12,7 @@ export class GagestatsComponent implements OnInit {
 
   loggedInRole;
 
-  constructor(private gagestatsService: GagestatsService) {  }
+  constructor(private gagestatsService: GagestatsService, private nssService: NSSService) {  }
 
   ngOnInit() {
     this.loggedInRole = localStorage.getItem('loggedInRole');
@@ -20,7 +21,7 @@ export class GagestatsComponent implements OnInit {
 
   showAddStationModal(): void{
     
-    this.gagestatsService.addStation();
+    this.nssService.setAddStationModal(true);
   }
 
   bulkUpload(): void{

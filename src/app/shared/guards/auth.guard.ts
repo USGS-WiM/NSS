@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
         if (localStorage.getItem('auth') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime()) {
             return true;
         }
-        else if (localStorage.getItem('authGage') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime()) {
+        else if (localStorage.getItem('authGageStats') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime()) {
             return true;
         }
         // if it gets here..they are not logged in

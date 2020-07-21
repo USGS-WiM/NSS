@@ -144,7 +144,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.loading = true; // not using this yet
         this._loginService.login(this.LoginForm.value).subscribe(
             () => {
-                this._loginService.loginGage(this.LoginForm.value).subscribe(
+                this._loginService.loginGageStats(this.LoginForm.value).subscribe(
                   () => {
                     if (this._loginService.isLoggedIn) {
                         this.router.navigate([this.returnUrl]);

@@ -1,6 +1,6 @@
 {
    "nssBaseURL": "https://test.streamstats.usgs.gov/nssservices/",
-   "gageBaseURL": "https://test.streamstats.usgs.gov/gagestatsservices/",
+   "gageStatsBaseURL": "https://test.streamstats.usgs.gov/gagestatsservices/",
     "agenciesURL": "Agencies",
     "citationURL": "Citations",
     "errorsURL": "Errors",

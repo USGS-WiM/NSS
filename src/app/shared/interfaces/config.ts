@@ -9,7 +9,7 @@
 export interface Config {
     agenciesURL: string;
     nssBaseURL: string;
-    gageBaseURL: string;
+    gageStatsBaseURL: string;
     citationURL: string;
     errorsURL: string;
     loginURL: string;

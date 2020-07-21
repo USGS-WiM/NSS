@@ -57,18 +57,18 @@ export class LoginService {
     }
 
     // log in for GageStatsServices
-    public loginGage(user: any){
+    public loginGageStats(user: any){
         const headers: HttpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
         });
-        return this.http.post(this.configSettings.gageBaseURL + this.configSettings.loginURL, user, { headers: headers, observe: "response"})
+        return this.http.post(this.configSettings.gageStatsBaseURL + this.configSettings.loginURL, user, { headers: headers, observe: "response"})
             .map((response:HttpResponse<null>) => {
                 // login successful if there's a jwt token in the response
                 user = response.body;
                 if (user) {
                     this._loggedInSubject.next(true);
                     // store user creds in localStorage and details in service for retrieval
-                    localStorage.setItem('authGage', 'Bearer ' + user.token);
+                    localStorage.setItem('authGageStats', 'Bearer ' + user.token);
                     this._authService.storeUserInfo(user);
                 }
             })

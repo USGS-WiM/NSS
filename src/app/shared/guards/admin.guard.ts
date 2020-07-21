@@ -23,7 +23,7 @@ export class AdminGuard implements CanActivate {
             localStorage.getItem('loggedInRole') === 'Administrator') {
             return true;
         }
-        else if (localStorage.getItem('authGage') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime() &&
+        else if (localStorage.getItem('authGageStats') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime() &&
             localStorage.getItem('loggedInRole') === 'Administrator') {
             return true;
         }

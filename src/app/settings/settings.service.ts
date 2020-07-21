@@ -35,9 +35,9 @@ export class SettingsService {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('auth') || ''
     });
-    public authHeaderGage: HttpHeaders = new HttpHeaders({
+    public authHeaderGageStats: HttpHeaders = new HttpHeaders({
         'Content-Type': 'application/json',
-        Authorization: localStorage.getItem('authGage') || ''
+        Authorization: localStorage.getItem('authGageStats') || ''
     });
     private configSettings: Config;
     // SUBJECTS //////////////////////////////////////
@@ -111,9 +111,9 @@ export class SettingsService {
             .catch(this.errorHandler);
     }
 
-    public getEntitiesGage(url: string) {
+    public getEntitiesGageStats(url: string) {
         return this._http
-            .get(this.configSettings.gageBaseURL + url, { headers: this.authHeaderGage })
+            .get(this.configSettings.gageStatsBaseURL + url, { headers: this.authHeaderGageStats })
             .map(res => { if (res) {return <Array<any>>res }})
             .catch(this.errorHandler);
     }
@@ -130,9 +130,9 @@ export class SettingsService {
             .catch(this.errorHandler);
     }
 
-    public postEntityGage(entity: object, url: string) {
+    public postEntityGageStats(entity: object, url: string) {
         return this._http
-            .post(this.configSettings.gageBaseURL + url, entity, { headers: this.authHeaderGage, observe: 'response' })
+            .post(this.configSettings.gageStatsBaseURL + url, entity, { headers: this.authHeaderGageStats, observe: 'response' })
             .map(res => {
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'New item was added');
                 } else {this.outputWimMessages(res); }
@@ -150,10 +150,10 @@ export class SettingsService {
             .catch(this.errorHandler);
     }
 
-    public putEntityGage(id, entity, url: string) {
+    public putEntityGageStats(id, entity, url: string) {
         if (id !== '') {url += '/' + id; }
         return this._http
-            .put(this.configSettings.gageBaseURL + url, entity, { headers: this.authHeaderGage, observe: 'response' })
+            .put(this.configSettings.gageStatsBaseURL + url, entity, { headers: this.authHeaderGageStats, observe: 'response' })
             .map(res => res)
             .catch(this.errorHandler);
     }
@@ -166,10 +166,10 @@ export class SettingsService {
             .catch(this.errorHandler);
     }
 
-    public deleteEntityGage(id, url: string, params?: string) {
+    public deleteEntityGageStats(id, url: string, params?: string) {
         if (id !== '') {url += '/' + id; }
         if (params) {url += params; }
-        return this._http.delete(this.configSettings.gageBaseURL + url, { headers: this.authHeaderGage, observe: 'response'})
+        return this._http.delete(this.configSettings.gageStatsBaseURL + url, { headers: this.authHeaderGageStats, observe: 'response'})
             .catch(this.errorHandler);
     }
 

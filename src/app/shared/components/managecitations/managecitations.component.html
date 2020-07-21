@@ -48,10 +48,10 @@
                 <td>
                     <span *ngFor="let e of c.regressionRegions">
                         <div>{{e.name}}
-                        <span [class.hidden]="!showAddCitations">
-                            <i title="Edit Regression Region" (click)="editRegRegion(e.id)" class="fa fa-pencil" aria-hidden="true" style="cursor:pointer"></i>
-                        </span>
-                    </div>
+                            <span [class.hidden]="!showAddCitations">
+                                <i title="Edit Regression Region" (click)="editRegRegion(e.id)" class="fa fa-pencil" aria-hidden="true" style="cursor:pointer"></i>
+                            </span>
+                        </div>
                     </span>
                 </td>
             </tr>

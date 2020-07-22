@@ -34,6 +34,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public modalRef;
     public loggedInRole;
     public citations;
+    public tempCitations;
     public scenarios: Scenario[];
     public filteredData;
     public filterText;
@@ -41,7 +42,6 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public itemBeingEdited;
     public tempData;
     public editIdx;
-    tempCitations: any;
 
     constructor(private _http: HttpClient, private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,

@@ -23,10 +23,6 @@ export class AdminGuard implements CanActivate {
             localStorage.getItem('loggedInRole') === 'Administrator') {
             return true;
         }
-        else if (localStorage.getItem('authGageStats') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime() &&
-            localStorage.getItem('loggedInRole') === 'Administrator') {
-            return true;
-        }
         // if it gets here it means they're not an admin
         // navigate to the settings page
         this._router.navigate(['/settings']);

@@ -17,7 +17,6 @@
 //		Hint (tooltip)
 // 
 
-
 ////////////////////////
 //      Text        //
 //////////////////////
@@ -501,20 +500,6 @@ button{
 /////////////////////////
 //     Checkboxes     //
 ///////////////////////
-// input[type="checkbox"]{
-// 	-webkit-appearance: checkbox !important;
-// 	   -moz-appearance: checkbox !important;
-// 	   -ms-appearance: checkbox !important;
-// 	   -o-appearance: checkbox !important;
-// 	   appearance: checkbox !important;
-//   }
-//   input[type="radio"]{
-// 	-webkit-appearance: radio !important;
-// 	   -moz-appearance: radio !important;
-// 	   -ms-appearance: radio !important;
-// 	   -o-appearance: radio !important;
-// 	   appearance: radio !important;
-//   }
 
 // Turn into checks
 input[type="checkbox"],
@@ -522,6 +507,7 @@ input[type="radio"]{
   width: auto;
   margin-right: 5px;
 }
+
 .check {
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -647,7 +633,6 @@ input[type="radio"]{
 ///////////////////////
 //      Range       //
 /////////////////////
-
 // now for the good stuff 🎉
 input[type="range"] {
 	outline: 0;

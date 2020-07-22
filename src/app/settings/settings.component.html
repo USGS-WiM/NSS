@@ -7,10 +7,10 @@
         <div id="sidebar-wrapper">
             <h1>Lookups</h1>
             <ul class="settings-links">
-                <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['agencies']" routerLinkActive="active">Agencies</a></li>
-                <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['errors']" routerLinkActive="active">Errors</a></li>
-                <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['managers']" routerLinkActive="active">Managers</a></li>
-                <li><a [class.hidden]="loggedInRole !== 'Administrator'" [routerLink]="['regions']"  routerLinkActive="active">Regions</a></li>
+                <li><a [routerLink]="['agencies']" routerLinkActive="active">Agencies</a></li>
+                <li><a [routerLink]="['errors']" routerLinkActive="active">Errors</a></li>
+                <li><a [routerLink]="['managers']" routerLinkActive="active">Managers</a></li>
+                <li><a [routerLink]="['regions']"  routerLinkActive="active">Regions</a></li>
                 <li><a [routerLink]="['regressiontypes']" routerLinkActive="active">Regression Types (Statistics)</a></li>
                 <li><a [routerLink]="['stationtypes']" routerLinkActive="active">Station Types</a></li>
                 <li><a [routerLink]="['statisticgroups']" routerLinkActive="active">Statistic Groups</a></li>

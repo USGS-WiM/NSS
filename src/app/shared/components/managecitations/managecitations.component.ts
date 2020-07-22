@@ -41,6 +41,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public itemBeingEdited;
     public tempData;
     public editIdx;
+    tempCitations: any;
 
     constructor(private _http: HttpClient, private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -116,6 +117,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.CancelEditRowClicked();
         } // if another item was being edited, cancel that
         this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
+        this.tempCitations = JSON.parse(JSON.stringify(this.citations));
         idx >= 0 ? this.editIdx = idx : this.editIdx = null;
         this.itemBeingEdited = item;
         item.isEditing = true;
@@ -123,7 +125,8 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
     public CancelEditRowClicked() {
         this.itemBeingEdited.isEditing = false;
-        this.citations[this.editIdx] = this.tempData;
+        this.filteredData[this.editIdx] = this.tempData;
+        this.citations = this.tempCitations
     }
 
     public saveCitation(c) {

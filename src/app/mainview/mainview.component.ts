@@ -58,8 +58,6 @@ export class MainviewComponent implements OnInit {
     public tempSelectedRegressionRegion: Array<Regressionregion>;
 
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
-    public tempStatusID;
-    public tempStatusName;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }

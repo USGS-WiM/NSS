@@ -1,35 +1,24 @@
-<div class = "mainPage scrollable">
+<div id="printArea" class = "mainPage scrollable">
 
     <div><h3 style="font-size: 32px !important; font-weight: bolder !important;">{{title}}</h3></div>
     <div style="margin-bottom: 5px; opacity: 0.5; letter-spacing: 0.6px;">{{timestamp | date:"MMMM d, y hh:mma"}}</div>
+
+    <div class="hidden-print">
+        <button *ngIf="loggedInRole" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showAddStationModal()">Add Station</button>
+        <button *ngIf="loggedInRole" style="margin: 15px 5px;" (click)="bulkUpload()">Bulk Upload</button>
+        <button *ngIf="loggedInRole" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="export()">Export</button>
+    </div>
+
     <span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span>
     <div class="col-md-6" style="padding: 0;">
-        <div *ngIf="showGSRegion">
-            <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Region:</label>
-            <div style="font-weight: bolder !important; font-size: 18px !important;">{{selectedGSRegion.name}}</div>
-        </div>
-        <div *ngIf="selectedStatisticGrp?.length>0">
-            <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Statistic Group(s):</label>
-            <div>
-                <span *ngFor="let st of selectedStatisticGrp;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{st.name}}{{isLast ? "" : ", "}}</span>
-            </div>
-        </div>
-        <div *ngIf="selectedRegressionRegion?.length>0" style="padding: 0;">
-            <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Regression Region(s):</label>
-            <div>
-                <span *ngFor="let rr of selectedRegressionRegion;let isLast=last" style="font-weight: bolder !important; font-size: 18px !important;">{{rr.name}}{{isLast ? "" : ", "}}</span>
-            </div>
-        </div>
-        <div class="hidden-print">
-            <button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showAddScenarioModal()">Add Scenario</button>
-            <button *ngIf="loggedInRole && showRegion && !editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="editRegScenario()">Edit Scenario</button>
-            <button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="cancelEditRegionScenario()">Finish Editing</button>
-            <button *ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showManageCitationsModal()">Manage Citations</button>
+        <div *ngIf="showStationType">
+            <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Station Type:</label>
+            <div style="font-weight: bolder !important; font-size: 18px !important;">{{selectedStationType.name}}</div>  
         </div>
     </div>
     <br clear="all"/>
 
-    <div class="hidden-print" *ngIf="showGSRegion">
+    <div class="hidden-print" *ngIf="showStationType">
         <table style="border:solid 1px gray" class="table"> 
             <thead>
                 <tr>
@@ -43,10 +32,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let r of showGSRegion">
-                    <td>
-                        {{r.name}}
-                    </td>
+                <tr *ngFor = "let s of selectedStations">
+                    <td>{{s.stationTypeID}}</td>
+                    <td>{{s.agencyID}}</td>
+                    <td>{{s.code}}</td>
+                    <td>{{s.name}}</td>
+                    <td>{{s.location.coordinates[1]}}</td>
+                    <td>{{s.location.coordinates[0]}}</td>
+                    <td style="checkbox:">{{s.isRegulated}}</td>
                 </tr>
             </tbody>
         </table>

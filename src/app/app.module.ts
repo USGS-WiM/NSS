@@ -50,6 +50,8 @@ import { ToasterService} from 'angular2-toaster';
 import { AddRegressionRegionModal } from './shared/components/addregressionregion/addregressionregion.component';
 import { GagestatsComponent } from './gagestats/gagestats.component';
 import { GsSidebarComponent } from './gs-sidebar/gs-sidebar.component';
+import { GagestatsService } from './gagestats/gagestats.service';
+
 
 declare const require: any;
 
@@ -103,7 +105,7 @@ export function highchartsFactory() {
   providers: [
     NSSService, { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService,
     { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
-    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ToasterService, LoaderService
+    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ToasterService, LoaderService, GagestatsService
   ],
   bootstrap: [AppComponent],
   exports: [RouterModule]

@@ -7,7 +7,7 @@
 // purpose: login service that logs user in (http) and stores creds, passes user info on to authservice
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -37,12 +37,12 @@ export class LoginService {
         return this._loginShowSubject.asObservable();
     }
 
-    // log in
+    // log in for NSSservices
     public login(user: any){
         const headers: HttpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
         });
-        return this.http.post(this.configSettings.baseURL + this.configSettings.loginURL, user, { headers: headers, observe: "response"})
+        return this.http.post(this.configSettings.nssBaseURL + this.configSettings.loginURL, user, { headers: headers, observe: "response"})
             .map((response:HttpResponse<null>) => {
                 // login successful if there's a jwt token in the response
                 user = response.body;
@@ -55,6 +55,7 @@ export class LoginService {
             })
             .catch(this.handleError);
     }
+    
     // log out and clear everything
     public logout() {
         this._loggedInSubject.next(false);

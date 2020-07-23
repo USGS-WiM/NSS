@@ -1,29 +1,29 @@
 <div>
-    <legend style="margin-bottom:25px;margin-top:0;">Variable Types</legend>
+    <legend style="margin-bottom:25px;margin-top:0;">Agencies</legend>
 </div>
-<button type="button" class="btn-blue" (click)="showNewVariableForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New Variable Type</button>
+<button type="button" class="btn-blue" (click)="showNewAgencyForm()"><i class="fa fa-plus"
+    aria-hidden="tru"></i> Add New Agency</button>
 
-<form #VariableTypeForm="ngForm">
-    <div class="form-group" *ngIf="variableTypes">
+<form #AgencyForm="ngForm">
+    <div class="form-group" *ngIf="agencies">
         <table class="table">
             <thead>
                 <tr>
                     <th class="col-xs-1"></th>
                     <th class="col-xs-4">Name</th>
                     <th>Description</th>
-                    <th class="col-xs-1">Code</th>
+                    <th>Code</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let v of variableTypes; let i = index">
+                <tr *ngFor="let v of agencies; let i = index">
                     <td>
                         <div class="data-controls">
-                            <i *ngIf="!v.isEditing" title="Edit Variable Type" (click)="EditRowClicked(i)" class="fa fa-pencil"
+                            <i *ngIf="!v.isEditing" title="Edit Agency" (click)="EditRowClicked(i)" class="fa fa-pencil"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                            <i *ngIf="!v.isEditing" title="Delete Variable Type" (click)="deleteVariable(v.id)" class="fa fa-times"
+                            <i *ngIf="!v.isEditing" title="Delete Agency" (click)="deleteAgency(v.id)" class="fa fa-times"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="v.isEditing" title="Save Variable Type" (click)="saveVariable(v,i)" class="fa fa-floppy-o"
+                            <i *ngIf="v.isEditing" title="Save Agency" (click)="saveAgency(v,i)" class="fa fa-floppy-o"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                             <i *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
@@ -35,7 +35,7 @@
                     </td>
                     <td>
                         <span *ngIf="!v.isEditing">{{ v.description }}</span>
-                        <span *ngIf="v.isEditing"><textarea rows="3" [(ngModel)]="v.description" name="description"></textarea></span>
+                        <span *ngIf="v.isEditing"><textarea rows="3" name="description" [(ngModel)]="v.description"></textarea></span>
                     </td>
                     <td>
                         <span *ngIf="!v.isEditing">{{ v.code }}</span>
@@ -48,36 +48,34 @@
 </form>
 <br />
 
-<!-- new variable type form -->
+<!-- new agency form -->
 <ng-template #add let-c="close" let-d="dismiss">
     <div class="modal-header">
         <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Variable Type </h4>
+            <h4 class="modal-title pull-left">New Agency </h4>
             <button class="close pull-right" (click)="d('closed')">x</button>
         </div>
     </div>
     <div class="modal-body">
-        <h3 class="modal-title">New Variable Type</h3>
-        <form [formGroup]="newVarForm">
-            <!-- Variable Type Name* -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('name').valid && newVarForm.get('name').dirty}">
+        <h3 class="modal-title">New Agency</h3>
+        <form [formGroup]="newAgencyForm">
+            <!-- Name -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newAgencyForm.get('name').valid && newAgencyForm.get('name').dirty}">
                 <label class="req" for="name">Name:</label>
-                <input class="form-control" type="text" formControlName="name" required>
-                <div class="input-invalid-warning" *ngIf="!newVarForm.get('name').valid && newVarForm.get('name').dirty">Variable
-                    Name is required</div>
+                <input class="form-control" type="text" placeholder="" formControlName="name" required>
+                <div class="input-invalid-warning" *ngIf="!newAgencyForm.get('name').valid && newAgencyForm.get('name').dirty">Agency Name
+                        is required</div>
             </div>
-
             <!-- Description -->
             <div class="form-group">
-                <label for="description">Description:</label>
+                <label for="Description">Description:</label>
                 <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
             </div>
-
-            <!-- Short Name -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('code').valid && newVarForm.get('code').dirty}">
+            <!-- Code -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newAgencyForm.get('code').valid && newAgencyForm.get('code').dirty}">
                 <label class="req" for="code">Code:</label>
-                <input class="form-control" type="text" formControlName="code">
-                <div class="input-invalid-warning" *ngIf="!newVarForm.get('code').valid && newVarForm.get('code').dirty">Code
+                <input class="form-control" type="text" formControlName="code" required>
+                <div class="input-invalid-warning" *ngIf="!newAgencyForm.get('code').valid && newAgencyForm.get('code').dirty">Code
                     is required</div>
             </div>
 
@@ -85,7 +83,7 @@
 
         <div class="modal-footer">
             <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewVariableType()" [disabled]="!newVarForm.valid" class="btn-blue">Create</button>
+            <button type="button" (click)="createNewAgency()" [disabled]="!newAgencyForm.valid" class="btn-blue">Create</button>
         </div>
     </div>
 </ng-template>

@@ -24,5 +24,6 @@ export interface Config {
     unitsURL: string;
     unitSystemsURL: string;
     variablesURL: string;
+    statusURL: string;
     loginShow: boolean;
 }

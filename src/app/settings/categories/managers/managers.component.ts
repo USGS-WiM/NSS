@@ -1,10 +1,10 @@
 // ------------------------------------------------------------------------------
-// ----- regions.component.ts -----------------------------------------------
+// ----- managers.component.ts -----------------------------------------------
 // ------------------------------------------------------------------------------
 
 // copyright:   2017 WiM - USGS
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
-// purpose: regions crud in admin settings page
+// purpose: managers crud in admin settings page
 
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';

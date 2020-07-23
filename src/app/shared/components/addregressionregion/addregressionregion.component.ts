@@ -123,7 +123,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
       this.selectedRegressionRegion = regRegions;
     });
-    // get all status types (use for options in edit/add scenario selects)
     this._settingsService.getEntities(this.configSettings.statusURL).subscribe(res => {
       this.status = res;
     });

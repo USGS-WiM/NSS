@@ -1413,10 +1413,8 @@ export class MainviewComponent implements OnInit {
     }
     
     public getStatusDescription(sID) {
-        this.tempStatusID = "";
-        this.tempStatusName = "";
         this.tempStatusID = sID;    
-        this.status.forEach(z=> {
+        this.status.forEach(z => {
             if (this.tempStatusID === z.id) {
                 this.tempStatusName = z.name;
             }

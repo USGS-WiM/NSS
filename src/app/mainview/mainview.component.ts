@@ -1413,13 +1413,13 @@ export class MainviewComponent implements OnInit {
     }
     
     public getStatusDescription(sID) {
-        this.tempStatusID = sID;    
+        let statusName;
         this.status.forEach(z => {
-            if (this.tempStatusID === z.id) {
-                this.tempStatusName = z.name;
-            }
-        });
-        return (this.tempStatusName);
+                    if (sID === z.id) {
+                        statusName = z.name;
+                    }
+                });
+        return statusName;
     }
 
     public getRegRegions() {

@@ -29,7 +29,7 @@
           <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty }">
               <label class="req" for="statusID">Status:</label>
               <select class="form-control" formControlName="statusID">
-                  <option *ngFor="let s of status" [value]="s.id">{{ s.name }}</option>
+                  <option *ngFor="let s of status" [value]="s.id">{{ s.name }} ({{s.description}})</option>
               </select>
               <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty">
                   Status is required

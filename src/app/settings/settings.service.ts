@@ -25,6 +25,7 @@ import { Manager } from 'app/shared/interfaces/manager';
 import { UnitSystem } from 'app/shared/interfaces/unitsystems';
 import { Citation } from 'app/shared/interfaces/citation';
 import { Error } from 'app/shared/interfaces/error';
+import { Users } from 'app/shared/interfaces/users';
 import { ToasterService } from 'angular2-toaster';
 
 @Injectable()
@@ -46,6 +47,7 @@ export class SettingsService {
     private _managersSubject: BehaviorSubject<Array<Manager>> = <BehaviorSubject<Manager[]>>new BehaviorSubject([]);
     private _citationsSubject: BehaviorSubject<Array<Citation>> = <BehaviorSubject<Citation[]>>new BehaviorSubject([]);
     private _errorsSubject: BehaviorSubject<Array<Error>> = <BehaviorSubject<Error[]>>new BehaviorSubject([]);
+    private _usersSubject: BehaviorSubject<Array<Users>> = <BehaviorSubject<Users[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -183,5 +185,8 @@ export class SettingsService {
     }
     public setErrors(e: Array<Error>) {
         this._errorsSubject.next(e);
+    }
+    public setUsers(u: Array<Users>) {
+        this._usersSubject.next(u);
     }
 }

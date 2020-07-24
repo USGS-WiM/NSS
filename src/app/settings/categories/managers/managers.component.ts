@@ -80,6 +80,9 @@ export class ManagersComponent implements OnInit {
         this._settingsservice.getEntities(this.configSettings.rolesURL).subscribe(roles => {
             this.roles = roles;
         });
+        this._settingsservice.getEntitiesGageStats(this.configSettings.usersURL).subscribe(users => {
+            this.users = users;
+        });
     }
 
     public getRegionNames(m) {
@@ -163,21 +166,10 @@ export class ManagersComponent implements OnInit {
         const newUser = this.newUserForm.value;
         this._settingsservice.postEntity(newUser, this.configSettings.managersURL).subscribe(
             (response: Manager) => {
-                this._settingsservice.postEntityGageStats(newUser, this.configSettings.usersURL).subscribe(
-                    (response: Users) => {
-                        response.isEditing = false;
-                        this.users.push(response);
-                        this._settingsservice.setUsers(this.users);
-                        //this._toasterService.pop('info', 'Info', 'Manager was created');
-                        this.cancelCreateUser();
-                    }, error => {
-                        if (this._settingsservice.outputWimMessages(error)) {return;}
-                        this._toasterService.pop('error', 'Error creating GageStats User', error._body.message || error.statusText);
-                }
-                )
                 response.isEditing = false;
                 this.managers.push(response);
                 this._settingsservice.setManagers(this.managers);
+                this.createNewUserGageStats(); // TODO: Delete once users/managers tables are connected between databases.
                 this._toasterService.pop('info', 'Info', 'Manager was created');
                 this.cancelCreateUser();
             }, error => {
@@ -187,46 +179,36 @@ export class ManagersComponent implements OnInit {
         );
     }
 
-    // private createNewUserGageStats() {
-    //     if (this.newUserForm.value.role == "Administrator") {
-    //         this.newUserForm.value.regionManagers.forEach(x => this.removeRegion(x));
-    //     }
-    //     const newUser = this.newUserForm.value;
-    //     this._settingsservice.postEntityGageStats(newUser, this.configSettings.usersURL).subscribe(
-    //         (response: Users) => {
-    //             response.isEditing = false;
-    //             this.users.push(response);
-    //             this._settingsservice.setUsers(this.users);
-    //             //this._toasterService.pop('info', 'Info', 'Manager was created');
-    //             this.cancelCreateUser();
-    //         }, error => {
-    //             if (this._settingsservice.outputWimMessages(error)) {return;}
-    //             this._toasterService.pop('error', 'Error creating GageStats User', error._body.message || error.statusText);
-    //     }
-    //     );
-    // }
+    // TODO: Delete once users/managers tables are connected between databases. 
+    private createNewUserGageStats() {
+        // if (this.newUserForm.value.role == "Administrator") {
+        //     this.newUserForm.value.regionManagers.forEach(x => this.removeRegion(x));
+        // }
+        const newUser = this.newUserForm.value;
+        this._settingsservice.postEntityGageStats(newUser, this.configSettings.usersURL).subscribe(
+            (response: Users) => {
+                response.isEditing = false;
+                this.users.push(response);
+                this._settingsservice.setUsers(this.users);
+                // this._toasterService.pop('info', 'Info', 'Manager was created');
+                this.cancelCreateUser();
+            }, error => {
+                if (this._settingsservice.outputWimMessages(error)) {return;}
+                this._toasterService.pop('error', 'Error creating Gagestats User', error._body.message || error.statusText);
+        }
+        );
+    }
 
     private EditRowClicked(i: number) {
         this.rowBeingEdited = i;
         this.tempData = Object.assign({}, this.managers[i]); // make a copy in case they cancel
         this.managers[i].isEditing = true;
-        this.tempData = Object.assign({}, this.users[i]);
-        this.users[i].isEditing = true;
         this.isEditing = true; // set to true so create new is disabled
     }
-
-    // private EditRowClickedGageStats(i: number) {
-    //     this.rowBeingEdited = i;
-    //     this.tempData = Object.assign({}, this.users[i]); // make a copy in case they cancel
-    //     this.users[i].isEditing = true;
-    //     this.isEditing = true; // set to true so create new is disabled
-    // }
 
     public CancelEditRowClicked(i: number) {
         this.managers[i] = Object.assign({}, this.tempData);
         this.managers[i].isEditing = false;
-        this.users[i] = Object.assign({}, this.tempData);
-        this.users[i].isEditing = false;
         this.rowBeingEdited = -1;
         this.isEditing = false; // set to true so create new is disabled
         if (this.userForm.nativeElement.dirty) {
@@ -234,18 +216,8 @@ export class ManagersComponent implements OnInit {
         }
     }
 
-    // public CancelEditRowClickedGageStats(i: number) {
-    //     this.users[i] = Object.assign({}, this.tempData);
-    //     this.users[i].isEditing = false;
-    //     this.rowBeingEdited = -1;
-    //     this.isEditing = false; // set to true so create new is disabled
-    //     if (this.userForm.nativeElement.dirty) {
-    //         this.userForm.reset();
-    //     }
-    // }
-
     // edits made, save clicked
-    public saveManager(u, i: number) {
+    public saveManager(u: Manager, i: number) {
         if (u.username === undefined || u.email === undefined || u.firstName === undefined || u.lastName === undefined || u.role === undefined) {
             // don't save it
             this._toasterService.pop('error', 'Error updating Manager', 'First name, last name, username, email and role are required.');
@@ -253,20 +225,6 @@ export class ManagersComponent implements OnInit {
             delete u.isEditing;
             this._settingsservice.putEntity(u.id, u, this.configSettings.managersURL).subscribe(
                 (resp) => {
-                    this._settingsservice.putEntityGageStats(u.id, u, this.configSettings.usersURL).subscribe(
-                        (resp) => {
-                            u.isEditing = false;
-                            this.users[i] = u;
-                            this._settingsservice.setUsers(this.users);
-                            this.rowBeingEdited = -1;
-                            this.isEditing = false; // set to true so create new is disabled
-                            if (this.userForm.nativeElement.dirty) { this.userForm.reset(); }
-                            this._settingsservice.outputWimMessages(resp);
-                        }, error => {
-                            if (this._settingsservice.outputWimMessages(error)) {return; }
-                            this._toasterService.pop('error', 'Error updating GageStats User', error._body.message || error.statusText);
-                    }
-                    )
                     u.isEditing = false;
                     this.managers[i] = u;
                     this._settingsservice.setManagers(this.managers);
@@ -282,50 +240,18 @@ export class ManagersComponent implements OnInit {
         }
     }
 
-    // // edits made, save clicked
-    // public saveManagerGageStats(u: Users, i: number) {
-    //     if (u.username === undefined || u.email === undefined || u.firstName === undefined || u.lastName === undefined || u.role === undefined) {
-    //         // don't save it
-    //         this._toasterService.pop('error', 'Error updating Manager', 'First name, last name, username, email and role are required.');
-    //     } else {
-    //         delete u.isEditing;
-    //         this._settingsservice.putEntityGageStats(u.id, u, this.configSettings.usersURL).subscribe(
-    //             (resp) => {
-    //                 u.isEditing = false;
-    //                 this.users[i] = u;
-    //                 this._settingsservice.setUsers(this.users);
-    //                 this.rowBeingEdited = -1;
-    //                 this.isEditing = false; // set to true so create new is disabled
-    //                 if (this.userForm.nativeElement.dirty) { this.userForm.reset(); }
-    //                 this._settingsservice.outputWimMessages(resp);
-    //             }, error => {
-    //                 if (this._settingsservice.outputWimMessages(error)) {return; }
-    //                 this._toasterService.pop('error', 'Error updating GageStats User', error._body.message || error.statusText);
-    //         }
-    //         );
-    //     }
-    // }
-
     // delete category type
-    public deleteManager(deleteID: number) {
+    public deleteManager(deleteUsername: string) {
         const check = confirm('Are you sure you want to delete this Manager?');
         if (check) {
             // delete it
-            const index = this.managers.findIndex(item => item.id === deleteID);
+            const index = this.managers.findIndex(item => item.username === deleteUsername);
+            const deleteID = this.managers[index].id;
             this._settingsservice.deleteEntity(deleteID, this.configSettings.managersURL)
                 .subscribe(result => {
-                    this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.usersURL)
-                    .subscribe(result => {
-                        this.users.splice(index, 1);
-                        this._settingsservice.setUsers(this.users); // update service
-                        this._settingsservice.outputWimMessages(result);
-                    }, error => {
-                        if (this._settingsservice.outputWimMessages(error)) {return; }
-                        this._toasterService.pop('error', 'Error deleting GageStats User', error._body.message || error.statusText);
-                }
-                );
                     this.managers.splice(index, 1);
                     this._settingsservice.setManagers(this.managers); // update service
+                    this.deleteManagerGageStats(deleteUsername); // TODO: Delete once users/managers tables are connected between databases. 
                     this._settingsservice.outputWimMessages(result);
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
@@ -335,22 +261,23 @@ export class ManagersComponent implements OnInit {
         }
     }
 
-        // // delete category type
-        // public deleteManagerGageStats(deleteID: number) {
-        //     const check = confirm('Are you sure you want to delete this Manager?');
-        //     if (check) {
-        //         // delete it
-        //         const index = this.users.findIndex(item => item.id === deleteID);
-        //         this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.usersURL)
-        //             .subscribe(result => {
-        //                 this.users.splice(index, 1);
-        //                 this._settingsservice.setUsers(this.users); // update service
-        //                 this._settingsservice.outputWimMessages(result);
-        //             }, error => {
-        //                 if (this._settingsservice.outputWimMessages(error)) {return; }
-        //                 this._toasterService.pop('error', 'Error deleting GageStats User', error._body.message || error.statusText);
-        //         }
-        //         );
-        //     }
+    // TODO: Delete once users/managers tables are connected between databases.
+    public deleteManagerGageStats(deleteUsername: string) {
+        // const check = confirm('Are you sure you want to delete this Manager?');
+        // if (check) {
+            // delete it
+            const index = this.users.findIndex(item => item.username === deleteUsername);
+            const deleteID = this.users[index].id;
+            this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.usersURL)
+                .subscribe(result => {
+                    this.users.splice(index, 1);
+                    this._settingsservice.setUsers(this.users); // update service
+                    this._settingsservice.outputWimMessages(result);
+                }, error => {
+                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    this._toasterService.pop('error', 'Error deleting GageStats User', error._body.message || error.statusText);
+            }
+            );
         // }
+    }
 }

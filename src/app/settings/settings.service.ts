@@ -98,6 +98,9 @@ export class SettingsService {
     public stationTypes(): Observable<Array<StationType>> {
         return this._stationTypeSubject.asObservable();
     }
+    public users(): Observable<Array<Users>> {
+        return this._usersSubject.asObservable();
+    }
 
     // HTTP REQUESTS ////////////////////////////////////
 

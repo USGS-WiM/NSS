@@ -181,16 +181,12 @@ export class ManagersComponent implements OnInit {
 
     // TODO: Delete once users/managers tables are connected between databases. 
     private createNewUserGageStats() {
-        // if (this.newUserForm.value.role == "Administrator") {
-        //     this.newUserForm.value.regionManagers.forEach(x => this.removeRegion(x));
-        // }
         const newUser = this.newUserForm.value;
         this._settingsservice.postEntityGageStats(newUser, this.configSettings.usersURL).subscribe(
             (response: Users) => {
                 response.isEditing = false;
                 this.users.push(response);
                 this._settingsservice.setUsers(this.users);
-                // this._toasterService.pop('info', 'Info', 'Manager was created');
                 this.cancelCreateUser();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return;}
@@ -263,9 +259,6 @@ export class ManagersComponent implements OnInit {
 
     // TODO: Delete once users/managers tables are connected between databases.
     public deleteManagerGageStats(deleteUsername: string) {
-        // const check = confirm('Are you sure you want to delete this Manager?');
-        // if (check) {
-            // delete it
             const index = this.users.findIndex(item => item.username === deleteUsername);
             const deleteID = this.users[index].id;
             this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.usersURL)
@@ -278,6 +271,5 @@ export class ManagersComponent implements OnInit {
                     this._toasterService.pop('error', 'Error deleting GageStats User', error._body.message || error.statusText);
             }
             );
-        // }
     }
 }

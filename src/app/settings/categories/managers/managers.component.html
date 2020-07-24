@@ -25,7 +25,8 @@
                         <div class="data-controls">
                             <!--<i *ngIf="!m.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="fa fa-pencil"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;-->
-                            <i *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.username)" class="fa fa-times"
+                            <!-- TODO: Must change deleteManager Function back to having a deleteID only and change here from (click)="deleteManager(m.username)" tp (click)="deleteManager(m.id)" -->
+                            <i *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.username)" class="fa fa-times" 
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                             <i *ngIf="m.isEditing" title="Save Manager" (click)="saveManager(m,i)" class="fa fa-floppy-o"
                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>

@@ -132,13 +132,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     // TODO: Delete once users/managers tables are connected between databases.
     public saveUserGageStats() {
-        // if (this.userInfo.username === undefined || this.userInfo.email === undefined || this.userInfo.firstName === undefined ||
-        //     this.userInfo.lastName === undefined || this.userInfo.role === undefined) {
-        //     // don't save it
-        //     this._toasterService.pop('error', 'Error updating User', 'First name, last name, username, email and role are required.');
-        // } else if (this.userInfo.password && this.userInfo.password !== this.passwordTest) {
-        //     this._toasterService.pop('error', 'Error', 'Passwords do not match. Please try again.');
-        // } else {
             delete this.userInfoGageStats.isEditing;
             delete this.userInfoGageStats.role;
             this._settingsService.putEntityGageStats(this.userInfoGageStats.id, this.userInfoGageStats, this.configSettings.usersURL).subscribe(
@@ -157,7 +150,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
                     this._toasterService.pop('error', 'Error updating GageStats User', error._body.message || error.statusText);
             }
             );
-        //}
     }
 
     public cancelEdit() {

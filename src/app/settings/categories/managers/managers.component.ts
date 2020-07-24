@@ -237,12 +237,15 @@ export class ManagersComponent implements OnInit {
     }
 
     // delete category type
+    // TODO: Must change back to original code referencing deleteID, not deleteUsername. 
+        // deleteManager(deleteUsername: string) to deleteManager(deleteID: number), update html file as well &
+        // const index should be equal to this.managers.findIndex(item => item.id === deleteID);
     public deleteManager(deleteUsername: string) {
         const check = confirm('Are you sure you want to delete this Manager?');
         if (check) {
             // delete it
             const index = this.managers.findIndex(item => item.username === deleteUsername);
-            const deleteID = this.managers[index].id;
+            const deleteID = this.managers[index].id; // TODO: Delete once users/managers tables are connected between databases. 
             this._settingsservice.deleteEntity(deleteID, this.configSettings.managersURL)
                 .subscribe(result => {
                     this.managers.splice(index, 1);
@@ -264,7 +267,7 @@ export class ManagersComponent implements OnInit {
             this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.usersURL)
                 .subscribe(result => {
                     this.users.splice(index, 1);
-                    this._settingsservice.setUsers(this.users); // update service
+                    this._settingsservice.setUsers(this.users);
                     this._settingsservice.outputWimMessages(result);
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }

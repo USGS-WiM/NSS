@@ -47,7 +47,7 @@
                         <i *ngIf="!c.isEditing" title="Delete Citation" (click)="!c.regressionRegions?.length>0 && deleteCitation(c.id)" class="fa fa-times" [class.disabled-icon]="c.regressionRegions?.length>0" aria-hidden="true" style="cursor:pointer"></i>
                     </div>
                     <div [class.hidden]="showAddCitations"> 
-                        <i title="Add Citation" (click)="addExistingCitation(l); d('closed')" class="fa fa-plus" aria-hidden="true" style="cursor:pointer"></i>
+                        <i title="Add Citation" (click)="addExistingCitation(c); d('closed')" class="fa fa-plus" aria-hidden="true" style="cursor:pointer"></i>
                     </div>
                 </td>
             </tr>

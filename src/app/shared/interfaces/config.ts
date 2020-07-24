@@ -11,7 +11,8 @@ export interface Config {
     baseURL: string;
     citationURL: string;
     errorsURL: string;
-    gsURL: string;
+    gageURL: string;
+    gageURL: string;
     loginURL: string;
     managersURL: string;
     regionURL: string;
@@ -19,6 +20,7 @@ export interface Config {
     regTypeURL: string;
     rolesURL: string;
     scenariosURL: string;
+    stationsURL: string;
     stationTypeURL: string;
     statisticGrpURL: string;
     unitsURL: string;

@@ -22,7 +22,7 @@ export class GsSidebarComponent implements OnInit {
   // station type
   public stationTypes: Array<Stationtype>;
   public stationType;
-  public selectedStationType: Array<number>;
+  public selectedStationType: Array<Stationtype>;
 
 
   // agency
@@ -33,7 +33,7 @@ export class GsSidebarComponent implements OnInit {
   constructor(private _nssService: NSSService, private _toasterService: ToasterService, private _loaderService: LoaderService) { }
 
   ngOnInit() {
-    this._nssService.getGSRegions();
+    /*this._nssService.getGSRegions();
     this._nssService.gsregions.subscribe((gsregions: Array<GSRegion>) => {
         this.gsregions = gsregions;
         if (gsregions.length === 0) {
@@ -45,11 +45,11 @@ export class GsSidebarComponent implements OnInit {
     this._nssService.selectedGSRegion.subscribe((g: GSRegion) => {
         if (g && g.id && this.gsregions) {this.selectedGSRegion = this.gsregions.find(gsreg => gsreg.id == g.id);}
         // this.clearSelections();
-    });
+    }); */
 
     this._nssService.getStationTypes();
-    this._nssService.stationType.subscribe((st: Array<Stationtype>) => {
-      this.stationType = st;
+    this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
+      this.stationTypes = st;
       /* remove from selectedStationType if not in response.
       if (this.selectedStationType !== undefined) {
           if (st.length > 0) {
@@ -64,19 +64,23 @@ export class GsSidebarComponent implements OnInit {
           } else { this.selectedStationType = []; }
       }*/
     });
+    this._nssService.selectedStationType.subscribe((s: Stationtype) => {
+      if (s && s.id && this.stationTypes) {this.selectedStationType = this.stationTypes.find(sta => sta.id == s.id);}
+    });
 
     this._nssService.getAgencies();
     this._nssService.agency.subscribe((ag: Array<Agency>) => {
       this.agency = ag;
     });
 
-  }
+  }  // end OnInit()
 
-    // select GSRegion. 
-    public onGSRegSelect(g: GSRegion) {
+    // select Station Type. 
+    public onStationTypeSelect(s: Stationtype) {
       //this._loaderService.showFullPageLoad();
-      this.gsregion = g;
-      this._nssService.setSelectedGSRegion(g);
-  }
+      this.stationType = s;
+      this._nssService.setSelectedStationType(s);
+      console.log(typeof this.selectedStationType)
+    }
   
 }

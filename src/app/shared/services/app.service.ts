@@ -251,7 +251,7 @@ export class NSSService {
     private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use
     private _selectedStationType: BehaviorSubject<Stationtype> = new BehaviorSubject<any>(''); // selectedstationtype
 
-    public get stationType(): Observable<Array<Stationtype>> {
+    public get stationTypes(): Observable<Array<Stationtype>> {
         // getter (station type)
         return this._stationTypeSubject.asObservable();
     }
@@ -259,6 +259,9 @@ export class NSSService {
     // clear selected
 
     // setter (selectedStationType)
+    public setSelectedStationType(v: Stationtype){
+        this._selectedStationType.next(v);
+    } 
     
     // getter (selectedStationType)
     public get selectedStationType(): Observable<Stationtype> {
@@ -267,7 +270,7 @@ export class NSSService {
     // get all station types
     public getStationTypes(): void {
         this._http
-            .get(this.configSettings.gsURL + this.configSettings.stationTypeURL, { headers: this.jsonHeader })
+            .get(this.configSettings.gageURL + this.configSettings.stationTypeURL, { headers: this.jsonHeader })
             .map(res => <Array<Stationtype>>res)
             .catch(this.handleError)
             .subscribe(r => {
@@ -296,7 +299,7 @@ export class NSSService {
     // get all station types
     public getAgencies(): void {
         this._http
-            .get(this.configSettings.gsURL + this.configSettings.agencyURL, { headers: this.jsonHeader })
+            .get(this.configSettings.gageURL + this.configSettings.agencyURL, { headers: this.jsonHeader })
             .map(res => <Array<Agency>>res)
             .catch(this.handleError)
             .subscribe(r => {
@@ -645,7 +648,7 @@ export class NSSService {
     }
 
     // get station types
-    public getStationType(params?: string) {
+    /* public getStationType(params?: string) {
         let url = this.configSettings.variablesURL
         if (params) {
             url += params; 
@@ -653,6 +656,13 @@ export class NSSService {
         return this._http
             .get(this.configSettings.baseURL + url, { headers: this.jsonHeader })
             .map(res => <Array<Stationtype>>res);
+    } */
+
+    // get stations by station type
+    public getStationsByType(id: string){
+        let params1 = new HttpParams().set("stationTypeID",id)
+        return this._http
+            .get(this.configSettings.gageURL + this.configSettings.stationsURL + "?stationTypes=" + id)
     }
 
     // get regressionRegions by region

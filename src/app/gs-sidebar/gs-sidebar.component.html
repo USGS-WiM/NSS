@@ -1,17 +1,17 @@
 <form class="gs-sidebar" id="gsSidebar">
-    <div class="sidebar-item">
+    <!-- <div class="sidebar-item">
         <span>Choose Region:</span>
         <select id="regSelect" [(ngModel)]="selectedGSRegion" (ngModelChange)="onGSRegSelect($event)" name="gsregion">
             <option selected hidden value=""></option>
             <option [ngValue]="i" *ngFor="let i of gsregions">{{i.name}}</option>
         </select>
-    </div>
+    </div> -->
 
     <div class="sidebar-item">
         <span>Limit by Station Type:</span>
-        <select>
+        <select id="regSelect" [(ngModel)]="selectedStationType" (ngModelChange)="onStationTypeSelect($event)" name="stationType">
             <option selected hidden value=""></option>
-            <option [ngValue]="i" *ngFor="let i of stationType">{{i.name}}</option>
+            <option [ngValue]="i" *ngFor="let i of stationTypes">{{i.name}}</option>
         </select>
     </div>
     

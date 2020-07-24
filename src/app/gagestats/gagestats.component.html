@@ -9,7 +9,7 @@
         <button *ngIf="loggedInRole" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="export()">Export</button>
     </div>
 
-    <span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span>
+    <span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span> 
     <div class="col-md-6" style="padding: 0;">
         <div *ngIf="showStationType">
             <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Station Type:</label>
@@ -18,7 +18,7 @@
     </div>
     <br clear="all"/>
 
-    <div class="hidden-print" *ngIf="showStationType">
+   <div class="hidden-print" *ngIf="showStationType">
         <table style="border:solid 1px gray" class="table"> 
             <thead>
                 <tr>
@@ -43,5 +43,5 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </div> 
 </div>

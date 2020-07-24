@@ -660,7 +660,7 @@
                             aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
                         <i *ngIf="!rr.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(rr.id)" class="fa fa-times"
                             aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                        <label *ngIf="!rr.isEditing" class="rrLabel">{{rr.name}} (RG_Code: {{rr.code}})</label>
+                        <label *ngIf="!rr.isEditing" class="rrLabel">{{rr.name}} (RG_Code: {{rr.code}}) Status: {{getStatusDescription(rr.statusID)}}</label>
                         <table *ngIf="rr.isEditing" class="table">
                                 <thead>
                                     <tr>
@@ -719,8 +719,6 @@
                                 <tr *ngFor="let c of citations | citationfilter:rr.citationID; let cIndex = index;">
                                     <td>
                                         <div class="data-controls">
-                                            <i *ngIf="!c.isEditing" title="Edit Citation" (click)="editRegRegion(rr.id)" class="fa fa-pencil"
-                                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp; 
                                             <i *ngIf="!c.isEditing" title="Remove Citation" (click)="removeCitation(rr)" class="fa fa-minus-circle"
                                                 aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
                                         </div>
@@ -918,7 +916,7 @@
                         aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
                     <i *ngIf="!u.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(u.id)" class="fa fa-times"
                         aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
-                    <label *ngIf="!u.isEditing" class="rrLabel">{{u.name}} (RG_Code: {{u.code}})</label>
+                    <label *ngIf="!u.isEditing" class="rrLabel">{{u.name}} (RG_Code: {{u.code}}) Status: {{getStatusDescription(u.statusID)}}</label>
                 </div>    
             </div>
         </form>

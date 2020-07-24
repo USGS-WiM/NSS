@@ -205,7 +205,7 @@ export class NSSService {
     // get all regions
     public getRegions(): void {
         this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL, { headers: this.jsonHeader })
             .map(res => <Array<Region>>res)
             .catch(this.handleError)
             .subscribe(r => {
@@ -632,7 +632,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-        .get(this.configSettings.baseURL + url, { headers: this.jsonHeader })
+        .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
         .map(res => <Array<Unittype>>res);
     }
 
@@ -643,7 +643,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
             .map(res => <Array<Variabletype>>res);
     }
 
@@ -672,7 +672,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Array<Regressionregion>>res);
     }
 
@@ -683,7 +683,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Regressiontype[]>res);
     }
 
@@ -694,7 +694,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Statisticgroup[]>res);
     }
 
@@ -705,7 +705,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Scenario[]>res)
             .subscribe(
                 s => {
@@ -742,7 +742,7 @@ export class NSSService {
     postScenarios(id: number, s: Scenario[], searchArgs?: string) {
         const options = { headers: this.jsonHeader, observe: 'response' as 'response' };       
         return this._http
-            .post(this.configSettings.baseURL + this.configSettings.regionURL + id + '/scenarios/estimate/' + searchArgs, s, options)
+            .post(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/scenarios/estimate/' + searchArgs, s, options)
             // .map(sResult => sResult.json())
             .subscribe(
                 res => {
@@ -782,7 +782,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
             .map(cit => <Citation[]>cit)
             .catch(this.handleError);
     }

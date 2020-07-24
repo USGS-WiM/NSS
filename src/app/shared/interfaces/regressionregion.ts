@@ -18,4 +18,5 @@ export interface Regressionregion {
     results?: Result[];
     percentWeight?: number;
     regressions?: Array<Regressiontype>;
+    statusID?: number;
 }

@@ -38,6 +38,9 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public filteredData;
     public filterText;
     public showAddCitations;
+    public itemBeingEdited;
+    public tempData;
+    public editIdx;
 
     constructor(private _http: HttpClient, private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -108,6 +111,35 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
     }
 
+    public editRowClicked(item, idx?) {
+        if (this.itemBeingEdited && this.itemBeingEdited.isEditing && this.tempData && this.itemBeingEdited.title !== item.title) {
+            this.CancelEditRowClicked();
+        } // if another item was being edited, cancel that
+        this.tempData = JSON.parse(JSON.stringify(item)); // make a copy in case they cancel
+        idx >= 0 ? this.editIdx = idx : this.editIdx = null;
+        this.itemBeingEdited = item;
+        item.isEditing = true;
+    }
+
+    public CancelEditRowClicked() {
+        this.itemBeingEdited.isEditing = false;
+        this.citations[this.editIdx] = this.tempData;
+    }
+
+    public saveCitation(c) {
+        // put edited scenario
+        this._settingsService.putEntity(c.id, c, this.configSettings.citationURL)
+            .subscribe((response) => {
+                c.isEditing = false;
+                this._nssService.setSelectedRegion(this.selectedRegion); // update everything
+                this._nssService.outputWimMessages(response);
+            }, error => {
+                if (this._settingsService.outputWimMessages(error)) {return; }
+                this._toasterService.pop('error', 'Error editing Citation', error._body.message || error.statusText);
+            }
+        );
+    }
+
     outputWimMessages(msg) {
         // takes messages from http requests and outputs into toast
         const existingMsgs = [];
@@ -131,7 +163,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             'Content-Type': 'application/json',
         });
 
-        this._http.get(this.configSettings.baseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
+        this._http.get(this.configSettings.nssBaseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
             .subscribe(res => {
                 this.citations = res.body;
                 this.filteredData = this.citations.filter(function (filter) {

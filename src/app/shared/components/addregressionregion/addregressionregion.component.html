@@ -25,6 +25,17 @@
               <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
           </div>
 
+          <!-- Status* -->
+          <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty }">
+              <label class="req" for="statusID">Status:</label>
+              <select class="form-control" formControlName="statusID">
+                  <option *ngFor="let s of status" [value]="s.id">{{ s.name }} ({{s.description}})</option>
+              </select>
+              <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty">
+                  Status is required
+              </div>
+          </div>
+
           <!-- Short Name -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty || (newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC'))}">
               <label class="req" for="code">Code (e.g. GC1234):</label>
@@ -34,6 +45,7 @@
               <div class="input-invalid-warning" *ngIf="newRegRegForm.get('code').value != '' && newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC')">
                       Code must start with "GC"</div>
           </div>
+
           <!-- Region* -->
           <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty }">
               <label class="req" for="region">Region:</label>

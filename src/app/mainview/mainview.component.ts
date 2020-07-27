@@ -101,6 +101,7 @@ export class MainviewComponent implements OnInit {
     public configSettings: Config;
     public units;
     public errors;
+    public status;
     public regTypes;
     public tempData;
     public itemBeingEdited;
@@ -605,6 +606,10 @@ export class MainviewComponent implements OnInit {
         });
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
+        });
+        // get all status types (use for options in edit/add scenario selects)
+        this._settingsService.getEntities(this.configSettings.statusURL).subscribe(res => {
+            this.status = res;
         });
     } // end ngOnInit()
 
@@ -1405,6 +1410,16 @@ export class MainviewComponent implements OnInit {
         this.unusedRegRegions = this.regressionRegions.filter(entry1 => !this.regRegionsScenarios.some(entry2 => entry1.id === entry2.id));
     }
     
+    public getStatusDescription(sID) {
+        let statusName;
+        this.status.forEach(z => {
+                    if (sID === z.id) {
+                        statusName = z.name;
+                    }
+                });
+        return statusName;
+    }
+
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)

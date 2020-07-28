@@ -1,16 +1,14 @@
 <ng-template #about let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">About National Streamflow Statistics client application v{{appVersion}}</h4>  
-            <button class="close pull-right" (click)="d('closed')">x</button>                
-        </div>  
+		<div class="title">About National Streamflow Statistics client application v{{appVersion}}</div>  
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
     </div>
-    <div class="modal-body">
-        <ngb-tabset>
+    <div class="modal-body modal-body-fixed">
+        <ngb-tabset class="fixed-tabs">
             <ngb-tab>
-                <ng-template ngbTabTitle><i class="fa fa-info-circle"></i>&nbsp;&nbsp;About</ng-template>                    
+                <ng-template ngbTabTitle><i class="far fa-info-circle"></i>About</ng-template>                    
                 <ng-template ngbTabContent>
-                    <h2 style="padding-top:2em" class="about-header">About National Streamflow Statistics (NSS) client application.</h2>
+                    <h2 class="about-header">About National Streamflow Statistics (NSS) client application.</h2>
                     <p>
                             The National Streamflow Statistics (NSS) program provides the U.S. Geological Survey developed and published regression equations, 
                             such as mean annual and monthly mean flows, flow-duration percentiles, and peak and low flows for or every State, the Commonwealth of Puerto Rico, 
@@ -37,7 +35,7 @@
                 </ng-template>
             </ngb-tab>
             <ngb-tab>
-                <ng-template ngbTabTitle><i class="fa fa-bell"></i>&nbsp;&nbsp;Disclaimer</ng-template>      
+                <ng-template ngbTabTitle><i class="far fa-bell"></i>Disclaimer</ng-template>      
                 <ng-template ngbTabContent>
                     <p>This software is preliminary or provisional and is subject to revision. It is being provided to meet the need for timely best science. 
                         The software has not received final approval by the U.S. Geological Survey (USGS). No warranty, expressed or implied, is made by the USGS 
@@ -48,10 +46,13 @@
                 </ng-template>
             </ngb-tab>
             <ngb-tab>
-                <ng-template ngbTabTitle><i class="fa fa-question-circle"></i>&nbsp;&nbsp;Help</ng-template>      
+                <ng-template ngbTabTitle><i class="far fa-question-circle"></i>Help</ng-template>      
                 <ng-template ngbTabContent>
-                    <div style="padding-top: 10px;">
-                        <span>Use the form below to get support on a specific issue. Please include as much information as possible.</span>                        
+                    <div>
+						<p class="mbottom-sm">
+							Use the form below to get support on a specific issue. Please include as much information as possible.
+						</p>    
+						                    
                         <form #form="ngForm" [formGroup]="newTicketForm" (ngSubmit)="submitFreshDeskTicket()"> 
                             <div class="well well-sm">
                                 <div class="row">
@@ -76,14 +77,26 @@
                                             <textarea class="form-control" rows="6" id="description" formControlName="description" name = "description" required></textarea>
                                         </div>
                                         <div class="form-group">
-                                            <label for="title">Upload an Attachment (optional):</label><br />
-                                            <span class="btn-file">
-                                                <i class="fa fa-paperclip"></i>&nbsp;&nbsp;Attach File <input type="file" ngf-select (change)="uploadFile($event)" formControlName="attachment" name="file" accept="image/*">
-                                            </span>  
-                                            <br />
-                                            <i *ngIf="file" (click)=removeFile() class="fa fa-trash">&nbsp;&nbsp;Remove File</i>
-                                        </div>
-                                        <button type="submit" [disabled]="!form.valid" class="btn-blue"><i class="fa fa-share"></i><span >&nbsp;&nbsp;Submit Support Request</span></button>
+											<label for="title">Upload an Attachment (optional):</label>
+											<div  *ngIf="!file">
+												<label class="button small black" style="padding-top: 3px;" for="supportRequestFile">
+													<i class="far fa-paperclip"></i>
+													<span>Attach File</span> 
+												</label>  
+												<input type="file" ngf-select (change)="uploadFile($event)" formControlName="attachment" name="file" accept="image/*" id="supportRequestFile" hidden>
+											</div>
+											<div  *ngIf="file">
+												<button class="button small red" (click)=removeFile()>
+													<i  class="far fa-trash"></i>
+													<span>Remove File</span>
+												</button>
+											</div>
+										</div>
+										<!-- Submit -->
+                                        <button type="submit" [disabled]="!form.valid" class="button blue mtop-sm">
+											<i class="far fa-share"></i>
+											<span>Submit Support Request</span>
+										</button>
                                     </div>
                                 </div>
                             </div>
@@ -92,11 +105,13 @@
                 </ng-template>
             </ngb-tab>
         </ngb-tabset>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn-black" (click)="d('closed')">
-            <i class="fa fa-close"></i>
-            <span>&nbsp;&nbsp;Close</span>
+	</div>
+	
+	<!-- Footer / Buttons -->
+    <div class="modal-body-footer">
+        <button type="button" class="button" (click)="d('closed')">
+            <i class="far fa-close"></i>
+            <span>Close</span>
         </button>
     </div>
 </ng-template>

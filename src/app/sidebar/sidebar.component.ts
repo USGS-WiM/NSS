@@ -13,9 +13,10 @@ import { AddRegressionRegion } from '../shared/interfaces/addregressionregion';
 import { LoaderService } from 'app/shared/services/loader.service';
 
 @Component({
-    selector: 'wim-sidebar',
+	selector: 'wim-sidebar',
+	host: {'class': 'app-sidebar'},
     templateUrl: './sidebar.component.html',
-    styleUrls: ['./sidebar.component.css']
+    styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit {
     public doShow: boolean;

@@ -20,7 +20,7 @@ declare var InstallTrigger: any;
 @Component({
     selector: 'aboutModal',
     templateUrl: './about.component.html',
-    styleUrls: ['./about.component.css']
+    styleUrls: ['./about.component.scss']
 })
 export class AboutModal implements OnInit, OnDestroy {
     @ViewChild('about', {static: true}) public aboutModal; // : ModalDirective;  //modal for validator

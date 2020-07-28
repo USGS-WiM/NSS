@@ -1,16 +1,58 @@
+.scenario-dropdown {
+    background-color: var(--grey);
+    padding: 8px 6px 6px 6px;
+    font-size: 14px;
+	border-radius: var(--borderRadius);
+	margin-bottom: 5px;
+	display: flex;
+	
+	&:hover{
+		cursor: pointer;
+	}
+
+	.scenario-dropdown-title{
+		display: flex;
+		flex-grow: 3;
+
+		span{
+			font-size: 16px;
+			font-weight: 600;
+		}
+
+		i{
+			margin-left: 25px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+	}
+
+	// Delete button
+	.icon-button{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		height: 100%;
+
+		&:hover{
+			color: var(--red);
+			span{
+				color: var(--red);
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
 .modal-body p {
     padding-top: 15px;
 }
-.modal-title {
-    color: #6f7697;
-    padding-top: 0;
-    font-size: 21px!important;
-}
-.modal-footer {    
-    align-items: center;
-    text-align: center;
-    display: block;
-}
+
 
 .example-text {
     color: #6f7697;
@@ -21,14 +63,6 @@
     margin-left: 5px;
 }
 
-.scenDropdown {
-    background-color: #eceef4;
-    padding: 5px;
-    font-size: 14px !important;
-    cursor: pointer;
-    border-radius: .25rem;
-    margin-bottom: 1px;
-}
 
 .showHideScen i {
     float: right;

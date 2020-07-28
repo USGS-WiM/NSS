@@ -2,7 +2,7 @@
 	<div>
 		<div class="modal-header">
 			<div class="title">Manage Citations</div>  
-			<button (click)="d('closed')">&times;</button>                
+			<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 		</div>
 
 		<div class="modal-body modal-body-fixed">
@@ -72,8 +72,10 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="modal-footer">
-			<button type="button" (click)="d('closed')" class="button black">Close</button>
-		</div>
+	</div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button black">Close</button>
 	</div>
 </ng-template>

@@ -10,7 +10,7 @@
     </select>
 </div>
 
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="button blue small mtop-sm" (click)="showNewRegressionForm()">
+<button type="button" class="button blue small mtop-sm" (click)="showNewRegressionForm()">
 	<i class="far fa-plus" aria-hidden="true"></i> 
 	<span>Add New Regression Type</span>
 </button>
@@ -65,7 +65,7 @@
 <ng-template #add let-c="close" let-d="dismiss">
 	<div class="modal-header">
 		<div class="title">New Regression Type</div>  
-		<button (click)="d('closed')">&times;</button>                
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 	</div>
     <div class="modal-body">
         <h3 class="">New Regression Type</h3>
@@ -93,10 +93,11 @@
             </div>
 
         </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="button">Cancel</button>
-            <button type="button" (click)="createNewRegression()" [disabled]="!newRegForm.valid" class="button-blue">Create</button>
-        </div>
     </div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button">Cancel</button>
+		<button type="button" (click)="createNewRegression()" [disabled]="!newRegForm.valid" class="button-blue">Create</button>
+	</div>
 </ng-template>

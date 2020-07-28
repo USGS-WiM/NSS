@@ -171,13 +171,12 @@
 
 	// td with several icon buttons
 	.table-icon-buttons{
-		padding: 0 !important;
+		padding: 3px 0 !important;
 
 		.icon-button{
 			width: 100%;
 			text-align: center;
-			margin-bottom: 4px;
-			padding: 4px 4px;
+			padding: 1px 4px;
 
 			i{
 				font-size: 18px;

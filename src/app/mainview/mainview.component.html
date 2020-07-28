@@ -742,6 +742,7 @@
 
                     <!--add option to switch statistic groups as well-->
                     <div *ngFor="let rr of s.regressionRegions; let rrIndex = index;">
+
 						<!-- Edit reg region -->
                         <button *ngIf="!rr.isEditing" title="Edit Regression Region" (click)="editRegRegion(rr.id)" class="icon-button mright-sm" aria-hidden="true">
 							<i class="far fa-pencil"></i>
@@ -752,7 +753,7 @@
 						</button>
 
 						<!-- Regression region label -->
-                        <label *ngIf="!rr.isEditing" class="big">{{rr.name}} (RG_Code: {{rr.code}})</label>
+                        <label *ngIf="!rr.isEditing" class="big">{{rr.name}} (RG_Code: {{rr.code}}) Status: {{getStatusDescription(rr.statusID)}}</label>
 						
 						<table *ngIf="rr.isEditing" class="custom-table">
                                 <thead>
@@ -1021,7 +1022,7 @@
                         aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
                     <i *ngIf="!u.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(u.id)" class="far fa-times"
                         aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
-                    <label *ngIf="!u.isEditing" class="rrLabel">{{u.name}} (RG_Code: {{u.code}})</label>
+                    <label *ngIf="!u.isEditing" class="rrLabel">{{u.name}} (RG_Code: {{u.code}}) Status: {{getStatusDescription(u.statusID)}}</label>
                 </div>    
             </div>
         </form>
@@ -1031,7 +1032,7 @@
 <ng-template #values let-c="close" let-d="dismiss">
 	<div class="modal-header">
 		<div class="title">Expected Values</div>  
-		<button (click)="d('closed')">&times;</button>                
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
     </div>
     <div class="modal-body">
         <span>The equation is: <span MathJax id="mathJaxEq">{{editScen.regressionRegions[0].regressions[0].equationMathJax}}</span></span>
@@ -1061,17 +1062,19 @@
             <!--Interval Bound Upper-->
             <label class="req">Upper Interval Bound:</label>
             <input type="number" name="upper" [(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.intervalBounds.upper" required>
-        </div>
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="button small">
-				<span>Cancel</span>
-			</button>
-            <!--<button type="button" (click)="!changeStatGroup ? submitScenario() : putLowFlow()" class="btn-blue">Create</button>-->
-            <button type="button" (click)="submitScenario()" class="button small blue">
-				<span>Save</span>
-			</button>
-        </div>
+		</div>
     </div>
+		
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button small">
+			<span>Cancel</span>
+		</button>
+		<!--<button type="button" (click)="!changeStatGroup ? submitScenario() : putLowFlow()" class="btn-blue">Create</button>-->
+		<button type="button" (click)="submitScenario()" class="button small blue">
+			<span>Save</span>
+		</button>
+	</div>
 </ng-template>
 
 <!--Add regression region modal-->

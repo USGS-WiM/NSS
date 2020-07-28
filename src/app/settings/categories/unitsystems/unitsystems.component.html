@@ -1,6 +1,6 @@
 <h3 class="mbottom-md">Unit Systems</h3>
 
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="button blue small" (click)="showNewForm()">
+<button type="button" class="button blue small mbottom-sm" (click)="showNewForm()">
 	<i class="far fa-plus" aria-hidden="true"></i> 
 	<span>Add New Unit System</span>
 </button>
@@ -46,7 +46,7 @@
 <ng-template #add let-c="close" let-d="dismiss">
 	<div class="modal-header">
 		<div class="title">New Unit Type</div>  
-		<button (click)="d('closed')">&times;</button>                
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 	</div>
     <div class="modal-body">
         <form [formGroup]="newUnitSystemForm">
@@ -54,15 +54,17 @@
             <div class="form-group required" [ngClass]="{'form-invalid': !newUnitSystemForm.get('unitSystem').valid && newUnitSystemForm.get('unitSystem').dirty}">
                 <label class="req" for="unitSystem">Unit System Name:</label>
                 <input class="form-control" type="text" formControlName="unitSystem" required>
-                <div class="input-invalid-warning" *ngIf="!newUnitSystemForm.get('unitSystem').valid && newUnitSystemForm.get('unitSystem').dirty">Unit
-                    Unit System Name is required</div>
+                <div class="input-invalid-warning" *ngIf="!newUnitSystemForm.get('unitSystem').valid && newUnitSystemForm.get('unitSystem').dirty">
+					Unit System Name is required
+				</div>
             </div>
 
         </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('clicked')" class="button">Cancel</button>
-            <button type="button" (click)="createNewUnit()" [disabled]="!newUnitSystemForm.valid" class="button blue">Create</button>
-        </div>
     </div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('clicked')" class="button">Cancel</button>
+		<button type="button" (click)="createNewUnit()" [disabled]="!newUnitSystemForm.valid" class="button blue">Create</button>
+	</div>
 </ng-template>

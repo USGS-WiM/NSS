@@ -3,7 +3,7 @@
 <div class="modal-header">
 	<div class="title" *ngIf="addRegReg">New Regression Region</div>  
 	<div class="title" *ngIf="!addRegReg">Edit Regression Region</div>  
-	<button (click)="d('closed')">&times;</button>                
+	<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 </div>
   <div class="modal-body">
       <form [formGroup]="newRegRegForm" style="margin-bottom: 10px;">
@@ -21,6 +21,17 @@
               <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
           </div>
 
+          <!-- Status* -->
+          <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty }">
+              <label class="req" for="statusID">Status:</label>
+              <select class="form-control" formControlName="statusID">
+                  <option *ngFor="let s of status" [value]="s.id">{{ s.name }} ({{s.description}})</option>
+              </select>
+              <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty">
+                  Status is required
+              </div>
+          </div>
+
           <!-- Short Name -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty || (newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC'))}">
               <label class="req" for="code">Code (e.g. GC1234):</label>
@@ -30,6 +41,7 @@
               <div class="input-invalid-warning" *ngIf="newRegRegForm.get('code').value != '' && newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC')">
                       Code must start with "GC"</div>
           </div>
+
           <!-- Region* -->
           <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty }">
               <label class="req" for="region">Region:</label>
@@ -92,10 +104,12 @@
       </div>
       <button *ngIf="uploadPolygon" type="button" class="button small blue" (click)="uploadPolygon = false">Remove Polygon</button>
 
-      <div class="modal-footer">
-          <button type="button" (click)="d('closed')" class="button">Cancel</button>
-          <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="button blue">Create</button>
-          <button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid" class="button blue">Save</button>
-      </div>
   </div>
+
+  <!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button">Cancel</button>
+		<button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="button blue">Create</button>
+		<button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid" class="button blue">Save</button>
+	</div>
 </ng-template>

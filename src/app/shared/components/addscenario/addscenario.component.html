@@ -3,7 +3,7 @@
 		<div class="modal-header">
 			<div class="title" *ngIf="clone==true">Clone Scenario</div>  
 			<div class="title" *ngIf="clone==false">New Scenario</div>  
-			<button (click)="d('closed')">&times;</button>                
+			<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 		</div>
 		<div class="modal-body">
 			<form [formGroup]="newScenForm">
@@ -280,14 +280,16 @@
 
 			
 		</div>
-		<div class="modal-footer">
-			<!--close and save-->
-			<div class="xs-f-btw">
-				<button type="button" (click)="clearScenario()" class="button red mright-xs">Clear All</button>
-				<button type="button" (click)="c('closed')" class="button black">Cancel</button>
-				<div class="flex-spacer"></div>
-				<button type="button" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="button blue">Create</button>
-			</div>
+	</div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<!--close and save-->
+		<div class="xs-f-btw">
+			<button type="button" (click)="clearScenario()" class="button red mright-xs">Clear All</button>
+			<button type="button" (click)="c('closed')" class="button black">Cancel</button>
+			<div class="flex-spacer"></div>
+			<button type="button" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="button blue">Create</button>
 		</div>
 	</div>
 </ng-template>

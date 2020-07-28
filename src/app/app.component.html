@@ -78,7 +78,7 @@
 <ng-template #login let-c="close" let-d="dismiss" id="loginModal">
 	<div class="modal-header">
 		<div class="title">Manager Login</div>  
-		<button (click)="d('closed')">&times;</button>                
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 	</div>
 	<div class="modal-body">
 		<form [formGroup]="LoginForm" id="loginForm">

@@ -1,6 +1,6 @@
 <h3 class="mbottom-md">Unit Types</h3>
 
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="button blue small" (click)="showNewUnitTypeForm()">
+<button type="button" class="button blue small" (click)="showNewUnitTypeForm()">
 	<i class="far fa-plus" aria-hidden="true"></i> 
 	<span>Add New Unit Type</span>
 </button>
@@ -57,7 +57,7 @@
 <ng-template #add let-c="close" let-d="dismiss">
 	<div class="modal-header">
 		<div class="title">New Unit Type</div>  
-		<button (click)="d('closed')">&times;</button>                
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 	</div>
     <div class="modal-body">
         <form [formGroup]="newUnitForm">
@@ -88,10 +88,11 @@
             </div>
 
         </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('clicked')" class="button">Cancel</button>
-            <button type="button" (click)="createNewUnit()" [disabled]="!newUnitForm.valid" class="button blue">Create</button>
-        </div>
     </div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('clicked')" class="button">Cancel</button>
+		<button type="button" (click)="createNewUnit()" [disabled]="!newUnitForm.valid" class="button blue">Create</button>
+	</div>
 </ng-template>

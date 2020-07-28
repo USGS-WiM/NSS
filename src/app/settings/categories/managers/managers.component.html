@@ -72,7 +72,7 @@
 <ng-template #add let-c="close" let-d="dismiss">
 	<div class="modal-header">
 		<div class="title">New Manager</div>  
-		<button (click)="d('closed')">&times;</button>                
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
     </div>
     <div class="modal-body">
         <form [formGroup]="newUserForm">
@@ -141,10 +141,11 @@
             <button *ngIf="role.value == 'Manager'" type="button" class="btn-blue" (click)="addRegion()">Add Region</button>
 
         </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="button">Cancel</button>
-            <button type="button" (click)="createNewUser()" [disabled]="!newUserForm.valid" class="button blue">Create</button>
-        </div>
     </div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button">Cancel</button>
+		<button type="button" (click)="createNewUser()" [disabled]="!newUserForm.valid" class="button blue">Create</button>
+	</div>
 </ng-template>

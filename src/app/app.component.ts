@@ -137,15 +137,11 @@ export class AppComponent implements OnInit, OnDestroy {
         this.loading = true; // not using this yet
         this._loginService.login(this.LoginForm.value).subscribe(
             () => {
-                if (this._loginService.isLoggedIn) {
-                    this.router.navigate([this.returnUrl]);
-                    this._nssService.setLoginModal(false);
-                }
                 this.loading = false; // not using this yet
                 this._nssService.setLoginModal(false);
                 this.loginError = false;
                 this.modalRef.close();
-                window.location.reload();
+                window.location.reload();  
             },
             error => {
                 this._toasterService.pop('error', 'Error logging in',  error.statusText|| error._body.message);
@@ -170,10 +166,10 @@ export class AppComponent implements OnInit, OnDestroy {
     private checkSetupTime(): boolean {
         let tooOld = false;
 
-        const twentyFourHours: number = 12 * 60 * 60 * 1000;
+        const twelveHours: number = 12 * 60 * 60 * 1000;
         const now: number = new Date().getTime();
         const setupTime: number = Number(localStorage.getItem('setupTime'));
-        if (now - setupTime > twentyFourHours) {
+        if (now - setupTime > twelveHours) {
             // is it greater than 12 hours
             tooOld = true;
             localStorage.clear();

@@ -21,7 +21,7 @@ import { ConfigService } from '../config.service';
 @Component({
     moduleId: module.id,
     templateUrl: 'settings.component.html',
-    styleUrls: ['./settings.component.css']
+    styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit, OnDestroy {
     public services;
@@ -47,6 +47,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+		
         if (localStorage.getItem('auth') === undefined) {
             this.router.navigate(['/']);
         }

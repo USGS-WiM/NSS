@@ -1,0 +1,82 @@
+//////////////////////// 
+////   Variables   ////
+//////////////////////
+////////////////////////////
+// Responsive Variables must be scss variables
+// because CSS variables can't be used in @media
+////////////////////////////
+$screenXS: 380px;
+$screenSM: 500px;
+$screenMD: 780px;
+$screenLG: 992px;
+$screenXL: 1400px;
+
+
+//////////////////////////////////////////////////////////////
+//////  Root CSS Variables. Use as var(--variableName)  //////
+/////////////////////////////////////////////////////////////
+:root {
+
+	// Fonts
+	--sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	--fontAwesome: 'Font Awesome 5 Pro';
+	--fontAwesomeBrands: 'Font Awesome 5 Brands';
+	--systemFont: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	
+	// Transitions
+	--transition: 0.2s;
+	--transitionFast: 0.1s;
+	--bezierTransition: all 0.18s cubic-bezier(0.5, 0.1, 0.75, 1);
+
+	// Border Measurements
+	--borderRadius: 3px;
+	--borderRadiusMd: 8px;
+	--borderWidth: 1px;
+
+	// Global Colors
+	--white: #ffffff;
+	--black: #060619;
+	--outline: rgba(160,160,160,0.25);
+
+
+
+	// Layout colors
+	--background: #ffffff;
+	--layer: #F9FAFB;
+
+	// Text and other elements
+	--text: #141425;
+	--textLight: rgba(22, 2, 60, 0.65);
+
+	// Inputs & Data Colors
+	--border: #CED3DC;
+	--inputBorder: #CED3DC;
+	--inputBackground: #ffffff;
+	--tableStripe: #F8F9FB;
+	--tableHeader: #EBEEF2;
+
+
+	// Colors
+	--blue: #055CDB;
+	--purple: #631CCC;
+	--green: #0EC275;
+	--yellow: #ffdb10;
+	--orange: #fa7c06;
+	--red: #FF2047;
+	--grey: #EBEEF2;
+
+	// Links
+	--links: #055CDB; // Same as blue
+	--linksHover: #033B92;
+
+	// Other
+	--lightbox: rgba(210, 210, 232, 0.35);
+
+	// Floating element that needs to be seen through
+	--transparent: rgba(255, 255, 255, 0.75);
+
+	// Box Shadows
+	--shadow:
+		0px 2px 15px -8px rgba(10,10,10,0.2),
+		0px 4px 20px -10px rgba(10,10,10,0.125);
+}

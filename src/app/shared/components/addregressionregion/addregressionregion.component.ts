@@ -28,7 +28,7 @@ import { ManageCitation } from 'app/shared/interfaces/managecitations';
 @Component({
   selector: 'addRegressionRegionModal',
   templateUrl: './addregressionregion.component.html',
-  styleUrls: ['./addregressionregion.component.css']
+  styleUrls: ['./addregressionregion.component.scss']
 })
 export class AddRegressionRegionModal implements OnInit, OnDestroy {
   @ViewChild('addRegressionRegion', {static: true}) public addRegressionRegionModal;

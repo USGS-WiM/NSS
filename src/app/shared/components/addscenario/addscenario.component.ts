@@ -26,7 +26,7 @@ declare var MathJax: {
 @Component({
     selector: 'addScenarioModal',
     templateUrl: './addscenario.component.html',
-    styleUrls: ['./addscenario.component.css']
+    styleUrls: ['./addscenario.component.scss']
 })
 export class AddScenarioModal implements OnInit, OnDestroy {
     @ViewChild('addScenario', {static: true}) public addScenarioModal; // : ModalDirective;  //modal for validator

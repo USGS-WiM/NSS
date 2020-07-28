@@ -1,0 +1,229 @@
+// Data
+// Styling for global data displays
+// Tables, graphs, etc
+
+
+////////////////////////////////
+//       Tables               //
+////////////////////////////////
+// .custom-table gives the table the most basic styling.
+// Other table style classes:
+// 		.table-striped = Striped rows
+// 		.table-condensed = Less spacing and padding, more can fit in a view
+// 		.table-hover-rows = Rows highlight on hover
+// 
+// 		You can also combine multiple classes ie <table class="custom-table table-striped table-compact">
+// 
+// Widths of table columns can be set with the classes .width-[x] - x can be any interval of 5 - 5,10,15,20... up to 100
+// .row-35 would make the column 35% of the table width. Should add up to 100.
+// 
+
+.custom-table{
+	border-spacing: 0px;
+	border-collapse: collapse;
+	width: 100%;
+	max-width: 100%;
+	margin-bottom: 15px;
+	background-color: transparent;
+	text-align: left;
+	font-size: 14px;
+	line-height: 17px;
+	word-break: break-word;
+  
+	th {
+		font-weight: bold;
+		border: 1px solid var(--border);
+		padding: 6px 6px;
+		box-sizing: border-box;
+		vertical-align: middle;
+	}
+
+	td {
+		border: 1px solid var(--border);
+		vertical-align: middle;
+		padding: 6px;
+		box-sizing: border-box;
+	}
+
+	// Header row
+	tr th {
+		background-color: var(--tableHeader); 
+	}
+
+	th.center,
+	td.center{
+		text-align: center;
+	}
+	th.right,
+	td.right{
+		text-align: right;
+	}
+
+	// .cell-block - use with multiple items within a table cell (or ngFor/Repeat)
+	// Adds spacing above and below
+	.cell-block{
+		display: block;
+		padding: 4px 0;
+	}
+
+	// Citation - link, adds spacing, adjusts color and line height
+	.cell-citation{
+		display: block;
+		color: var(--links);
+
+		&:not(:first-child){
+			padding-top: 4px;
+		}
+
+		div, small{
+			display: block;
+		}
+		small{
+			opacity: 0.9;
+			font-size: 13.5px;
+		}
+	}
+
+	// Cell that contains buttons - centers them vertically in cell
+	.cell-buttons{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		height: 100%;
+		width: 100%;
+		text-align: center;
+
+		button{
+			margin: 4px auto;
+		}
+	}
+
+	// Striped Rows Table
+	&.table-striped{
+		tr {
+			background-color: transparent;
+		}
+		
+		tr:nth-of-type(2n+1) {
+			background-color: var(--tableStripe); 
+		}
+	}
+
+	// Condensed table
+	&.table-condensed{
+		font-size: 13px;
+		line-height: 14px;
+
+		th {
+			padding: 2px;
+		}
+	
+		td {
+			padding: 2px;
+		}
+	}
+
+	// Highlight rows on hover
+	&.table-hover-rows{
+
+		tr:hover{
+			background-color: var(--tableHeader); 
+			cursor: pointer;
+
+			td{
+				border-color: #C0C5CE;
+			}
+		}
+
+	}
+
+	// Scroll table, keep header fixed
+	&.table-scroll{
+		display: flex;
+		flex-direction: column;
+		thead{
+			display: block;
+			width: 100%;
+		}
+		tbody{
+			display: block;
+			width: 100%;
+			flex-grow: 3;
+			overflow: auto;
+		}
+	}
+
+	// Borderless table
+	&.table-borderless{
+		font-weight: bold;
+		th {
+			border: none;
+			padding: 6px 0;
+		}
+	
+		td {
+			padding: 6px 0;
+			border: none;
+		}
+	}
+
+
+
+	// td with several icon buttons
+	.table-icon-buttons{
+		padding: 3px 0 !important;
+
+		.icon-button{
+			width: 100%;
+			text-align: center;
+			padding: 1px 4px;
+
+			i{
+				font-size: 18px;
+			}
+
+			&:hover{
+				color: var(--blue);
+				i{
+					color: var(--blue);
+				}
+			}
+		}
+	}
+
+
+	// Cells that scroll horizontally
+	.equation-cell{
+		max-width: 300px;
+    	overflow-y: auto;
+	}
+
+}
+
+// Width class shortcuts to use in tables
+.width-5{width: 5%;}
+.width-10{width: 10%;}
+.width-15{width: 15%;}
+.width-20{width: 20%;}
+.width-25{width: 25%;}
+.width-30{width: 30%;}
+.width-35{width: 35%;}
+.width-40{width: 40%;}
+.width-45{width: 45%;}
+.width-50{width: 50%;}
+.width-55{width: 55%;}
+.width-60{width: 60%;}
+.width-65{width: 65%;}
+.width-70{width: 70%;}
+.width-75{width: 75%;}
+.width-80{width: 80%;}
+.width-85{width: 85%;}
+.width-90{width: 90%;}
+.width-95{width: 95%;}
+.width-100{width: 100%;}
+
+// Max-widths
+.max-600{max-width: 600px;}
+.max-500{width: 500px;}
+.max-400{width: 400px;}
+.max-300{width: 300px;}

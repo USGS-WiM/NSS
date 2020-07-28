@@ -1,66 +1,43 @@
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Statistic Groups</legend>
-</div>
-<div class="regSelect">
-    Filter By Region:
-    <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
+<h3 class="mbottom-md">Statistic Groups</h3>
+
+<div class="regSelect pbottom-md">
+    <label for="region" class="block">Filter By Region:</label>
+    <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region" class="input-small">
         <option value="none">None</option>
         <option [ngValue]="i" *ngFor="let i of regions">{{ i.name }}</option>
     </select>
 </div>
 
-<button type="button" class="btn-blue" (click)="showNewStatGroupForm()">
-    <i class="fa fa-plus" aria-hidden="tru"></i> Add New Statistic Group
+<button type="button" class="button blue small" (click)="showNewStatGroupForm()">
+	<i class="far fa-plus" aria-hidden="true"></i>
+	<span>Add New Statistic Group</span>
 </button>
 
 <form #StatGroupForm="ngForm">
     <div class="form-group" *ngIf="statisticGroups">
-        <table class="table">
+        <table class="custom-table mtop-sm">
             <thead>
                 <tr>
-                    <th class="col-xs-1"></th>
-                    <th class="col-xs-4">Name</th>
-                    <th class="col-xs-1">Code</th>
+                    <th class="width-5"></th>
+                    <th class="width-60">Name</th>
+                    <th class="width-35">Code</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let r of statisticGroups; let i = index">
-                    <td>
-                        <div class="data-controls">
-                            <i
-                                *ngIf="!r.isEditing"
-                                title="Edit Statistic Group"
-                                (click)="EditRowClicked(i)"
-                                class="fa fa-pencil"
-                                aria-hidden="true"
-                                style="cursor:pointer;padding:5px;"
-                            ></i
-                            >&nbsp;
-                            <i
-                                *ngIf="!r.isEditing"
-                                title="Delete Statistic Group"
-                                (click)="deleteStatGroup(r.id)"
-                                class="fa fa-times"
-                                aria-hidden="true"
-                                style="cursor:pointer;padding:5px;"
-                            ></i>
-                            <i
-                                *ngIf="r.isEditing"
-                                title="Save Statistic Group"
-                                (click)="saveStatGroup(r, i)"
-                                class="fa fa-floppy-o"
-                                aria-hidden="true"
-                                style="cursor:pointer;padding:5px;"
-                            ></i>
-                            <i
-                                *ngIf="r.isEditing"
-                                title="Cancel Edit"
-                                (click)="CancelEditRowClicked(i)"
-                                class="fa fa-history"
-                                aria-hidden="true"
-                                style="cursor:pointer;padding:5px;"
-                            ></i>
-                        </div>
+                    <td class="table-icon-buttons">
+						<button *ngIf="!r.isEditing" title="Edit Statistic Group" (click)="EditRowClicked(i)" class="icon-button">
+							<i class="far fa-pencil"></i>
+						</button>
+						<button *ngIf="!r.isEditing" title="Delete Statistic Group" (click)="deleteStatGroup(r.id)" class="icon-button">
+							<i class="far fa-times"></i>
+						</button>
+						<button *ngIf="r.isEditing" title="Save Statistic Group" (click)="saveStatGroup(r,i)" class="icon-button">
+							<i class="far fa-floppy-o"></i>
+						</button>
+						<button *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button">
+							<i class="far fa-history"></i>
+						</button>
                     </td>
                     <td>
                         <span *ngIf="!r.isEditing">{{ r.name }}</span>
@@ -79,14 +56,11 @@
 
 <!-- new statistic group form -->
 <ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Statistic Group</h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
-    </div>
+	<div class="modal-header">
+		<div class="title">New Statistic Group</div>  
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+	</div>
     <div class="modal-body">
-        <h3 class="modal-title">New Statistic Group</h3>
         <form [formGroup]="newStatGroupForm">
             <!-- Statistic Group Name* -->
             <div
@@ -112,10 +86,11 @@
                 </div>
             </div>
         </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewStatGroup()" [disabled]="!newStatGroupForm.valid" class="btn-blue">Create</button>
-        </div>
     </div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button">Cancel</button>
+		<button type="button" (click)="createNewStatGroup()" [disabled]="!newStatGroupForm.valid" class="button blue">Create</button>
+	</div>
 </ng-template>

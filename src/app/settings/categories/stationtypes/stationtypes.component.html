@@ -1,12 +1,13 @@
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Station Types</legend>
-</div>
-<button type="button" class="btn-blue" (click)="showNewStationTypeForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New Station Type</button>
+<h3 class="mbottom-md">Station Types</h3>
+
+<button type="button" class="button blue small mbottom-sm" (click)="showNewStationTypeForm()">
+	<i class="far fa-plus" aria-hidden="true"></i> 
+	<span>Add New Station Type</span>
+</button>
 
 <form #StationTypeForm="ngForm">
     <div class="form-group" *ngIf="stationTypes">
-        <table class="table">
+        <table class="custom-table">
             <thead>
                 <tr>
                     <th class="col-xs-1"></th>
@@ -50,14 +51,11 @@
 
 <!-- new station type form -->
 <ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Station Type </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
-    </div>
+	<div class="modal-header">
+		<div class="title">New Station Type</div>  
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+	</div>
     <div class="modal-body">
-        <h3 class="modal-title">New Station Type</h3>
         <form [formGroup]="newStationTypeForm">
             <!-- Name -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newStationTypeForm.get('name').valid && newStationTypeForm.get('name').dirty}">
@@ -80,10 +78,11 @@
             </div>
 
         </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewStationType()" [disabled]="!newStationTypeForm.valid" class="btn-blue">Create</button>
-        </div>
     </div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
+		<button type="button" (click)="createNewStationType()" [disabled]="!newStationTypeForm.valid" class="btn-blue">Create</button>
+	</div>
 </ng-template>

@@ -1,0 +1,130 @@
+// This file imports all other global stylesheets
+// There shouldn't be any CSS added here.
+// Try to find the correct partial stylesheet (below) to fit it in
+
+// If it's styles for a specific element in a specific component, put it in the the *.component.scss file instead
+// These are for global styles use throughout the project.
+
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import "~leaflet/dist/leaflet.css";
+
+// Clears default browser styles
+@import "styles/reset.scss";
+
+// Defines variables to use in SCSS Files
+@import "styles/variables.scss";
+
+// Base project styles, including <html> and <body> properties
+@import "styles/base.scss";
+
+// Form elements - inputs, buttons, labels, etc
+@import "styles/forms.scss";
+
+// Typography and text - headers, paragraphs, etc
+@import "styles/typography.scss";
+
+// Modal-specific styles
+@import "styles/modal.scss";
+
+// Data-specific styles - tables, graphs, etc
+@import "styles/data.scss";
+
+// Helper classes - classes that can be added to an element to adjust styles/spacing/margin/padding/etc
+@import "styles/helpers.scss";
+
+
+
+
+#toast-container{
+	top: 80px;
+}
+.toast{
+	box-shadow: var(--shadow);
+	opacity: 1;
+}
+.toast:hover{
+	box-shadow: var(--shadow);
+}
+
+
+
+
+
+
+// .wim-sidebar{
+//   overflow: visible !important;
+// }
+
+// .modal {
+//     z-index: 5000!important;
+// }
+
+// /*11/21 changes*/
+// .dropdown-toggle{
+//   overflow: hidden;
+// }
+// .dropdown-toggle .caret{
+//   display: none !important;
+// }
+
+// .wim-sidebar{
+//   overflow-x: scroll !important;
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.hidden-print {
+  margin-top: 15px;
+}
+
+.wim-nav.hidden-print {
+  margin-top: 0px !important;
+}
+
+input {
+    margin: 0px !important;
+}
+.form-invalid input {
+  margin-bottom: 12px !important;
+}
+
+.settingsMultSelect {
+  background-color: white;
+  border: 2px solid #e0e3e6;
+}
+
+/* needed smaller table cells */
+.col-xs-half {
+    width: 4%;
+}
+
+.equation {
+    margin-bottom: 20px !important;
+}
+
+/* Fixed New Regression Region Polygon Map formatting */
+#map section {
+  margin: 0 !important;
+}
+select {
+  appearance: menulist;
+  -webkit-appearance: menulist;
+  }
+  
+.ng-input input[type=text] {
+  padding: 0px !important;
+  }
+
+
+

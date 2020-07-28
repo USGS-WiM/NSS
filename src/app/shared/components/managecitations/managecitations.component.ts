@@ -23,7 +23,7 @@ import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 @Component({
     selector: 'manageCitationsModal',
     templateUrl: './managecitations.component.html',
-    styleUrls: ['./managecitations.component.css']
+    styleUrls: ['./managecitations.component.scss']
 })
 export class ManageCitationsModal implements OnInit, OnDestroy {
     @ViewChild('manageCitations', {static: true}) public manageCitationsModal; // : ModalDirective;  //modal for validator
@@ -172,7 +172,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             'Content-Type': 'application/json',
         });
 
-        this._http.get(this.configSettings.baseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
+        this._http.get(this.configSettings.nssBaseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
             .subscribe(res => {
                 this.citations = res.body;
                 this.filteredData = this.citations.filter(function (filter) {

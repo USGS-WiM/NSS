@@ -1,10 +1,10 @@
 // ------------------------------------------------------------------------------
-// ----- regions.component.ts -----------------------------------------------
+// ----- statisticgroups.component.ts -----------------------------------------------
 // ------------------------------------------------------------------------------
 
 // copyright:   2017 WiM - USGS
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
-// purpose: regions crud in admin settings page
+// purpose: statistica groups crud in admin settings page
 
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
@@ -24,7 +24,7 @@ import { ConfigService } from 'app/config.service';
 @Component({
     moduleId: module.id,
     templateUrl: 'statisticgroups.component.html',
-    styleUrls: ['../../settings.component.css']
+    styleUrls: ['../../settings.component.scss']
 })
 
 export class StatisticGroupsComponent implements OnInit, OnDestroy {

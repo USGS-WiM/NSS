@@ -1,0 +1,27 @@
+.profile-page{
+	display: block;
+	margin: 0 auto;
+	max-width: 400px;
+	width: 96%;
+	box-sizing: border-box;
+	padding: 25px 0;
+
+	.profile-page-row{
+		display: flex;
+		width: 100%;
+		margin-bottom: 8px;
+
+		span,
+		label{
+			width: 50%;
+			max-width: 50%;
+			min-width: 50%;
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			box-sizing: border-box;
+			padding: 0 4px;
+		}
+	}
+}
+

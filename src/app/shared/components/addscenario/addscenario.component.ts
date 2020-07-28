@@ -26,7 +26,7 @@ declare var MathJax: {
 @Component({
     selector: 'addScenarioModal',
     templateUrl: './addscenario.component.html',
-    styleUrls: ['./addscenario.component.css']
+    styleUrls: ['./addscenario.component.scss']
 })
 export class AddScenarioModal implements OnInit, OnDestroy {
     @ViewChild('addScenario', {static: true}) public addScenarioModal; // : ModalDirective;  //modal for validator
@@ -353,7 +353,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
         this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
         this.tempSelectedRegType = this.selectedRegType;
-        this.newScenForm.removeControl('region');
         // adding all necessary properties, since ngValue won't work with all the nested properties
         const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;

@@ -1,15 +1,11 @@
 <!--Add regression region modal-->
 <ng-template #addRegressionRegion let-c="close" let-d="dismiss">
-  <div class="modal-header">
-      <div class="col-xs-12">
-          <h4 class="modal-title pull-left" *ngIf="addRegReg">New Regression Region </h4>
-          <h4 class="modal-title pull-left" *ngIf="!addRegReg">Edit Regression Region </h4>
-          <button class="close pull-right" (click)="d('closed')">x</button>
-      </div>
-  </div>
+<div class="modal-header">
+	<div class="title" *ngIf="addRegReg">New Regression Region</div>  
+	<div class="title" *ngIf="!addRegReg">Edit Regression Region</div>  
+	<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+</div>
   <div class="modal-body">
-      <h3 class="modal-title" *ngIf="addRegReg">New Regression Region</h3>
-      <h3 class="modal-title" *ngIf="!addRegReg">Edit Regression Region</h3>
       <form [formGroup]="newRegRegForm" style="margin-bottom: 10px;">
           <!-- Regression Type Name* -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('name').valid && newRegRegForm.get('name').dirty}">
@@ -25,6 +21,17 @@
               <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
           </div>
 
+          <!-- Status* -->
+          <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty }">
+              <label class="req" for="statusID">Status:</label>
+              <select class="form-control" formControlName="statusID">
+                  <option *ngFor="let s of status" [value]="s.id">{{ s.name }} ({{s.description}})</option>
+              </select>
+              <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty">
+                  Status is required
+              </div>
+          </div>
+
           <!-- Short Name -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty || (newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC'))}">
               <label class="req" for="code">Code (e.g. GC1234):</label>
@@ -34,6 +41,7 @@
               <div class="input-invalid-warning" *ngIf="newRegRegForm.get('code').value != '' && newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC')">
                       Code must start with "GC"</div>
           </div>
+
           <!-- Region* -->
           <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty }">
               <label class="req" for="region">Region:</label>
@@ -70,12 +78,14 @@
               <div class="input-invalid-warning" *ngIf="!newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty">URL
                   is required</div>
           </div>
-          <button *ngIf="addCitation" type="button" class="btn-blue" (click)="removeCitation()">Remove Citation</button>
+          <button *ngIf="addCitation" type="button" class="button small blue" (click)="removeCitation()">Remove Citation</button>
       </form>
-      
-    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation=true; newCitation=true">Add New Citation</button>
-    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="showManageCitationsModal(); addCitation=true; newCitation=false">Find Existing Citation</button>
-    <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="showMap()">Upload Polygon</button>        
+	  
+	  <div class="xs-f-start pbottom-xs">
+		<button *ngIf="!addCitation" type="button" class="button mright-xs" (click)="addCitation=true; newCitation=true">Add New Citation</button>
+		<button *ngIf="!addCitation" type="button" class="button mright-xs" (click)="showManageCitationsModal(); addCitation=true; newCitation=false">Find Existing Citation</button>
+		<button *ngIf="!uploadPolygon" type="button" class="button mright-xs" (click)="showMap()">Upload Polygon</button>        
+	  </div>
 
       <form *ngIf="uploadPolygon">
         <form #f="ngForm" class="ui form">
@@ -92,12 +102,14 @@
           <div id="map"></div>
         </div>
       </div>
-      <button *ngIf="uploadPolygon" type="button" class="btn-blue" (click)="uploadPolygon = false">Remove Polygon</button>
+      <button *ngIf="uploadPolygon" type="button" class="button small blue" (click)="uploadPolygon = false">Remove Polygon</button>
 
-      <div class="modal-footer">
-          <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-          <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="btn-blue">Create</button>
-          <button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid" class="btn-blue">Save</button>
-      </div>
   </div>
+
+  <!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button">Cancel</button>
+		<button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="button blue">Create</button>
+		<button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid" class="button blue">Save</button>
+	</div>
 </ng-template>

@@ -16,7 +16,7 @@ import { SettingsService } from './settings/settings.service';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
+    styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
 
@@ -36,6 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
     isLoggedIn: boolean;
     isloginShow: boolean;
     public loginError = false;
+    public showMobileMenu = false;
     constructor(
         private _nssService: NSSService,
         public router: Router,
@@ -87,15 +88,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.modalElement = this.loginModal;
         this.loginError = false;
 
-        // Ensures sidebar will appear if screen changes size
-        window.onresize = function (event) {
-            var sidebar = document.getElementById("wimSidebar");
-            if (window.innerWidth > 800) {
-                sidebar.style.display = "block";
-            } else {
-                sidebar.style.display = "none";
-            }
-        };
+    
 
     }
     // @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
@@ -144,15 +137,11 @@ export class AppComponent implements OnInit, OnDestroy {
         this.loading = true; // not using this yet
         this._loginService.login(this.LoginForm.value).subscribe(
             () => {
-                if (this._loginService.isLoggedIn) {
-                    this.router.navigate([this.returnUrl]);
-                    this._nssService.setLoginModal(false);
-                }
                 this.loading = false; // not using this yet
                 this._nssService.setLoginModal(false);
                 this.loginError = false;
                 this.modalRef.close();
-                window.location.reload();
+                window.location.reload();  
             },
             error => {
                 this._toasterService.pop('error', 'Error logging in',  error.statusText|| error._body.message);
@@ -177,10 +166,10 @@ export class AppComponent implements OnInit, OnDestroy {
     private checkSetupTime(): boolean {
         let tooOld = false;
 
-        const twentyFourHours: number = 12 * 60 * 60 * 1000;
+        const twelveHours: number = 12 * 60 * 60 * 1000;
         const now: number = new Date().getTime();
         const setupTime: number = Number(localStorage.getItem('setupTime'));
-        if (now - setupTime > twentyFourHours) {
+        if (now - setupTime > twelveHours) {
             // is it greater than 12 hours
             tooOld = true;
             localStorage.clear();
@@ -189,16 +178,5 @@ export class AppComponent implements OnInit, OnDestroy {
         return tooOld;
     }
 
-    public toggleSidebar() {
-        // should allow sidebar to go in and come back out
-        var sidebar = document.getElementById("wimSidebar");
-        if (sidebar.style.display == "") {
-            sidebar.style.display = "block";
-        } else if (sidebar.style.display === "none") {
-            sidebar.style.display = "block";
-        } else {
-            sidebar.style.display = "none";
-        }
-    }
 
 }

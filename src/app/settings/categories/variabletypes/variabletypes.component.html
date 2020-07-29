@@ -1,33 +1,36 @@
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Variable Types</legend>
-</div>
-<button type="button" class="btn-blue" (click)="showNewVariableForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New Variable Type</button>
+<h3 class="mbottom-md">Variable Types</h3>
+
+<button type="button" class="button blue small mbottom-sm" (click)="showNewVariableForm()">
+	<i class="far fa-plus" aria-hidden="true"></i> 
+	<span>Add New Variable Type</span>
+</button>
 
 <form #VariableTypeForm="ngForm">
     <div class="form-group" *ngIf="variableTypes">
-        <table class="table">
+        <table class="custom-table mtop-sm">
             <thead>
                 <tr>
-                    <th class="col-xs-1"></th>
-                    <th class="col-xs-4">Name</th>
-                    <th>Description</th>
-                    <th class="col-xs-1">Code</th>
+                    <th class="width-5"></th>
+                    <th class="width-40">Name</th>
+                    <th class="width-45">Description</th>
+                    <th class="col-xs-10">Code</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let v of variableTypes; let i = index">
-                    <td>
-                        <div class="data-controls">
-                            <i *ngIf="!v.isEditing" title="Edit Variable Type" (click)="EditRowClicked(i)" class="fa fa-pencil"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                            <i *ngIf="!v.isEditing" title="Delete Variable Type" (click)="deleteVariable(v.id)" class="fa fa-times"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="v.isEditing" title="Save Variable Type" (click)="saveVariable(v,i)" class="fa fa-floppy-o"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                        </div>
+                    <td class="table-icon-buttons">
+						<button *ngIf="!v.isEditing" title="Edit Variable Type" (click)="EditRowClicked(i)" class="icon-button">
+							<i class="far fa-pencil"></i>
+						</button>
+						<button *ngIf="!v.isEditing" title="Delete Variable Type" (click)="deleteVariable(v.id)" class="icon-button">
+							<i class="far fa-times"></i>
+						</button>
+						<button *ngIf="v.isEditing" title="Save Variable Type" (click)="saveVariable(v,i)" class="icon-button">
+							<i class="far fa-floppy-o"></i>
+						</button>
+						<button *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button">
+							<i class="far fa-history"></i>
+						</button>
                     </td>
                     <td>
                         <span *ngIf="!v.isEditing">{{ v.name }}</span>
@@ -50,14 +53,11 @@
 
 <!-- new variable type form -->
 <ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Variable Type </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
-    </div>
+	<div class="modal-header">
+		<div class="title">New Variable Type</div>  
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+	</div>
     <div class="modal-body">
-        <h3 class="modal-title">New Variable Type</h3>
         <form [formGroup]="newVarForm">
             <!-- Variable Type Name* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('name').valid && newVarForm.get('name').dirty}">
@@ -82,10 +82,11 @@
             </div>
 
         </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewVariableType()" [disabled]="!newVarForm.valid" class="btn-blue">Create</button>
-        </div>
-    </div>
+	</div>
+	
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button">Cancel</button>
+		<button type="button" (click)="createNewVariableType()" [disabled]="!newVarForm.valid" class="button blue">Create</button>
+	</div>
 </ng-template>

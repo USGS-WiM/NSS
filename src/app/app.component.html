@@ -27,7 +27,7 @@
 		<a routerLink="" [class.active]="router.url == ''">
 			<span>NSS</span>
 		</a>
-		<a routerLink="gagestats" [class.active]="router.url == ''">
+		<a routerLink="gagestats" [class.active]="router.url == ''" [class.hidden]="!showGageStats">
 			<span>Gagestats</span>
 		</a>
 		<a [class.hidden]="!isLoggedIn || loggedInRole !== 'Administrator'" routerLink="settings" routerLinkActive="active">

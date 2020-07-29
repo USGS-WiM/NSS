@@ -36,7 +36,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         public _nssService: NSSService,
         private _configService: ConfigService,
         private _toasterService: ToasterService,
-        private router: Router
+        public router: Router
     ) {
         this.configSettings = this._configService.getConfiguration();
         this.navigationSubscription = this.router.events.subscribe((e: any) => {

@@ -17,5 +17,6 @@
     "unitSystemsURL": "UnitsSystems",
     "variablesURL": "Variables",
     "statusURL": "Status",
-    "loginShow": true
+    "loginShow": true,
+    "showGageStats": true
 }

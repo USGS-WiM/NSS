@@ -26,7 +26,6 @@ import { LoaderService } from './loader.service';
 import { ManageCitation } from '../interfaces/managecitations';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
-import { GSRegion } from 'app/shared/interfaces/gsregion';
 
 @Injectable()
 export class NSSService {
@@ -214,39 +213,6 @@ export class NSSService {
     }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
-    // -+-+-+-+-+-+ gsregion section -+-+-+-+-+-+-+
-    private _gsregionSubject: Subject<Array<GSRegion>> = new Subject<Array<GSRegion>>(); // array of gsregions that sidebar and mainview use
-    private _selectedGSRegion: BehaviorSubject<GSRegion> = new BehaviorSubject<any>(''); // selectedgsregion
-
-    public get gsregions(): Observable<Array<GSRegion>> {
-        // getter (gsregions)
-        return this._gsregionSubject.asObservable();
-    }
-
-    // clear selected
-    
-    
-    // setter (selectedGSRegion)
-        public setSelectedGSRegion(v: GSRegion) {
-        this._selectedGSRegion.next(v);
-    }
-
-    // getter (selectedGSRegion)
-    public get selectedGSRegion(): Observable<GSRegion> {
-        return this._selectedGSRegion.asObservable();
-    }
-    // get all gsregions
-    public getGSRegions(): void {
-        this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL, { headers: this.jsonHeader })
-            .map(res => <Array<GSRegion>>res)
-            .catch(this.handleError)
-            .subscribe(g => {
-                this._gsregionSubject.next(g);
-            });
-    }
-    // -+-+-+-+-+-+ end gsregion section -+-+-+-+-+-+-+
-
     // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
     private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use
     private _selectedStationType: BehaviorSubject<Stationtype> = new BehaviorSubject<any>(''); // selectedstationtype
@@ -283,14 +249,17 @@ export class NSSService {
     private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
     private _selectedAgency: BehaviorSubject<Agency> = new BehaviorSubject<any>(''); // selectedAgency
 
-    public get agency(): Observable<Array<Agency>> {
-        // getter (agency)
+    public get agencies(): Observable<Array<Agency>> {
+        // getter (agencies)
         return this._agencySubject.asObservable();
     }
 
     // clear selected
 
     // setter (selectedAgency)
+    public setSelectedAgency(v: Agency){
+        this._selectedAgency.next(v);
+    }
     
     // getter (selectedAgency)
     public get selectedAgency(): Observable<Agency> {
@@ -299,7 +268,7 @@ export class NSSService {
     // get all station types
     public getAgencies(): void {
         this._http
-            .get(this.configSettings.gageURL + this.configSettings.agencyURL, { headers: this.jsonHeader })
+            .get(this.configSettings.gageURL + this.configSettings.agenciesURL, { headers: this.jsonHeader })
             .map(res => <Array<Agency>>res)
             .catch(this.handleError)
             .subscribe(r => {
@@ -647,22 +616,19 @@ export class NSSService {
             .map(res => <Array<Variabletype>>res);
     }
 
-    // get station types
-    /* public getStationType(params?: string) {
-        let url = this.configSettings.variablesURL
-        if (params) {
-            url += params; 
-        }
-        return this._http
-            .get(this.configSettings.baseURL + url, { headers: this.jsonHeader })
-            .map(res => <Array<Stationtype>>res);
-    } */
-
     // get stations by station type
-    public getStationsByType(id: string){
-        let params1 = new HttpParams().set("stationTypeID",id)
+    public getStationsByType(id: number, params?: string) {
+       if (params) {
+           params
+       }
         return this._http
-            .get(this.configSettings.gageURL + this.configSettings.stationsURL + "?stationTypes=" + id)
+            .get(this.configSettings.gageURL + this.configSettings.stationsURL + "?stationTypes=" + id + params)
+    }
+
+     // get stations by station type
+     public getStationsByAgency(id: number, id2: number){
+        return this._http
+            .get(this.configSettings.gageURL + this.configSettings.stationsURL + "?stationTypes=" + id + "?agencies=" + id2)
     }
 
     // get regressionRegions by region

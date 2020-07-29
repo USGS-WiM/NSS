@@ -1,15 +1,8 @@
 <form class="gs-sidebar" id="gsSidebar">
-    <!-- <div class="sidebar-item">
-        <span>Choose Region:</span>
-        <select id="regSelect" [(ngModel)]="selectedGSRegion" (ngModelChange)="onGSRegSelect($event)" name="gsregion">
-            <option selected hidden value=""></option>
-            <option [ngValue]="i" *ngFor="let i of gsregions">{{i.name}}</option>
-        </select>
-    </div> -->
 
     <div class="sidebar-item">
         <span>Limit by Station Type:</span>
-        <select id="regSelect" [(ngModel)]="selectedStationType" (ngModelChange)="onStationTypeSelect($event)" name="stationType">
+        <select id="stSelect" [(ngModel)]="selectedStationType" (ngModelChange)="onStationTypeSelect($event)" name="stationType">
             <option selected hidden value=""></option>
             <option [ngValue]="i" *ngFor="let i of stationTypes">{{i.name}}</option>
         </select>
@@ -17,15 +10,14 @@
     
     <div class="sidebar-item">
         <span>Limit by Agency:</span>
-        <select>
+        <select id="agSelect" [(ngModel)]="selectedAgency" (ngModelChange)="onAgencySelect($event)" name="agency">
             <option selected hidden value=""></option>
-            <option [ngValue]="i" *ngFor="let i of agency">{{i.name}}</option>
+            <option [ngValue]="i" *ngFor="let i of agencies">{{i.name}}</option>
         </select>
     </div>
 
     <div class="footer-links">
         <div class="identification">Powered by <a href="https://wim.usgs.gov/" target="_blank">WiM</a></div>
-        <!--     <div class="identification pull-right">powered by <a href="https://wim.usgs.gov/" target="_blank">WiM</a></div>-->
         <a href="https://usgs.gov" target="_blank">USGS Home</a><a href="https://answers.usgs.gov" target="_blank">Contact
             USGS</a>
         <a href="https://search.usgs.gov" target="_blank">Search USGS</a>

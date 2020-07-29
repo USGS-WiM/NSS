@@ -23,9 +23,10 @@ export class GagestatsComponent implements OnInit {
   public editRegionScenario: boolean;
   public selectedStationType;
   public showStationType: boolean;
-  public stations: Station[];
+  public stations: Array<Station>;
   public selectedStations: Array<Station>;
-  public selectedAgencyIds;
+  public selectStations: Array<Station>;
+  public selectedAgency;
 
   loggedInRole;
 
@@ -55,16 +56,38 @@ export class GagestatsComponent implements OnInit {
     this.showStationType = false;
     this._nssService.selectedStationType.subscribe(stationtype => {
       this.selectedStationType = stationtype;
-      this.selectedStations = [];
+      //this.selectedStations = [];
+      this.selectedAgency = [];
+      
       if (stationtype) { this.showStationType = true; }
       window.scrollTo(0, 0);
-      this._nssService.getStationsByType(this.selectedStationType.id).subscribe(data => {
-          this.selectedStations = data;
-        });
-        this.selectedStations = 
+      var x = '';
+      if (this.selectedAgency.length > 0) {
+        x = '?agencies=' + this.selectedAgency.id;
+      };
+      this._nssService.getStationsByType(this.selectedStationType.id, x).subscribe((s: Array<Station>) => {
+        this.selectedStations = s;
+        //else if (this.selectedAgency.length === 0) {
+        //  this.selectedStations = this.selectedStations;
+        //} 
+      });  
+      
+         
       
     });
-    
+    /*
+    console.log(this.selectedStationType)
+    this._nssService.selectedAgency.subscribe(Agency => {
+      this.selectedAgency = Agency;
+      console.log(this.selectedAgency)
+      if (this.selectedAgency > 0) {
+        this.selectStations = [];
+        this._nssService.getStationsByAgency(this.selectedStationType.id, this.selectedAgency.id).subscribe((s: Array<Station>) => {
+          this.selectedStations = s;
+           });
+      }
+    });
+    */
 
   }   
 

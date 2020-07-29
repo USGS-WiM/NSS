@@ -35,6 +35,7 @@ export class AppComponent implements OnInit, OnDestroy {
     returnUrl: string;
     isLoggedIn: boolean;
     isloginShow: boolean;
+    showGageStats: boolean;
     public loginError = false;
     public showMobileMenu = false;
     constructor(
@@ -65,6 +66,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this._loginService.isloginShow().subscribe(loginShow => {
             this.isloginShow = loginShow;
+        });
+
+        this._nssService.showGageStats().subscribe(show => {
+            this.showGageStats = show;
         });
 
         this._loginService.isLoggedIn().subscribe(loggedIn => {

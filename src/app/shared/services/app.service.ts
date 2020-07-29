@@ -50,6 +50,12 @@ export class NSSService {
     public get getVersion(): any {
         return this.appversion.asObservable();
     }
+    // -+-+-+-+-+-+-+-+-+ show gagestats -+-+-+-+-+-+-+-+
+    private _showGageStatsSubject = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+    public showGageStats(): Observable<boolean> {
+        this._showGageStatsSubject = <BehaviorSubject<boolean>>new BehaviorSubject(this.configSettings.showGageStats);
+        return this._showGageStatsSubject.asObservable();
+    }
     // -+-+-+-+-+-+-+-+-+ about modal -+-+-+-+-+-+-+-+
     private _showHideAboutModal: Subject<boolean> = new Subject<boolean>();
     public setAboutModal(val: any) {

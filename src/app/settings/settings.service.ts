@@ -26,7 +26,6 @@ import { Manager } from 'app/shared/interfaces/manager';
 import { UnitSystem } from 'app/shared/interfaces/unitsystems';
 import { Citation } from 'app/shared/interfaces/citation';
 import { Error } from 'app/shared/interfaces/error';
-import { Agency } from 'app/shared/interfaces/agencies';
 import { ToasterService } from 'angular2-toaster';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
@@ -232,7 +231,7 @@ export class SettingsService {
     public setAgencies(a: Array<Agency>) {
         this._agenciesSubject.next(a);
     }
-    public setStationTypes(a: Array<StationType>) {
+    public setStationTypes(a: Array<Stationtype>) {
         this._stationTypeSubject.next(a);
     }
 }

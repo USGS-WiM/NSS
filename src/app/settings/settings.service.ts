@@ -1,3 +1,4 @@
+
 // ------------------------------------------------------------------------------
 // ----- settings.service..ts -----------------------------------------------
 // ------------------------------------------------------------------------------
@@ -25,10 +26,14 @@ import { Manager } from 'app/shared/interfaces/manager';
 import { UnitSystem } from 'app/shared/interfaces/unitsystems';
 import { Citation } from 'app/shared/interfaces/citation';
 import { Error } from 'app/shared/interfaces/error';
+<<<<<<< HEAD
 import { Users } from 'app/shared/interfaces/users';
 import { Agency } from 'app/shared/interfaces/agencies';
+=======
+>>>>>>> 63b9e6fa2b73b12e03538bcadd30c67e52d71d22
 import { ToasterService } from 'angular2-toaster';
-import { StationType } from 'app/shared/interfaces/stationtypes';
+import { Stationtype } from 'app/shared/interfaces/stationtype';
+import { Agency } from 'app/shared/interfaces/agency';
 
 @Injectable()
 export class SettingsService {
@@ -49,9 +54,12 @@ export class SettingsService {
     private _managersSubject: BehaviorSubject<Array<Manager>> = <BehaviorSubject<Manager[]>>new BehaviorSubject([]);
     private _citationsSubject: BehaviorSubject<Array<Citation>> = <BehaviorSubject<Citation[]>>new BehaviorSubject([]);
     private _errorsSubject: BehaviorSubject<Array<Error>> = <BehaviorSubject<Error[]>>new BehaviorSubject([]);
+<<<<<<< HEAD
     private _usersSubject: BehaviorSubject<Array<Users>> = <BehaviorSubject<Users[]>>new BehaviorSubject([]);
+=======
+    private _stationTypeSubject: BehaviorSubject<Array<Stationtype>> = <BehaviorSubject<Stationtype[]>>new BehaviorSubject([]);
+>>>>>>> 63b9e6fa2b73b12e03538bcadd30c67e52d71d22
     private _agenciesSubject: BehaviorSubject<Array<Agency>> = <BehaviorSubject<Agency[]>>new BehaviorSubject([]);
-    private _stationTypeSubject: BehaviorSubject<Array<StationType>> = <BehaviorSubject<StationType[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -95,7 +103,7 @@ export class SettingsService {
     public agencies(): Observable<Array<Agency>> {
         return this._agenciesSubject.asObservable();
     }
-    public stationTypes(): Observable<Array<StationType>> {
+    public stationTypes(): Observable<Array<Stationtype>> {
         return this._stationTypeSubject.asObservable();
     }
     public users(): Observable<Array<Users>> {
@@ -238,7 +246,7 @@ export class SettingsService {
     public setAgencies(a: Array<Agency>) {
         this._agenciesSubject.next(a);
     }
-    public setStationTypes(a: Array<StationType>) {
+    public setStationTypes(a: Array<Stationtype>) {
         this._stationTypeSubject.next(a);
     }
 }

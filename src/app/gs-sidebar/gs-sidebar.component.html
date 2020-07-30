@@ -1,0 +1,33 @@
+<div class="gs-sidebar-content">
+
+    <div class="sidebar-item">
+        <label>Limit by Station Type:</label>
+        <ss-multiselect-dropdown [options]="stationTypes" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedStationType" (ngModelChange)="onStationTypeSelect($event)" name="stationType">
+        </ss-multiselect-dropdown>
+    </div>
+    
+    <div class="sidebar-item">
+        <label>Limit by Agency:</label>
+        <ss-multiselect-dropdown [options]="agencies" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedAgency" (ngModelChange)="onAgencySelect($event)" name="agency">
+        </ss-multiselect-dropdown>
+    </div>
+
+    	<!-- Spacer - fills space to align footer at bottom -->
+	<div class="flex-spacer"></div>
+
+    <div class="sidebar-footer">
+        <div class="identification">Powered by <a href="https://wim.usgs.gov/" target="_blank">WiM <img src="assets/img/favicon-pin.png"/></a></div>
+        <div class="sidebar-footer-links">
+            <a href="https://usgs.gov" target="_blank">USGS Home</a><a href="https://answers.usgs.gov" target="_blank">Contact
+                USGS</a>
+            <a href="https://search.usgs.gov" target="_blank">Search USGS</a>
+            <a href="https://www2.usgs.gov/laws/accessibility.html" target="_blank">Accessibility</a>
+            <a href="https://www2.usgs.gov/foia/" target="_blank">FOIA</a>
+            <a href="https://www2.usgs.gov/laws/privacy.html" target="_blank">Privacy</a>
+            <a href="https://www2.usgs.gov/laws/policies_notices.html" target="_blank">Policies &amp; Notices</a>
+        </div>
+    </div>
+</div>
+

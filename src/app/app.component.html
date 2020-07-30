@@ -58,11 +58,13 @@
 </nav>
 
 <div class="app-body">
-	<!-- Sidebar -->
-	<wim-sidebar *ngIf="!router.url.startsWith('/settings') && !router.url.startsWith('/profile')" [class.visible]="showMobileMenu"></wim-sidebar>
+	<!-- Sidebars -->
+	<wim-sidebar class="app-sidebar" *ngIf="!router.url.startsWith('/settings') && !router.url.startsWith('/profile') && router.url.indexOf('/gagestats') === -1" [class.visible]="showMobileMenu"></wim-sidebar>
+	<gs-sidebar class="app-sidebar" *ngIf="router.url.indexOf('/gagestats') > -1" [class.visible]="showMobileMenu"></gs-sidebar>
 	<!-- Lightbox behind menu -->
 	<div id="sidebarLightbox" [class.visible]="showMobileMenu" (click)="showMobileMenu = false"></div>
 
+	
 
 	<!-- Main content -->
 	<div class="app-content" [class.no-padding]="router.url.startsWith('/settings') || router.url.startsWith('/profile')">

@@ -35,6 +35,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     public userInfo;
     public userInfoGageStats; // TODO: Delete once users/managers tables are connected between databases.
     public roles;
+    public users;
+    public userId;
     public tempData;
     public tempDataGageStats; // TODO: Delete once users/managers tables are connected between databases.
     public toast: Toast;
@@ -66,10 +68,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this._toasterService.pop(this.toast);
         });
         this.getLoggedInID();
+        this._settingsService.getEntitiesGageStats(this.configSettings.usersURL).subscribe(users => {
+            this.users = users;
+        });
         this._settingsService.getEntities(this.configSettings.rolesURL).subscribe(roles => {
             this.roles = roles;
             this.getUserInfo();
-        });
+        });    
     }
 
     private handleError(error: any) {
@@ -81,10 +86,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private getUserInfo() {
         this._settingsService.getEntities(this.configSettings.managersURL + '/' + this.loggedInID).subscribe(res => {
             this.userInfo = res;
-        });
-        // TODO: Delete once users/managers tables are connected between databases.
-        this._settingsService.getEntitiesGageStats(this.configSettings.usersURL + '/' + this.loggedInID).subscribe(res => {
-            this.userInfoGageStats = res;
+            // TODO: Delete once users/managers tables are connected between databases.
+            for (const user of this.users) {
+                if (user.username === this.userInfo.username) {
+                    this.userId = user.id
+                    this._settingsService.getEntitiesGageStats(this.configSettings.usersURL + '/' + this.userId).subscribe(res => {
+                        this.userInfoGageStats = res;
+                    });
+                }  
+            }
+            // end delete section 
         });
     }
 
@@ -94,9 +105,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     public editUser() {
         this.userInfo.isEditing = true;
-        this.userInfoGageStats.isEditing = true; // TODO: Delete once users/managers tables are connected between databases.
         this.tempData = Object.assign({}, this.userInfo);
-        this.tempDataGageStats = Object.assign({}, this.userInfoGageStats); // TODO: Delete once users/managers tables are connected between databases.
+        // TODO: Delete once users/managers tables are connected between databases.
+        if (this.userInfoGageStats.length > 0) {
+            this.userInfoGageStats.isEditing = true; 
+            this.tempDataGageStats = Object.assign({}, this.userInfoGageStats); 
+        }
+        // end delete section
         this.passwordTest = '';
     }
 
@@ -121,7 +136,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
                         this.router.navigate(['']);
                         this._nssService.setLoginModal(true);
                     }
-                    this.saveUserGageStats(); // TODO: Delete once users/managers tables are connected between databases.
+                    if (this.userInfoGageStats.length > 0) {
+                        this.saveUserGageStats(); // TODO: Delete once users/managers tables are connected between databases.
+                    }
+                    
                 }, error => {
                     if (this._settingsService.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating User', error._body.message || error.statusText);

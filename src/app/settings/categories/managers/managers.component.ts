@@ -49,6 +49,7 @@ export class ManagersComponent implements OnInit {
     public modalRef;
     public regionIDs = [];
     public regionNames = [];
+    public gageStatsUsers = [];
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -82,6 +83,9 @@ export class ManagersComponent implements OnInit {
         });
         this._settingsservice.getEntitiesGageStats(this.configSettings.usersURL).subscribe(users => {
             this.users = users;
+            for (const user of this.users) {
+                this.gageStatsUsers.push(user.username)
+            }
         });
     }
 

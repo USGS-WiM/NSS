@@ -17,6 +17,7 @@
                     <th class="col-xs-2">Last Name</th>
                     <th class="col-xs-2">Role</th>
                     <th class="col-xs-1">Regions</th>
+                    <th class="col-xs-1">GSS</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,6 +60,13 @@
                     </td>
                     <td>
                         <span *ngIf="!m.isEditing">{{getRegionNames(m)}}</span>
+                    </td>
+                    <td>
+                        <div *ngIf="!m.isEditing">
+                            <span *ngFor="let users of gageStatsUsers">
+                                <span *ngIf="m.username === users" class="fa fa-check"></span>
+                            </span>
+                        </div>
                     </td>
                 </tr>
             </tbody>

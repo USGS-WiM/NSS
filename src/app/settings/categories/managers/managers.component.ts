@@ -38,7 +38,7 @@ export class ManagersComponent implements OnInit {
     public newUserForm: FormGroup;
     public showUserForm: boolean;
     public managers: Array<Manager>;
-    public users: Array<Users>;
+    public users: Array<Users>; // TODO: Delete once users/managers tables are connected between databases.
     public loggedInRole;
     private CloseResult;
     private configSettings: Config;
@@ -49,7 +49,7 @@ export class ManagersComponent implements OnInit {
     public modalRef;
     public regionIDs = [];
     public regionNames = [];
-    public gageStatsUsers = [];
+    public gageStatsUsers = []; // TODO: Delete once users/managers tables are connected between databases.
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -81,12 +81,14 @@ export class ManagersComponent implements OnInit {
         this._settingsservice.getEntities(this.configSettings.rolesURL).subscribe(roles => {
             this.roles = roles;
         });
+        // TODO: Delete once users/managers tables are connected between databases.
         this._settingsservice.getEntitiesGageStats(this.configSettings.usersURL).subscribe(users => {
             this.users = users;
             for (const user of this.users) {
                 this.gageStatsUsers.push(user.username)
             }
         });
+        // end of delete section
     }
 
     public getRegionNames(m) {

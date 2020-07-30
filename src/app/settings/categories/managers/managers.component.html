@@ -10,14 +10,14 @@
         <table class="custom-table mtop-sm">
             <thead>
                 <tr>
-                    <th class="width-4"></th> <!-- TODO: Was at width-5, change back once users/managers tables are connected between databases. -->
-                    <th class="width-15">Username</th>
-                    <th class="width-15">Email</th>
-                    <th class="width-15">First name</th>
-                    <th class="width-15">Last Name</th>
-                    <th class="width-15">Role</th>
-                    <th class="width-20">Regions</th>
-                    <th class="width-4">GSS</th> <!-- TODO: Delete once users/managers tables are connected between databases. -->
+                    <th class="width-5"></th> 
+                    <th class="width-10">Username</th> <!-- TODO: Was at width-15, change back once users/managers tables are connected between databases. -->
+                    <th class="width-10">Email</th> <!-- TODO: Was at width-15, change back once users/managers tables are connected between databases. -->
+                    <th class="width-10">First name</th> <!-- TODO: Was at width-15, change back once users/managers tables are connected between databases. -->
+                    <th class="width-10">Last Name</th> <!-- TODO: Was at width-15, change back once users/managers tables are connected between databases. -->
+                    <th class="width-10">Role</th> <!-- TODO: Was at width-15, change back once users/managers tables are connected between databases. -->
+                    <th class="width-15">Regions</th> <!-- TODO: Was at width-20, change back once users/managers tables are connected between databases. -->
+                    <th class="width-10">GageStats Services User</th> <!-- TODO: Delete once users/managers tables are connected between databases. -->
                 </tr>
             </thead>
             <tbody>
@@ -64,8 +64,8 @@
                         <span *ngIf="!m.isEditing">{{getRegionNames(m)}}</span>
                     </td>
                     <!-- TODO: Delete once users/managers tables are connected between databases. -->
-                    <td>
-                        <span *ngFor="let users of gageStatsUsers">
+                    <td *ngIf="!m.isEditing || m.isEditing">
+                        <span  *ngFor="let users of gageStatsUsers" class="cell-buttons" >
                             <span *ngIf="m.username === users" class="fa fa-check"></span>
                         </span>
                     </td>

@@ -625,11 +625,11 @@ export class NSSService {
     // get stations by station type
     public getStationsByType(id: Array<number>, params?: string) {
         let url = ''
-        if (id.length === 0) {
-           id = null
+        if (id) {
+           url = "?stationTypes=" + id
        }
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + "?stationTypes=" + id + params)
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url + params)
     }
 
      // get stations by station type

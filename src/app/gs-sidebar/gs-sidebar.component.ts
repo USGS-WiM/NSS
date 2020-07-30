@@ -71,7 +71,7 @@ export class GsSidebarComponent implements OnInit {
   }  // end OnInit()
 
     // select Station Type. 
-    public onStationTypeSelect(s: Array<Stationtype>) {
+    public onStationTypeSelect(s) {
       //this._loaderService.showFullPageLoad();
       this.selectedAgency = [];
       this.stationType = s;

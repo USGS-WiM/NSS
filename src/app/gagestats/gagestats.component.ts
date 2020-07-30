@@ -57,8 +57,7 @@ export class GagestatsComponent implements OnInit {
       this.selectedStationType = s;
       this.selectedAgency = [];
       console.log(typeof s)
-      if (Object.keys(s).length !== 0) { this.showStationType = true; }
-      else if (Object.keys(s).length === 0) { this.showStationType = false; }
+      if (s) { this.showStationType = true; }
       window.scrollTo(0, 0);
       var x = '';
       this._nssService.getStationsByType(this.selectedStationType, x).subscribe((s: Array<Station>) => {

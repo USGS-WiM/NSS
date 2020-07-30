@@ -696,6 +696,7 @@ export class MainviewComponent implements OnInit {
             vals = '';
             for (var t = 0; t < tableRows[r].children.length; t++) {
                 let child = tableRows[r].children[t];
+                child.innerText = child.innerText.replace(",", ";");
                 if (child.localName == 'th') {
                     if (keys == '' && tableName == '')
                         tableName = inputTableStr.indexOf('Area-Averaged') == 0 ? 'Area_Averaged' : child.innerText;

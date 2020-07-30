@@ -36,7 +36,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     public userInfoGageStats; // TODO: Delete once users/managers tables are connected between databases.
     public roles;
     public users;
-    public userId;
+    public userId; // TODO: Delete once users/managers tables are connected between databases.
     public tempData;
     public tempDataGageStats; // TODO: Delete once users/managers tables are connected between databases.
     public toast: Toast;

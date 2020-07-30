@@ -10,14 +10,14 @@
         <table class="custom-table mtop-sm">
             <thead>
                 <tr>
-                    <th class="width-5"></th>
+                    <th class="width-4"></th> <!-- TODO: Was at width-5, change back once users/managers tables are connected between databases. -->
                     <th class="width-15">Username</th>
                     <th class="width-15">Email</th>
                     <th class="width-15">First name</th>
                     <th class="width-15">Last Name</th>
                     <th class="width-15">Role</th>
                     <th class="width-20">Regions</th>
-                    <th class="col-xs-5">GSS</th>
+                    <th class="width-4">GSS</th> <!-- TODO: Delete once users/managers tables are connected between databases. -->
                 </tr>
             </thead>
             <tbody>
@@ -25,8 +25,9 @@
                     <td class="table-icon-buttons">
 						<!--<button *ngIf="!m.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="icon-button" aria-hidden="true">
 							<i class="far fa-pencil"></i>
-						</button>-->
-						<button *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.id)" class="icon-button" aria-hidden="true">
+                        </button>-->
+                        <!-- TODO: Change "deleteManager(m.username)" back to "deleteManager(m.id)"once users/managers tables are connected between databases. -->
+						<button *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.username)" class="icon-button" aria-hidden="true">
 							<i class="far fa-times"></i>
 						</button>
 						<button *ngIf="m.isEditing" title="Save Manager" (click)="saveManager(m,i)" class="icon-button" aria-hidden="true">
@@ -62,13 +63,13 @@
                     <td>
                         <span *ngIf="!m.isEditing">{{getRegionNames(m)}}</span>
                     </td>
+                    <!-- TODO: Delete once users/managers tables are connected between databases. -->
                     <td>
-                        <div *ngIf="!m.isEditing">
-                            <span *ngFor="let users of gageStatsUsers">
-                                <span *ngIf="m.username === users" class="fa fa-check"></span>
-                            </span>
-                        </div>
+                        <span *ngFor="let users of gageStatsUsers">
+                            <span *ngIf="m.username === users" class="fa fa-check"></span>
+                        </span>
                     </td>
+                    <!-- end of delete section. -->
                 </tr>
             </tbody>
         </table>

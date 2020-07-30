@@ -22,7 +22,7 @@ import { LoginService } from 'app/shared/services/login.service';
 @Component({
     moduleId: module.id,
     templateUrl: 'profile.component.html',
-    styleUrls: ['profile.component.css']
+    styleUrls: ['profile.component.scss']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
     @ViewChild('UserInfo', {static: true}) userForm;

@@ -16,7 +16,7 @@ import { SettingsService } from './settings/settings.service';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
+    styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
 
@@ -35,7 +35,9 @@ export class AppComponent implements OnInit, OnDestroy {
     returnUrl: string;
     isLoggedIn: boolean;
     isloginShow: boolean;
+    showGageStats: boolean;
     public loginError = false;
+    public showMobileMenu = false;
     constructor(
         private _nssService: NSSService,
         public router: Router,
@@ -66,6 +68,10 @@ export class AppComponent implements OnInit, OnDestroy {
             this.isloginShow = loginShow;
         });
 
+        this._nssService.showGageStats().subscribe(show => {
+            this.showGageStats = show;
+        });
+
         this._loginService.isLoggedIn().subscribe(loggedIn => {
             this.isLoggedIn = loggedIn;
         });
@@ -87,15 +93,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.modalElement = this.loginModal;
         this.loginError = false;
 
-        // Ensures sidebar will appear if screen changes size
-        window.onresize = function (event) {
-            var sidebar = document.getElementById("wimSidebar");
-            if (window.innerWidth > 800) {
-                sidebar.style.display = "block";
-            } else {
-                sidebar.style.display = "none";
-            }
-        };
+    
 
     }
     // @ViewChild(NavbarComponent) navbarComponent: NavbarComponent;
@@ -185,16 +183,5 @@ export class AppComponent implements OnInit, OnDestroy {
         return tooOld;
     }
 
-    public toggleSidebar() {
-        // should allow sidebar to go in and come back out
-        var sidebar = document.getElementById("wimSidebar");
-        if (sidebar.style.display == "") {
-            sidebar.style.display = "block";
-        } else if (sidebar.style.display === "none") {
-            sidebar.style.display = "block";
-        } else {
-            sidebar.style.display = "none";
-        }
-    }
 
 }

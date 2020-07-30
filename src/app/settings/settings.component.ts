@@ -21,7 +21,7 @@ import { ConfigService } from '../config.service';
 @Component({
     moduleId: module.id,
     templateUrl: 'settings.component.html',
-    styleUrls: ['./settings.component.css']
+    styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit, OnDestroy {
     public services;
@@ -36,7 +36,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         public _nssService: NSSService,
         private _configService: ConfigService,
         private _toasterService: ToasterService,
-        private router: Router
+        public router: Router
     ) {
         this.configSettings = this._configService.getConfiguration();
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -47,6 +47,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+		
         if (localStorage.getItem('auth') === undefined) {
             this.router.navigate(['/']);
         }

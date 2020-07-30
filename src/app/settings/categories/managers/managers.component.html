@@ -1,39 +1,40 @@
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Managers</legend>
-</div>
+<h3 class="mbottom-md">Managers</h3>
 
-<button type="button" class="btn-blue" (click)="showNewUserForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New Manager</button>
+<button type="button" class="button small blue" (click)="showNewUserForm()">
+	<i class="far fa-plus" aria-hidden="true"></i> 
+	<span>Add New Manager</span>
+</button>
 
 <form #User TypeForm="ngForm">
     <div class="form-group" *ngIf="managers">
-        <table class="table">
+        <table class="custom-table mtop-sm">
             <thead>
                 <tr>
-                    <th class="col-xs-1"></th>
-                    <th class="col-xs-2">Username</th>
-                    <th class="col-xs-2">Email</th>
-                    <th class="col-xs-2">First name</th>
-                    <th class="col-xs-2">Last Name</th>
-                    <th class="col-xs-2">Role</th>
-                    <th class="col-xs-1">Regions</th>
-                    <th class="col-xs-1">GSS</th>
+                    <th class="width-5"></th>
+                    <th class="width-15">Username</th>
+                    <th class="width-15">Email</th>
+                    <th class="width-15">First name</th>
+                    <th class="width-15">Last Name</th>
+                    <th class="width-15">Role</th>
+                    <th class="width-20">Regions</th>
+                    <th class="col-xs-5">GSS</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let m of managers; let i = index">
-                    <td>
-                        <div class="data-controls">
-                            <!--<i *ngIf="!m.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="fa fa-pencil"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;-->
-                            <!-- TODO: Must change deleteManager Function back to having a deleteID only and change here from (click)="deleteManager(m.username)" tp (click)="deleteManager(m.id)" -->
-                            <i *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.username)" class="fa fa-times" 
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="m.isEditing" title="Save Manager" (click)="saveManager(m,i)" class="fa fa-floppy-o"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="m.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                        </div> 
+                    <td class="table-icon-buttons">
+						<!--<button *ngIf="!m.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="icon-button" aria-hidden="true">
+							<i class="far fa-pencil"></i>
+						</button>-->
+						<button *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.id)" class="icon-button" aria-hidden="true">
+							<i class="far fa-times"></i>
+						</button>
+						<button *ngIf="m.isEditing" title="Save Manager" (click)="saveManager(m,i)" class="icon-button" aria-hidden="true">
+							<i class="far fa-floppy-o"></i>
+						</button>
+						<button *ngIf="m.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button" aria-hidden="true">
+							<i class="far fa-history"></i>
+						</button>
                     </td>
                     <td>
                         <span *ngIf="!m.isEditing">{{ m.username }}</span>
@@ -77,14 +78,11 @@
 
 <!-- new user form -->
 <ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Manager </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
+	<div class="modal-header">
+		<div class="title">New Manager</div>  
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
     </div>
     <div class="modal-body">
-        <h3 class="modal-title">New Manager</h3>
         <form [formGroup]="newUserForm">
             <!-- UserName* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('username').valid && newUserForm.get('username').dirty}">
@@ -151,10 +149,11 @@
             <button *ngIf="role.value == 'Manager'" type="button" class="btn-blue" (click)="addRegion()">Add Region</button>
 
         </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewUser()" [disabled]="!newUserForm.valid" class="btn-blue">Create</button>
-        </div>
     </div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button">Cancel</button>
+		<button type="button" (click)="createNewUser()" [disabled]="!newUserForm.valid" class="button blue">Create</button>
+	</div>
 </ng-template>

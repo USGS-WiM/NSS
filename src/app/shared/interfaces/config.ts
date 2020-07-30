@@ -27,4 +27,5 @@ export interface Config {
     variablesURL: string;
     statusURL: string;
     loginShow: boolean;
+    showGageStats: boolean;
 }

@@ -4,7 +4,6 @@
     "agenciesURL": "Agencies",
     "citationURL": "Citations",
     "errorsURL": "Errors",
-    "gageURL": "https://test.streamstats.usgs.gov/gagestatsservices/",
     "loginURL": "authenticate",
     "managersURL": "Managers",
     "regionURL": "Regions/",

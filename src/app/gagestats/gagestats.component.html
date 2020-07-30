@@ -1,22 +1,23 @@
-<div id="printArea" class = "mainPage scrollable">
+<div id="printArea" class = "app-content">
 
-    <div><h3 style="font-size: 32px !important; font-weight: bolder !important;">{{title}}</h3></div>
-    <div style="margin-bottom: 5px; opacity: 0.5; letter-spacing: 0.6px;">{{timestamp | date:"MMMM d, y hh:mma"}}</div>
+    <h2 class="bold">{{title}}</h2>
+
+    <h4>{{timestamp | date:"MMMM d, y hh:mma"}}</h4>
 
     <div class="hidden-print">
-        <button *ngIf="loggedInRole" type="button" class="btn-wim-primary" style="margin: 15px 0px;" (click)="showAddStationModal()">Add Station</button>
-        <button *ngIf="loggedInRole" style="margin: 15px 5px;" (click)="bulkUpload()">Bulk Upload</button>
-        <button *ngIf="loggedInRole" type="button" class="btn-wim-primary" style="margin: 15px 5px;" (click)="export()">Export</button>
+        <button *ngIf="loggedInRole" type="button" class="button small blue mright-xs"  (click)="showAddStationModal()">Add Station</button>
+        <button *ngIf="loggedInRole" class="button small mright-xs" (click)="bulkUpload()">Bulk Upload</button>
+        <button *ngIf="loggedInRole" type="button" class="button small mright-xs" (click)="export()">Export</button>
     </div>
 
     <span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span> 
     <div class="col-md-6" style="padding: 0;">
-        <div *ngIf="showStationType">
-            <label style="margin-bottom: 0 !important; margin-top: 15px !important;">Station Type:</label>
-            <div style="font-weight: bolder !important; font-size: 18px !important;">{{selectedStationType.name}}</div>  
+        <div *ngIf="showStationType" class="app-body-section">
+            <label class="big">Station Type:</label>
+            <h5 class="bold">{{selectedStationType.name}}</h5>  
         </div>
     </div>
-    <br clear="all"/>
+
 
    <div class="hidden-print" *ngIf="showStationType">
         <table style="border:solid 1px gray" class="table"> 

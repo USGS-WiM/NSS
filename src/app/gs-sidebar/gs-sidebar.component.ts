@@ -4,26 +4,31 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { LoaderService } from 'app/shared/services/loader.service';
 import { Agency } from '../shared/interfaces/agency';
 import { Stationtype } from '../shared/interfaces/stationtype';
+import { IMultiSelectSettings, IMultiSelectTexts} from '../../../node_modules/angular-2-dropdown-multiselect';
 
 
 @Component({
   selector: 'gs-sidebar',
   templateUrl: './gs-sidebar.component.html',
-  styleUrls: ['./gs-sidebar.component.css']
+  styleUrls: ['./gs-sidebar.component.scss']
 })
 export class GsSidebarComponent implements OnInit {
 
   // station type
   public stationTypes: Array<Stationtype>;
   public stationType;
-  public selectedStationType: Stationtype;
+  public selectedStationType;
+  public showStationType: boolean;
 
   // agency
   public agency;
   public agencies: Array<Agency>;
   public selectedAgency: Array<Agency>;
  
-  //public selectedAgencyIDs: Array<number>;
+  // Dropdown menu default text
+  private myMSTexts: IMultiSelectTexts;
+  private myRTSettings: IMultiSelectSettings;
+
 
   constructor(private _nssService: NSSService, private _toasterService: ToasterService, private _loaderService: LoaderService) { }
 
@@ -32,19 +37,6 @@ export class GsSidebarComponent implements OnInit {
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
-      /* remove from selectedStationType if not in response.
-      if (this.selectedStationType !== undefined) {
-          if (st.length > 0) {
-              for (let sti = this.selectedStationType.length; sti--; ) {
-                  const STind = st
-                      .map(function(eachst) {
-                          return eachst.id;
-                      })
-                      .indexOf(this.selectedStationType[sti]);
-                  if (STind < 0) {this.selectedStationType.splice(sti, 1); }
-              }
-          } else { this.selectedStationType = []; }
-      }*/
     });
     this._nssService.selectedStationType.subscribe((s: Stationtype) => {
       if (s && s.id && this.stationTypes) {this.selectedStationType = this.stationTypes.find(sta => sta.id == s.id);}
@@ -55,15 +47,36 @@ export class GsSidebarComponent implements OnInit {
       this.agencies = ag;
     });
 
+    this.myRTSettings = {
+      pullRight: false,
+      enableSearch: false,
+      checkedStyle: 'glyphicon', // 'checkboxes',
+      buttonClasses: 'btn btn-default',
+      selectionLimit: 0,
+      closeOnSelect: false,
+      showCheckAll: true,
+      showUncheckAll: true,
+      dynamicTitleMaxItems: 2,
+      maxHeight: '300px'
+    };
+
+    this.myMSTexts = {
+      checkAll: 'Check all',
+      uncheckAll: 'Uncheck all',
+      checked: 'checked',
+      checkedPlural: 'checked',
+      defaultTitle: 'Select'
+    };
+
   }  // end OnInit()
 
     // select Station Type. 
-    public onStationTypeSelect(s: Stationtype) {
+    public onStationTypeSelect(s: Array<Stationtype>) {
       //this._loaderService.showFullPageLoad();
       this.selectedAgency = [];
       this.stationType = s;
       this._nssService.setSelectedStationType(s);
-      console.log(typeof this.selectedStationType)
+      console.log(this.selectedStationType)
     }
 
     // select Agency Type
@@ -73,17 +86,4 @@ export class GsSidebarComponent implements OnInit {
       console.log(typeof this.selectedAgency)
     }
 
-    /*public onAgencySelect(): void {
-      const selectedAgencies: Array<Agency> = new Array<Agency>();
-      this.selectedAgencyIDs.forEach(sa => {
-          // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
-          selectedAgencies.push(
-              this.agency.filter(function(a) {
-                  return a.id === sa;
-              })[0]
-          );
-      });
-      this._nssService.setSelectedAgency(selectedAgencies);
-    }*/
-  
 }

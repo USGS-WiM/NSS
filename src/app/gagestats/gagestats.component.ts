@@ -13,7 +13,7 @@ import { GagestatsService } from './gagestats.service';
 @Component({
   selector: 'app-gagestats',
   templateUrl: './gagestats.component.html',
-  styleUrls: ['./gagestats.component.css']
+  styleUrls: ['./gagestats.component.scss']
 })
 export class GagestatsComponent implements OnInit {
   public title: string;
@@ -46,49 +46,26 @@ export class GagestatsComponent implements OnInit {
           this.previousUrl = e.url;
       }
     });
-
-   }
+    }
 
   ngOnInit() {
     this.loggedInRole = localStorage.getItem('loggedInRole');
     this.title = 'Gage Stats';
     this.timestamp = new Date();
     this.showStationType = false;
-    this._nssService.selectedStationType.subscribe(stationtype => {
-      this.selectedStationType = stationtype;
-      //this.selectedStations = [];
+    this._nssService.selectedStationType.subscribe((s: Stationtype) => {
+      this.selectedStationType = s;
       this.selectedAgency = [];
-      
-      if (stationtype) { this.showStationType = true; }
+      console.log(typeof s)
+      if (Object.keys(s).length !== 0) { this.showStationType = true; }
+      else if (Object.keys(s).length === 0) { this.showStationType = false; }
       window.scrollTo(0, 0);
       var x = '';
-      if (this.selectedAgency.length > 0) {
-        x = '?agencies=' + this.selectedAgency.id;
-      };
-      this._nssService.getStationsByType(this.selectedStationType.id, x).subscribe((s: Array<Station>) => {
+      this._nssService.getStationsByType(this.selectedStationType, x).subscribe((s: Array<Station>) => {
         this.selectedStations = s;
-        //else if (this.selectedAgency.length === 0) {
-        //  this.selectedStations = this.selectedStations;
-        //} 
-      });  
-      
-         
-      
-    });
-    /*
-    console.log(this.selectedStationType)
-    this._nssService.selectedAgency.subscribe(Agency => {
-      this.selectedAgency = Agency;
-      console.log(this.selectedAgency)
-      if (this.selectedAgency > 0) {
-        this.selectStations = [];
-        this._nssService.getStationsByAgency(this.selectedStationType.id, this.selectedAgency.id).subscribe((s: Array<Station>) => {
-          this.selectedStations = s;
-           });
-      }
-    });
-    */
 
+      });  
+    });
   }   
 
   showAddStationModal(): void{

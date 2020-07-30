@@ -236,7 +236,7 @@ export class NSSService {
     // get all station types
     public getStationTypes(): void {
         this._http
-            .get(this.configSettings.gageURL + this.configSettings.stationTypeURL, { headers: this.jsonHeader })
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL, { headers: this.jsonHeader })
             .map(res => <Array<Stationtype>>res)
             .catch(this.handleError)
             .subscribe(r => {
@@ -268,7 +268,7 @@ export class NSSService {
     // get all station types
     public getAgencies(): void {
         this._http
-            .get(this.configSettings.gageURL + this.configSettings.agenciesURL, { headers: this.jsonHeader })
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL, { headers: this.jsonHeader })
             .map(res => <Array<Agency>>res)
             .catch(this.handleError)
             .subscribe(r => {
@@ -617,18 +617,19 @@ export class NSSService {
     }
 
     // get stations by station type
-    public getStationsByType(id: number, params?: string) {
-       if (params) {
-           params
+    public getStationsByType(id: Array<number>, params?: string) {
+        let url = ''
+        if (id.length === 0) {
+           id = null
        }
         return this._http
-            .get(this.configSettings.gageURL + this.configSettings.stationsURL + "?stationTypes=" + id + params)
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + "?stationTypes=" + id + params)
     }
 
      // get stations by station type
      public getStationsByAgency(id: number, id2: number){
         return this._http
-            .get(this.configSettings.gageURL + this.configSettings.stationsURL + "?stationTypes=" + id + "?agencies=" + id2)
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + "?stationTypes=" + id + "?agencies=" + id2)
     }
 
     // get regressionRegions by region

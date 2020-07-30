@@ -12,7 +12,6 @@ export interface Config {
     gageStatsBaseURL: string;
     citationURL: string;
     errorsURL: string;
-    gageURL: string;
     loginURL: string;
     managersURL: string;
     regionURL: string;

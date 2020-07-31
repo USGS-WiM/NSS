@@ -129,7 +129,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public CancelEditRowClicked() {
         this.itemBeingEdited.isEditing = false;
         this.filteredData[this.editIdx] = this.tempData;
-        this.citations = this.tempCitations
+        this.citations = this.tempCitations;
     }
 
     public saveCitation(c) {
@@ -183,17 +183,16 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
     public checkManagerCitations(c){
         if (this.loggedInRole == "Manager") {
-            return (this.managerCitations.filter(mc => mc.id == c.id).length > 0);
+            return this.managerCitations.filter(mc => mc.id == c.id).length > 0;
         } else {
-            return (true);
+            return true;
         }
     }
 
     public getManagerCitations() {
         this._settingsService.getEntities(this.configSettings.citationURL)
         .subscribe(res => {
-           this.managerCitations = res;
-           this.managerCitations = this.managerCitations.filter(item => item !== null);
+           this.managerCitations = res.filter(item => item !== null);
         })
     }
 

@@ -48,7 +48,7 @@
 						<td class="width-5">
 							<!-- Editing -->
 							<div [class.hidden]="!showAddCitations" class="cell-buttons">
-								<button *ngIf="!c.isEditing" title="Edit Citation"  (click)="editRowClicked(c, cIndex)" class="icon-button" [class.disabled-icon]="!checkManagerCitations(c)" aria-hidden="true">
+								<button *ngIf="!c.isEditing" title="Edit Citation"  (click)="editRowClicked(c, cIndex)" class="icon-button" [disabled]="!checkManagerCitations(c)" aria-hidden="true">
 									<i class="far fa-pencil"></i>
 								</button> 
 								<button *ngIf="c.isEditing" title="Save Citation" (click)="saveCitation(c)" class="icon-button" aria-hidden="true">
@@ -57,7 +57,7 @@
 								<button *ngIf="c.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="icon-button" aria-hidden="true">
 									<i class="far fa-history"></i>
 								</button>
-								<button *ngIf="!c.isEditing" title="Delete Citation" (click)="!c.regressionRegions?.length>0 && deleteCitation(c.id)" class="icon-button" [class.disabled-icon]="c.regressionRegions?.length>0" aria-hidden="true">
+								<button *ngIf="!c.isEditing" title="Delete Citation" (click)="deleteCitation(c.id)" class="icon-button" [disabled]="c.regressionRegions?.length>0" aria-hidden="true">
 									<i class="far fa-times"></i>
 								</button>
 							</div>

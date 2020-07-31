@@ -15,7 +15,6 @@ import { ConfigService } from 'app/config.service';
 import { Scenario } from 'app/shared/interfaces/scenario';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
-import { Citation } from 'app/shared/interfaces/citation';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 
@@ -42,6 +41,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public itemBeingEdited;
     public tempData;
     public editIdx;
+    public managerCitations: any[];
 
     constructor(private _http: HttpClient, private _nssService: NSSService, private _modalService: NgbModal,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -73,6 +73,9 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.scenarios = s;
             this.getCitations(); // get full list of citations
             this.getRegRegions(); // get list of regression regions for the region
+            if (this.loggedInRole == 'Manager') {
+                this.getManagerCitations();
+            }
         });
         this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((result: ManageCitation) => {
             if (result.show) { 
@@ -176,6 +179,22 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
                     this.filter(this.filterText);
                 }
             })
+    }
+
+    public checkManagerCitations(c){
+        if (this.loggedInRole == "Manager") {
+            return (this.managerCitations.filter(mc => mc.id == c.id).length > 0);
+        } else {
+            return (true);
+        }
+    }
+
+    public getManagerCitations() {
+        this._settingsService.getEntities(this.configSettings.citationURL)
+        .subscribe(res => {
+           this.managerCitations = res;
+           this.managerCitations = this.managerCitations.filter(item => item !== null);
+        })
     }
 
     public deleteCitation(id) {

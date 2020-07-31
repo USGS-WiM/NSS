@@ -48,7 +48,7 @@
 						<td class="width-5">
 							<!-- Editing -->
 							<div [class.hidden]="!showAddCitations" class="cell-buttons">
-								<button *ngIf="!c.isEditing" title="Edit Citation"  (click)="editRowClicked(c, cIndex)" class="icon-button" aria-hidden="true">
+								<button *ngIf="!c.isEditing" title="Edit Citation"  (click)="checkManagerCitations(c) && editRowClicked(c, cIndex)" class="icon-button" [class.disabled-icon]="!checkManagerCitations(c)" aria-hidden="true">
 									<i class="far fa-pencil"></i>
 								</button> 
 								<button *ngIf="c.isEditing" title="Save Citation" (click)="saveCitation(c)" class="icon-button" aria-hidden="true">

@@ -34,9 +34,9 @@ declare var MathJax: {
 };
 
 @Component({
-    selector: 'wim-mainview',
+	selector: 'wim-mainview',
     templateUrl: './mainview.component.html',
-    styleUrls: ['./mainview.component.css']
+    styleUrls: ['./mainview.component.scss']
 })
 export class MainviewComponent implements OnInit {
     @ViewChildren('inputsTable', { read: ViewContainerRef }) inputTable;
@@ -101,6 +101,7 @@ export class MainviewComponent implements OnInit {
     public configSettings: Config;
     public units;
     public errors;
+    public status;
     public regTypes;
     public tempData;
     public itemBeingEdited;
@@ -606,6 +607,10 @@ export class MainviewComponent implements OnInit {
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
         });
+        // get all status types (use for options in edit/add scenario selects)
+        this._settingsService.getEntities(this.configSettings.statusURL).subscribe(res => {
+            this.status = res;
+        });
     } // end ngOnInit()
 
     public saveFilters(){
@@ -691,6 +696,7 @@ export class MainviewComponent implements OnInit {
             vals = '';
             for (var t = 0; t < tableRows[r].children.length; t++) {
                 let child = tableRows[r].children[t];
+                child.innerText = child.innerText.replace(",", ";");
                 if (child.localName == 'th') {
                     if (keys == '' && tableName == '')
                         tableName = inputTableStr.indexOf('Area-Averaged') == 0 ? 'Area_Averaged' : child.innerText;
@@ -1405,6 +1411,16 @@ export class MainviewComponent implements OnInit {
         this.unusedRegRegions = this.regressionRegions.filter(entry1 => !this.regRegionsScenarios.some(entry2 => entry1.id === entry2.id));
     }
     
+    public getStatusDescription(sID) {
+        let statusName;
+        this.status.forEach(z => {
+                    if (sID === z.id) {
+                        statusName = z.name;
+                    }
+                });
+        return statusName;
+    }
+
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)

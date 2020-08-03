@@ -1,7 +1,10 @@
-<form class="wim-sidebar fixed" id="wimSidebar">
+<!-- Sidebar -->
+<!-- Hidden on mobile, toggled with button on nav -->
+
+<div class="sidebar-content">
 
     <div class="sidebar-item">
-        <span>Choose Region:</span>
+        <label>Choose Region:</label>
         <select id="regSelect" [(ngModel)]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
             <option selected hidden value=""></option>
             <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
@@ -11,8 +14,8 @@
 
     <div class="sidebar-item" *ngIf="statisticGroups">
         <span>
-            <span>Limit by Statistic Group(s):</span>
-            <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
+            <label>Limit by Statistic Group(s):</label>
+            <i *ngIf="loggedInRole != 'Administrator'" class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>
         <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings" name="selectedStatGrpIDs"
             [(ngModel)]="selectedStatGrpIDs" (ngModelChange)="onStatGrpSelect($event)">
@@ -21,11 +24,15 @@
 
 
     <div class="sidebar-item" *ngIf="regressionRegions">
-        <span>
-            <span>Limit by Hydrologic Region(s):</span>
-            <i *ngIf="loggedInRole == 'Administrator'" (click)="showAddRegRegion()" title="Add Regression Region" class="ion-plus-circled"></i>
-            <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
-        </span>
+        <div class="xs-f-btw">
+			<label>Limit by Hydrologic Region(s):</label>
+			<button class="icon-button hover-blue" (click)="showAddRegRegion()" *ngIf="loggedInRole == 'Administrator'" aria-label="Add Regression Region" >
+				<i class="far fa-plus-circle"></i>
+			</button>
+			<button class="icon-button hover-blue" *ngIf="loggedInRole != 'Administrator'" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click">
+				<i class="far fa-info-circle"></i>
+			</button>
+        </div>
         <ss-multiselect-dropdown [options]="regressionRegions" [texts]="myMSTexts" [settings]="myRRSettings" name="selectedRegRegionIDs"
             [(ngModel)]="selectedRegRegionIDs" (ngModelChange)="onRegressionRegSelect($event)"> 
         </ss-multiselect-dropdown>
@@ -34,8 +41,8 @@
 
     <div class="sidebar-item" *ngIf="regressionTypes">
         <span>
-            <span>Limit by Statistic(s):</span>
-            <i *ngIf="loggedInRole != 'Administrator'" class="ion-information-circled" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
+            <label>Limit by Statistic(s):</label>
+            <i *ngIf="loggedInRole != 'Administrator'" class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>
         <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="mySGSettings" name="selectedRegTypeIDs"
             [(ngModel)]="selectedRegTypeIDs" (ngModelChange)="onRegTypeSelect($event)">
@@ -44,44 +51,59 @@
 
 
     <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].regressionRegions.length > 0">
-        <label>Calculate Statistic:</label>
-        <button style="margin-top: 6px" [disabled]="scenarios[0].regressionRegions[0].Results != undefined || showCompute==false" type="button"
-            class="btn-black" (click)="CalculateScenario()">Compute</button>
+		<label class="block">Calculate Statistic:</label>
+		<div>
+			<button [disabled]="scenarios[0].regressionRegions[0].Results != undefined || showCompute==false" type="button"class="button full" (click)="CalculateScenario()">
+				<i class="far fa-check"></i>
+				<span>Compute</span>
+			</button>
+    	</div>  
     </div> <!-- end sidebar-item-->
 
-    <div class="sidebar-item" *ngIf="(selectedRegRegionIDs && selectedRegRegionIDs.length > 0) || (selectedRegTypeIDs && selectedRegTypeIDs.length > 0)
+    <div class="sidebar-item center" *ngIf="(selectedRegRegionIDs && selectedRegRegionIDs.length > 0) || (selectedRegTypeIDs && selectedRegTypeIDs.length > 0)
         || (selectedStatGrpIDs && selectedStatGrpIDs.length > 0)">
-        <button style="margin-top: 6px" type="button"
-            class="btn-wim-primary" (click)="clearSelections()">Reset Region Filters</button>
+        <button type="button" class="button blue small" (click)="clearSelections()">
+			<i class="far fa-times"></i>
+			<span>Reset Region Filters</span>
+		</button>
     </div> <!-- end sidebar-item-->
 
     <div class="sidebar-item" *ngIf="showChart">
         <label>Chart:</label>
-        <ul style="padding: 0px !important;">
-            <div *ngFor="let pt of plotTypes" (click)="selectChart(pt)">
-                <li style="list-style: none; cursor: pointer" class="simple-btn">{{pt}}</li>
-            </div>
-        </ul>
+		<div *ngFor="let pt of plotTypes">
+			<button class="button small black" (click)="selectChart(pt)">
+				<i class="far fa-chart-network"></i>
+				<span>{{pt}}</span>
+			</button>
+		</div>
     </div> <!-- end sidebar-item-->
 
     <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].regressionRegions.length > 0 && scenarios[0].regressionRegions[0].results != undefined">
         <label>Go To:</label>
-        <ul style="padding: 0 !important;">
-            <li style="list-style:none"><a pageScroll href="#citations" class="simple-btn-link">Citations</a></li>
-            <li *ngIf="showChart" style="list-style:none"><a pageScroll href="#chart" class="simple-btn-link">Charts</a></li>
-            <li style="list-style:none"><a pageScroll href="#appendix" class="simple-btn-link">Appendix</a></li>
+        <ul class="go-to-links">
+            <li><a href="#citations">Citations</a></li>
+            <li *ngIf="showChart"><a href="#chart">Charts</a></li>
+            <li><a href="#appendix">Appendix</a></li>
         </ul>
-    </div> <!-- end sidebar-item-->
+	</div> <!-- end sidebar-item-->
+	
 
-    <div class="footer-links">
-        <div class="identification">Powered by <a href="https://wim.usgs.gov/" target="_blank">WiM</a></div>
-        <!--     <div class="identification pull-right">powered by <a href="https://wim.usgs.gov/" target="_blank">WiM</a></div>-->
-        <a href="https://usgs.gov" target="_blank">USGS Home</a><a href="https://answers.usgs.gov" target="_blank">Contact
-            USGS</a>
-        <a href="https://search.usgs.gov" target="_blank">Search USGS</a>
-        <a href="https://www2.usgs.gov/laws/accessibility.html" target="_blank">Accessibility</a>
-        <a href="https://www2.usgs.gov/foia/" target="_blank">FOIA</a>
-        <a href="https://www2.usgs.gov/laws/privacy.html" target="_blank">Privacy</a>
-        <a href="https://www2.usgs.gov/laws/policies_notices.html" target="_blank">Policies &amp; Notices</a>
+	<!-- Spacer - fills space to align footer at bottom -->
+	<div class="flex-spacer"></div>
+
+
+	<!-- Footer, USGS Links -->
+    <div class="sidebar-footer">
+        <div class="identification">Powered by <a href="https://wim.usgs.gov/" target="_blank">WIM <img src="assets/img/favicon-pin.png"/></a></div>
+		
+		<div class="sidebar-footer-links">
+			<a href="https://usgs.gov" target="_blank">USGS Home</a><a href="https://answers.usgs.gov" target="_blank">Contact
+				USGS</a>
+			<a href="https://search.usgs.gov" target="_blank">Search USGS</a>
+			<a href="https://www2.usgs.gov/laws/accessibility.html" target="_blank">Accessibility</a>
+			<a href="https://www2.usgs.gov/foia/" target="_blank">FOIA</a>
+			<a href="https://www2.usgs.gov/laws/privacy.html" target="_blank">Privacy</a>
+			<a href="https://www2.usgs.gov/laws/policies_notices.html" target="_blank">Policies &amp; Notices</a>
+		</div>
     </div>
-</form>
+</div>

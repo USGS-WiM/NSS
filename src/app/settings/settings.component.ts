@@ -1,10 +1,10 @@
 // ------------------------------------------------------------------------------
-// ----- regions.component.ts -----------------------------------------------
+// ----- settings.component.ts -----------------------------------------------
 // ------------------------------------------------------------------------------
 
 // copyright:   2017 WiM - USGS
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
-// purpose: regions crud in admin settings page
+// purpose: settings crud in admin settings page
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
@@ -21,7 +21,7 @@ import { ConfigService } from '../config.service';
 @Component({
     moduleId: module.id,
     templateUrl: 'settings.component.html',
-    styleUrls: ['./settings.component.css']
+    styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit, OnDestroy {
     public services;
@@ -36,7 +36,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         public _nssService: NSSService,
         private _configService: ConfigService,
         private _toasterService: ToasterService,
-        private router: Router
+        public router: Router
     ) {
         this.configSettings = this._configService.getConfiguration();
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -47,6 +47,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+		
         if (localStorage.getItem('auth') === undefined) {
             this.router.navigate(['/']);
         }

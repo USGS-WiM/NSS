@@ -1,4 +1,4 @@
-<ng-template #addStation let-c="close" let-d="dismiss">
+<ng-template #addStation let-c="close" let-d="dismiss" class='modal-lg'>
     <div class="modal-header">
         <div class="col-xs-12">
             <h4 class="modal-title pull-left" > Add Station </h4>
@@ -8,7 +8,16 @@
     </div>
     <div class="modal-body">
         
+        <form [formGroup]="newStationForm">
+            <div class="form-group required" [ngClass]="{'form-invalid': !code.valid && code.touched}">
+                <label class="req" for="code">Code:</label><br/>
+                <label class="example-text">Example: "1111"</label>
+                <input class="form-control code" type="text" formControlName="code" required>
+                <div class="input-invalid-warning" *ngIf="!code.valid && code.touched">Station Code
+                    is required</div>
+            </div>
 
+        </form>
 
 
         <div class="modal-footer">

@@ -4,5 +4,6 @@ export interface Station {
     id: number;
     location: Location;
     name: string;
+    isRegulated: boolean;
     stationTypeID: string;
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { NSSService } from 'app/shared/services/app.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'app/settings/settings.service';
@@ -25,8 +25,18 @@ export class AddStationModal implements OnInit {
   constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
     private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
     private _authService: AuthService) {
+    this.addStationForm = _fb.group({
+      'code': new FormControl(null),
+      'agencyID': new FormControl(null, Validators.required),
+      'name': new FormControl(null),
+      'stationTypeID': new FormControl(null, Validators.required),
+      'location': this._fb.group({
+          'latitude': new FormControl(null, Validators.required),
+          'longitude': new FormControl(null, Validators.required),
+      }),
+    });
 
-      this.configSettings = this._configService.getConfiguration();
+    this.configSettings = this._configService.getConfiguration();
       
       /*
       STATION OBJECT EXAMPLE
@@ -47,7 +57,7 @@ export class AddStationModal implements OnInit {
       /* this.addStationForm = _fb.group({
         
       }); */
-    }
+  }
 
   ngOnInit() {
     this.modalSubscription = this._nssService.showAddStationModal.subscribe((show: boolean) => {
@@ -70,16 +80,15 @@ export class AddStationModal implements OnInit {
         
         }
     );
-    /* if (this.cloneParameters != " "){
-        this.clearScenario();
-        this.clone = true;
-        this.cloneScenario();
-        this.newScenForm.addControl('region', this._fb.control('', Validators.required));
-    }else{
-        this.clearScenario();
-        this.clone = false;
-    } */
-}
+  }
   
+  public clearStation() {
+    this.addStationForm.reset();
+
+  }
+
+  public addNewStation() {
+    
+  }
 
 }

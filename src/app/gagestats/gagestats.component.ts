@@ -25,8 +25,8 @@ export class GagestatsComponent implements OnInit {
   public showStationType: boolean;
   public stations: Array<Station>;
   public selectedStations: Array<Station>;
-  public selectStations: Array<Station>;
   public selectedAgency;
+  public term: string;
 
   loggedInRole;
 
@@ -53,19 +53,27 @@ export class GagestatsComponent implements OnInit {
     this.title = 'Gage Stats';
     this.timestamp = new Date();
     this.showStationType = false;
+    this._nssService.cast.subscribe(term=> this.term = term);
+    if (this.term > '') {
+      this._nssService.searchStations(this.term).subscribe((s: Array<Station>) => {
+        this.selectedStations = s;
+      });
+    } 
+    console.log(this.term)
     this._nssService.selectedStationType.subscribe((s: Stationtype) => {
       this.selectedStationType = s;
       this.selectedAgency = [];
-      console.log(typeof s)
       if (s) { this.showStationType = true; }
       window.scrollTo(0, 0);
       var x = '';
       this._nssService.getStationsByType(this.selectedStationType, x).subscribe((s: Array<Station>) => {
         this.selectedStations = s;
-
       });  
     });
+
   }   
+
+  
 
   showAddStationModal(): void{
     this.gagestatsService.addStation();

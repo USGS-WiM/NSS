@@ -1,6 +1,16 @@
 <div class="gs-sidebar-content">
 
     <div class="sidebar-item">
+        <label>Search Stations:</label>
+        
+            <input type="text" [(ngModel)]="searchText"  placeholder="Search">
+            <button class="button" (click)="onSearchText($event)">Search</button>
+        
+    </div>
+
+    <hr style="color:black">  <!--This isn't displaying! Why? Is it a scss thing?-->
+
+    <div class="sidebar-item">
         <label>Limit by Station Type:</label>
         <ss-multiselect-dropdown [options]="stationTypes" [texts]="myMSTexts" [settings]="myRTSettings"
         [(ngModel)]="selectedStationType" (ngModelChange)="onStationTypeSelect($event)" name="stationType">

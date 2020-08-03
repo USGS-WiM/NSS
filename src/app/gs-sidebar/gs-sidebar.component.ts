@@ -29,6 +29,8 @@ export class GsSidebarComponent implements OnInit {
   private myMSTexts: IMultiSelectTexts;
   private myRTSettings: IMultiSelectSettings;
 
+  public term: string;
+  public searchText: string;
 
   constructor(private _nssService: NSSService, private _toasterService: ToasterService, private _loaderService: LoaderService) { }
 
@@ -41,7 +43,7 @@ export class GsSidebarComponent implements OnInit {
     this._nssService.selectedStationType.subscribe((s: Stationtype) => {
       if (s && s.id && this.stationTypes) {this.selectedStationType = this.stationTypes.find(sta => sta.id == s.id);}
     });
-
+    this._nssService.cast.subscribe(term=> this.term = term);
     this._nssService.getAgencies();
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
@@ -70,20 +72,25 @@ export class GsSidebarComponent implements OnInit {
 
   }  // end OnInit()
 
+    // search with searchText
+    public onSearchText() {
+      //this.term = t;
+      this._nssService.editTerm(this.searchText);
+      console.log(this.term)
+    }
+
     // select Station Type. 
     public onStationTypeSelect(s) {
       //this._loaderService.showFullPageLoad();
       this.selectedAgency = [];
       this.stationType = s;
       this._nssService.setSelectedStationType(s);
-      console.log(this.selectedStationType)
     }
 
     // select Agency Type
     public onAgencySelect(a: Agency) {
       this.agency = a;
       this._nssService.setSelectedAgency(a);
-      console.log(typeof this.selectedAgency)
     }
 
 }

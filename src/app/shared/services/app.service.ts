@@ -39,6 +39,8 @@ export class NSSService {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('auth') || ''
     });
+    private term = new BehaviorSubject<string>('');
+    cast = this.term.asObservable();
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService, private _loaderService: LoaderService) {
         this.configSettings = this._configService.getConfiguration();
         this.getRegions();
@@ -173,6 +175,11 @@ export class NSSService {
     }
     public getToast(): Observable<Toast> {
         return this.toastBind.asObservable();
+    }
+
+    // -+-+-+-+-+-+ Search Term -+-+-+-+-+-+
+    public editTerm(newTerm) {
+        this.term.next(newTerm);
     }
 
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
@@ -636,6 +643,12 @@ export class NSSService {
      public getStationsByAgency(id: number, id2: number){
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + "?stationTypes=" + id + "?agencies=" + id2)
+    }
+
+    // get stations by text search
+    public searchStations(term: string) {
+        return this._http
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + "?filterText=" + term)
     }
 
     // get regressionRegions by region

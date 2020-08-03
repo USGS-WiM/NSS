@@ -1,30 +1,36 @@
-<ng-template #addStation let-c="close" let-d="dismiss" class='modal-lg'>
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left" > Add Station </h4>
+<ng-template #addStation let-c="close" let-d="dismiss" >
+    <div>
+        <div class="modal-header">
+            <h4 class="title" > Add Station </h4>
             <!--close and save-->
-            <button class="close pull-right" (click)="c('closed')">x</button><br><br>
+            <button class="icon-button" (click)="c('closed')"><i class="far fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            
+            <form [formGroup]="addStationForm">
+                <div class="form-group required">
+                    <label class="req" for="code">Code:</label><br/>
+                    <label class="example-text">Example: "1111"</label>
+                    <input class="form-control code" type="text" formControlName="code" required>
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('code').valid && addStationForm.get('code').touched">Station Code
+                        is required</div>
+                </div>
+    
+            </form>
+    
+    
+            
         </div>
     </div>
-    <div class="modal-body">
-        
-        <form [formGroup]="newStationForm">
-            <div class="form-group required" [ngClass]="{'form-invalid': !code.valid && code.touched}">
-                <label class="req" for="code">Code:</label><br/>
-                <label class="example-text">Example: "1111"</label>
-                <input class="form-control code" type="text" formControlName="code" required>
-                <div class="input-invalid-warning" *ngIf="!code.valid && code.touched">Station Code
-                    is required</div>
-            </div>
 
-        </form>
-
-
-        <div class="modal-footer">
-            <!--close and save-->
-            <button type="button" (click)="clearStation()" class="btn-black">Clear All</button>
-            <button type="button" (click)="c('closed')" class="btn-black">Cancel</button>
-            <button type="button" (click)="addNewStation()" class="btn-blue">Add</button>
+    <div class="modal-body-footer">
+        <!--close and save-->
+        <div class ="xs-f-btw">
+            <button type="button" (click)="clearStation()" class="button red mright-xs">Clear All</button>
+            <button type="button" (click)="c('closed')" class="button black">Cancel</button>
+            <div class="flex-spacer"></div>
+            <button type="button" (click)="addNewStation()" [disabled]="!addStationForm.valid" class="button blue">Add</button>
         </div>
+        
     </div>
 </ng-template>

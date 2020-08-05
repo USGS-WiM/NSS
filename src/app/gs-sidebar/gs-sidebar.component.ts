@@ -43,7 +43,9 @@ export class GsSidebarComponent implements OnInit {
     this._nssService.selectedStationType.subscribe((s: Stationtype) => {
       if (s && s.id && this.stationTypes) {this.selectedStationType = this.stationTypes.find(sta => sta.id == s.id);}
     });
-    this._nssService.cast.subscribe(term=> this.term = term);
+    this._nssService.term.subscribe((t: string) => {
+      this.term = t;
+    });
     this._nssService.getAgencies();
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
@@ -73,16 +75,15 @@ export class GsSidebarComponent implements OnInit {
   }  // end OnInit()
 
     // search with searchText
-    public onSearchText() {
-      //this.term = t;
-      this._nssService.editTerm(this.searchText);
-      console.log(this.term)
+    public onSearchText(searchText: string) {
+      this.term = searchText;
+      this._nssService.setTerm(searchText);
     }
 
     // select Station Type. 
     public onStationTypeSelect(s) {
       //this._loaderService.showFullPageLoad();
-      this.selectedAgency = [];
+      //this.selectedAgency = [];
       this.stationType = s;
       this._nssService.setSelectedStationType(s);
     }

@@ -39,8 +39,7 @@ export class NSSService {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('auth') || ''
     });
-    private term = new BehaviorSubject<string>('');
-    cast = this.term.asObservable();
+
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService, private _loaderService: LoaderService) {
         this.configSettings = this._configService.getConfiguration();
         this.getRegions();
@@ -178,8 +177,14 @@ export class NSSService {
     }
 
     // -+-+-+-+-+-+ Search Term -+-+-+-+-+-+
-    public editTerm(newTerm) {
-        this.term.next(newTerm);
+    private _term = new BehaviorSubject<string>('');
+
+    public setTerm(newTerm: string) {
+        this._term.next(newTerm);
+    }
+
+    public get term(): Observable<string> {
+        return this._term.asObservable();
     }
 
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
@@ -646,9 +651,22 @@ export class NSSService {
     }
 
     // get stations by text search
-    public searchStations(term: string) {
+    public searchStations(term: string, id: Array<number>, params?: string) {
+        let url = ''
+        let url2 = ''
+        let url3 = ''
+        if (term) {
+            url = "?filterText=" + term
+        }
+        if (id.length > 0) {
+           url2 = "?stationTypes=" + id
+       }
+       if (term && id.length > 0) {
+           url = '', url2 = ''
+           url3 = "?filterText=" + term + "&stationTypes=" + id
+       }
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + "?filterText=" + term)
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url + url2 + url3 + params )
     }
 
     // get regressionRegions by region

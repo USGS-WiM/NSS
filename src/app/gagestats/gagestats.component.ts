@@ -4,6 +4,8 @@ import { Stationtype } from '../shared/interfaces/stationtype';
 import { Router, NavigationStart } from '@angular/router';
 import { Station } from '../shared/interfaces/station';
 import { GagestatsService } from './gagestats.service';
+import { Agency } from 'app/shared/interfaces/agencies';
+import { StationType } from 'app/shared/interfaces/stationtypes';
 
 @Component({
   selector: 'app-gagestats',
@@ -22,8 +24,9 @@ export class GagestatsComponent implements OnInit {
   public selectedStations: Array<Station>;
   public selectStations: Array<Station>;
   public selectedAgency;
-
-  loggedInRole;
+  public agencies: Array<Agency>;
+  public stationTypes: Array<StationType>
+  public loggedInRole;
 
   constructor(
     private router: Router,
@@ -58,10 +61,38 @@ export class GagestatsComponent implements OnInit {
         this.selectedStations = s;
       });  
     });
+    this._nssService.agencies.subscribe((ag: Array<Agency>) => {
+      this.agencies = ag;
+    });
+    this._nssService.stationTypes.subscribe((sationtypes: Array<Agency>) => {
+      this.stationTypes = sationtypes;
+    });
   }   
 
   showAddStationModal(): void{
     this.gagestatsService.addStation();
+  }
+
+  public getAgencyName(aID) {
+    let acencyName;
+    if (this.agencies) {
+      this.agencies.forEach(z => {
+          if (aID === z.id) {
+            acencyName = z.name;
+          }
+      });
+    }
+    return acencyName;
+  }
+
+  public getStationType(sID) {
+    let stationTypeName;
+    this.stationTypes.forEach(z => {
+        if (sID === z.id) {
+          stationTypeName = z.name;
+        }
+    });
+    return stationTypeName;
   }
 
   //TODO: Bulk Upload Button

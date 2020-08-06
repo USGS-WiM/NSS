@@ -34,8 +34,8 @@
             </thead>
             <tbody>
                 <tr *ngFor = "let s of selectedStations">
-                    <td>{{s.stationTypeID}}</td>
-                    <td>{{s.agencyID}}</td>
+                    <td>{{getStationType(s.stationTypeID)}}</td>
+                    <td>{{getAgencyName(s.agencyID)}}</td>
                     <td>{{s.code}}</td>
                     <td>{{s.name}}</td>
                     <td>{{s.location.coordinates[1]}}</td>

@@ -5,4 +5,5 @@ export interface Station {
     location: Location;
     name: string;
     stationTypeID: string;
+    isRegulated: boolean;
 }

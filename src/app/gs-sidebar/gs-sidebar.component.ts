@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NSSService } from '../shared/services/app.service';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
-import { LoaderService } from 'app/shared/services/loader.service';
 import { Agency } from '../shared/interfaces/agency';
 import { Stationtype } from '../shared/interfaces/stationtype';
 import { IMultiSelectSettings, IMultiSelectTexts} from '../../../node_modules/angular-2-dropdown-multiselect';
@@ -30,7 +28,7 @@ export class GsSidebarComponent implements OnInit {
   private myRTSettings: IMultiSelectSettings;
 
 
-  constructor(private _nssService: NSSService, private _toasterService: ToasterService, private _loaderService: LoaderService) { }
+  constructor(private _nssService: NSSService) { }
 
   ngOnInit() {
 
@@ -72,18 +70,15 @@ export class GsSidebarComponent implements OnInit {
 
     // select Station Type. 
     public onStationTypeSelect(s) {
-      //this._loaderService.showFullPageLoad();
       this.selectedAgency = [];
       this.stationType = s;
       this._nssService.setSelectedStationType(s);
-      console.log(this.selectedStationType)
     }
 
     // select Agency Type
     public onAgencySelect(a: Agency) {
       this.agency = a;
       this._nssService.setSelectedAgency(a);
-      console.log(typeof this.selectedAgency)
     }
 
 }

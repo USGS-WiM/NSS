@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NSSService } from '../shared/services/app.service';
-import { Toast } from 'angular2-toaster/src/toast';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
-import { LoaderService } from 'app/shared/services/loader.service';
-import { Agency } from '../shared/interfaces/agency';
 import { Stationtype } from '../shared/interfaces/stationtype';
 import { Router, NavigationStart } from '@angular/router';
-import { SettingsService } from 'app/settings/settings.service';
 import { Station } from '../shared/interfaces/station';
 import { GagestatsService } from './gagestats.service';
 
@@ -56,13 +51,11 @@ export class GagestatsComponent implements OnInit {
     this._nssService.selectedStationType.subscribe((s: Stationtype) => {
       this.selectedStationType = s;
       this.selectedAgency = [];
-      console.log(typeof s)
       if (s) { this.showStationType = true; }
       window.scrollTo(0, 0);
       var x = '';
       this._nssService.getStationsByType(this.selectedStationType, x).subscribe((s: Array<Station>) => {
         this.selectedStations = s;
-
       });  
     });
   }   
@@ -71,12 +64,12 @@ export class GagestatsComponent implements OnInit {
     this.gagestatsService.addStation();
   }
 
+  //TODO: Bulk Upload Button
   bulkUpload(): void{
-    console.log("bulk upload clicked, does nothing else @ this time.")
   }
 
+  //TODO: Export Button
   export(): void{
-    console.log("export clicked, does nothing else")
   }
 
 }

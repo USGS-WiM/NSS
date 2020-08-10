@@ -7,6 +7,7 @@ import { ConfigService } from 'app/config.service';
 import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Config } from 'app/shared/interfaces/config';
+import { Agency } from 'app/shared/interfaces/agency';
 
 @Component({
   selector: 'addStationModal',
@@ -17,6 +18,7 @@ export class AddStationModal implements OnInit {
   @ViewChild('addStation', {static: true}) public addStationModal;
   private configSettings: Config;
   private modalElement: any;
+  public agencies: Array<Agency>;
   public modalSubscription: any;
   public modalRef;
   public addStationForm: FormGroup;
@@ -26,14 +28,13 @@ export class AddStationModal implements OnInit {
     private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
     private _authService: AuthService) {
     this.addStationForm = _fb.group({
-      'code': new FormControl(null),
-      'agencyID': new FormControl(null, Validators.required),
-      'name': new FormControl(null),
-      'stationTypeID': new FormControl(null, Validators.required),
-      'location': this._fb.group({
-          'latitude': new FormControl(null, Validators.required),
-          'longitude': new FormControl(null, Validators.required),
-      }),
+      code : new FormControl(null, Validators.required),
+      agencyID : new FormControl(null, Validators.required),
+      name : new FormControl(null),
+      stationTypeID : new FormControl( null, Validators.required),
+      latitude : new FormControl(null, [Validators.min(-90), Validators.max(90), Validators.required] ),
+      longitude : new FormControl(null, [Validators.min(-180), Validators.max(180), Validators.required]),
+
     });
 
     this.configSettings = this._configService.getConfiguration();
@@ -63,8 +64,11 @@ export class AddStationModal implements OnInit {
     this.modalSubscription = this._nssService.showAddStationModal.subscribe((show: boolean) => {
       if (show) { this.showModal(); }
     });
-
     this.modalElement = this.addStationModal;
+
+    this._nssService.agencies.subscribe((agencyList: Array<Agency>) => {
+      this.agencies = agencyList;
+    })
   }
 
   public showModal(): void {

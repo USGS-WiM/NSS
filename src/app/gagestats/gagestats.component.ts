@@ -28,7 +28,7 @@ export class GagestatsComponent implements OnInit {
   public selectStations: Array<Station>;
   public selectedAgency;
   public agencies: Array<Agency>;
-  public stationTypes: Array<StationType>
+  public stationTypes: Array<StationType>;
   public loggedInRole;
   public lastPageNumber;
   public currentPageNumber;
@@ -73,7 +73,6 @@ export class GagestatsComponent implements OnInit {
         let response = ((res.headers.get('x-usgswim-messages')));
         this.lastPageNumber = (response.slice(response.indexOf("of") + "of".length));
         this.lastPageNumber = (this.lastPageNumber.substr(0, this.lastPageNumber.indexOf('.'))); 
-
         this.currentPageNumber = (response.slice(response.indexOf("page") + "page".length));
         this.currentPageNumber = (this.currentPageNumber.substr(0, this.currentPageNumber.indexOf('of'))); 
       });

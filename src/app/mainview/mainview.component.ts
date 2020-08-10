@@ -250,6 +250,9 @@ export class MainviewComponent implements OnInit {
                         rr.results.forEach(R => {
                             if (eqResult.name != '') {
                                 eqResult.formulas.push({ Code: R.code, Equation: this.buildEquation(rr.parameters, R.equation) });
+                                eqResult.formulas.forEach(r => {
+                                    r.Equation= r.Equation.replace(/_/g, ' \\_');
+                                });
                                 equationString += R.code + '= ,' + R.equation + '\r\n';
                             }
                         });

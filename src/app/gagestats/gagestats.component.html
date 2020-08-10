@@ -14,10 +14,15 @@
     <div class="col-md-6" style="padding: 0;">
         <div *ngIf="showStationType" class="app-body-section">
             <label class="big">Station Type:</label>
-            <h5 class="bold">{{selectedStationType.name}}</h5>  
+            <h5 class="bold">{{selectedStationType}}</h5>  
         </div>
     </div>
 
+    <div *ngIf="showStationType" class="form-group">
+        <label>Page</label>
+        <input [value]="currentPageNumber" (change)="newPage($event)"/>
+        <label >of {{lastPageNumber}}</label>
+    </div>
 
    <div class="hidden-print" *ngIf="showStationType">
         <table style="border:solid 1px gray" class="table"> 

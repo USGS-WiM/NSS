@@ -624,12 +624,23 @@ export class NSSService {
 
     // get stations by station type
     public getStationsByType(id: Array<number>, params?: string) {
-        let url = ''
+        let url = '';
         if (id) {
-           url = "?stationTypes=" + id
+           url = "?stationTypes=" + id;
        }
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url + params)
+    }
+
+    // get page number of stations by station type
+    public getPageStationsByType(id: Array<number>, params?: string) {
+        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };       
+        let url = '';
+        if (id) {
+           url = "?stationTypes=" + id;
+       }
+        return this._http
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url + params, options) 
     }
 
      // get stations by station type
@@ -637,6 +648,8 @@ export class NSSService {
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + "?stationTypes=" + id + "?agencies=" + id2)
     }
+
+    // TODO: get page number of stations by agency type
 
     // get regressionRegions by region
     private getRegionRegressionRegions(id: number, params?: string) {

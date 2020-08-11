@@ -54,24 +54,17 @@ export class GagestatsComponent implements OnInit {
     this.title = 'Gage Stats';
     this.timestamp = new Date();
     this.showStationType = false;
+    this._nssService.selectedStationType.subscribe((s: Stationtype) => {
+      this.selectedStationType = s;
+    });
     this._nssService.term.subscribe(t => {
       this.term = t;
-      this._nssService.selectedStationType.subscribe((s: Stationtype) => {
-        this.selectedStationType = s;
-        if (this.selectedStationType > []) {
-          this.showStationType = true;
-        }
-      });
       var x = '';
       this._nssService.searchStations(this.term, this.selectedStationType, x).subscribe((s: Array<Station>) => {
         this.selectedStations = s;
       });
-
     });
-
   }   
-
-  
 
   showAddStationModal(): void{
     this.gagestatsService.addStation();

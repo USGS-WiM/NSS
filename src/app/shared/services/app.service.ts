@@ -634,39 +634,14 @@ export class NSSService {
             .map(res => <Array<Variabletype>>res);
     }
 
-    // get stations by station type
-    public getStationsByType(id: Array<number>, params?: string) {
-        let url = ''
-        if (id) {
-           url = "?stationTypes=" + id
-       }
-        return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url + params)
-    }
-
-     // get stations by station type
-     public getStationsByAgency(id: number, id2: number){
-        return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + "?stationTypes=" + id + "?agencies=" + id2)
-    }
-
-    // get stations by text search
+    // get stations by text search, station type and other param
     public searchStations(term: string, id: Array<number>, params?: string) {
-        let url = ''
-        let url2 = ''
-        let url3 = ''
-        if (term) {
-            url = "?filterText=" + term
-        }
-        if (id.length > 0) {
-           url2 = "?stationTypes=" + id
-       }
-       if (term && id.length > 0) {
-           url = '', url2 = ''
-           url3 = "?filterText=" + term + "&stationTypes=" + id
-       }
+        if (term) {term = term}
+        else {term = ''};
+        const url = "?filterText=" + term + "&stationTypes=" + id;
+        console.log(url);
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url + url2 + url3 + params )
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url + params )
     }
 
     // get regressionRegions by region

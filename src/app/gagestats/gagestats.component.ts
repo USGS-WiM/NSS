@@ -21,13 +21,10 @@ export class GagestatsComponent implements OnInit {
   private navigationSubscription;
   public previousUrl;
   public editRegionScenario: boolean;
-  public selectedStationType;
   public showStationType: boolean;
   public stations: Array<Station>;
   public selectedStations: Array<Station>;
   public selectedAgency;
-  public term: string;
-  public id: Array<number>;
 
   loggedInRole;
 
@@ -40,10 +37,6 @@ export class GagestatsComponent implements OnInit {
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationStart) {
           this.router.navigated = false;
-          if (this.previousUrl === '/settings' || this.previousUrl === '/profile') {
-              this._nssService.setSelectedStationType(undefined);
-              this.showStationType = false;
-          }
           this.previousUrl = e.url;
       }
     });
@@ -54,16 +47,11 @@ export class GagestatsComponent implements OnInit {
     this.title = 'Gage Stats';
     this.timestamp = new Date();
     this.showStationType = false;
-    this._nssService.selectedStationType.subscribe((s: Stationtype) => {
-      this.selectedStationType = s;
-    });
-    this._nssService.term.subscribe(t => {
-      this.term = t;
-      var x = '';
-      this._nssService.searchStations(this.term, this.selectedStationType, x).subscribe((s: Array<Station>) => {
+
+    // subscribe to stations subject, which is set in the service's searchStations() function
+    this._nssService.Stations.subscribe((s: Array<Station>) => {
         this.selectedStations = s;
       });
-    });
   }   
 
   showAddStationModal(): void{

@@ -26,6 +26,7 @@ import { LoaderService } from './loader.service';
 import { ManageCitation } from '../interfaces/managecitations';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
+import { Station } from '../interfaces/station';
 
 @Injectable()
 export class NSSService {
@@ -176,15 +177,15 @@ export class NSSService {
         return this.toastBind.asObservable();
     }
 
-    // -+-+-+-+-+-+ Search Term -+-+-+-+-+-+
-    private _term = new BehaviorSubject<string>('');
+    // -+-+-+-+-+-+ Stations -+-+-+-+-+-+
+    private _stationsSubject = new Subject<Array<Station>>();
 
-    public setTerm(newTerm: string) {
-        this._term.next(newTerm);
+    public setStations(stations: Array<Station>) {
+        this._stationsSubject.next(stations);
     }
 
-    public get term(): Observable<string> {
-        return this._term.asObservable();
+    public get Stations(): Observable<Array<Station>> {
+        return this._stationsSubject.asObservable();
     }
 
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
@@ -240,17 +241,6 @@ export class NSSService {
         return this._stationTypeSubject.asObservable();
     }
 
-    // clear selected
-
-    // setter (selectedStationType)
-    public setSelectedStationType(v: Stationtype){
-        this._selectedStationType.next(v);
-    } 
-    
-    // getter (selectedStationType)
-    public get selectedStationType(): Observable<Stationtype> {
-        return this._selectedStationType.asObservable();
-    }
     // get all station types
     public getStationTypes(): void {
         this._http
@@ -635,13 +625,14 @@ export class NSSService {
     }
 
     // get stations by text search, station type and other param
-    public searchStations(term: string, id: Array<number>, params?: string) {
-        if (term) {term = term}
-        else {term = ''};
-        const url = "?filterText=" + term + "&stationTypes=" + id;
-        console.log(url);
+    public searchStations(searchText: string, stationTypeIds: Array<number>) {
+        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString();
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url + params )
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url )
+            .map(res => <Array<Station>>res)
+            .subscribe(res => {
+                this._stationsSubject.next(res);
+            })
     }
 
     // get regressionRegions by region

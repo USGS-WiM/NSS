@@ -250,9 +250,6 @@ export class MainviewComponent implements OnInit {
                         rr.results.forEach(R => {
                             if (eqResult.name != '') {
                                 eqResult.formulas.push({ Code: R.code, Equation: this.buildEquation(rr.parameters, R.equation) });
-                                eqResult.formulas.forEach(r => {
-                                    r.Equation= r.Equation.replace(/_/g, ' \\_');
-                                });
                                 equationString += R.code + '= ,' + R.equation + '\r\n';
                             }
                         });
@@ -647,8 +644,7 @@ export class MainviewComponent implements OnInit {
     // add backticks around parameter code to escape in equation
     private buildEquation(p: Parameter[], equation: string): string {
         let fullEquation: string = '';
-        let arrayOfparameterValues = [];
-        fullEquation = '`' + equation + '`';
+        fullEquation = '`' + equation.replace(/_/g, ' \\_') + '`';
         return fullEquation;
     }
 

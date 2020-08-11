@@ -1203,6 +1203,9 @@ export class MainviewComponent implements OnInit {
 
     /////////////////////// Edit Scenarios Section ///////////////////////////
     public editRegScenario() {
+        this.saveFilters();
+        this._nssService.setSelectedRegion(this.selectedRegion);
+        this.requeryFilters();
         this._nssService.showCompute(false);
         this.editRegionScenario = true;
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']); // render equations into Mathjax

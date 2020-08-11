@@ -8,6 +8,9 @@ import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Config } from 'app/shared/interfaces/config';
 import { Agency } from 'app/shared/interfaces/agency';
+import { Station } from 'app/shared/interfaces/station';
+import { StationType } from 'app/shared/interfaces/stationtypes';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'addStationModal',
@@ -19,6 +22,7 @@ export class AddStationModal implements OnInit {
   private configSettings: Config;
   private modalElement: any;
   public agencies: Array<Agency>;
+  public stationTypes: Array<StationType>;
   public modalSubscription: any;
   public modalRef;
   public addStationForm: FormGroup;
@@ -38,26 +42,6 @@ export class AddStationModal implements OnInit {
     });
 
     this.configSettings = this._configService.getConfiguration();
-      
-      /*
-      STATION OBJECT EXAMPLE
-      {
-        "code":"11111111",
-        "agencyID": 1,
-        "name":"example station 1 at example location, ex. river",
-        "stationTypeID":"1",
-        "location": {
-            "type": "Point",
-            "coordinates": [
-                "0": -99.999,
-                "1": 44.444
-            ]
-        }
-    }*/
-
-      /* this.addStationForm = _fb.group({
-        
-      }); */
   }
 
   ngOnInit() {
@@ -68,6 +52,9 @@ export class AddStationModal implements OnInit {
 
     this._nssService.agencies.subscribe((agencyList: Array<Agency>) => {
       this.agencies = agencyList;
+    });
+    this._nssService.stationTypes.subscribe((stationTypeList: Array<StationType>) =>{
+      this.stationTypes = stationTypeList;
     })
   }
 
@@ -91,8 +78,42 @@ export class AddStationModal implements OnInit {
 
   }
 
-  public addNewStation() {
+  public submitStation() {
+    const location = {type: 'Point', coordinates: [ this.addStationForm.get('latitude').value, this.addStationForm.get('longitude').value]}
     
+    let station = JSON.parse(JSON.stringify(this.addStationForm.value));
+    delete station.latitude;
+    delete station.longitude;
+    station = {...station, 'location': location}
+     /*
+      STATION OBJECT EXAMPLE Format
+      {
+        "code":"11111111",
+        "agencyID": 1,
+        "name":"example station 1 at example location, ex. river",
+        "stationTypeID":"1",
+        "location": {
+            "type": "Point",
+            "coordinates": [
+                "0": -99.999,
+                "1": 44.444
+            ]
+        }
+    }*/
+
+    //console.log('station: ', station);
+    this._settingsService.postEntityGageStats(station, 'stations')
+      .subscribe((response:any) =>{
+        if(!response.headers){
+          this._toasterService.pop('info', 'Info', 'Station Added');
+        } else {
+          this._settingsService.outputWimMessages(response);
+        }
+      }, error => {
+        if (!this._settingsService.outputWimMessages(error)) {
+          this._toasterService.pop('error', 'Error adding Station', error.message || error.statusText);
+        }
+    });
   }
 
 }

@@ -33,6 +33,15 @@
                         is required</div>
                 </div>
 
+                <div class="form-group required" [ngClass]="{ 'form-invalid': !addStationForm.get('stationTypeID').valid && addStationForm.get('stationTypeID').touched }">
+                    <label class="req" for="stationTypeID">Station Type:</label><br/>
+                    <ng-select formControlName="stationTypeID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                        <ng-option *ngFor="let type of stationTypes" [value]="type.id">{{type.name}} ({{type.code}})</ng-option>
+                    </ng-select>
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('agencyID').valid && addStationForm.get('agencyID').touched">Agency ID
+                        is required</div>
+                </div>
+
                 
                 <!-- latitude -->
                 <div class="form-group required width-40">
@@ -55,6 +64,12 @@
                 </div>
                 
                 <br> <div>form Valid {{addStationForm.valid}}</div>
+                <div>code valid {{addStationForm.get('code').valid}}</div>
+                <div>agencyID Valid {{addStationForm.get('agencyID').valid}}</div>
+                <div>name Valid {{addStationForm.get('name').valid}}</div>
+                <div>station Valid {{addStationForm.get('stationTypeID').valid}}</div>
+                <div>lat Valid {{addStationForm.get('latitude').valid}}</div>
+                <div>long Valid {{addStationForm.get('longitude').valid}}</div>
             </form>
             
     
@@ -69,7 +84,7 @@
             <button type="button" (click)="clearStation()" class="button red mright-xs">Clear All</button>
             <button type="button" (click)="c('closed')" class="button black">Cancel</button>
             <div class="flex-spacer"></div>
-            <button type="button" (click)="addNewStation()" [disabled]="!addStationForm.valid" class="button blue">Add</button>
+            <button type="button" (click)="submitStation()" [disabled]="!addStationForm.valid" class="button blue">Add</button>
         </div>
         
     </div>

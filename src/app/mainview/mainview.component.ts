@@ -1203,9 +1203,6 @@ export class MainviewComponent implements OnInit {
 
     /////////////////////// Edit Scenarios Section ///////////////////////////
     public editRegScenario() {
-        this.saveFilters();
-        this._nssService.setSelectedRegion(this.selectedRegion);
-        this.requeryFilters();
         this._nssService.showCompute(false);
         this.editRegionScenario = true;
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']); // render equations into Mathjax
@@ -1521,6 +1518,10 @@ export class MainviewComponent implements OnInit {
                 equ.style.visibility = '';
             });
             // use this in original equations too??
+    }
+
+    toMathJax(e){
+        return('`' + e.replace(/_/g, ' \\_') + '`');
     }
 
     // trying to PUT peak flow regs to low flow on button click, holding off for now

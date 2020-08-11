@@ -973,7 +973,7 @@
                                         <button *ngIf="r.isEditing" class="addErrorButton" (click)="addError(r.errors)">Add Error</button>
                                     </td>
                                     <td class="equation-cell">
-                                        <span *ngIf="!r.isEditing" MathJax id="mathJax1">{{ r.equationMathJax }}</span>
+                                        <span *ngIf="!r.isEditing" MathJax id="mathJax1">{{ toMathJax(r.equation) }}</span>
                                         <span>
                                             <input *ngIf="r.isEditing" type="text" name="equation" [(ngModel)]="r.equation" required (ngModelChange)="showMathjax(r)">
                                             <span class="math-jax" [id]="'mathjaxEq' + r.id"></span>

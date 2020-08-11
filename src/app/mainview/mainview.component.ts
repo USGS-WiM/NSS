@@ -1525,10 +1525,6 @@ export class MainviewComponent implements OnInit {
             // use this in original equations too??
     }
 
-    toMathJax(e){
-        return('`' + e.replace(/_/g, ' \\_') + '`');
-    }
-
     // trying to PUT peak flow regs to low flow on button click, holding off for now
     /*moveToLowFlow(r, rrID, rrIndex, sgIndex) {
         // console.log(JSON.stringify(r));

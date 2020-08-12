@@ -15,7 +15,7 @@ export class GsSidebarComponent implements OnInit {
   // station type
   public stationTypes: Array<Stationtype>;
   public stationType;
-  public selectedStationType;
+  public selectedStationType = [];
   public showStationType: boolean;
 
   // agency
@@ -27,6 +27,7 @@ export class GsSidebarComponent implements OnInit {
   private myMSTexts: IMultiSelectTexts;
   private myRTSettings: IMultiSelectSettings;
 
+  public searchText: string = '';
 
   constructor(private _nssService: NSSService) { }
 
@@ -36,14 +37,13 @@ export class GsSidebarComponent implements OnInit {
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
     });
-    this._nssService.selectedStationType.subscribe((s: Stationtype) => {
-      if (s && s.id && this.stationTypes) {this.selectedStationType = this.stationTypes.find(sta => sta.id == s.id);}
-    });
-
     this._nssService.getAgencies();
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
     });
+
+    // trigger initial stations search
+    this._nssService.searchStations(this.searchText, this.selectedStationType);
 
     this.myRTSettings = {
       pullRight: false,
@@ -68,17 +68,9 @@ export class GsSidebarComponent implements OnInit {
 
   }  // end OnInit()
 
-    // select Station Type. 
-    public onStationTypeSelect(s) {
-      this.selectedAgency = [];
-      this.stationType = s;
-      this._nssService.setSelectedStationType(s);
-    }
-
-    // select Agency Type
-    public onAgencySelect(a: Agency) {
-      this.agency = a;
-      this._nssService.setSelectedAgency(a);
+    // search stations
+    public onSearch() {
+      this._nssService.searchStations(this.searchText, this.selectedStationType);
     }
 
 }

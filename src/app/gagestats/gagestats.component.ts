@@ -21,11 +21,9 @@ export class GagestatsComponent implements OnInit {
   private navigationSubscription;
   public previousUrl;
   public editRegionScenario: boolean;
-  public selectedStationType;
   public showStationType: boolean;
   public stations: Array<Station>;
   public selectedStations: Array<Station>;
-  public selectStations: Array<Station>;
   public selectedAgency;
   public agencies: Array<Agency>;
   public stationTypes: Array<StationType>;
@@ -43,10 +41,6 @@ export class GagestatsComponent implements OnInit {
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationStart) {
           this.router.navigated = false;
-          if (this.previousUrl === '/settings' || this.previousUrl === '/profile') {
-              this._nssService.setSelectedStationType(undefined);
-              this.showStationType = false;
-          }
           this.previousUrl = e.url;
       }
     });
@@ -57,18 +51,6 @@ export class GagestatsComponent implements OnInit {
     this.title = 'Gage Stats';
     this.timestamp = new Date();
     this.showStationType = false;
-    this._nssService.selectedStationType.subscribe((s: Stationtype) => {
-      this.selectedStationType = s;
-      this.selectedAgency = [];
-      if (Object.keys(this.selectedStationType).length>0) { 
-        this.showStationType = true; 
-      }
-      window.scrollTo(0, 0);
-      this.configSettings = this._configService.getConfiguration();
-      var x = '';
-      this._nssService.getStationsByType(this.selectedStationType, x).subscribe((s: Array<Station>) => {
-        this.selectedStations = s;
-      });  
       this._nssService.getPageStationsByType(this.selectedStationType, x).subscribe((res) => {
         let response = ((res.headers.get('x-usgswim-messages')));
         this.lastPageNumber = (response.slice(response.indexOf("of") + "of".length));
@@ -76,13 +58,11 @@ export class GagestatsComponent implements OnInit {
         this.currentPageNumber = (response.slice(response.indexOf("page") + "page".length));
         this.currentPageNumber = (this.currentPageNumber.substr(0, this.currentPageNumber.indexOf('of'))); 
       });
-    });
-    this._nssService.agencies.subscribe((ag: Array<Agency>) => {
-      this.agencies = ag;
-    });
-    this._nssService.stationTypes.subscribe((sationtypes: Array<Agency>) => {
-      this.stationTypes = sationtypes;
-    });
+
+    // subscribe to stations subject, which is set in the service's searchStations() function
+    this._nssService.Stations.subscribe((s: Array<Station>) => {
+        this.selectedStations = s;
+      });
   }   
 
   showAddStationModal(): void{

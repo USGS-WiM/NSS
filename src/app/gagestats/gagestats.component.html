@@ -23,9 +23,9 @@
         <input [value]="currentPageNumber" (change)="newPage($event)"/>
         <label >of {{lastPageNumber}}</label>
     </div>
-
-   <div class="hidden-print" *ngIf="showStationType">
-        <table style="border:solid 1px gray" class="table"> 
+   
+   <div class="hidden-print" >
+        <table style="border:solid 1px gray" class="custom-table mtop-lg"> 
             <thead>
                 <tr>
                     <th class="col-xs-1">Type</th>

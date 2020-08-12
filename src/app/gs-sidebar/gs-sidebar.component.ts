@@ -16,7 +16,6 @@ export class GsSidebarComponent implements OnInit {
   public stationTypes: Array<Stationtype>;
   public stationType;
   public selectedStationType = [];
-  public showStationType: boolean;
 
   // agency
   public agency;
@@ -69,8 +68,8 @@ export class GsSidebarComponent implements OnInit {
   }  // end OnInit()
 
     // search stations
-    public onSearch() {
-      this._nssService.searchStations(this.searchText, this.selectedStationType);
-    }
+  public onSearch() {
+    this._nssService.searchStations(this.searchText, this.selectedStationType);
+  }
 
 }

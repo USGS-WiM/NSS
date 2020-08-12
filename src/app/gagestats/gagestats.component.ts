@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NSSService } from '../shared/services/app.service';
-import { Stationtype } from '../shared/interfaces/stationtype';
 import { Router, NavigationStart } from '@angular/router';
 import { Station } from '../shared/interfaces/station';
 import { GagestatsService } from './gagestats.service';
 import { Agency } from 'app/shared/interfaces/agencies';
 import { StationType } from 'app/shared/interfaces/stationtypes';
-import { Toast } from 'angular2-toaster/src/toast';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 
@@ -21,7 +19,6 @@ export class GagestatsComponent implements OnInit {
   private navigationSubscription;
   public previousUrl;
   public editRegionScenario: boolean;
-  public showStationType: boolean;
   public stations: Array<Station>;
   public selectedStations: Array<Station>;
   public selectedAgency;
@@ -50,24 +47,46 @@ export class GagestatsComponent implements OnInit {
     this.loggedInRole = localStorage.getItem('loggedInRole');
     this.title = 'Gage Stats';
     this.timestamp = new Date();
-    this.showStationType = false;
-      this._nssService.getPageStationsByType(this.selectedStationType, x).subscribe((res) => {
-        let response = ((res.headers.get('x-usgswim-messages')));
-        this.lastPageNumber = (response.slice(response.indexOf("of") + "of".length));
-        this.lastPageNumber = (this.lastPageNumber.substr(0, this.lastPageNumber.indexOf('.'))); 
-        this.currentPageNumber = (response.slice(response.indexOf("page") + "page".length));
-        this.currentPageNumber = (this.currentPageNumber.substr(0, this.currentPageNumber.indexOf('of'))); 
-      });
+    //this._nssService.getPageStationsByType(this.selectedStationType, x).subscribe((res) => {
+    //   let response = ((res.headers.get('x-usgswim-messages')));
+    //   this.lastPageNumber = (response.slice(response.indexOf("of") + "of".length));
+    //   this.lastPageNumber = (this.lastPageNumber.substr(0, this.lastPageNumber.indexOf('.'))); 
+    //   this.currentPageNumber = (response.slice(response.indexOf("page") + "page".length));
+    //   this.currentPageNumber = (this.currentPageNumber.substr(0, this.currentPageNumber.indexOf('of'))); 
+    //});
 
     // subscribe to stations subject, which is set in the service's searchStations() function
     this._nssService.Stations.subscribe((s: Array<Station>) => {
         this.selectedStations = s;
-      });
+        console.log(this.selectedStations)
+    });
+    this._nssService.agencies.subscribe((ag: Array<Agency>) => {
+      this.agencies = ag;
+    });
+    this._nssService.stationTypes.subscribe((stationtypes: Array<Agency>) => {
+      this.stationTypes = stationtypes;
+    });
   }   
 
   showAddStationModal(): void{
     this.gagestatsService.addStation();
   }
+
+  // public newPage(event){
+  //   let pageNumber = (event.target.value);
+  //   if ((pageNumber - 1) * (pageNumber - this.lastPageNumber) <= 0) {
+  //     this._nssService.getStationsByType(this.selectedStationType, "&page="+ pageNumber).subscribe((s: Array<Station>) => {
+  //       this.selectedStations = s;
+  //     }); 
+  //   } else {
+  //     const toast: Toast = {
+  //       type: 'warning',
+  //       title: 'Error',
+  //       body: 'Page Number Out of Bounds'
+  //     };
+  //     this._nssService.showToast(toast);
+  //   }
+  // }
 
   public getAgencyName(aID) {
     let acencyName;
@@ -81,29 +100,15 @@ export class GagestatsComponent implements OnInit {
     return acencyName;
   }
 
-  public newPage(event){
-    let pageNumber = (event.target.value);
-    if ((pageNumber - 1) * (pageNumber - this.lastPageNumber) <= 0) {
-      this._nssService.getStationsByType(this.selectedStationType, "&page="+ pageNumber).subscribe((s: Array<Station>) => {
-        this.selectedStations = s;
-      }); 
-    } else {
-      const toast: Toast = {
-        type: 'warning',
-        title: 'Error',
-        body: 'Page Number Out of Bounds'
-      };
-      this._nssService.showToast(toast);
-    }
-  }
-
   public getStationType(sID) {
     let stationTypeName;
-    this.stationTypes.forEach(z => {
-        if (sID === z.id) {
-          stationTypeName = z.name;
-        }
-    });
+    if (this.stationTypes) {
+      this.stationTypes.forEach(z => {
+          if (sID === z.id) {
+            stationTypeName = z.name;
+          }
+      });
+    }
     return stationTypeName;
   }
 

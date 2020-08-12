@@ -9,23 +9,14 @@
         <button *ngIf="loggedInRole" class="button small mright-xs" (click)="bulkUpload()">Bulk Upload</button>
         <button *ngIf="loggedInRole" type="button" class="button small mright-xs" (click)="export()">Export</button>
     </div>
-
-    <span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span> 
-    <div class="col-md-6" style="padding: 0;">
-        <div *ngIf="showStationType" class="app-body-section">
-            <label class="big">Station Type:</label>
-            <h5 class="bold">{{selectedStationType}}</h5>  
-        </div>
-    </div>
-
-    <div *ngIf="showStationType" class="form-group">
-        <label>Page</label>
-        <input [value]="currentPageNumber" (change)="newPage($event)"/>
-        <label >of {{lastPageNumber}}</label>
-    </div>
    
    <div class="hidden-print" >
-        <table style="border:solid 1px gray" class="custom-table mtop-lg"> 
+        <div class="mtop-lg">
+            <label>Page </label>
+            <input [value]="currentPageNumber" (change)="newPage($event)"/>
+            <label> of {{lastPageNumber}}</label>
+        </div>
+        <table style="border:solid 1px gray" class="custom-table"> 
             <thead>
                 <tr>
                     <th class="col-xs-1">Type</th>

@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NSSService } from '../shared/services/app.service';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
-import { LoaderService } from 'app/shared/services/loader.service';
 import { Agency } from '../shared/interfaces/agency';
 import { Stationtype } from '../shared/interfaces/stationtype';
 import { IMultiSelectSettings, IMultiSelectTexts} from '../../../node_modules/angular-2-dropdown-multiselect';
@@ -17,7 +15,7 @@ export class GsSidebarComponent implements OnInit {
   // station type
   public stationTypes: Array<Stationtype>;
   public stationType;
-  public selectedStationType;
+  public selectedStationType = [];
   public showStationType: boolean;
 
   // agency
@@ -29,8 +27,9 @@ export class GsSidebarComponent implements OnInit {
   private myMSTexts: IMultiSelectTexts;
   private myRTSettings: IMultiSelectSettings;
 
+  public searchText: string = '';
 
-  constructor(private _nssService: NSSService, private _toasterService: ToasterService, private _loaderService: LoaderService) { }
+  constructor(private _nssService: NSSService) { }
 
   ngOnInit() {
 
@@ -38,14 +37,13 @@ export class GsSidebarComponent implements OnInit {
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
     });
-    this._nssService.selectedStationType.subscribe((s: Stationtype) => {
-      if (s && s.id && this.stationTypes) {this.selectedStationType = this.stationTypes.find(sta => sta.id == s.id);}
-    });
-
     this._nssService.getAgencies();
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
     });
+
+    // trigger initial stations search
+    this._nssService.searchStations(this.searchText, this.selectedStationType);
 
     this.myRTSettings = {
       pullRight: false,
@@ -70,20 +68,9 @@ export class GsSidebarComponent implements OnInit {
 
   }  // end OnInit()
 
-    // select Station Type. 
-    public onStationTypeSelect(s) {
-      //this._loaderService.showFullPageLoad();
-      this.selectedAgency = [];
-      this.stationType = s;
-      this._nssService.setSelectedStationType(s);
-      console.log(this.selectedStationType)
-    }
-
-    // select Agency Type
-    public onAgencySelect(a: Agency) {
-      this.agency = a;
-      this._nssService.setSelectedAgency(a);
-      console.log(typeof this.selectedAgency)
+    // search stations
+    public onSearch() {
+      this._nssService.searchStations(this.searchText, this.selectedStationType);
     }
 
 }

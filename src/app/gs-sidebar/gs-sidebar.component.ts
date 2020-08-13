@@ -3,6 +3,9 @@ import { NSSService } from '../shared/services/app.service';
 import { Agency } from '../shared/interfaces/agency';
 import { Stationtype } from '../shared/interfaces/stationtype';
 import { IMultiSelectSettings, IMultiSelectTexts} from '../../../node_modules/angular-2-dropdown-multiselect';
+import { SettingsService } from 'app/settings/settings.service';
+import { Config } from 'app/shared/interfaces/config';
+import { ConfigService } from 'app/config.service';
 
 
 @Component({
@@ -16,7 +19,7 @@ export class GsSidebarComponent implements OnInit {
   public stationTypes: Array<Stationtype>;
   public stationType;
   public selectedStationType = [];
-
+  public configSettings: Config;
   // agency
   public agency;
   public agencies: Array<Agency>;
@@ -28,10 +31,10 @@ export class GsSidebarComponent implements OnInit {
 
   public searchText: string = '';
 
-  constructor(private _nssService: NSSService) { }
+  constructor(private _nssService: NSSService, private _settingsService: SettingsService, private _configService: ConfigService) { }
 
   ngOnInit() {
-
+    this.configSettings = this._configService.getConfiguration();
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
@@ -69,7 +72,7 @@ export class GsSidebarComponent implements OnInit {
 
     // search stations
   public onSearch() {
-    this._nssService.searchStations(this.searchText, this.selectedStationType);
+    this._nssService.searchStations(this.searchText, this.selectedStationType)
   }
 
 }

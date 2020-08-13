@@ -7,6 +7,7 @@ import { Agency } from 'app/shared/interfaces/agencies';
 import { StationType } from 'app/shared/interfaces/stationtypes';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+import { Toast } from 'angular2-toaster/src/toast';
 
 @Component({
   selector: 'app-gagestats',
@@ -28,12 +29,14 @@ export class GagestatsComponent implements OnInit {
   public lastPageNumber;
   public currentPageNumber;
   public configSettings: Config;
+  public selectedStationType = [];
+  public searchText: string = '';
 
   constructor(
     private router: Router,
     private _nssService: NSSService,
     private gagestatsService: GagestatsService,
-    private _configService: ConfigService
+    private _configService: ConfigService,
   ) {
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationStart) {
@@ -47,18 +50,17 @@ export class GagestatsComponent implements OnInit {
     this.loggedInRole = localStorage.getItem('loggedInRole');
     this.title = 'Gage Stats';
     this.timestamp = new Date();
-    //this._nssService.getPageStationsByType(this.selectedStationType, x).subscribe((res) => {
-    //   let response = ((res.headers.get('x-usgswim-messages')));
-    //   this.lastPageNumber = (response.slice(response.indexOf("of") + "of".length));
-    //   this.lastPageNumber = (this.lastPageNumber.substr(0, this.lastPageNumber.indexOf('.'))); 
-    //   this.currentPageNumber = (response.slice(response.indexOf("page") + "page".length));
-    //   this.currentPageNumber = (this.currentPageNumber.substr(0, this.currentPageNumber.indexOf('of'))); 
-    //});
 
     // subscribe to stations subject, which is set in the service's searchStations() function
     this._nssService.Stations.subscribe((s: Array<Station>) => {
         this.selectedStations = s;
-        console.log(this.selectedStations)
+    });
+    this._nssService.Pages.subscribe((p:any) => {
+      let response = p;
+      this.lastPageNumber = (response.slice(response.indexOf("of") + "of".length));
+      this.lastPageNumber = (this.lastPageNumber.substr(0, this.lastPageNumber.indexOf('.'))); 
+      this.currentPageNumber = (response.slice(response.indexOf("page") + "page".length));
+      this.currentPageNumber = (this.currentPageNumber.substr(0, this.currentPageNumber.indexOf('of'))); 
     });
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
@@ -72,21 +74,19 @@ export class GagestatsComponent implements OnInit {
     this.gagestatsService.addStation();
   }
 
-  // public newPage(event){
-  //   let pageNumber = (event.target.value);
-  //   if ((pageNumber - 1) * (pageNumber - this.lastPageNumber) <= 0) {
-  //     this._nssService.getStationsByType(this.selectedStationType, "&page="+ pageNumber).subscribe((s: Array<Station>) => {
-  //       this.selectedStations = s;
-  //     }); 
-  //   } else {
-  //     const toast: Toast = {
-  //       type: 'warning',
-  //       title: 'Error',
-  //       body: 'Page Number Out of Bounds'
-  //     };
-  //     this._nssService.showToast(toast);
-  //   }
-  // }
+  public newPage(event){
+    let pageNumber = (event.target.value);
+    if ((pageNumber - 1) * (pageNumber - this.lastPageNumber) <= 0) {
+      this._nssService.searchStations(this.searchText, this.selectedStationType, "&page="+ pageNumber);
+    } else {
+      const toast: Toast = {
+        type: 'warning',
+        title: 'Error',
+        body: 'Page Number Out of Bounds'
+      };
+      this._nssService.showToast(toast);
+    }
+  }
 
   public getAgencyName(aID) {
     let acencyName;

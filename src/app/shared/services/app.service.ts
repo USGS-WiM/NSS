@@ -178,15 +178,24 @@ export class NSSService {
     }
 
     // -+-+-+-+-+-+ Stations -+-+-+-+-+-+
-    private _stationsSubject = new Subject<Array<Station>>();
+    private _stationsSubject = new Subject<any>();
+    private _pagesSubject = new Subject<any>();
 
-    public setStations(stations: Array<Station>) {
+    public setStations(stations: Array<any>) {
         this._stationsSubject.next(stations);
     }
 
-    public get Stations(): Observable<Array<Station>> {
+    public get Stations(): Observable<any> {
         return this._stationsSubject.asObservable();
     }
+
+     public setPages(p: any){
+        this._selectedStationType.next(p);
+    }
+
+    public get Pages(): Observable<any> {
+        return this._pagesSubject.asObservable();
+    } 
 
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
     private _regionSubject: Subject<Array<Region>> = new Subject<Array<Region>>(); // array of regions that sidebar and mainview use
@@ -623,30 +632,20 @@ export class NSSService {
             .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
             .map(res => <Array<Variabletype>>res);
     }
-
-    // get page number of stations by station type
-    public getPageStationsByType(id: Array<number>, params?: string) {
-        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };       
-        let url = '';
-        if (id) {
-           url = "?stationTypes=" + id;
-       }
-        return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url + params, options) 
-    }
     
     // get stations by text search, station type and other param
-    public searchStations(searchText: string, stationTypeIds: Array<number>) {
-        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString();
+    public searchStations(searchText: string, stationTypeIds: Array<number>, params?: string) {
+        let url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString();
+        if (params) {
+            url += params; 
+        }
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url )
-            .map(res => <Array<Station>>res)
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
             .subscribe(res => {
-                this._stationsSubject.next(res);
+                this._stationsSubject.next(res.body);
+                this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
             })
     }
-
-    // TODO: get page number of stations by agency type
 
     // get regressionRegions by region
     private getRegionRegressionRegions(id: number, params?: string) {

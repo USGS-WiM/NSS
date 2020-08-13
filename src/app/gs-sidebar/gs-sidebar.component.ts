@@ -18,7 +18,7 @@ export class GsSidebarComponent implements OnInit {
   // station type
   public stationTypes: Array<Stationtype>;
   public stationType;
-  public selectedStationType = [];
+  public selectedStationType: Array<Stationtype> = [];
   public configSettings: Config;
   // agency
   public agency;

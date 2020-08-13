@@ -8,6 +8,7 @@ import { StationType } from 'app/shared/interfaces/stationtypes';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { Toast } from 'angular2-toaster/src/toast';
+import { Stationtype } from 'app/shared/interfaces/stationtype';
 
 @Component({
   selector: 'app-gagestats',
@@ -29,15 +30,14 @@ export class GagestatsComponent implements OnInit {
   public lastPageNumber;
   public currentPageNumber;
   public configSettings: Config;
-  public selectedStationType = [];
+  public selectedStationType: Array<Stationtype> = [];
   public searchText: string = '';
 
   constructor(
     private router: Router,
     private _nssService: NSSService,
-    private gagestatsService: GagestatsService,
-    private _configService: ConfigService,
-  ) {
+    private gagestatsService: GagestatsService
+    ){
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationStart) {
           this.router.navigated = false;
@@ -55,15 +55,21 @@ export class GagestatsComponent implements OnInit {
     this._nssService.Stations.subscribe((s: Array<Station>) => {
         this.selectedStations = s;
     });
-    this._nssService.Pages.subscribe((p:any) => {
-      let response = p;
+    this._nssService.pages.subscribe((pageText: string) => {
+      let response = pageText;
       this.lastPageNumber = (response.slice(response.indexOf("of") + "of".length));
       this.lastPageNumber = (this.lastPageNumber.substr(0, this.lastPageNumber.indexOf('.'))); 
       this.currentPageNumber = (response.slice(response.indexOf("page") + "page".length));
       this.currentPageNumber = (this.currentPageNumber.substr(0, this.currentPageNumber.indexOf('of'))); 
     });
-    this._nssService.agencies.subscribe((ag: Array<Agency>) => {
-      this.agencies = ag;
+    this._nssService.selectedStationType.subscribe((selectedStations: Array<Stationtype>) => {
+      this.selectedStationType = selectedStations;
+    });
+    this._nssService.searchText.subscribe((text: string) => {
+      this.searchText = text;
+    });
+    this._nssService.agencies.subscribe((agencies: Array<Agency>) => {
+      this.agencies = agencies;
     });
     this._nssService.stationTypes.subscribe((stationtypes: Array<Agency>) => {
       this.stationTypes = stationtypes;

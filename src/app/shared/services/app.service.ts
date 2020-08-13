@@ -179,7 +179,6 @@ export class NSSService {
 
     // -+-+-+-+-+-+ Stations -+-+-+-+-+-+
     private _stationsSubject = new Subject<any>();
-    private _pagesSubject = new Subject<any>();
 
     public setStations(stations: Array<any>) {
         this._stationsSubject.next(stations);
@@ -188,14 +187,6 @@ export class NSSService {
     public get Stations(): Observable<any> {
         return this._stationsSubject.asObservable();
     }
-
-     public setPages(p: any){
-        this._selectedStationType.next(p);
-    }
-
-    public get Pages(): Observable<any> {
-        return this._pagesSubject.asObservable();
-    } 
 
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
     private _regionSubject: Subject<Array<Region>> = new Subject<Array<Region>>(); // array of regions that sidebar and mainview use
@@ -241,12 +232,24 @@ export class NSSService {
     }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
+    // -+-+-+-+-+-+ pages section-+-+-+-+-+-+
+    private _pagesSubject: BehaviorSubject<string> = new BehaviorSubject<any>('');
+
+    public setPages(p: string){
+        this._pagesSubject.next(p);
+    }
+
+    public get pages(): Observable<string> {
+        return this._pagesSubject.asObservable();
+    } 
+    // -+-+-+-+-+-+ end pages section-+-+-+-+-+-+
+
     // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
     private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use
-    private _selectedStationType: BehaviorSubject<Stationtype> = new BehaviorSubject<any>(''); // selectedstationtype
+    private _selectedStationType: BehaviorSubject<Array<Stationtype>> = new BehaviorSubject<any>(''); // selectedStationType
 
     public get stationTypes(): Observable<Array<Stationtype>> {
-        // getter (station type)
+        // getter all (station type)
         return this._stationTypeSubject.asObservable();
     }
 
@@ -260,28 +263,41 @@ export class NSSService {
                 this._stationTypeSubject.next(r);
             });
     }
+
+    // setter (selectStationType)
+    public setSelectedStationType(v: Stationtype[]){
+        this._selectedStationType.next(v);
+    }
+    
+    // getter (selectedStationType)
+    public get selectedStationType(): Observable<Array<Stationtype>> {
+        return this._selectedStationType.asObservable();
+    }
     // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ search text section -+-+-+-+-+-+-+
+    private _searchTextSubject: BehaviorSubject<string> = new BehaviorSubject<any>(''); // searchText
+
+    // setter (selectStationType)
+    public setSearchText(t: string){
+        this._searchTextSubject.next(t);
+    }
+
+    // getter (selectedStationType)
+    public get searchText(): Observable<string> {
+        return this._searchTextSubject.asObservable();
+    }
+    // -+-+-+-+-+-+ search text station type section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
     private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
     private _selectedAgency: BehaviorSubject<Agency> = new BehaviorSubject<any>(''); // selectedAgency
 
     public get agencies(): Observable<Array<Agency>> {
-        // getter (agencies)
+        // getter all (agencies)
         return this._agencySubject.asObservable();
     }
 
-    // clear selected
-
-    // setter (selectedAgency)
-    public setSelectedAgency(v: Agency){
-        this._selectedAgency.next(v);
-    }
-    
-    // getter (selectedAgency)
-    public get selectedAgency(): Observable<Agency> {
-        return this._selectedAgency.asObservable();
-    }
     // get all station types
     public getAgencies(): void {
         this._http
@@ -291,6 +307,16 @@ export class NSSService {
             .subscribe(r => {
                 this._agencySubject.next(r);
             });
+    }
+
+    // setter (selectedAgency)
+    public setSelectedAgency(v: Agency){
+        this._selectedAgency.next(v);
+    }
+    
+    // getter (selectedAgency)
+    public get selectedAgency(): Observable<Agency> {
+        return this._selectedAgency.asObservable();
     }
     // -+-+-+-+-+-+ end agency section -+-+-+-+-+-+-+
 
@@ -632,9 +658,9 @@ export class NSSService {
             .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
             .map(res => <Array<Variabletype>>res);
     }
-    
+
     // get stations by text search, station type and other param
-    public searchStations(searchText: string, stationTypeIds: Array<number>, params?: string) {
+    public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, params?: string) {
         let url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString();
         if (params) {
             url += params; 
@@ -644,6 +670,8 @@ export class NSSService {
             .subscribe(res => {
                 this._stationsSubject.next(res.body);
                 this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
+                this._selectedStationType.next(stationTypeIds);
+                this._searchTextSubject.next(searchText);
             })
     }
 

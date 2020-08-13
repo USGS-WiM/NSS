@@ -180,11 +180,11 @@ export class NSSService {
     // -+-+-+-+-+-+ Stations -+-+-+-+-+-+
     private _stationsSubject = new Subject<any>();
 
-    public setStations(stations: Array<any>) {
+    public setStations(stations: Array<Station>) {
         this._stationsSubject.next(stations);
     }
 
-    public get Stations(): Observable<any> {
+    public get Stations(): Observable<Array<Station>> {
         return this._stationsSubject.asObservable();
     }
 
@@ -278,12 +278,12 @@ export class NSSService {
     // -+-+-+-+-+-+ search text section -+-+-+-+-+-+-+
     private _searchTextSubject: BehaviorSubject<string> = new BehaviorSubject<any>(''); // searchText
 
-    // setter (selectStationType)
+    // setter (searchText)
     public setSearchText(t: string){
         this._searchTextSubject.next(t);
     }
 
-    // getter (selectedStationType)
+    // getter (searchText)
     public get searchText(): Observable<string> {
         return this._searchTextSubject.asObservable();
     }

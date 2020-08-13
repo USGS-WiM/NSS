@@ -5,8 +5,6 @@ import { Station } from '../shared/interfaces/station';
 import { GagestatsService } from './gagestats.service';
 import { Agency } from 'app/shared/interfaces/agencies';
 import { StationType } from 'app/shared/interfaces/stationtypes';
-import { Config } from 'app/shared/interfaces/config';
-import { ConfigService } from 'app/config.service';
 import { Toast } from 'angular2-toaster/src/toast';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 
@@ -20,8 +18,6 @@ export class GagestatsComponent implements OnInit {
   public timestamp: Date; // display a time stamp when they first get here.
   private navigationSubscription;
   public previousUrl;
-  public editRegionScenario: boolean;
-  public stations: Array<Station>;
   public selectedStations: Array<Station>;
   public selectedAgency;
   public agencies: Array<Agency>;
@@ -29,7 +25,6 @@ export class GagestatsComponent implements OnInit {
   public loggedInRole;
   public lastPageNumber;
   public currentPageNumber;
-  public configSettings: Config;
   public selectedStationType: Array<Stationtype> = [];
   public searchText: string = '';
 

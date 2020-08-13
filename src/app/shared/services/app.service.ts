@@ -234,19 +234,21 @@ export class NSSService {
 
     // -+-+-+-+-+-+ pages section-+-+-+-+-+-+
     private _pagesSubject: BehaviorSubject<string> = new BehaviorSubject<any>('');
+    private _selectedPageNumber = new BehaviorSubject<any>(' ');
 
-    public setPages(p: string){
-        this._pagesSubject.next(p);
-    }
-
-    public get pages(): Observable<string> {
+    // Response from x-usgswim-messages
+    public get pageResponse(): Observable<string> {
         return this._pagesSubject.asObservable();
     } 
+
+    selectedPageNumber = this._selectedPageNumber.asObservable();
+    changePageNumber(pageNumber: any){
+        this._selectedPageNumber.next(pageNumber);
+    }
     // -+-+-+-+-+-+ end pages section-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
     private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use
-    private _selectedStationType: BehaviorSubject<Array<Stationtype>> = new BehaviorSubject<any>(''); // selectedStationType
 
     public get stationTypes(): Observable<Array<Stationtype>> {
         // getter all (station type)
@@ -263,35 +265,10 @@ export class NSSService {
                 this._stationTypeSubject.next(r);
             });
     }
-
-    // setter (selectStationType)
-    public setSelectedStationType(v: Stationtype[]){
-        this._selectedStationType.next(v);
-    }
-    
-    // getter (selectedStationType)
-    public get selectedStationType(): Observable<Array<Stationtype>> {
-        return this._selectedStationType.asObservable();
-    }
     // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
-
-    // -+-+-+-+-+-+ search text section -+-+-+-+-+-+-+
-    private _searchTextSubject: BehaviorSubject<string> = new BehaviorSubject<any>(''); // searchText
-
-    // setter (searchText)
-    public setSearchText(t: string){
-        this._searchTextSubject.next(t);
-    }
-
-    // getter (searchText)
-    public get searchText(): Observable<string> {
-        return this._searchTextSubject.asObservable();
-    }
-    // -+-+-+-+-+-+ search text station type section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
     private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
-    private _selectedAgency: BehaviorSubject<Agency> = new BehaviorSubject<any>(''); // selectedAgency
 
     public get agencies(): Observable<Array<Agency>> {
         // getter all (agencies)
@@ -307,16 +284,6 @@ export class NSSService {
             .subscribe(r => {
                 this._agencySubject.next(r);
             });
-    }
-
-    // setter (selectedAgency)
-    public setSelectedAgency(v: Agency){
-        this._selectedAgency.next(v);
-    }
-    
-    // getter (selectedAgency)
-    public get selectedAgency(): Observable<Agency> {
-        return this._selectedAgency.asObservable();
     }
     // -+-+-+-+-+-+ end agency section -+-+-+-+-+-+-+
 
@@ -660,18 +627,14 @@ export class NSSService {
     }
 
     // get stations by text search, station type and other param
-    public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, params?: string) {
-        let url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString();
-        if (params) {
-            url += params; 
-        }
+    public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, pageNumber: string) {
+        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString() + "&page="+ pageNumber;
+        console.log(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url)
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
             .subscribe(res => {
                 this._stationsSubject.next(res.body);
                 this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
-                this._selectedStationType.next(stationTypeIds);
-                this._searchTextSubject.next(searchText);
             })
     }
 

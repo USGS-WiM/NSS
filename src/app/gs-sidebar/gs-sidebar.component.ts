@@ -3,8 +3,6 @@ import { NSSService } from '../shared/services/app.service';
 import { Agency } from '../shared/interfaces/agency';
 import { Stationtype } from '../shared/interfaces/stationtype';
 import { IMultiSelectSettings, IMultiSelectTexts} from '../../../node_modules/angular-2-dropdown-multiselect';
-import { SettingsService } from 'app/settings/settings.service';
-import { ConfigService } from 'app/config.service';
 
 
 @Component({
@@ -19,17 +17,22 @@ export class GsSidebarComponent implements OnInit {
   public selectedStationType: Array<Stationtype> = [];
   // agency
   public agencies: Array<Agency>;
-  public selectedAgency: Array<Agency>;
- 
+  public selectedAgency: Array<Agency> = [];
+  // search and page parameters
+  public searchText: string = '';
+  public pageNumber = '1';
+
   // Dropdown menu default text
   private myMSTexts: IMultiSelectTexts;
   private myRTSettings: IMultiSelectSettings;
 
-  public searchText: string = '';
-
   constructor(private _nssService: NSSService) { }
 
   ngOnInit() {
+    this._nssService.selectedPageNumber.subscribe((page: string) => { 
+      this.pageNumber = page;
+      this._nssService.searchStations(this.searchText, this.selectedStationType, this.pageNumber);
+    });
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
@@ -40,7 +43,7 @@ export class GsSidebarComponent implements OnInit {
     });
 
     // trigger initial stations search
-    this._nssService.searchStations(this.searchText, this.selectedStationType);
+    this._nssService.searchStations(this.searchText, this.selectedStationType, this.pageNumber);
 
     this.myRTSettings = {
       pullRight: false,
@@ -67,7 +70,8 @@ export class GsSidebarComponent implements OnInit {
 
   // search stations
   public onSearch() {
-    this._nssService.searchStations(this.searchText, this.selectedStationType);
+    this.pageNumber = '1';
+    this._nssService.searchStations(this.searchText, this.selectedStationType, this.pageNumber);
   }
 
 }

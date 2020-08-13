@@ -59,7 +59,7 @@ export class GagestatsComponent implements OnInit {
       this.lastPageNumber = (response.slice(response.indexOf("of") + "of".length));
       this.lastPageNumber = (this.lastPageNumber.substr(0, this.lastPageNumber.indexOf('.'))); 
       this.currentPageNumber = (response.slice(response.indexOf("page") + "page".length));
-      this.currentPageNumber = (this.currentPageNumber.substr(0, this.currentPageNumber.indexOf('of'))); 
+      this.currentPageNumber = Number(this.currentPageNumber.substr(0, this.currentPageNumber.indexOf('of'))); 
     });
   }   
 
@@ -68,7 +68,12 @@ export class GagestatsComponent implements OnInit {
   }
 
   public newPage(event){
-    let pageNumber = (event.target.value);
+    let pageNumber;
+    if(event.target){
+       pageNumber = (event.target.value);
+    }else{
+       pageNumber = event;
+    }
     if ((pageNumber - 1) * (pageNumber - this.lastPageNumber) <= 0) {
       this._nssService.changePageNumber(pageNumber);
     } else {

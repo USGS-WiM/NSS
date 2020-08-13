@@ -629,7 +629,6 @@ export class NSSService {
     // get stations by text search, station type and other param
     public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, pageNumber: string) {
         const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString() + "&page="+ pageNumber;
-        console.log(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url)
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
             .subscribe(res => {

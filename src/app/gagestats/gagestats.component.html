@@ -12,9 +12,12 @@
    
    <div class="hidden-print" >
         <div class="mtop-lg">
-            <label>Page </label>
-            <input [value]="currentPageNumber" (change)="newPage($event)"/>
-            <label> of {{lastPageNumber}}</label>
+            <i class="fas fa-angle-double-left" (click)="newPage(1)" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+            <i class="fas fa-angle-left" (click)="newPage(currentPageNumber-1)" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+            <input style="width:5%"  [value]="currentPageNumber" (change)="newPage($event)"/>
+            <label> /{{lastPageNumber}}</label>
+            <i title="Click to go forward" (click)="newPage(currentPageNumber+1)" class="fas fa-angle-right" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+            <i title="Click to go forward" (click)="newPage(lastPageNumber)" class="fas fa-angle-double-right" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
         </div>
         <table style="border:solid 1px gray" class="custom-table"> 
             <thead>

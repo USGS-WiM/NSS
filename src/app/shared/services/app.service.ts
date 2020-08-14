@@ -178,7 +178,7 @@ export class NSSService {
     }
 
     // -+-+-+-+-+-+ Stations -+-+-+-+-+-+
-    private _stationsSubject = new Subject<Array<Station>>();
+    private _stationsSubject = new Subject<any>();
 
     public setStations(stations: Array<Station>) {
         this._stationsSubject.next(stations);
@@ -232,12 +232,26 @@ export class NSSService {
     }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
+    // -+-+-+-+-+-+ pages section-+-+-+-+-+-+
+    private _pagesSubject: BehaviorSubject<string> = new BehaviorSubject<any>('');
+    private _selectedPageNumber = new BehaviorSubject<any>(' ');
+
+    // Response from x-usgswim-messages
+    public get pageResponse(): Observable<string> {
+        return this._pagesSubject.asObservable();
+    } 
+
+    selectedPageNumber = this._selectedPageNumber.asObservable();
+    changePageNumber(pageNumber: any){
+        this._selectedPageNumber.next(pageNumber);
+    }
+    // -+-+-+-+-+-+ end pages section-+-+-+-+-+-+
+
     // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
     private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use
-    private _selectedStationType: BehaviorSubject<Stationtype> = new BehaviorSubject<any>(''); // selectedstationtype
 
     public get stationTypes(): Observable<Array<Stationtype>> {
-        // getter (station type)
+        // getter all (station type)
         return this._stationTypeSubject.asObservable();
     }
 
@@ -255,24 +269,12 @@ export class NSSService {
 
     // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
     private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
-    private _selectedAgency: BehaviorSubject<Agency> = new BehaviorSubject<any>(''); // selectedAgency
 
     public get agencies(): Observable<Array<Agency>> {
-        // getter (agencies)
+        // getter all (agencies)
         return this._agencySubject.asObservable();
     }
 
-    // clear selected
-
-    // setter (selectedAgency)
-    public setSelectedAgency(v: Agency){
-        this._selectedAgency.next(v);
-    }
-    
-    // getter (selectedAgency)
-    public get selectedAgency(): Observable<Agency> {
-        return this._selectedAgency.asObservable();
-    }
     // get all station types
     public getAgencies(): void {
         this._http
@@ -625,13 +627,13 @@ export class NSSService {
     }
 
     // get stations by text search, station type and other param
-    public searchStations(searchText: string, stationTypeIds: Array<number>) {
-        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString();
+    public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, pageNumber: string) {
+        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString() + "&page="+ pageNumber;
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url )
-            .map(res => <Array<Station>>res)
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
             .subscribe(res => {
-                this._stationsSubject.next(res);
+                this._stationsSubject.next(res.body);
+                this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
             })
     }
 

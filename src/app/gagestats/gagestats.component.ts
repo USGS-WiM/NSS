@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NSSService } from '../shared/services/app.service';
-import { Toast } from 'angular2-toaster/src/toast';
-import { ToasterService } from 'angular2-toaster/angular2-toaster';
-import { LoaderService } from 'app/shared/services/loader.service';
-import { Agency } from '../shared/interfaces/agency';
-import { Stationtype } from '../shared/interfaces/stationtype';
 import { Router, NavigationStart } from '@angular/router';
-import { SettingsService } from 'app/settings/settings.service';
 import { Station } from '../shared/interfaces/station';
 import { GagestatsService } from './gagestats.service';
+import { Agency } from 'app/shared/interfaces/agencies';
+import { StationType } from 'app/shared/interfaces/stationtypes';
+import { Toast } from 'angular2-toaster/src/toast';
 
 @Component({
   selector: 'app-gagestats',
@@ -20,20 +17,18 @@ export class GagestatsComponent implements OnInit {
   public timestamp: Date; // display a time stamp when they first get here.
   private navigationSubscription;
   public previousUrl;
-  public editRegionScenario: boolean;
-  public showStationType: boolean;
-  public stations: Array<Station>;
   public selectedStations: Array<Station>;
-  public selectedAgency;
-
-  loggedInRole;
+  public agencies: Array<Agency>;
+  public stationTypes: Array<StationType>;
+  public loggedInRole;
+  public lastPageNumber;
+  public currentPageNumber;
 
   constructor(
     private router: Router,
     private _nssService: NSSService,
-    private gagestatsService: GagestatsService,
-    
-  ) {
+    private gagestatsService: GagestatsService
+    ){
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationStart) {
           this.router.navigated = false;
@@ -46,24 +41,63 @@ export class GagestatsComponent implements OnInit {
     this.loggedInRole = localStorage.getItem('loggedInRole');
     this.title = 'Gage Stats';
     this.timestamp = new Date();
-    this.showStationType = false;
-
     // subscribe to stations subject, which is set in the service's searchStations() function
     this._nssService.Stations.subscribe((s: Array<Station>) => {
         this.selectedStations = s;
-      });
+    });
+    // subscribe to all agencies
+    this._nssService.agencies.subscribe((agencies: Array<Agency>) => {
+      this.agencies = agencies;
+    });
+    // subscribe to all station types
+    this._nssService.stationTypes.subscribe((stationtypes: Array<Agency>) => {
+      this.stationTypes = stationtypes;
+    });
+    //subscribe to page number related information
+    this._nssService.pageResponse.subscribe((pageText: string) => {
+      var numbers = pageText.match(/[0-9]+/g); // [0-9] means to match any digit, the + means to match where there are multiple digits
+      if (numbers != null) {
+          this.currentPageNumber = Number(numbers[0]); // first occurrence of a number
+          this.lastPageNumber = Number(numbers[1]); // second occurrence of a number
+      }
+    });
   }   
 
   showAddStationModal(): void{
     this.gagestatsService.addStation();
   }
 
-  bulkUpload(): void{
-    console.log("bulk upload clicked, does nothing else @ this time.")
+  public newPage(event){
+    if (event >=1 && event <= this.lastPageNumber) {
+      this._nssService.changePageNumber(event);
+    } else {
+      const toast: Toast = {
+        type: 'warning',
+        title: 'Error',
+        body: 'Page Number Out of Bounds'
+      };
+      this._nssService.showToast(toast);
+    }
   }
 
+  public getAgencyName(aID) {
+    if (this.agencies) {
+      return (this.agencies.find(a => a.id === aID).name);
+    }
+  }
+
+  public getStationType(sID) {
+    if (this.stationTypes) {
+      return (this.stationTypes.find(s => s.id === sID).name);
+    }
+  }
+
+  //TODO: Bulk Upload Button
+  bulkUpload(): void{
+  }
+
+  //TODO: Export Button
   export(): void{
-    console.log("export clicked, does nothing else")
   }
 
 }

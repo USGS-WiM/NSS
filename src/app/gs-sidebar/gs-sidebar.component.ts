@@ -14,25 +14,25 @@ export class GsSidebarComponent implements OnInit {
 
   // station type
   public stationTypes: Array<Stationtype>;
-  public stationType;
-  public selectedStationType = [];
-  public showStationType: boolean;
-
+  public selectedStationType: Array<Stationtype> = [];
   // agency
-  public agency;
   public agencies: Array<Agency>;
-  public selectedAgency: Array<Agency>;
- 
+  public selectedAgency: Array<Agency> = [];
+  // search and page parameters
+  public searchText: string = '';
+  public pageNumber = '1';
+
   // Dropdown menu default text
   private myMSTexts: IMultiSelectTexts;
   private myRTSettings: IMultiSelectSettings;
 
-  public searchText: string = '';
-
   constructor(private _nssService: NSSService) { }
 
   ngOnInit() {
-
+    this._nssService.selectedPageNumber.subscribe((page: string) => { 
+      this.pageNumber = page;
+      this._nssService.searchStations(this.searchText, this.selectedStationType, this.pageNumber);
+    });
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
@@ -43,7 +43,7 @@ export class GsSidebarComponent implements OnInit {
     });
 
     // trigger initial stations search
-    this._nssService.searchStations(this.searchText, this.selectedStationType);
+    this._nssService.searchStations(this.searchText, this.selectedStationType, this.pageNumber);
 
     this.myRTSettings = {
       pullRight: false,
@@ -68,9 +68,10 @@ export class GsSidebarComponent implements OnInit {
 
   }  // end OnInit()
 
-    // search stations
-    public onSearch() {
-      this._nssService.searchStations(this.searchText, this.selectedStationType);
-    }
+  // search stations
+  public onSearch() {
+    this.pageNumber = '1';
+    this._nssService.searchStations(this.searchText, this.selectedStationType, this.pageNumber);
+  }
 
 }

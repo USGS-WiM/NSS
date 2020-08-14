@@ -123,19 +123,20 @@
     }
 }
 
+.icon {
+	cursor: pointer;
+	padding: 5px;
+}
 
 .addErrorButton {
     padding: 5px;
     height: 30px;
 }
 
-  
-  .chart-wrapper{
+.chart-wrapper{
 	border: 1px solid rgba(0,0,0,0.3);
 	display:inline-block;
 	margin-bottom:65px !important;
 	max-height: 460px !important;
 	padding: 0 !important;
-  }
-  
-
+}

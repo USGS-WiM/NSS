@@ -55,11 +55,11 @@ export class GagestatsComponent implements OnInit {
     });
     //subscribe to page number related information
     this._nssService.pageResponse.subscribe((pageText: string) => {
-      let response = pageText;
-      this.lastPageNumber = (response.slice(response.indexOf("of") + "of".length));
-      this.lastPageNumber = (this.lastPageNumber.substr(0, this.lastPageNumber.indexOf('.'))); 
-      this.currentPageNumber = (response.slice(response.indexOf("page") + "page".length));
-      this.currentPageNumber = Number(this.currentPageNumber.substr(0, this.currentPageNumber.indexOf('of'))); 
+      var numbers = pageText.match(/[0-9]+/g); // [0-9] means to match any digit, the + means to match where there are multiple digits
+      if (numbers != null) {
+          this.currentPageNumber = Number(numbers[0]); // first occurrence of a number
+          this.lastPageNumber = Number(numbers[1]); // second occurrence of a number
+      }
     });
   }   
 
@@ -68,14 +68,8 @@ export class GagestatsComponent implements OnInit {
   }
 
   public newPage(event){
-    let pageNumber;
-    if(event.target){
-       pageNumber = (event.target.value);
-    }else{
-       pageNumber = event;
-    }
-    if ((pageNumber - 1) * (pageNumber - this.lastPageNumber) <= 0) {
-      this._nssService.changePageNumber(pageNumber);
+    if (event >=1 && event <= this.lastPageNumber) {
+      this._nssService.changePageNumber(event);
     } else {
       const toast: Toast = {
         type: 'warning',
@@ -87,27 +81,15 @@ export class GagestatsComponent implements OnInit {
   }
 
   public getAgencyName(aID) {
-    let acencyName;
     if (this.agencies) {
-      this.agencies.forEach(z => {
-          if (aID === z.id) {
-            acencyName = z.name;
-          }
-      });
+      return (this.agencies.find(a => a.id === aID).name);
     }
-    return acencyName;
   }
 
   public getStationType(sID) {
-    let stationTypeName;
     if (this.stationTypes) {
-      this.stationTypes.forEach(z => {
-          if (sID === z.id) {
-            stationTypeName = z.name;
-          }
-      });
+      return (this.stationTypes.find(s => s.id === sID).name);
     }
-    return stationTypeName;
   }
 
   //TODO: Bulk Upload Button

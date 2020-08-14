@@ -12,34 +12,34 @@
    
    <div class="hidden-print" >
         <div class="mtop-lg">
-            <i class="fas fa-angle-double-left" (click)="newPage(1)" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-            <i class="fas fa-angle-left" (click)="newPage(currentPageNumber-1)" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-            <input style="width:5%"  [value]="currentPageNumber" (change)="newPage($event)"/>
+            <i title="Click to go to first page" class="icon fas fa-angle-double-left" (click)="newPage(1)" aria-hidden="true"></i>
+            <i title="Click to go backward" class="icon fas fa-angle-left" (click)="newPage(currentPageNumber-1)" aria-hidden="true"></i>
+            <input style="width:5%"  [value]="currentPageNumber" (change)="newPage($event.target.value)"/>
             <label> /{{lastPageNumber}}</label>
-            <i title="Click to go forward" (click)="newPage(currentPageNumber+1)" class="fas fa-angle-right" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-            <i title="Click to go forward" (click)="newPage(lastPageNumber)" class="fas fa-angle-double-right" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
+            <i title="Click to go forward" (click)="newPage(currentPageNumber+1)" class="icon fas fa-angle-right" aria-hidden="true"></i>
+            <i title="Click to go to last page" (click)="newPage(lastPageNumber)" class="icon fas fa-angle-double-right" aria-hidden="true"></i>
         </div>
         <table style="border:solid 1px gray" class="custom-table"> 
             <thead>
                 <tr>
-                    <th class="col-xs-1">Type</th>
-                    <th class="col-xs-2">Agency</th>
                     <th class="col-xs-1">Code</th>
                     <th class="col-xs-4">Name</th>
                     <th class="col-xs-1">Latitude</th>
                     <th class="col-xs-1">Longitude</th>
+                    <th class="col-xs-1">Type</th>
+                    <th class="col-xs-2">Agency</th>
                     <th class="col-xs-1">Regulated</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor = "let s of selectedStations">
-                    <td>{{getStationType(s.stationTypeID)}}</td>
-                    <td>{{getAgencyName(s.agencyID)}}</td>
                     <td>{{s.code}}</td>
                     <td>{{s.name}}</td>
                     <td>{{s.location.coordinates[1]}}</td>
                     <td>{{s.location.coordinates[0]}}</td>
-                    <td>{{s.isRegulated}}</td>
+                    <td>{{getStationType(s.stationTypeID)}}</td>
+                    <td>{{getAgencyName(s.agencyID)}}</td>
+                    <td><input type="checkbox" [checked]="s.isRegulated" onclick="return false"/></td>
                 </tr>
             </tbody>
         </table>

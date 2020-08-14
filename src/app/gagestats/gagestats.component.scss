@@ -123,13 +123,16 @@
     }
 }
 
+.icon {
+	cursor: pointer;
+	padding: 5px;
+}
 
 .addErrorButton {
     padding: 5px;
     height: 30px;
 }
 
-  
 .chart-wrapper{
 	border: 1px solid rgba(0,0,0,0.3);
 	display:inline-block;

@@ -31,11 +31,11 @@ export class GsSidebarComponent implements OnInit {
   ngOnInit() {
     this._nssService.selectedPageNumber.subscribe((page: string) => { 
       this.pageNumber = page;
-      this._nssService.searchStations(this.searchText, this.selectedStationType, this.pageNumber, this.perPage);
+      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage);
     });
     this._nssService.selectedPerPage.subscribe((perPage: number) => { 
       this.perPage = perPage;
-      this._nssService.searchStations(this.searchText, this.selectedStationType, this.pageNumber, this.perPage);
+      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage);
     });
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
@@ -47,7 +47,7 @@ export class GsSidebarComponent implements OnInit {
     });
 
     // trigger initial stations search
-    this._nssService.searchStations(this.searchText, this.selectedStationType, this.pageNumber, this.perPage);
+    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage);
 
     this.myRTSettings = {
       pullRight: false,
@@ -75,7 +75,7 @@ export class GsSidebarComponent implements OnInit {
   // search stations
   public onSearch() {
     this.pageNumber = '1';
-    this._nssService.searchStations(this.searchText, this.selectedStationType, this.pageNumber,this.perPage);
+    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage);
   }
 
 }

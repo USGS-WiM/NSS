@@ -52,7 +52,7 @@ export class GagestatsComponent implements OnInit {
       this.agencies = agencies;
     });
     // subscribe to all station types
-    this._nssService.stationTypes.subscribe((stationtypes: Array<Agency>) => {
+    this._nssService.stationTypes.subscribe((stationtypes: Array<StationType>) => {
       this.stationTypes = stationtypes;
     });
     //subscribe to page number related information

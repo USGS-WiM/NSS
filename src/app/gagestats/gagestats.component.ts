@@ -23,6 +23,8 @@ export class GagestatsComponent implements OnInit {
   public loggedInRole;
   public lastPageNumber;
   public currentPageNumber;
+  public itemPerPage = [15,25,50,100]; 
+  public perPage = 50;
 
   constructor(
     private router: Router,
@@ -78,6 +80,10 @@ export class GagestatsComponent implements OnInit {
       };
       this._nssService.showToast(toast);
     }
+  }
+
+  public changePerPage(p){
+    this._nssService.changePerPage(p);
   }
 
   public getAgencyName(aID) {

@@ -60,6 +60,15 @@ export class NSSService {
         this._showGageStatsSubject = <BehaviorSubject<boolean>>new BehaviorSubject(this.configSettings.showGageStats);
         return this._showGageStatsSubject.asObservable();
     }
+    // -+-+-+-+-+-+-+-+-+ show gagepage -+-+-+-+-+-+-+-+
+    private _showHideGagePageModal: Subject<boolean> = new Subject<boolean>();
+    public setGagePageModal(val: any) {
+        this._showHideGagePageModal.next(val);
+    }
+    // show gagepage modal in the mainview
+    public get showGagePageModal(): any {
+        return this._showHideGagePageModal.asObservable();
+    }
     // -+-+-+-+-+-+-+-+-+ about modal -+-+-+-+-+-+-+-+
     private _showHideAboutModal: Subject<boolean> = new Subject<boolean>();
     public setAboutModal(val: any) {

@@ -92,6 +92,10 @@ export class GagestatsComponent implements OnInit {
     }
   }
 
+  public showGagePageModal() {
+    this._nssService.setGagePageModal(true);
+  }
+
   //TODO: Bulk Upload Button
   bulkUpload(): void{
   }

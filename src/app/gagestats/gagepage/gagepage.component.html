@@ -1,1 +1,14 @@
-<p>gagepage works!</p>
+<ng-template #gagePage let-c="close" let-d="dismiss">
+	<div>
+		<div class="modal-header">
+			<div class="title">GagePage</div>  
+			<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+		</div>
+
+	</div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button black">Close</button>
+	</div>
+</ng-template>

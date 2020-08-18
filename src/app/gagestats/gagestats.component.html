@@ -32,7 +32,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor = "let s of selectedStations">
+                <tr (click) = showGagePageModal() *ngFor = "let s of selectedStations">
                     <td>{{s.code}}</td>
                     <td>{{s.name}}</td>
                     <td>{{s.location.coordinates[1]}}</td>

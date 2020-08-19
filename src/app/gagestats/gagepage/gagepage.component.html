@@ -4,7 +4,132 @@
 			<div class="title">GagePage</div>  
 			<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 		</div>
+	</div>
 
+	<div class="modal-body modal-body-fixed">
+		<!--Gage Information-->
+		<div>
+			<div>Gage Information</div>
+			<div>
+				<table style="border:solid 1px gray" class="custom-table"> 
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+						<td>USGS Station Number</td>
+						<!-- <td><a href="https://waterdata.usgs.gov/monitoring-location/{{vm.gage.siteid}}">{{vm.gage.siteid}}&nbsp;&nbsp;</a><a href="https://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{vm.gage.siteid}}">(Legacy NWIS link)</a></td> -->
+						</tr>
+						<tr>
+						<td>Station Name</td>
+						<!-- <td>{{vm.gage.sitename}}</td> -->
+						</tr>
+						<tr>
+							<td>Station Type</td>
+							<!-- <td>{{vm.gage.stationtype}}</td> -->
+						</tr>
+						<tr>
+						<td>Latitude</td>
+						<!-- <td>{{vm.gage.lat}}</td> -->
+						</tr>
+						<tr>
+							<td>Longitude</td>
+							<!-- <td>{{vm.gage.lng}}</td> -->
+						</tr>
+						<tr>
+							<td>Is regulated?</td>
+							<!-- <td>{{vm.gage.isRegulated}}</td> -->
+						</tr>
+						<tr>
+							<td>Agency</td>
+							<!-- <td>{{vm.gage.agency}}</td> -->
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<!--Physical Characteristics-->
+		<!-- <div class="panel panel-default" ng-show="vm.gage.characteristics.length > 0"> -->
+		<div>
+			<div>Physical Characteristics</div>
+			<div>
+				<table style="border:solid 1px gray" class="custom-table"> 
+					<thead>
+						<tr>
+							<th>Characteristic Name</th>
+							<th>Value</th>
+							<th>Units</th>
+							<th>Citation</th>
+						</tr>
+					</thead>
+					<tbody >
+						<!-- <tr ng-repeat="characteristic in vm.gage.characteristics" ng-form="characteristicForm">
+							<td ng-bind="characteristic.name"></td>
+							<td ng-bind="characteristic.value"></td>
+							<td ng-bind="characteristic.units"></td>
+							<td ng-bind="characteristic.citationID"></td>
+						<tr> -->
+						</tbody>
+				</table>
+			</div>
+		</div>
+		<!--Streamflow Statistics-->
+		<!-- <div class="panel panel-default" ng-show="vm.gage.statisticsgroups.length > 0"> -->
+			<div>
+			<div>Streamflow Statistics</div>
+			<div>
+				<!-- <div class="panel panel-default" ng-repeat="statisticGroup in vm.gage.statisticsgroups" ng-form="statisticGroupForm"> -->
+					<div>
+					<!-- <div class="panel-heading">{{statisticGroup.name}}</div> -->
+					<div>
+						<table style="border:solid 1px gray" class="custom-table"> 
+							<thead>
+								<tr>
+									<th>Statistic Name</th>
+									<th>Value</th>
+									<th>Units</th>
+									<th>Citation</th>
+									<!-- <th>Preffered?</th>
+									<th>Years of Record</th> -->
+								</tr>
+							</thead>
+							<tbody >
+								<!-- <tr ng-repeat="statistic in statisticGroup.statistics" ng-form="statisticsForm">
+									<td ng-bind="statistic.name"></td>
+									<td ng-bind="statistic.value"></td>
+									<td ng-bind="statistic.units"></td>
+									<td ng-bind="statistic.citationID"></td>
+								</tr> -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--Citations-->
+		<!-- <div class="panel panel-default" ng-show="vm.gage.citations.length > 0"> -->
+			<div>
+			<div>Citations</div>
+			<div>
+				<table style="border:solid 1px gray" class="custom-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Citation</th>
+						</tr>
+					</thead>
+					<tbody >
+						<!-- <tr ng-repeat="citation in vm.gage.citations" ng-form="citationsForm">
+							<td ng-bind="citation.id"></td>
+							<td><a href="{{citation.url}}">{{citation.author}}&nbsp;{{citation.title}}</a></td>
+						</tr> -->
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 
 	<!-- Footer / Buttons -->

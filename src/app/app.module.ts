@@ -51,7 +51,7 @@ import { ManageCitationsModal } from './shared/components/managecitations/manage
 import { ToasterService} from 'angular2-toaster';
 import { AddRegressionRegionModal } from './shared/components/addregressionregion/addregressionregion.component';
 import { GagestatsComponent } from './gagestats/gagestats.component';
-import { GsSidebarComponent } from './gs-sidebar/gs-sidebar.component';
+import { GsSidebarComponent } from './gagestats/gs-sidebar/gs-sidebar.component';
 import { GagestatsService } from './gagestats/gagestats.service';
 import { GagepageComponent } from './gagestats/gagepage/gagepage.component';
 

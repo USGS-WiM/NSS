@@ -6,6 +6,7 @@ import { GagestatsService } from './gagestats.service';
 import { Agency } from 'app/shared/interfaces/agencies';
 import { StationType } from 'app/shared/interfaces/stationtypes';
 import { Toast } from 'angular2-toaster/src/toast';
+import { GagePage } from 'app/shared/interfaces/gagepage';
 
 @Component({
   selector: 'app-gagestats',
@@ -98,8 +99,12 @@ export class GagestatsComponent implements OnInit {
     }
   }
 
-  public showGagePageModal() {
-    this._nssService.setGagePageModal(true);
+  public showGagePageModal(s) {
+    const gagePageForm: GagePage = {
+      show: true,
+      gageInfo: s
+  }
+    this._nssService.setGagePageModal(gagePageForm);
   }
 
   //TODO: Bulk Upload Button

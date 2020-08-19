@@ -27,6 +27,7 @@ import { ManageCitation } from '../interfaces/managecitations';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from '../interfaces/station';
+import { GagePage } from '../interfaces/gagepage';
 
 @Injectable()
 export class NSSService {
@@ -61,8 +62,8 @@ export class NSSService {
         return this._showGageStatsSubject.asObservable();
     }
     // -+-+-+-+-+-+-+-+-+ show gagepage -+-+-+-+-+-+-+-+
-    private _showHideGagePageModal: Subject<boolean> = new Subject<boolean>();
-    public setGagePageModal(val: any) {
+    private _showHideGagePageModal: Subject<GagePage> = new Subject<GagePage>();
+    public setGagePageModal(val: GagePage) {
         this._showHideGagePageModal.next(val);
     }
     // show gagepage modal in the mainview

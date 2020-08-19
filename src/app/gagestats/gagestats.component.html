@@ -17,7 +17,11 @@
             <input style="width:5%"  [value]="currentPageNumber" (change)="newPage($event.target.value)"/>
             <label> /{{lastPageNumber}}</label>
             <i title="Click to go forward" (click)="newPage(currentPageNumber+1)" class="icon fas fa-angle-right" aria-hidden="true"></i>
-            <i title="Click to go to last page" (click)="newPage(lastPageNumber)" class="icon fas fa-angle-double-right" aria-hidden="true"></i>
+            <i title="Click to go to last page" (click)="newPage(lastPageNumber)" class="icon fas fa-angle-double-right" aria-hidden="true"></i>&nbsp;&nbsp;
+            <select style= "width: 80px" [(ngModel)]="perPage" (change)="changePerPage(perPage)">
+                <option *ngFor="let i of itemPerPage">{{i}}</option>
+            </select>
+            <label>per page</label>
         </div>
         <table style="border:solid 1px gray" class="custom-table"> 
             <thead>

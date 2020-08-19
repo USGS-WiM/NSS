@@ -244,6 +244,7 @@ export class NSSService {
     // -+-+-+-+-+-+ pages section-+-+-+-+-+-+
     private _pagesSubject: BehaviorSubject<string> = new BehaviorSubject<any>('');
     private _selectedPageNumber = new BehaviorSubject<any>(' ');
+    private _selectedPerPage = new BehaviorSubject<any>(' ');
 
     // Response from x-usgswim-messages
     public get pageResponse(): Observable<string> {
@@ -253,6 +254,11 @@ export class NSSService {
     selectedPageNumber = this._selectedPageNumber.asObservable();
     changePageNumber(pageNumber: any){
         this._selectedPageNumber.next(pageNumber);
+    }
+
+    selectedPerPage = this._selectedPerPage.asObservable();
+    changePerPage(perPage: any){
+        this._selectedPerPage.next(perPage);
     }
     // -+-+-+-+-+-+ end pages section-+-+-+-+-+-+
 
@@ -636,8 +642,8 @@ export class NSSService {
     }
 
     // get stations by text search, station type and other param
-    public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, agencyID: Array<Agency>, pageNumber: string) {
-        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString() + "&agencies=" + agencyID.toString() + "&page="+ pageNumber;
+    public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, agencyID: Array<Agency>, pageNumber: string, perPage: number) {
+        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString() + "&agencies=" + agencyID.toString() + "&page=" + pageNumber + "&pageCount="+ perPage;
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
             .subscribe(res => {

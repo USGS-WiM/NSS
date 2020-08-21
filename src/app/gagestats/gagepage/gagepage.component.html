@@ -68,7 +68,7 @@
 					</thead>
 					<tbody >
 						<tr *ngFor="let c of gage.characteristics">
-							<td>{{c.id}}</td>
+							<td>{{c.variableType.name}}</td>
 							<td>{{c.value}}</td>
 							<td>{{c.unitType.name}}</td>
 							<td>{{c.citationID}}</td>
@@ -98,7 +98,7 @@
 							</thead>
 							<tbody >
 								<tr *ngFor="let s of gage.statistics">
-									<td>{{s.id}}</td>
+									<td>{{s.regressionType.name}}</td>
 									<td>{{s.value}}</td>
 									<td>{{s.unitType.name}}</td>
 									<td>{{s.citationID}}</td>

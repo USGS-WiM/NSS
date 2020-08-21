@@ -198,7 +198,7 @@ export class NSSService {
         return this._stationsSubject.asObservable();
     }
 
-    // -+-+-+-+-+-+ Stations -+-+-+-+-+-+
+    // -+-+-+-+-+-+ Station Infomation -+-+-+-+-+-+
     private _gageInfoSubject = new Subject<any>();
 
     public setGageInfo(stations: Station) {
@@ -208,7 +208,6 @@ export class NSSService {
     public get GageInfo(): Observable<Station> {
         return this._gageInfoSubject.asObservable();
     }
-
 
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
     private _regionSubject: Subject<Array<Region>> = new Subject<Array<Region>>(); // array of regions that sidebar and mainview use
@@ -671,7 +670,6 @@ export class NSSService {
         .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + code)
         .subscribe(res => {
             this._gageInfoSubject.next(res);
-          //console.log(res)
         })
     }
 

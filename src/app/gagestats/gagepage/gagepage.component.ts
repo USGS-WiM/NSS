@@ -2,8 +2,6 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NSSService } from 'app/shared/services/app.service';
 import { NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { GagePage } from 'app/shared/interfaces/gagepage';
-import { StationType } from 'app/shared/interfaces/stationtypes';
-import { Agency } from 'app/shared/interfaces/agencies';
 import { HttpClient } from '@angular/common/http';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -22,8 +20,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public modalRef;
   public loggedInRole;
   public code;
-  public stationTypes;
-  public agencies;
   public gage: Station;
 
   constructor(private _nssService: NSSService, private _configService: ConfigService, private _modalService: NgbModal, private _http: HttpClient) { 
@@ -51,14 +47,13 @@ export class GagepageComponent implements OnInit, OnDestroy {
         .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + this.code)
         .subscribe((res: Station) => {
           this.gage = res;
-          console.log(this.gage);
         })
   }
   
   public getCitations(){
-    this.gage.citations=[];
+    this.gage.citations = [];
     this.gage.characteristics.forEach(c => {
-      if(c.citationID){
+      if (c.citationID) {
          if (!this.checkForDupCitations(c.citationID)) {
           this.gage.citations.push(c.citation);
         }
@@ -66,7 +61,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
 
     this.gage.statistics.forEach(s => {
-      if(s.citationID){
+      if (s.citationID) {
          if (!this.checkForDupCitations(s.citationID)) {
           this.gage.citations.push(s.citation);
         }

@@ -102,7 +102,7 @@ export class GagestatsComponent implements OnInit {
   public showGagePageModal(s) {
     const gagePageForm: GagePage = {
       show: true,
-      gageInfo: s
+      gageCode: s
   }
     this._nssService.setGagePageModal(gagePageForm);
   }

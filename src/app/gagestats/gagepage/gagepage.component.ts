@@ -4,6 +4,10 @@ import { NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { GagePage } from 'app/shared/interfaces/gagepage';
 import { StationType } from 'app/shared/interfaces/stationtypes';
 import { Agency } from 'app/shared/interfaces/agencies';
+import { HttpClient } from '@angular/common/http';
+import { Config } from 'app/shared/interfaces/config';
+import { ConfigService } from 'app/config.service';
+import { Station } from 'app/shared/interfaces/station';
 
 @Component({
   selector: 'gagePageModal',
@@ -13,52 +17,70 @@ import { Agency } from 'app/shared/interfaces/agencies';
 export class GagepageComponent implements OnInit, OnDestroy {
   @ViewChild('gagePage', {static: true}) public gagePageModal; // : ModalDirective;  //modal for validator
   private modalSubscript;
+  private configSettings: Config;
   private modalElement: any;
   public modalRef;
   public loggedInRole;
-  public descriptiveInfo;
+  public code;
   public stationTypes;
   public agencies;
+  public gage: Station;
 
-  constructor(private _nssService: NSSService, private _modalService: NgbModal) { }
+  constructor(private _nssService: NSSService, private _configService: ConfigService, private _modalService: NgbModal, private _http: HttpClient) { 
+    this.configSettings = this._configService.getConfiguration();
+  }
 
   ngOnInit() {
     this.loggedInRole = localStorage.getItem('loggedInRole');
     this.modalSubscript = this._nssService.showGagePageModal.subscribe((result: GagePage) => {
       if (result.show) { 
-          this.descriptiveInfo = result.gageInfo;
-          this.showGagePageForm(result.gageInfo);
+          this.code = result.gageCode;
+          this._nssService.getGagePageInfo(this.code);
         }
     });
-    // subscribe to all agencies
-    this._nssService.agencies.subscribe((agencies: Array<Agency>) => {
-      this.agencies = agencies;
-    });
-    // subscribe to all station types
-    this._nssService.stationTypes.subscribe((stationtypes: Array<StationType>) => {
-      this.stationTypes = stationtypes;
+    this._nssService.GageInfo.subscribe((s: Station) => {
+      this.gage = s;
+      this.getCitations();
+      this.showGagePageForm();
     });
     this.modalElement = this.gagePageModal;
   }
 
+  public getGagePageInfo(){
+    return this._http
+        .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + this.code)
+        .subscribe((res: Station) => {
+          this.gage = res;
+          console.log(this.gage);
+        })
+  }
+  
+  public getCitations(){
+    this.gage.citations=[];
+    this.gage.characteristics.forEach(c => {
+      if(c.citationID){
+         if (!this.checkForDupCitations(c.citationID)) {
+          this.gage.citations.push(c.citation);
+        }
+      }
+    });
 
-  public showGagePageForm(g){
+    this.gage.statistics.forEach(s => {
+      if(s.citationID){
+         if (!this.checkForDupCitations(s.citationID)) {
+          this.gage.citations.push(s.citation);
+        }
+      }
+    });
+  }
+
+  public checkForDupCitations(id: number) {
+    var found = this.gage.citations.some(el => el.id === id);
+    return found;
+  }
+
+  public showGagePageForm(){
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
-  }
-
-  public getAgencyName(aID) {
-    if (this.agencies) {
-      return (this.agencies.find(a => a.id === aID).name);
-    }
-  }
-
-  public getStationType(sID) {
-    if (this.stationTypes) {
-      return (this.stationTypes.find(s => s.id === sID).name);
-    }
-  }
-
-  public editRowClicked(){
   }
 
   ngOnDestroy() {

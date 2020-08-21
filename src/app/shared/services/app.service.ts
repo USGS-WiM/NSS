@@ -198,6 +198,18 @@ export class NSSService {
         return this._stationsSubject.asObservable();
     }
 
+    // -+-+-+-+-+-+ Stations -+-+-+-+-+-+
+    private _gageInfoSubject = new Subject<any>();
+
+    public setGageInfo(stations: Station) {
+        this._gageInfoSubject.next(stations);
+    }
+
+    public get GageInfo(): Observable<Station> {
+        return this._gageInfoSubject.asObservable();
+    }
+
+
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
     private _regionSubject: Subject<Array<Region>> = new Subject<Array<Region>>(); // array of regions that sidebar and mainview use
     private _selectedRegion: BehaviorSubject<Region> = new BehaviorSubject<any>(''); // selectedregion
@@ -651,6 +663,16 @@ export class NSSService {
                 this._stationsSubject.next(res.body);
                 this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
             })
+    }
+
+    // get gage page info
+    public getGagePageInfo(code) {
+        return this._http
+        .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + code)
+        .subscribe(res => {
+            this._gageInfoSubject.next(res);
+          //console.log(res)
+        })
     }
 
     // get regressionRegions by region

@@ -23,8 +23,8 @@ export class GsSidebarComponent implements OnInit {
   public pageNumber = '1';
   public perPage = 50;
   // Dropdown menu default text
-  private myMSTexts: IMultiSelectTexts;
-  private myRTSettings: IMultiSelectSettings;
+  public myMSTexts: IMultiSelectTexts;
+  public myRTSettings: IMultiSelectSettings;
 
   constructor(private _nssService: NSSService) { }
 

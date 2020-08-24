@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NSSService } from '../shared/services/app.service';
-import { Agency } from '../shared/interfaces/agency';
-import { Stationtype } from '../shared/interfaces/stationtype';
-import { IMultiSelectSettings, IMultiSelectTexts} from '../../../node_modules/angular-2-dropdown-multiselect';
+import { NSSService } from 'app/shared/services/app.service';
+import { Agency } from 'app/shared/interfaces/agency';
+import { Stationtype } from 'app/shared/interfaces/stationtype';
+import { IMultiSelectSettings, IMultiSelectTexts} from '../../../../node_modules/angular-2-dropdown-multiselect';
 
 
 @Component({
@@ -23,8 +23,8 @@ export class GsSidebarComponent implements OnInit {
   public pageNumber = '1';
   public perPage = 50;
   // Dropdown menu default text
-  private myMSTexts: IMultiSelectTexts;
-  private myRTSettings: IMultiSelectSettings;
+  public myMSTexts: IMultiSelectTexts;
+  public myRTSettings: IMultiSelectSettings;
 
   constructor(private _nssService: NSSService) { }
 

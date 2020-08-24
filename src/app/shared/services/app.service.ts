@@ -27,6 +27,7 @@ import { ManageCitation } from '../interfaces/managecitations';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from '../interfaces/station';
+import { GagePage } from '../interfaces/gagepage';
 
 @Injectable()
 export class NSSService {
@@ -59,6 +60,15 @@ export class NSSService {
     public showGageStats(): Observable<boolean> {
         this._showGageStatsSubject = <BehaviorSubject<boolean>>new BehaviorSubject(this.configSettings.showGageStats);
         return this._showGageStatsSubject.asObservable();
+    }
+    // -+-+-+-+-+-+-+-+-+ show gagepage -+-+-+-+-+-+-+-+
+    private _showHideGagePageModal: Subject<GagePage> = new Subject<GagePage>();
+    public setGagePageModal(val: GagePage) {
+        this._showHideGagePageModal.next(val);
+    }
+    // show gagepage modal in the mainview
+    public get showGagePageModal(): any {
+        return this._showHideGagePageModal.asObservable();
     }
     // -+-+-+-+-+-+-+-+-+ about modal -+-+-+-+-+-+-+-+
     private _showHideAboutModal: Subject<boolean> = new Subject<boolean>();
@@ -641,6 +651,13 @@ export class NSSService {
                 this._stationsSubject.next(res.body);
                 this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
             })
+    }
+
+    // get gage page info
+    public getGagePageInfo(code) {
+        return this._http
+        .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + code)
+        .map(res => <Station>res);
     }
 
     // get regressionRegions by region

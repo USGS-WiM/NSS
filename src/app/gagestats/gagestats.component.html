@@ -23,7 +23,7 @@
             </select>
             <label>per page</label>
         </div>
-        <table style="border:solid 1px gray" class="custom-table"> 
+        <table style="border:solid 1px gray" class="custom-table sortable"> 
             <thead>
                 <tr>
                     <th class="col-xs-1">Code</th>
@@ -36,7 +36,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor = "let s of selectedStations">
+                <tr (click) = showGagePageModal(s.code) *ngFor = "let s of selectedStations">
                     <td>{{s.code}}</td>
                     <td>{{s.name}}</td>
                     <td>{{s.location.coordinates[1]}}</td>

@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NSSService } from 'app/shared/services/app.service';
 import { NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { GagePage } from 'app/shared/interfaces/gagepage';
-import { HttpClient } from '@angular/common/http';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { Station } from 'app/shared/interfaces/station';
@@ -22,7 +21,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public code;
   public gage: Station;
 
-  constructor(private _nssService: NSSService, private _configService: ConfigService, private _modalService: NgbModal, private _http: HttpClient) { 
+  constructor(private _nssService: NSSService, private _configService: ConfigService, private _modalService: NgbModal) { 
     this.configSettings = this._configService.getConfiguration();
   }
 
@@ -31,47 +30,29 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this.modalSubscript = this._nssService.showGagePageModal.subscribe((result: GagePage) => {
       if (result.show) { 
           this.code = result.gageCode;
-          this._nssService.getGagePageInfo(this.code);
+          this._nssService.getGagePageInfo(this.code).subscribe(res => {
+            this.gage = res;
+            this.getCitations();
+            this.showGagePageForm();
+          });
         }
     });
-    this._nssService.GageInfo.subscribe((s: Station) => {
-      this.gage = s;
-      this.getCitations();
-      this.showGagePageForm();
-    });
     this.modalElement = this.gagePageModal;
-  }
-
-  public getGagePageInfo(){
-    return this._http
-        .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + this.code)
-        .subscribe((res: Station) => {
-          this.gage = res;
-        })
   }
   
   public getCitations(){
     this.gage.citations = [];
     this.gage.characteristics.forEach(c => {
-      if (c.citationID) {
-         if (!this.checkForDupCitations(c.citationID)) {
-          this.gage.citations.push(c.citation);
-        }
+      if (c.citationID && !this.gage.citations.some(cit => cit.id === c.citationID)) {
+        this.gage.citations.push(c.citation);
       }
     });
 
     this.gage.statistics.forEach(s => {
-      if (s.citationID) {
-         if (!this.checkForDupCitations(s.citationID)) {
-          this.gage.citations.push(s.citation);
-        }
+      if (s.citationID && !this.gage.citations.some(cit => cit.id === s.citationID)) {
+        this.gage.citations.push(s.citation);
       }
     });
-  }
-
-  public checkForDupCitations(id: number) {
-    var found = this.gage.citations.some(el => el.id === id);
-    return found;
   }
 
   public showGagePageForm(){

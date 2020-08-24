@@ -1,4 +1,6 @@
 import { Citation } from './citation';
+import { Unittype } from './unitType';
+import { Variabletype } from './variabletype';
 
 export interface GageCharacteristic {
     name: string;
@@ -7,4 +9,6 @@ export interface GageCharacteristic {
     comments: string;
     citationID: number;
     citation: Citation;
+    unitType: Unittype;
+    variableType: Variabletype;
 }

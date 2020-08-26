@@ -51,9 +51,10 @@ import { ManageCitationsModal } from './shared/components/managecitations/manage
 import { ToasterService} from 'angular2-toaster';
 import { AddRegressionRegionModal } from './shared/components/addregressionregion/addregressionregion.component';
 import { GagestatsComponent } from './gagestats/gagestats.component';
-import { GsSidebarComponent } from './gs-sidebar/gs-sidebar.component';
+import { GsSidebarComponent } from './gagestats/gs-sidebar/gs-sidebar.component';
 import { GagestatsService } from './gagestats/gagestats.service';
 import { AddStationModal } from './shared/components/add-station/add-station.component';
+import { GagepageComponent } from './gagestats/gagepage/gagepage.component';
 
 
 declare const require: any;
@@ -100,7 +101,7 @@ export function highchartsFactory() {
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
     ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, 
-    LoaderComponent, GagestatsComponent, GsSidebarComponent, AgenciesComponent, StationTypesComponent, AddStationModal
+    LoaderComponent, GagestatsComponent, GsSidebarComponent, AgenciesComponent, StationTypesComponent, AddStationModal, GagepageComponent
   ],
   imports: [
     NgSelectModule, BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

@@ -148,9 +148,6 @@ export class SidebarComponent implements OnInit {
                 // if there are results, show the chart buttons
                 if (sc.regressionRegions.length > 0 && sc.regressionRegions[0].results && sc.statisticGroupName.indexOf('Peak-Flow') > -1) {
                     this.showChart = true;
-                    sc.regressionRegions[0].results.forEach((r) => {
-                        r.equation = r.equation.replace(/_/g, ' \\_');
-                    });
                 } else { this.showChart = false; }
             });
             this._loaderService.hideFullPageLoad();

@@ -230,6 +230,11 @@ export class MainviewComponent implements OnInit {
                 if (this.uniqueRegRegions.length > 1) { this.multipleRegRegions = true; }
 
                 s.regressionRegions.forEach((rr, index) => {
+                    if (rr.regressions) {
+                        rr.regressions.forEach((r) => {
+                            r['equationMathJax'] = '`' + r.equation.replace(/_/g, ' \\_') + '`';
+                        });
+                    }
                     regID = '(RG_Code: ' + rr.code + ')'; // need to show the regID for each limit so they know which one they are out of range on
                     if (rr.results && rr.results.length > 0) {
                         if (rr.results[0] && rr.results[0].errors) {
@@ -644,8 +649,7 @@ export class MainviewComponent implements OnInit {
     // add backticks around parameter code to escape in equation
     private buildEquation(p: Parameter[], equation: string): string {
         let fullEquation: string = '';
-        let arrayOfparameterValues = [];
-        fullEquation = '`' + equation + '`';
+        fullEquation = '`' + equation.replace(/_/g, ' \\_') + '`';
         return fullEquation;
     }
 

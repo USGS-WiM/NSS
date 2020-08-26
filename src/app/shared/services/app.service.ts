@@ -26,6 +26,8 @@ import { LoaderService } from './loader.service';
 import { ManageCitation } from '../interfaces/managecitations';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
+import { Station } from '../interfaces/station';
+import { GagePage } from '../interfaces/gagepage';
 
 @Injectable()
 export class NSSService {
@@ -39,6 +41,7 @@ export class NSSService {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('auth') || ''
     });
+
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService, private _loaderService: LoaderService) {
         this.configSettings = this._configService.getConfiguration();
         this.getRegions();
@@ -57,6 +60,15 @@ export class NSSService {
     public showGageStats(): Observable<boolean> {
         this._showGageStatsSubject = <BehaviorSubject<boolean>>new BehaviorSubject(this.configSettings.showGageStats);
         return this._showGageStatsSubject.asObservable();
+    }
+    // -+-+-+-+-+-+-+-+-+ show gagepage -+-+-+-+-+-+-+-+
+    private _showHideGagePageModal: Subject<GagePage> = new Subject<GagePage>();
+    public setGagePageModal(val: GagePage) {
+        this._showHideGagePageModal.next(val);
+    }
+    // show gagepage modal in the mainview
+    public get showGagePageModal(): any {
+        return this._showHideGagePageModal.asObservable();
     }
     // -+-+-+-+-+-+-+-+-+ about modal -+-+-+-+-+-+-+-+
     private _showHideAboutModal: Subject<boolean> = new Subject<boolean>();
@@ -186,6 +198,17 @@ export class NSSService {
         return this.toastBind.asObservable();
     }
 
+    // -+-+-+-+-+-+ Stations -+-+-+-+-+-+
+    private _stationsSubject = new Subject<any>();
+
+    public setStations(stations: Array<Station>) {
+        this._stationsSubject.next(stations);
+    }
+
+    public get Stations(): Observable<Array<Station>> {
+        return this._stationsSubject.asObservable();
+    }
+
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
     private _regionSubject: Subject<Array<Region>> = new Subject<Array<Region>>(); // array of regions that sidebar and mainview use
     private _selectedRegion: BehaviorSubject<Region> = new BehaviorSubject<any>(''); // selectedregion
@@ -230,26 +253,35 @@ export class NSSService {
     }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
+    // -+-+-+-+-+-+ pages section-+-+-+-+-+-+
+    private _pagesSubject: BehaviorSubject<string> = new BehaviorSubject<any>('');
+    private _selectedPageNumber = new BehaviorSubject<any>(' ');
+    private _selectedPerPage = new BehaviorSubject<any>(' ');
+
+    // Response from x-usgswim-messages
+    public get pageResponse(): Observable<string> {
+        return this._pagesSubject.asObservable();
+    } 
+
+    selectedPageNumber = this._selectedPageNumber.asObservable();
+    changePageNumber(pageNumber: any){
+        this._selectedPageNumber.next(pageNumber);
+    }
+
+    selectedPerPage = this._selectedPerPage.asObservable();
+    changePerPage(perPage: any){
+        this._selectedPerPage.next(perPage);
+    }
+    // -+-+-+-+-+-+ end pages section-+-+-+-+-+-+
+
     // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
     private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use
-    private _selectedStationType: BehaviorSubject<Stationtype> = new BehaviorSubject<any>(''); // selectedstationtype
 
     public get stationTypes(): Observable<Array<Stationtype>> {
-        // getter (station type)
+        // getter all (station type)
         return this._stationTypeSubject.asObservable();
     }
 
-    // clear selected
-
-    // setter (selectedStationType)
-    public setSelectedStationType(v: Stationtype){
-        this._selectedStationType.next(v);
-    } 
-    
-    // getter (selectedStationType)
-    public get selectedStationType(): Observable<Stationtype> {
-        return this._selectedStationType.asObservable();
-    }
     // get all station types
     public getStationTypes(): void {
         this._http
@@ -264,24 +296,12 @@ export class NSSService {
 
     // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
     private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
-    private _selectedAgency: BehaviorSubject<Agency> = new BehaviorSubject<any>(''); // selectedAgency
 
     public get agencies(): Observable<Array<Agency>> {
-        // getter (agencies)
+        // getter all (agencies)
         return this._agencySubject.asObservable();
     }
 
-    // clear selected
-
-    // setter (selectedAgency)
-    public setSelectedAgency(v: Agency){
-        this._selectedAgency.next(v);
-    }
-    
-    // getter (selectedAgency)
-    public get selectedAgency(): Observable<Agency> {
-        return this._selectedAgency.asObservable();
-    }
     // get all station types
     public getAgencies(): void {
         this._http
@@ -633,20 +653,22 @@ export class NSSService {
             .map(res => <Array<Variabletype>>res);
     }
 
-    // get stations by station type
-    public getStationsByType(id: Array<number>, params?: string) {
-        let url = ''
-        if (id) {
-           url = "?stationTypes=" + id
-       }
+    // get stations by text search, station type and other param
+    public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, agencyID: Array<Agency>, pageNumber: string, perPage: number) {
+        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString() + "&agencies=" + agencyID.toString() + "&page=" + pageNumber + "&pageCount="+ perPage;
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url + params)
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
+            .subscribe(res => {
+                this._stationsSubject.next(res.body);
+                this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
+            })
     }
 
-     // get stations by station type
-     public getStationsByAgency(id: number, id2: number){
+    // get gage page info
+    public getGagePageInfo(code) {
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + "?stationTypes=" + id + "?agencies=" + id2)
+        .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + code)
+        .map(res => <Station>res);
     }
 
     // get regressionRegions by region

@@ -11,11 +11,13 @@
     "regTypeURL": "RegressionTypes",
     "rolesURL": "Roles",
     "scenariosURL": "Scenarios",
+    "stationsURL": "Stations",
     "stationTypeURL": "StationTypes",
     "statisticGrpURL": "StatisticGroups",
     "unitsURL": "Units",
     "unitSystemsURL": "UnitsSystems",
     "variablesURL": "Variables",
     "statusURL": "Status",
-    "loginShow": true
+    "loginShow": true,
+    "showGageStats": true
 }

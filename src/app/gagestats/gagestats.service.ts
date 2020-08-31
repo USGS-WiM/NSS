@@ -7,7 +7,7 @@ export class GagestatsService {
   
   constructor() { }
 
+  //TODO: add station POST request
   addStation(): void {
-    console.log('TODO: add station POST request')
   }
 }

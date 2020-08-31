@@ -302,7 +302,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         if(exp == null){
             this.equation = " ";
         }else{
-        this.equation = '`' + exp + '`';
+        this.equation = '`' + exp.replace(/_/g, ' \\_') + '`';
         }
         equ.insertAdjacentHTML('afterbegin', '<span [MathJax]="equation">' + this.equation + '</span');
         MathJax.Hub.Config({

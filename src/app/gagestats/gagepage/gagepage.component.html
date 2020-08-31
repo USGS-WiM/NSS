@@ -1,0 +1,140 @@
+<ng-template #gagePage let-c="close" let-d="dismiss">
+	<div>
+		<div class="modal-header">
+			<div class="title">GagePage</div>  
+			<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+		</div>
+	</div>
+
+	<div class="modal-body modal-body-fixed">
+		<!--Gage Information-->
+		<div>
+			<div class="table-title">Gage Information</div>
+			<div>
+				<table style="border:solid 1px gray" class="custom-table"> 
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>USGS Station Number</td>
+							<td><a href="https://waterdata.usgs.gov/monitoring-location/{{gage.code}}">{{gage.code}}&nbsp;&nbsp;</a><a href="https://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.code}}">(Legacy NWIS link)</a></td> 
+						</tr>
+						<tr>
+							<td>Station Name</td>
+							<td>{{gage.name}}</td>
+						</tr>
+						<tr>
+							<td>Station Type</td>
+							<td>{{gage.stationType.name}}</td>
+						</tr>
+						<tr>
+							<td>Latitude</td>
+							<td>{{gage.location.coordinates[1]}}</td>
+						</tr>
+						<tr>
+							<td>Longitude</td>
+							<td>{{gage.location.coordinates[0]}}</td>
+						</tr>
+						<tr>
+							<td>Is regulated?</td>
+							<td>{{gage.isRegulated}}</td> 
+						</tr>
+						<tr>
+							<td>Agency</td>
+							<td>{{gage.agency.name}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<!--Physical Characteristics-->
+		<div *ngIf="gage.characteristics.length > 0">
+			<div class="table-title">Physical Characteristics
+				<!-- <button *ngIf="loggedInRole" type="button" class="button small blue mright-xs"  (click)="addPhysicalCharacteristic()">Add Physical Characteristic</button> -->
+			</div>
+			<div>
+				<table style="border:solid 1px gray" class="custom-table"> 
+					<thead>
+						<tr>
+							<th>Characteristic</th>
+							<th>Value</th>
+							<th>Units</th>
+							<th>Citation ID</th>
+						</tr>
+					</thead>
+					<tbody >
+						<tr *ngFor="let c of gage.characteristics">
+							<td>{{c.variableType.name}}</td>
+							<td>{{c.value}}</td>
+							<td>{{c.unitType.name}}</td>
+							<td>{{c.citationID}}</td>
+						<tr>
+						</tbody>
+				</table>
+			</div>
+		</div>
+		<!--Streamflow Statistics-->
+			<div *ngIf="gage.statistics.length > 0">
+			<div class="table-title">Streamflow Statistics
+				<!-- <button *ngIf="loggedInRole" type="button" class="button small blue mright-xs"  (click)="addStreamflowStatistic()">Add Streamflow Statistic</button> -->
+			</div>
+			<div>
+				<div>
+					<div>
+						<table style="border:solid 1px gray" class="custom-table"> 
+							<thead>
+								<tr>
+									<th>Statistic</th>
+									<th>Value</th>
+									<th>Units</th>
+									<th>Citation ID</th>
+									<th>Preferred?</th>
+									<th>Years of Record</th> 
+								</tr>
+							</thead>
+							<tbody >
+								<tr *ngFor="let s of gage.statistics">
+									<td>{{s.regressionType.name}}</td>
+									<td>{{s.value}}</td>
+									<td>{{s.unitType.name}}</td>
+									<td>{{s.citationID}}</td>
+									<td>{{s.isPreferred}}</td>
+									<td>{{s.yearsofRecord}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--Citations-->
+		<div *ngIf="gage.citations.length > 0">
+			<div class="table-title">Citations</div>
+			<div>
+				<table style="border:solid 1px gray" class="custom-table">
+					<thead>
+						<tr>
+							<th class="width-5">ID</th>
+							<th>Citation</th>
+						</tr>
+					</thead>
+					<tbody >
+						<tr *ngFor="let c of gage.citations">
+							<td>{{c.id}}</td>
+							<td><a href="{{c.url}}">{{c.author}}&nbsp;{{c.title}}</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button black">Close</button>
+	</div>
+</ng-template>

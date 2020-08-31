@@ -19,6 +19,7 @@ export interface Config {
     regTypeURL: string;
     rolesURL: string;
     scenariosURL: string;
+    stationsURL: string;
     stationTypeURL: string;
     statisticGrpURL: string;
     unitsURL: string;
@@ -26,4 +27,5 @@ export interface Config {
     variablesURL: string;
     statusURL: string;
     loginShow: boolean;
+    showGageStats: boolean;
 }

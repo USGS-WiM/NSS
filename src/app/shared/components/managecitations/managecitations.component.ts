@@ -6,7 +6,7 @@
 // authors:  Tonia Roddick USGS Wisconsin Internet Mapping
 // purpose: modal used to show about information
 
-import { Component, ViewChild, OnInit, OnDestroy, ɵCompiler_compileModuleSync__POST_R3__ } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from 'app/settings/settings.service';
@@ -23,7 +23,6 @@ import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Region } from 'app/shared/interfaces/region';
-import { TestBed } from '@angular/core/testing';
 
 @Component({
     selector: 'manageCitationsModal',
@@ -263,19 +262,17 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
 
     public checkManagerRegressionRegions(r){
-        let test = [];
+        let tempRegressionRegions = [];
         this.managerRegressionRegions.forEach(m => {
-            m.forEach(t =>{
-                test.push(t)
+            m.forEach(x =>{
+                tempRegressionRegions.push(x);
             })
         })
-
         if (this.loggedInRole == "Manager") {
-            return test.filter(mc => mc.id == r.id).length > 0;
+            return tempRegressionRegions.filter(mc => mc.id == r.id).length > 0;
         } else {
             return true;
         }
-        
     }
 
     public getManagerCitations() {
@@ -286,12 +283,12 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
 
     public getManagerRegressionRegions(){
-        this.managerRegressionRegions= []
+        this.managerRegressionRegions = [];
         this.regions.forEach(r => {
             this._settingsService.getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.regRegionURL)
             .subscribe(res => {
                 this.managerRegressionRegions.push(res);
-        });
+            });
         })
     }
 

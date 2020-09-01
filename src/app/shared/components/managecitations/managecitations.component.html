@@ -10,7 +10,6 @@
 			<div>
 				<input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
 			</div>
-
 			<div  [class.hidden]="showNewCitation" class = "mtop-sm">
 				<button type="button" (click)="showNewCitation = true" class="button blue">Create New Citation</button>
 			</div>
@@ -30,7 +29,6 @@
 					<div class="input-invalid-warning" *ngIf="!newCitForm.get('author').valid && newCitForm.get('author').dirty">Author
 						is required</div>
 				</div>
-	  
 				<!-- Short Name -->
 				<div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty}">
 					<label class="req" for="citationURL">Citation URL:</label>

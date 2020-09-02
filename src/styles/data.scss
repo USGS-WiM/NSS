@@ -201,6 +201,10 @@
 }
 
 // Width class shortcuts to use in tables
+.empty-cell:after{
+	content: '\00A0\00A0\00A0\00A0\00A0\00A0\00A0\00A0\00A0';
+	visibility: hidden;
+}
 .width-5{width: 5%;}
 .width-10{width: 10%;}
 .width-15{width: 15%;}

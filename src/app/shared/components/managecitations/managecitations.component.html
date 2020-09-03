@@ -93,19 +93,21 @@
 							</div>
 						</td>
 						<!-- Col 3, Associated Regression Region and Buttons -->
-						<span *ngFor="let e of c.regressionRegions">
 							<td class="width-35">
-								<div>{{e.name}}</div>	
+								<div *ngFor="let e of c.regressionRegions">{{e.name}}
+									<!-- <button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button" [disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
+										<i class="far fa-pencil"></i>
+									</button> -->
+								</div>
 							</td>
 
 							<td class="width-5">
-								<div [class.hidden]="!showAddCitations" class="cell-buttons">
+								<div *ngFor="let e of c.regressionRegions" [class.hidden]="!showAddCitations" class="cell-buttons">
 									<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button" [disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
 										<i class="far fa-pencil"></i>
-									</button> 
+									</button>
 								</div>
-							</td>
-						</span>
+							</td> 
 					</tr>
 				</tbody>
 			</table>

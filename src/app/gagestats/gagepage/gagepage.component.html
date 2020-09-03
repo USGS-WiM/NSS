@@ -103,13 +103,13 @@
 						</tr>
 					</thead>
 					<tbody >
-						<tr *ngFor="let c of gage.characteristics">
+						<tr *ngFor="let c of gage.characteristics, let cIndex = index">
 							<td>	
 								<div class="table-icon-buttons">
-									<button *ngIf="!c.isEditing" title="Edit Parameter" (click)="editRowClicked(c)" class="icon-button" aria-hidden="true">
+									<button *ngIf="!c.isEditing" title="Edit Parameter" (click)="editRowClicked(c, cIndex)" class="icon-button" aria-hidden="true">
 										<i class="far fa-pencil"></i>
 									</button>
-									<button *ngIf="c.isEditing" title="Save Parameter" (click)="saveParameter(c)"  class="icon-button" aria-hidden="true">
+									<button *ngIf="c.isEditing" title="Save Parameter" (click)="saveChar(c)"  class="icon-button" aria-hidden="true">
 										<i class="far fa-floppy-o"></i>
 									</button>
 									<button *ngIf="c.isEditing" title="Cancel Edit" (click)="cancelEditRowClicked(c)"  class="icon-button" aria-hidden="true">
@@ -120,19 +120,19 @@
 							<td>{{c.variableType.name}}</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.value}}</span>
-								<span *ngIf="c.isEditing"><input size="5"></span>
+								<span *ngIf="c.isEditing"><input [(ngModel)]="c.value" size="3"></span>
 							</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.unitType.name}}</span>
 								<span *ngIf="c.isEditing">
-									<select [compareWith]="compareObjects" name="unitType" [(ngModel)]="c.unitType" >
+									<select [compareWith]="compareObjects" name="unitType" [(ngModel)]="c.unitType" style="width: 100px;">
 										<option *ngFor="let unit of units" [ngValue]="unit">{{unit.unit}}</option>
 									</select>
 								</span>
 							</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.citationID}}</span>
-								<span *ngIf="c.isEditing"><input size="5"></span>
+								<span *ngIf="c.isEditing"><input [(ngModel)]="c.citationID" size="5"></span>
 							</td>
 						<tr>
 						</tbody>
@@ -192,13 +192,13 @@
 								</tr>
 							</thead>
 							<tbody >
-								<tr *ngFor="let s of gage.statistics">
+								<tr *ngFor="let s of gage.statistics,  let sIndex = index">
 									<td>	
 										<div class="table-icon-buttons">
-											<button *ngIf="!s.isEditing" title="Edit Parameter" (click)="editRowClicked(s)" class="icon-button" aria-hidden="true">
+											<button *ngIf="!s.isEditing" title="Edit Parameter" (click)="editRowClicked(s, sIndex)" class="icon-button" aria-hidden="true">
 												<i class="far fa-pencil"></i>
 											</button>
-											<button *ngIf="s.isEditing" title="Save Parameter" (click)="saveParameter(s)"  class="icon-button" aria-hidden="true">
+											<button *ngIf="s.isEditing" title="Save Parameter" (click)="saveStat(s, gIndex, stIndex)"  class="icon-button" aria-hidden="true">
 												<i class="far fa-floppy-o"></i>
 											</button>
 											<button *ngIf="s.isEditing" title="Cancel Edit" (click)="cancelEditRowClicked(s)"  class="icon-button" aria-hidden="true">
@@ -209,27 +209,27 @@
 									<td>{{s.regressionType.name}}</td>
 									<td>
 										<span *ngIf="!s.isEditing">{{s.value}}</span>
-										<span *ngIf="s.isEditing"><input size="1"></span>
+										<span *ngIf="s.isEditing"><input [(ngModel)]="s.value" size="1"></span>
 									</td>
 									<td>
 										<span *ngIf="!s.isEditing">{{s.unitType.name}}</span>
 										<span *ngIf="s.isEditing" >
-											<select [compareWith]="compareObjects" name="unitType" [(ngModel)]="s.unitType" >
+											<select [(ngModel)]="s.unitType" name="unitType" [compareWith]="compareObjects">
                                                 <option *ngFor="let unit of units" [ngValue]="unit">{{unit.unit}}</option>
                                             </select>
 										</span>
 									</td>
 									<td>
 										<span *ngIf="!s.isEditing">{{s.citationID}}</span>
-										<span *ngIf="s.isEditing"><input size="1"></span>
+										<span *ngIf="s.isEditing"><input [(ngModel)]="s.citationID" size="1"></span>
 									</td>
 									<td>
 										<span *ngIf="!s.isEditing">{{s.isPreferred}}</span>
-										<span *ngIf="s.isEditing"><input size="5"></span>
+										<span *ngIf="s.isEditing"><input [(ngModel)]="s.isPreferred" size="5"></span>
 									</td>
 									<td>
 										<span *ngIf="!s.isEditing">{{s.yearsofRecord}}</span>
-										<span *ngIf="s.isEditing"><input size="1"></span>
+										<span *ngIf="s.isEditing"><input [(ngModel)]="s.yearsofRecord" size="1"></span>
 									</td>
 								</tr>
 							</tbody>

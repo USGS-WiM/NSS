@@ -29,6 +29,7 @@ import { Error } from 'app/shared/interfaces/error';
 import { ToasterService } from 'angular2-toaster';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
+import { Station } from 'app/shared/interfaces/station';
 
 @Injectable()
 export class SettingsService {
@@ -51,6 +52,7 @@ export class SettingsService {
     private _errorsSubject: BehaviorSubject<Array<Error>> = <BehaviorSubject<Error[]>>new BehaviorSubject([]);
     private _stationTypeSubject: BehaviorSubject<Array<Stationtype>> = <BehaviorSubject<Stationtype[]>>new BehaviorSubject([]);
     private _agenciesSubject: BehaviorSubject<Array<Agency>> = <BehaviorSubject<Agency[]>>new BehaviorSubject([]);
+    private _stationSubject: BehaviorSubject<Array<Station>> = <BehaviorSubject<Station[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {

@@ -5,7 +5,9 @@ import { GagePage } from 'app/shared/interfaces/gagepage';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { Station } from 'app/shared/interfaces/station';
-import { Unittype } from '../shared/interfaces/unittype';
+import { Unittype } from 'app/shared/interfaces/unittype';
+import { SettingsService } from '../../settings/settings.service';
+import { GageCharacteristic } from 'app/shared/interfaces/gagecharacteristic';
 
 @Component({
   selector: 'gagePageModal',
@@ -23,8 +25,17 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public gage: Station;
   public editGage: boolean;
   public units;
+  public tempItem;
+  public itemBeingEdited;
+  public editItem;
+  public editId;
+  public newChar: GageCharacteristic;
 
-  constructor(private _nssService: NSSService, private _configService: ConfigService, private _modalService: NgbModal) { 
+  constructor(
+    private _nssService: NSSService, 
+    private _configService: ConfigService, 
+    private _modalService: NgbModal, 
+    public _settingsservice: SettingsService) { 
     this.configSettings = this._configService.getConfiguration();
   }
 
@@ -79,31 +90,55 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public endEditGageStats() {
     this.editGage = false;
+
   } 
 
-  public editRowClicked(item) {
+  public editRowClicked(item, id) {
+    this.tempItem = JSON.parse(JSON.stringify(item));
+    this.itemBeingEdited = item;
+    this.editId = id
     item.isEditing = true;
   }
 
-  public saveParameter(item) {
+  public saveChar(item) {
     item.isEditing = false;
   }
 
-  public cancelEditRowClicked(item) {
+  public saveStat(item, gIndex, stIndex, ) {
     item.isEditing = false;
+    this.editItem = JSON.parse(JSON.stringify(this.gage[gIndex]));
+    this.editItem.statistics = [this.editItem.statistics[stIndex]];
+  }
+
+  public cancelEditRowClicked(item) {
+    if (this.itemBeingEdited.variableTypeID) {  // is a characteristic
+      this.gage.characteristics[this.editId] = this.tempItem;
+    }
+    else if (this.itemBeingEdited.isPreferred) {  // is a statistic
+      this.gage.statistics[this.editId] = this.tempItem;
+    }
+    
+    item.isEditing = false;
+  }
+
+  public submitGage() {
+    const url = ''
+    this._settingsservice.putEntityGageStats('', this.configSettings.stationsURL, url).subscribe()
   }
 
 ///////////////////////Add Characteristic Section////////////////
 
-  public addPhysicalCharacteristic() {
-    const newChar = this.gage.characteristics;
-    this.gage.characteristics.push(this.gage.characteristics);
+  public addPhysicalCharacteristic(id) {
+    //this.editRowClicked(item, id)
+    //this.newChar = item;
+    //this.gage.characteristics.push(this.newChar)
   }
+
 ///////////////////////Add Statistic Section/////////////////////
 
   public addStreamflowStatistic() {
-    const newStat = this.gage.statistics;
-    this.gage.statistics.push(this.gage.statistics);
+    //const newStat = this.gage.statistics;
+    //this.gage.statistics.push(this.gage.statistics);
   }
 
 

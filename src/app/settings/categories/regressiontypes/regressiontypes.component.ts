@@ -45,6 +45,8 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public tempData;
     public isEditing = false;
     public modalRef;
+    statisticGroups: any[];
+    selectedSatistic: string;
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -72,12 +74,18 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(reg => {
             this.regions = reg;
         });
+        this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.statisticGroups = res;
+        });
+        this.selectedSatistic = 'none';
         this.selectedRegion = 'none';
         this.getAllRegTypes();
     }
 
     public onRegSelect(r) {
         this.selectedRegion = r;
+        this.selectedSatistic = 'none';
         if (r === 'none') {
             this.getAllRegTypes();
         } else {
@@ -86,6 +94,18 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
                 .subscribe(regs => {
                     this.regressionTypes = regs;
                 });
+        }
+    }
+    public onSatSelect(e){
+        this.selectedSatistic = e;
+        this.selectedRegion= "none";
+        if (e === 'none') {
+            this.getAllRegTypes();
+        } else {
+            this._settingsservice.getEntities(this.configSettings.regTypeURL+"?statisticgroups="+ e.id).subscribe(res => {
+                res.sort((a, b) => a.name.localeCompare(b.name));
+                this.regressionTypes = res;
+            });
         }
     }
 

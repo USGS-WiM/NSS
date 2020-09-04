@@ -56,6 +56,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public selectedRegressionRegion: Array<Regressionregion>;
     public tempSelectedRegressionRegion: Array<Regressionregion>;
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
+    public filteredRegressionTypes;
+    public selectedStatisticGrpID = "16";
+    public filtered = false;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -138,6 +141,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this._settingsService.getEntities(this.configSettings.regTypeURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.regressionTypes = res;
+        });
+        this._settingsService.getEntities(this.configSettings.regTypeURL+"?statisticgroups="+ this.selectedStatisticGrpID).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.filteredRegressionTypes = res;
+            console.log(this.filteredRegressionTypes)
         });
         this._settingsService.getEntities(this.configSettings.variablesURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));

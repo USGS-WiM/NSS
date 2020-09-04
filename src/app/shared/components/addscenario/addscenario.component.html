@@ -43,8 +43,19 @@
 
 					<div formArrayName="regressions">
 						<!-- Regression Type/Statistic-->
-						<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
+						<div *ngIf= "filtered" class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
 							<label class="req" for="ID">Regression Variable:</label>
+							<button (click)="filtered=false"><i class="fa fa-toggle-on" ></i> AutoFilter</button>
+								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+									<ng-option *ngFor="let rt of filteredRegressionTypes" [value]="rt.id">{{rt.name}}</ng-option>
+								</ng-select>
+							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty">Regression Type
+								is required</div>
+						</div>
+
+						<div *ngIf= "!filtered"  class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
+							<label class="req" for="ID">Regression Variable:</label>
+							<button (click)="filtered=true"><i class="fa fa-toggle-off"></i> AutoFilter</button>
 								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
 									<ng-option *ngFor="let rt of regressionTypes" [value]="rt.id">{{rt.name}}</ng-option>
 								</ng-select>

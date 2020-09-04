@@ -57,6 +57,10 @@
 		overflow: hidden;
 		padding: 0 !important;
 
+		&.side-padding{
+			padding: 10px 10px 0 10px !important;
+		}
+
 		table{
 			flex-grow: 3;
 			height: 300px;

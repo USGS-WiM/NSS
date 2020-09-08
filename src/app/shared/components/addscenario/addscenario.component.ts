@@ -222,7 +222,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 } 
             }
         });
-        this.onSatSelect(this.cloneParameters.statisticGroupID)
+        this.onSatSelect(this.cloneParameters.statisticGroupID);
         //Prediction Interval
         if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null){
             this.addPredInt = true
@@ -356,7 +356,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this._settingsService.getEntities(this.configSettings.regTypeURL+"?statisticgroups="+ e).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.filteredRegressionTypes = res;
-            console.log(this.filteredRegressionTypes)
         });
     }
 

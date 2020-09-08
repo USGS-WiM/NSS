@@ -19,6 +19,7 @@ import { SettingsService } from '../../settings.service';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 
 @Component({
     moduleId: module.id,
@@ -45,8 +46,8 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public tempData;
     public isEditing = false;
     public modalRef;
-    statisticGroups: any[];
-    selectedSatistic: string;
+    public statisticGroups: Array<Statisticgroup>;
+    public selectedSatistic;
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -98,7 +99,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     }
     public onSatSelect(e){
         this.selectedSatistic = e;
-        this.selectedRegion= "none";
+        this.selectedRegion = "none";
         if (e === 'none') {
             this.getAllRegTypes();
         } else {

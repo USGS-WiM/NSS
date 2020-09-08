@@ -45,8 +45,8 @@
 						<!-- Regression Type/Statistic-->
 						<div *ngIf= "filtered" class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
 							<label class="req" for="ID">Regression Variable:</label>
-							<button (click)="filtered=false"><i class="fa fa-toggle-on" ></i> AutoFilter</button>
-								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+							<button (click)="filtered=false; selectDropdownOn.handleClearClick()"><i class="fa fa-toggle-on" ></i> AutoFilter</button>
+								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" #selectDropdownOn>
 									<ng-option *ngFor="let rt of filteredRegressionTypes" [value]="rt.id">{{rt.name}}</ng-option>
 								</ng-select>
 							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty">Regression Type
@@ -55,8 +55,8 @@
 
 						<div *ngIf= "!filtered"  class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
 							<label class="req" for="ID">Regression Variable:</label>
-							<button (click)="filtered=true"><i class="fa fa-toggle-off"></i> AutoFilter</button>
-								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+							<button (click)="filtered=true; selectDropDownOff.handleClearClick()"><i class="fa fa-toggle-off"></i> AutoFilter</button>
+								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" #selectDropDownOff>
 									<ng-option *ngFor="let rt of regressionTypes" [value]="rt.id">{{rt.name}}</ng-option>
 								</ng-select>
 							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty">Regression Type

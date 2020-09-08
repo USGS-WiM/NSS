@@ -141,10 +141,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.regressionTypes = res;
         });
-        this._settingsService.getEntities(this.configSettings.regTypeURL+"?statisticgroups= ").subscribe(res => {
-            res.sort((a, b) => a.name.localeCompare(b.name));
-            this.filteredRegressionTypes = res;
-        });
         this._settingsService.getEntities(this.configSettings.variablesURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.variables = res;
@@ -168,8 +164,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     public showModal(): void {
         this.selectedRegion = this.originalRegion;
-        if (this.selectedRegion) {
-        }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
             result => {
@@ -187,9 +181,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         if (this.cloneParameters != " "){
             this.clearScenario();
             this.clone = true;
+            this.filtered = false;
             this.cloneScenario();
             this.newScenForm.addControl('region', this._fb.control('', Validators.required));
         }else{
+            this.filtered = true;
             this.clearScenario();
             this.clone = false;
         }
@@ -226,6 +222,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 } 
             }
         });
+        this.onSatSelect(this.cloneParameters.statisticGroupID)
         //Prediction Interval
         if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null){
             this.addPredInt = true
@@ -359,6 +356,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this._settingsService.getEntities(this.configSettings.regTypeURL+"?statisticgroups="+ e).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.filteredRegressionTypes = res;
+            console.log(this.filteredRegressionTypes)
         });
     }
 

@@ -4,6 +4,7 @@ import { Regressiontype } from './regressiontype';
 
 export interface GageStatistic {
     name: string;
+    id: number;
     value: string;
     units: string;
     citationID: number;

@@ -1346,7 +1346,8 @@ export class MainviewComponent implements OnInit {
                 reg.expected = {value: '', parameters: {}, intervalBounds: null};
                 // if regression has prediction interval, need to ask for expected bounds
                 if (!reg.predictionInterval.student_T_Statistic || !reg.predictionInterval.variance
-                    || !reg.predictionInterval.xiRowVector || !reg.predictionInterval.covarianceMatrix) {reg.predictionInterval = null;
+                    || !reg.predictionInterval.xiRowVector || !reg.predictionInterval.covarianceMatrix) {
+                        reg.predictionInterval = null;
                 } else {
                     this.getBounds = true;
                     reg.expected.intervalBounds = {lower: null, upper: null};

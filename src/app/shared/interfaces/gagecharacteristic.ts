@@ -4,6 +4,7 @@ import { Variabletype } from './variabletype';
 
 export interface GageCharacteristic {
     name: string;
+    id: number;
     value: string;
     units: string;
     comments: string;

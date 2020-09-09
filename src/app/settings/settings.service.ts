@@ -30,6 +30,7 @@ import { ToasterService } from 'angular2-toaster';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from 'app/shared/interfaces/station';
+import { GageCharacteristic } from 'app/shared/interfaces/gagecharacteristic';
 
 @Injectable()
 export class SettingsService {
@@ -53,6 +54,7 @@ export class SettingsService {
     private _stationTypeSubject: BehaviorSubject<Array<Stationtype>> = <BehaviorSubject<Stationtype[]>>new BehaviorSubject([]);
     private _agenciesSubject: BehaviorSubject<Array<Agency>> = <BehaviorSubject<Agency[]>>new BehaviorSubject([]);
     private _stationSubject: BehaviorSubject<Array<Station>> = <BehaviorSubject<Station[]>>new BehaviorSubject([]);
+    private _gageCharacteristicSubject: BehaviorSubject<Array<GageCharacteristic>> = <BehaviorSubject<GageCharacteristic[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -98,6 +100,10 @@ export class SettingsService {
     }
     public stationTypes(): Observable<Array<Stationtype>> {
         return this._stationTypeSubject.asObservable();
+    }
+
+    public gageCharacteristics(): Observable<Array<GageCharacteristic>> {
+        return this._gageCharacteristicSubject.asObservable();
     }
 
     // HTTP REQUESTS ////////////////////////////////////

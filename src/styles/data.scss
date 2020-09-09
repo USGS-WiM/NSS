@@ -48,6 +48,15 @@
 		padding: 6px;
 		box-sizing: border-box;
 	}
+	td:after{
+		content: "\00A0\00A0\00A0\00A0\00A0\00A0\00A0\00A0";
+		display: block;
+		height: 0px;
+		width: 100%;
+		max-height: 0px;
+		overflow: none;
+		user-select: none;
+	}
 
 	// Header row
 	tr th {

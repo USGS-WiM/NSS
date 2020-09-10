@@ -245,7 +245,7 @@
 							<div [formGroupName]="varIndex">
 								<!-- Parameter Value* (gets moved to expected before posting) -->
 								<div class="form-group required">
-									<label *ngIf="vari.controls.code.value" class="req" for="value">{{vari.controls.code.value}} Parameter Value:</label>
+									<label *ngIf="vari.controls.code.value" class="req" for="value">{{vari.controls.code.value}} Explanatory Variable Value:</label>
 									<label *ngIf="!vari.controls.code.value" class="req" for="value">Explanatory Variable {{varIndex + 1}} Value:</label>
 									<input class="form-control" type="number" formControlName="value" required>
 								</div>
@@ -258,7 +258,7 @@
 						<!-- Expected* -->
 						<div formGroupName="expected">
 							<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty}">
-								<label class="req" for="expression">Expected value (based on given parameter values and equation):</label>
+								<label class="req" for="expression">Expected value (based on given explanatory variable values and equation):</label>
 								<input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="value" required>
 								<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty">Expected value
 									is required</div>

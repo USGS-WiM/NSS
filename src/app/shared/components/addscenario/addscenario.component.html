@@ -43,7 +43,7 @@
 
 					<div formArrayName="regressions">
 						<!-- Regression Type/Statistic-->
-						<div *ngIf= "filtered" class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
+						<div *ngIf="filtered" class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
 							<label class="req" for="ID">Regression Variable:</label>
 							<button (click)="filtered=false; selectDropdownOn.handleClearClick()"><i class="fa fa-toggle-on" ></i> AutoFilter</button>
 								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" #selectDropdownOn>

@@ -962,15 +962,18 @@
                                             <i *ngIf="r.isEditing" title="Remove Error" class="far fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;" (click)="r.errors.splice(eIndex, 1)"></i>
                                             <span *ngIf="!r.isEditing">{{e.name}}, value: {{e.value}}</span>
                                             <span *ngIf="r.isEditing">
-                                                <select [(ngModel)]="r.errors[eIndex]" name="e" [compareWith]="compareObjects">
+                                                <select [(ngModel)]="r.errors[eIndex]" name="e{{eIndex}}" [compareWith]="compareObjects">
                                                     <option *ngFor="let err of errors" [ngValue]="err" [selected]="err.name === r.errors[eIndex].name">{{err.name}}</option>
                                                 </select>
-                                                <input type="number" name="value" [(ngModel)]="r.errors[eIndex].value" required>
+                                                <input type="number" name="value{{eIndex}}" [(ngModel)]="r.errors[eIndex].value" required>
                                             </span>
                                         </span>
                                         <span *ngIf="!r.isEditing && r.errors.length === 0">None</span>
-                                        <br *ngIf="r.errors.length > 0">
-                                        <button *ngIf="r.isEditing" class="addErrorButton" (click)="addError(r.errors)">Add Error</button>
+										<br *ngIf="r.errors.length > 0">
+										<button *ngIf="r.isEditing" type="button" class="button small blue mright-xs" (click)="addError(r.errors)">
+											<i class="far fa-plus"></i>
+											<span>Add Error</span>
+										</button>
                                     </td>
                                     <td class="equation-cell">
                                         <span *ngIf="!r.isEditing" MathJax id="mathJax1">{{ r.equationMathJax }}</span>
@@ -988,7 +991,7 @@
                                         <span *ngIf="!r.isEditing && (r.predictionInterval.biasCorrectionFactor || r.predictionInterval.student_T_Statistic || r.predictionInterval.variance 
                                         || r.predictionInterval.xiRowVector || r.predictionInterval.covarianceMatrix)">
                                             <div [class.hidden]="loggedInRole != 'Administrator'">Bias Correction Factor: {{r.predictionInterval.biasCorrectionFactor}}<br></div>
-                                            Student T Statistic: {{r.predictionInterval.student_T_Statistic}}<br>
+                                            Student's T Statistics for 90% confidence interval: {{r.predictionInterval.student_T_Statistic}}<br>
                                             Variance: {{r.predictionInterval.variance}}<br>
                                             XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
                                             Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}<br>
@@ -998,7 +1001,7 @@
                                         <span *ngIf="r.isEditing && r.predictionInterval">
                                             <div [class.hidden]="loggedInRole != 'Administrator'"><label>Bias Correction Factor:</label>
                                             <input type="number" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.biasCorrectionFactor"></div>
-                                            <label>Student T Statistic:</label>
+                                            <label>Student's T Statistics for 90% confidence interval:</label>
                                             <input type="number" name="student_T_Statistic" [(ngModel)]="r.predictionInterval.student_T_Statistic">
                                             <label>Variance:</label>
                                             <input type="number" name="variance" [(ngModel)]="r.predictionInterval.variance">

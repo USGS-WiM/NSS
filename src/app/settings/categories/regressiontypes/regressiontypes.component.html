@@ -12,9 +12,9 @@
 
 <div class="satSelect">
 	<label class="block" for="region">Filter By Statistic Group:</label>
-    <select [ngModel]="selectedSatistic" (ngModelChange)="onSatSelect($event)" name="statistic" class="input-small">
+    <select [ngModel]="selectedSatistic" (ngModelChange)="onStatGroupSelect($event)" name="statistic" class="input-small">
         <option value="none">None</option>
-        <option [ngValue]="i" *ngFor="let i of statisticGroups">{{i.name}}</option>
+        <option [ngValue]="i" *ngFor="let i of selectedStatisticGroups">{{i.name}}</option>
     </select>
 </div>
 

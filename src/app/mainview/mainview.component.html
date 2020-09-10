@@ -962,15 +962,18 @@
                                             <i *ngIf="r.isEditing" title="Remove Error" class="far fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;" (click)="r.errors.splice(eIndex, 1)"></i>
                                             <span *ngIf="!r.isEditing">{{e.name}}, value: {{e.value}}</span>
                                             <span *ngIf="r.isEditing">
-                                                <select [(ngModel)]="r.errors[eIndex]" name="e" [compareWith]="compareObjects">
+                                                <select [(ngModel)]="r.errors[eIndex]" name="e{{eIndex}}" [compareWith]="compareObjects">
                                                     <option *ngFor="let err of errors" [ngValue]="err" [selected]="err.name === r.errors[eIndex].name">{{err.name}}</option>
                                                 </select>
-                                                <input type="number" name="value" [(ngModel)]="r.errors[eIndex].value" required>
+                                                <input type="number" name="value{{eIndex}}" [(ngModel)]="r.errors[eIndex].value" required>
                                             </span>
                                         </span>
                                         <span *ngIf="!r.isEditing && r.errors.length === 0">None</span>
-                                        <br *ngIf="r.errors.length > 0">
-                                        <button *ngIf="r.isEditing" class="addErrorButton" (click)="addError(r.errors)">Add Error</button>
+										<br *ngIf="r.errors.length > 0">
+										<button *ngIf="r.isEditing" type="button" class="button small blue mright-xs" (click)="addError(r.errors)">
+											<i class="far fa-plus"></i>
+											<span>Add Error</span>
+										</button>
                                     </td>
                                     <td class="equation-cell">
                                         <span *ngIf="!r.isEditing" MathJax id="mathJax1">{{ r.equationMathJax }}</span>

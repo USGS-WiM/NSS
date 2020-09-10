@@ -70,7 +70,7 @@
 								<button class="icon-button hover-blue" (click)="removeVariable(varIndex)">
 									<i class="far fa-times"></i>
 								</button>
-								<div *ngIf="checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="hideDiv('variable' + (varIndex + 1))">Explantory Variable {{varIndex + 1}}
+								<div *ngIf="checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="hideDiv('variable' + (varIndex + 1))">Explanatory Variable {{varIndex + 1}}
 									<i class="far fa-chevron-double-down"></i></div>
 								<div *ngIf="!checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="showDiv('variable' + (varIndex + 1))">Explanatory Variable {{varIndex + 1}}<i class="far fa-chevron-double-right"></i></div>
 							</div>

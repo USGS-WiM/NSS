@@ -991,7 +991,7 @@
                                         <span *ngIf="!r.isEditing && (r.predictionInterval.biasCorrectionFactor || r.predictionInterval.student_T_Statistic || r.predictionInterval.variance 
                                         || r.predictionInterval.xiRowVector || r.predictionInterval.covarianceMatrix)">
                                             <div [class.hidden]="loggedInRole != 'Administrator'">Bias Correction Factor: {{r.predictionInterval.biasCorrectionFactor}}<br></div>
-                                            Student T Statistic: {{r.predictionInterval.student_T_Statistic}}<br>
+                                            Student's T Statistics for 90% confidence interval: {{r.predictionInterval.student_T_Statistic}}<br>
                                             Variance: {{r.predictionInterval.variance}}<br>
                                             XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
                                             Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}<br>
@@ -1001,7 +1001,7 @@
                                         <span *ngIf="r.isEditing && r.predictionInterval">
                                             <div [class.hidden]="loggedInRole != 'Administrator'"><label>Bias Correction Factor:</label>
                                             <input type="number" name="biasCorrectionFactor" [(ngModel)]="r.predictionInterval.biasCorrectionFactor"></div>
-                                            <label>Student T Statistic:</label>
+                                            <label>Student's T Statistics for 90% confidence interval:</label>
                                             <input type="number" name="student_T_Statistic" [(ngModel)]="r.predictionInterval.student_T_Statistic">
                                             <label>Variance:</label>
                                             <input type="number" name="variance" [(ngModel)]="r.predictionInterval.variance">

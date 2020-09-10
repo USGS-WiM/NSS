@@ -70,14 +70,14 @@
 								<button class="icon-button hover-blue" (click)="removeVariable(varIndex)">
 									<i class="far fa-times"></i>
 								</button>
-								<div *ngIf="checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="hideDiv('variable' + (varIndex + 1))">Variable {{varIndex + 1}}
+								<div *ngIf="checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="hideDiv('variable' + (varIndex + 1))">Explanatory Variable {{varIndex + 1}}
 									<i class="far fa-chevron-double-down"></i></div>
-								<div *ngIf="!checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="showDiv('variable' + (varIndex + 1))">Variable {{varIndex + 1}}<i class="far fa-chevron-double-right"></i></div>
+								<div *ngIf="!checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="showDiv('variable' + (varIndex + 1))">Explanatory Variable {{varIndex + 1}}<i class="far fa-chevron-double-right"></i></div>
 							</div>
 							<div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
 								<!-- Parameter ID-->
 								<div class="form-group required">
-									<label class="req" for="code">Parameter:</label>
+									<label class="req" for="code">Explanatory Variable:</label>
 										<ng-select formControlName="code" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
 											<ng-option *ngFor="let v of variables" [value]="v.code">{{v.code}} ({{v.description}})</ng-option>
 										</ng-select>
@@ -86,13 +86,13 @@
 								<div formArrayName="limits" class="xs-f-btw">
 									<!-- Parameter Min-->
 									<div class="form-group required width-40">
-										<label class="req" for="min">Parameter Min:</label>
+										<label class="req" for="min">Explanatory Variable Min:</label>
 										<i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="Minimum value used in regression equation development" triggers="click"></i>
 										<input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="min" required>
 									</div>
 									<!-- Parameter Max-->
 									<div class="form-group required width-40">
-										<label class="req" for="max">Parameter Max:</label>
+										<label class="req" for="max">Explanatory Variable Max:</label>
 										<i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="Maximum value used in regression equation development" triggers="click"></i>
 										<input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="max" required>
 									</div>
@@ -100,7 +100,7 @@
 			
 								<!-- Parameter Unit Type-->
 								<div class="form-group required">
-										<label class="req" for="unitType">Parameter Unit:</label>
+										<label class="req" for="unitType">Explanatory Variable Unit:</label>
 											<ng-select formControlName="unitType"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
 												<ng-option *ngFor="let u of unitTypes" [value]="u">{{u.name}} ({{u.abbr}})</ng-option>
 											</ng-select>
@@ -225,7 +225,7 @@
 					<div class="xs-f-start pbottom-sm ptop-sm">
 						<button type="button" class="button small blue mright-sm" (click)="addVariable()">
 							<i class="far fa-plus"></i>
-							<span>Add Parameter</span>
+							<span>Add Explanatory Variable</span>
 						</button>
 						<button *ngIf="!addPredInt" type="button" class="button small blue mright-sm" (click)="addPredInt = true">
 							<i class="far fa-plus"></i>
@@ -245,8 +245,8 @@
 							<div [formGroupName]="varIndex">
 								<!-- Parameter Value* (gets moved to expected before posting) -->
 								<div class="form-group required">
-									<label *ngIf="vari.controls.code.value" class="req" for="value">{{vari.controls.code.value}} Parameter Value:</label>
-									<label *ngIf="!vari.controls.code.value" class="req" for="value">Parameter {{varIndex + 1}} Value:</label>
+									<label *ngIf="vari.controls.code.value" class="req" for="value">{{vari.controls.code.value}} Explanatory Variable Value:</label>
+									<label *ngIf="!vari.controls.code.value" class="req" for="value">Explanatory Variable {{varIndex + 1}} Value:</label>
 									<input class="form-control" type="number" formControlName="value" required>
 								</div>
 							</div>
@@ -258,7 +258,7 @@
 						<!-- Expected* -->
 						<div formGroupName="expected">
 							<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty}">
-								<label class="req" for="expression">Expected value (based on given parameter values and equation):</label>
+								<label class="req" for="expression">Expected value (based on given explanatory variable values and equation):</label>
 								<input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="value" required>
 								<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty">Expected value
 									is required</div>

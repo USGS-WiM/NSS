@@ -90,7 +90,7 @@
             <table *ngIf="scenarios[0].regressionRegions.length > 0" class="custom-table mtop-lg">
                 <thead>
                     <tr>
-                        <th class="width-20">Parameter</th>
+                        <th class="width-20">Explanatory Variable</th>
                         <th class="width-10 center">Code</th>
                         <th class="width-20 center">Value</th>
                         <th class="width-30" *ngIf="multipleRegRegions"></th>
@@ -123,7 +123,7 @@
                             <!-- <span style="font-size:small;" *ngIf="p.seeDescription">{{p.description}}</span> -->
                             <!-- outOfRange span -->
                             <p *ngIf="p.outOfRange" class="error">
-								Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors
+								Warning: Explanatory Variable is outside of suggested range. Estimates will be extrapolations with unknown errors
 							</p>
 						</td>
 						<!-- Code -->
@@ -185,7 +185,7 @@
 		<!-- Edit -->
         <button type="button" class="button small hidden-print mbottom-xs" (click)="editScenario()">
 			<i class="far fa-pencil-alt"></i>
-			<span>Edit Scenario Parameters</span>
+			<span>Edit Scenario Explanatory Variables</span>
 		</button>
 		
 		<div *ngFor="let s of scenarios">
@@ -691,7 +691,7 @@
 				</div><!--End equations-->
 			</div>
 
-			<h5 class="block ptop-xs">Parameter Definitions</h5>
+			<h5 class="block ptop-xs">Explanatory Variable Definitions</h5>
 			<table class="custom-table max-600">
 				<thead>
 					<tr>
@@ -850,7 +850,7 @@
                         </div>
                         
                         <!--Parameter table-->
-                        <label class="big block mtop-sm">Parameters</label>
+                        <label class="big block mtop-sm">Explanatory Variables</label>
                         <table class="custom-table">
                             <thead>
                                 <tr>
@@ -866,10 +866,10 @@
                             <tbody>
                                 <tr *ngFor="let p of rr.parameters; let pIndex = index;">
                                     <td class="table-icon-buttons">
-										<button *ngIf="!p.isEditing" title="Edit Parameter" (click)="editRowClicked(p, rrIndex, sgIndex, pIndex)" class="icon-button" aria-hidden="true">
+										<button *ngIf="!p.isEditing" title="Edit Explanatory Variable" (click)="editRowClicked(p, rrIndex, sgIndex, pIndex)" class="icon-button" aria-hidden="true">
 											<i class="far fa-pencil"></i>
 										</button>
-										<button *ngIf="p.isEditing" title="Save Parameter" (click)="saveParameter(p, rrIndex, sgIndex)" class="icon-button" aria-hidden="true">
+										<button *ngIf="p.isEditing" title="Save Explanatory Variable" (click)="saveParameter(p, rrIndex, sgIndex)" class="icon-button" aria-hidden="true">
 											<i class="far fa-floppy-o"></i>
 										</button>
 										<button *ngIf="p.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="icon-button" aria-hidden="true">

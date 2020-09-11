@@ -163,6 +163,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public showModal(): void {
+        this.onStatGroupSelect('');
         this.selectedRegion = this.originalRegion;
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(

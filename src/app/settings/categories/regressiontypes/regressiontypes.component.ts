@@ -36,6 +36,8 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public selectedStatGroupIDs;
     public selectedRegTypeIDs;
     public regressionTypes: Array<Regressiontype>;
+    public regRegressionTypes: Array<Regressiontype>;
+    public statRegressionTypes: Array<Regressiontype>;
     public newRegForm: FormGroup;
     public showNewRegForm: boolean;
     private CloseResult;
@@ -81,33 +83,55 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         });
         this.selectedSatistic = 'none';
         this.selectedRegion = 'none';
-        this.getAllRegTypes();
+        this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+            this.regressionTypes = res;
+            this.regRegressionTypes = res;
+            this.statRegressionTypes = res;
+        });
     }
 
     public onRegSelect(r) {
         this.selectedRegion = r;
-        this.selectedSatistic = 'none';
         if (r === 'none') {
-            this.getAllRegTypes();
+            this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+                this.regRegressionTypes = res;
+                this.compareRegressionTypes();
+            });
         } else {
             this._settingsservice
                 .getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.regTypeURL)
                 .subscribe(regs => {
-                    this.regressionTypes = regs;
+                    this.regRegressionTypes = regs;
+                    this.compareRegressionTypes();
                 });
         }
     }
+
     public onStatGroupSelect(e){
         this.selectedSatistic = e;
-        this.selectedRegion = "none";
         if (e === 'none') {
-            this.getAllRegTypes();
+            this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+                this.statRegressionTypes = res;
+                this.compareRegressionTypes();
+            });
         } else {
             this._settingsservice.getEntities(this.configSettings.regTypeURL+"?statisticgroups="+ e.id).subscribe(res => {
                 res.sort((a, b) => a.name.localeCompare(b.name));
-                this.regressionTypes = res;
+                this.statRegressionTypes = res;
+                this.compareRegressionTypes();
             });
         }
+    }
+
+    public compareRegressionTypes(){
+        this.regressionTypes = [];
+        this.regRegressionTypes.forEach(y=> {
+            this.statRegressionTypes.forEach(z=> {
+                if (y.id === z.id) {
+                    this.regressionTypes.push(y);
+                }
+            });
+        });
     }
 
     public getAllRegTypes() {

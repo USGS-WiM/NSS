@@ -7,6 +7,7 @@ import { Agency } from 'app/shared/interfaces/agencies';
 import { StationType } from 'app/shared/interfaces/stationtypes';
 import { Toast } from 'angular2-toaster/src/toast';
 import { GagePage } from 'app/shared/interfaces/gagepage';
+import { Region } from 'app/shared/interfaces/region';
 
 @Component({
   selector: 'app-gagestats',
@@ -20,6 +21,7 @@ export class GagestatsComponent implements OnInit {
   public previousUrl;
   public selectedStations: Array<Station>;
   public agencies: Array<Agency>;
+  public regions: Array<Region>;
   public stationTypes: Array<StationType>;
   public loggedInRole;
   public lastPageNumber;
@@ -56,6 +58,10 @@ export class GagestatsComponent implements OnInit {
     this._nssService.stationTypes.subscribe((stationtypes: Array<StationType>) => {
       this.stationTypes = stationtypes;
     });
+    // subscribe to all region 
+    this._nssService.regions.subscribe((regions: Array<Region>) => {
+      this.regions = regions;
+    });
     //subscribe to page number related information
     this._nssService.pageResponse.subscribe((pageText: string) => {
       var numbers = pageText.match(/[0-9]+/g); // [0-9] means to match any digit, the + means to match where there are multiple digits
@@ -90,6 +96,12 @@ export class GagestatsComponent implements OnInit {
   public getAgencyName(aID) {
     if (this.agencies) {
       return (this.agencies.find(a => a.id === aID).name);
+    }
+  }
+
+  public getRegionName(rID) {
+    if (this.regions) {
+      return (this.regions.find(r => r.id === rID).name);
     }
   }
 

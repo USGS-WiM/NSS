@@ -3,9 +3,12 @@ import { Unittype } from './unitType';
 import { Variabletype } from './variabletype';
 
 export interface GageCharacteristic {
-    name: string;
+    name?: string;
     id: number;
-    value: string;
+    stationID: number;
+    variableTypeID: number;
+    unitTypeID: number;
+    value: number;
     units: string;
     comments: string;
     citationID: number;

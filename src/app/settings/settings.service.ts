@@ -31,6 +31,7 @@ import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from 'app/shared/interfaces/station';
 import { GageCharacteristic } from 'app/shared/interfaces/gagecharacteristic';
+import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
 
 @Injectable()
 export class SettingsService {
@@ -55,6 +56,7 @@ export class SettingsService {
     private _agenciesSubject: BehaviorSubject<Array<Agency>> = <BehaviorSubject<Agency[]>>new BehaviorSubject([]);
     private _stationSubject: BehaviorSubject<Array<Station>> = <BehaviorSubject<Station[]>>new BehaviorSubject([]);
     private _gageCharacteristicSubject: BehaviorSubject<Array<GageCharacteristic>> = <BehaviorSubject<GageCharacteristic[]>>new BehaviorSubject([]);
+    private _gageStatisticSubject: BehaviorSubject<Array<GageStatistic>> = <BehaviorSubject<GageStatistic[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -101,11 +103,12 @@ export class SettingsService {
     public stationTypes(): Observable<Array<Stationtype>> {
         return this._stationTypeSubject.asObservable();
     }
-
     public gageCharacteristics(): Observable<Array<GageCharacteristic>> {
         return this._gageCharacteristicSubject.asObservable();
     }
-
+    public gageStatistics(): Observable<Array<GageStatistic>> {
+        return this._gageStatisticSubject.asObservable();
+    }
     // HTTP REQUESTS ////////////////////////////////////
 
     // ------------ GETS ---------------------------
@@ -119,7 +122,7 @@ export class SettingsService {
     public getEntitiesGageStats(url: string) {
         return this._http
             .get(this.configSettings.gageStatsBaseURL + url, { headers: this.authHeader })
-            .map(res => { if (res) {return <Array<any>>res }})
+            .map(res => res)//{ if (res) {return <Array<any>>res }}) Out response as object instead of array.
             .catch(this.errorHandler);
     }
 
@@ -131,7 +134,7 @@ export class SettingsService {
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
                 } else {this.outputWimMessages(res); }
                 return res.body;
-            })
+            }) 
             .catch(this.errorHandler);
     }
 
@@ -140,10 +143,12 @@ export class SettingsService {
             .post(this.configSettings.gageStatsBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => {
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'New item was added');
-                } else {this.outputWimMessages(res); }
+                } else {
+                    console.log(res);
+                    this.outputWimMessages(res); }
                 return res.body;
             })
-            .catch(this.errorHandler);
+            .catch(this.errorHandler); 
     }
 
     // ------------ PUTS --------------------------------
@@ -180,11 +185,11 @@ export class SettingsService {
 
     public errorHandler(error: Response | any) {
         //if (error._body !== '') {error._body = JSON.parse(error._body); }
-        return Observable.throw(error);
+        return Observable.throwError(error);
     }
 
     public outputWimMessages(res) {
-        this._toasterService.clear();
+        //this._toasterService.clear();
         const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
         const existingMsgs = [];
         if (wimMessages) {
@@ -193,7 +198,7 @@ export class SettingsService {
                     // skip duplicates and counts
                     if (item.indexOf('Count:') === -1 && existingMsgs.indexOf(item) == -1) {
                         existingMsgs.push(item);
-                        this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+                        //this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
                     }
                 }
             }

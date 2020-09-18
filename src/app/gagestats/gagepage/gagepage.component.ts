@@ -5,12 +5,17 @@ import { GagePage } from 'app/shared/interfaces/gagepage';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { Station } from 'app/shared/interfaces/station';
-import { Unittype } from 'app/shared/interfaces/unittype';
 import { SettingsService } from '../../settings/settings.service';
 import { GageCharacteristic } from 'app/shared/interfaces/gagecharacteristic';
 import { ThrowStmt } from '@angular/compiler';
-
+import { CharacteristicResponse } from 'app/shared/interfaces/characteristicresponse';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
+import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
+import { Unittype } from 'app/shared/interfaces/unittype';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
+import { Citation } from 'app/shared/interfaces/citation';
+import { Variabletype } from 'app/shared/interfaces/variabletype';
+import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
 
 @Component({
   selector: 'gagePageModal',
@@ -32,7 +37,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public itemBeingEdited;
   public editItem;
   public editId;
-  //public newChar: GageCharacteristic;
+  public newChar: GageCharacteristic;
+  public newStat: GageStatistic;
 
   constructor(
     private _nssService: NSSService, 
@@ -98,18 +104,18 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   } 
 
-  public editRowClicked(item, id) {
+  public editRowClicked(item, index) {
     this.tempItem = JSON.parse(JSON.stringify(item));
     this.itemBeingEdited = item;
-    this.editId = id
+    this.editId = index
     item.isEditing = true;
   }
 
   public cancelEditRowClicked(item) {
-    if (this.itemBeingEdited.variableTypeID) {  // is a characteristic
+    if (!this.itemBeingEdited.statisticGroupTypeID) {  // is a characteristic
       this.gage.characteristics[this.editId] = this.tempItem;
     }
-    else if (this.itemBeingEdited.isPreferred) {  // is a statistic
+    else if (this.itemBeingEdited.statisticGroupTypeID) {  // is a statistic
       this.gage.statistics[this.editId] = this.tempItem;
     }
     
@@ -122,77 +128,170 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
 ///////////////////////Characteristic Section////////////////
-  /*
+  
   public addPhysicalCharacteristic() {
-    //this.editRowClicked(item, id)
-    //const newChar = JSON.parse(JSON.stringify(this.gage.characteristics[0]));  // Make copy
-    //this.newChar.variableType = null; this.newChar.value = null; this.newChar.citationID  = null; // Set values null
-    //this.newChar.id = 323884; //(this.gage.characteristics[(this.gage.characteristics.length - 1)].id + 1); // Create new id number
-    //this.gage.characteristics.push(this.newChar); // Add new characteristic to table
-    //this.editRowClicked(this.newChar, this.newChar.id); // Set new char as editable
-    const newChar = {"id":400000,"stationID":17,"variableTypeID":1,"unitTypeID":35,"citationID":3,"value":2.1,"comments":"null","variableType":{"id":1,"name":"Drainage Area","code":"DRNAREA","description":"Area that drains to a point on a stream"},"unitType":{"id":35,"name":"square miles","abbreviation":"mi^2","unitSystemTypeID":2},"citation":{"id":3,"title":"Imported from NWIS file","author":"Imported from NWIS file","citationURL":"http://waterdata.usgs.gov/nwis/si"}}
-    console.log(newChar)
-    this._settingsservice.postEntityGageStats(newChar, this.configSettings.characteristicsURL).subscribe(
-      (res: GageCharacteristic) => {
-        this.gage.characteristics.push(res);
-        this.editRowClicked(res, res.id)
-        console.log("Pass", res)
+    // Create new characteristic
+    this.newChar = {
+      id: null,
+      stationID: this.gage.id,
+      value: 1,
+      comments: " ",
+      variableTypeID: 1,
+      unitTypeID: null,
+      citationID: 1,
+      units: "",
+      citation: <Citation>{
+        id: 1,
+        title: "none",
+        author: "none",
+        citationURL: "null"},
+      unitType: <Unittype>{id: 1,
+        name: "dimensionless",
+        abbreviation: "dim",
+        unitSystemTypeID: 3},
+      variableType: <Variabletype>{id: 1,
+        name: "Drainage Area",
+        code: "DRNAREA",
+        description: "Area that drains to a point on a stream"},
+    }
+    // Change characteristic elements 
+    this.newChar.unitTypeID = this.newChar.unitType.id;
+    this.newChar.citationID = this.newChar.citation.id;
+    this.newChar.variableTypeID = this.newChar.variableType.id;
+  
+  this.gage.characteristics.push(this.newChar);
+  this.editRowClicked(this.newChar, this.newChar.id);
+    /* this._settingsservice.postEntityGageStats(newChar, this.configSettings.characteristicsURL).subscribe(
+      (response: GageCharacteristic) => { 
+        this._toasterService.pop('info', 'Info', 'Characteristic was created');
+        console.log(typeof(response), response);
+        //response.isEditing = true; 
+        this.gage.characteristics.push(response);
+        this.editRowClicked(response, response.id);
       }, error => {
         if (this._settingsservice.outputWimMessages(error)) {return; }
-        this._toasterService.pop('error', 'Error creating Characterisic', error._body.message || error.statusText);
+        this._toasterService.pop('error', 'Error creating Characteristic', error._body.message || error.statusText);
       }
-    );
-  } */
-
+    ) */
+  } 
+    
   public deletePhysicalCharacteristic(deleteID: number) {
     const check = confirm('Are you sure you want to delete this Characteristic?');
       if (check) {
         const index = this.gage.characteristics.findIndex(item => item.id === deleteID);
-        this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.characteristicsURL).subscribe(
-          (res) => {
-            this.gage.characteristics.splice(index, 1)
-          }
-        )
+        if (deleteID) {    // If characteristic has an ID number (if it comes from the service)
+          this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.characteristicsURL).subscribe(
+            (res) => {
+              this.gage.characteristics.splice(index, 1)
+              this._settingsservice.outputWimMessages(res);
+            }
+          )
+        } else { this.gage.characteristics.splice(index, 1) }  // If the char does not have an ID (if it has not been saved to the service)
   }}
 
   public saveChar(item) {
-    this._settingsservice.putEntityGageStats(item.id, item, this.configSettings.characteristicsURL).subscribe(
-      (res) => {
-        item.isEditing = false;
-      }
-    ) 
+    if (item.id) {  // If item has an item, then it is already in NSS
+      this._settingsservice.putEntityGageStats(item.id, item, this.configSettings.characteristicsURL).subscribe(
+        (res) => { 
+          item.isEditing = false;
+          this._settingsservice.outputWimMessages(res); 
+          console.log(res)
+        }
+      )
+    }; if (!item.id) {  // If an item doesn't have an ID, then it needs to be added to NSS
+      const newItem = JSON.parse(JSON.stringify(item)); // Copy item
+      delete newItem.citation, delete newItem.unitType, delete newItem.variableType;  // Delete unneeded elements
+      this._settingsservice.postEntityGageStats(newItem, this.configSettings.characteristicsURL).subscribe(
+        (res: CharacteristicResponse) => { 
+          item.isEditing = false; 
+          const index = (this.gage.characteristics.length - 1);
+          this.gage.characteristics.splice(index, 1);  // Delete newChar from table
+          const url = this.configSettings.characteristicsURL + "/" + res.id;
+          this._settingsservice.getEntitiesGageStats(url).subscribe((resp: GageCharacteristic) => {
+              this.gage.characteristics.push(resp);  // Add new characteristic to table
+            }
+          );
+          this._toasterService.pop('info', 'Info', 'Characteristic was created');
+          console.log(res)
+        }, error => {
+          if (this._settingsservice.outputWimMessages(error)) {return; }
+          this._toasterService.pop('error', 'Error creating Characteristic', error._body.message || error.statusText);
+        } 
+      )} 
   }
 
 ///////////////////////Statistic Section/////////////////////
-  /*
+  
   public addStreamflowStatistic() {
-    const newStat = JSON.parse(JSON.stringify(this.gage.statistics[0]));
-    this._settingsservice.postEntityGageStats(newStat, this.configSettings.statisticsURL).subscribe(
-      (res) => {
-        console.log('pass', res);
-        this.gage.statistics.push(newStat);
-      }
-    )
-  } */
+    this.newStat = {
+      //name: "",
+      id: null,
+      stationID: this.gage.id,
+      value: "",
+      //units: "",
+      citationID: 0,
+      citation: <Citation>{},
+      comments: "",
+      isPreferred: true,
+      regressionTypeID: 0,
+      statisticErrors: <any>{},
+      unitType: <Unittype>{},
+      regressionType: <Regressiontype>{},
+      statisticGroupTypeID: 0,
+      unitTypeID: 0,
+      yearsofRecord: 0,
+    } 
+    this.gage.statistics.push(this.newStat);
+    this.editRowClicked(this.newStat, this.newStat.id);
+    
+  } 
 
-   public deleteStatistic(deleteID: number) {
+  public saveStat(item, sIndex) {
+    //item.unitTypeID = item.unitType.id;
+    const newItem = _.omit(item, ['id', 'regressionType', 'statisticErrors', 
+    'citation', 'citationID', 'unitType', 'isEditing']);  // Copy item, delete unnecessary elements
+    
+    if (newItem.id) {
+      this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
+        (res) => {
+          item.isEditing = false;
+        }
+      )
+    }; if (!newItem.id) {  
+      this._settingsservice.postEntityGageStats(newItem, this.configSettings.statisticsURL).subscribe(
+        (res: StatisticResponse) => {
+          item.isEditing = false;
+          const index = (this.gage.statistics.length - 1);
+          this.gage.statistics.splice(index, 1);  // Delete newStat from table
+          const url = this.configSettings.statisticsURL + "/" + res.id;
+          this._settingsservice.getEntitiesGageStats(url).subscribe( (resp: GageStatistic) => {
+            console.log(resp);
+            resp.unitType = this.units[resp.unitTypeID];
+            this.gage.statistics.push(resp);
+          }) 
+        } 
+      ) 
+    }
+  }
+
+  public deleteStatistic(deleteID: number) {
     const check = confirm('Are you sure you want to delete this Statistic?');
       if (check) {
         const index = this.gage.statistics.findIndex(item => item.id === deleteID);
-        this.gage.statistics.splice(index, 1)
-  }} 
-
-  public saveStat(item, sIndex) {
-    //this.editItem = JSON.parse(JSON.stringify(this.gage));
-    this._settingsservice.putEntityGageStats(item.id, item, this.configSettings.statisticsURL).subscribe(
-      (res) => {
-        item.isEditing = false;
-        console.log('pass');
+        if (deleteID) {    // If statistic has an ID number (if it comes from the service)
+          this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.statisticsURL).subscribe(
+            (res) => {
+              this.gage.statistics.splice(index, 1)
+              this._settingsservice.outputWimMessages(res);
+            }
+          )
+        } else { this.gage.statistics.splice(index, 1) }  // If the stat does not have an ID (if it has not been saved to the service)
       }
-    )
-    //this.editItem.statistics = [this.editItem.statistics[sIndex]];
+  } 
+  compareObjects(Obj1, Obj2) {
+    // used to make sure the existing options are showing in selects
+    return Obj1 && Obj2 ? Obj1.id === Obj2.id : Obj1 === Obj2;
   }
-
 
   ngOnDestroy() {
     this.modalSubscript.unsubscribe();

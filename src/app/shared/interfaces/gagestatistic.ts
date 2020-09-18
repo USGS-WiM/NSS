@@ -3,19 +3,20 @@ import { Unittype } from './unitType';
 import { Regressiontype } from './regressiontype';
 
 export interface GageStatistic {
-    name: string;
+    //name: string;
+    //units: string;
     id: number;
+    statisticGroupTypeID: number;
+    regressionTypeID: number;
+    stationID: number;
     value: string;
-    units: string;
-    citationID: number;
-    citation: Citation;
+    unitTypeID: number;
     comments: string;
     isPreferred: boolean;
-    regressionTypeID: number;
+    yearsofRecord: number;
+    citationID: number;
     statisticErrors: Array<any>;
+    citation: Citation;
     unitType: Unittype;
     regressionType: Regressiontype;
-    statisticGroupTypeID: number;
-    unitTypeID: number;
-    yearsofRecord: number;
 }

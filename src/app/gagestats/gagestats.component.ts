@@ -59,6 +59,7 @@ export class GagestatsComponent implements OnInit {
       this.stationTypes = stationtypes;
     });
     // subscribe to all region 
+    this._nssService.getRegions();
     this._nssService.regions.subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });

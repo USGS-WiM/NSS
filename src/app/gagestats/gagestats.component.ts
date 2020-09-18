@@ -8,6 +8,9 @@ import { StationType } from 'app/shared/interfaces/stationtypes';
 import { Toast } from 'angular2-toaster/src/toast';
 import { GagePage } from 'app/shared/interfaces/gagepage';
 import { Region } from 'app/shared/interfaces/region';
+import { SettingsService } from 'app/settings/settings.service';
+import { ConfigService } from 'app/config.service';
+import { Config } from 'protractor';
 
 @Component({
   selector: 'app-gagestats',
@@ -28,11 +31,14 @@ export class GagestatsComponent implements OnInit {
   public currentPageNumber;
   public itemPerPage = [15,25,50,100]; 
   public perPage = 50;
+  private configSettings: Config;
 
   constructor(
     private router: Router,
     private _nssService: NSSService,
-    private gagestatsService: GagestatsService
+    private gagestatsService: GagestatsService,
+    public _settingsservice: SettingsService, 
+    private _configService: ConfigService
     ){
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationStart) {
@@ -40,6 +46,7 @@ export class GagestatsComponent implements OnInit {
           this.previousUrl = e.url;
       }
     });
+    this.configSettings = this._configService.getConfiguration();
     }
 
   ngOnInit() {
@@ -58,9 +65,7 @@ export class GagestatsComponent implements OnInit {
     this._nssService.stationTypes.subscribe((stationtypes: Array<StationType>) => {
       this.stationTypes = stationtypes;
     });
-    // subscribe to all region 
-    this._nssService.getRegions();
-    this._nssService.regions.subscribe((regions: Array<Region>) => {
+    this._settingsservice.getEntitiesGageStats(this.configSettings.gageStatsRegionURL).subscribe(regions => {
       this.regions = regions;
     });
     //subscribe to page number related information

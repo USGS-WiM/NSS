@@ -91,6 +91,8 @@ export class SettingsService {
     public errors(): Observable<Array<Error>> {
         return this._errorsSubject.asObservable();
     }
+
+    //Gagestats
     public agencies(): Observable<Array<Agency>> {
         return this._agenciesSubject.asObservable();
     }

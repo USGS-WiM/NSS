@@ -68,13 +68,12 @@
 						<div *ngFor="let var of newScenForm.get('regressionRegions.parameters').controls; let varIndex = index">
 
 							<div class="scenario-dropdown">
-								<button class="icon-button hover-blue" (click)="removeVariable(varIndex)">
-									<i class="far fa-times"></i>
-								</button>
-								<div *ngIf="checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="hideDiv('variable' + (varIndex + 1))">Explanatory Variable {{varIndex + 1}}
-									<i class="far fa-chevron-double-down"></i></div>
-								<div *ngIf="!checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="showDiv('variable' + (varIndex + 1))">Explanatory Variable {{varIndex + 1}}<i class="far fa-chevron-double-right"></i></div>
-							</div>
+                                <div class="scenario-dropdown-title" (click)="checkDiv('variable' + (varIndex + 1)) ? hideDiv('variable' + (varIndex + 1)) : showDiv('variable' + (varIndex + 1))">
+                                    <span>Explanatory Variable {{varIndex + 1}}</span>
+                                    <i class="fas" [ngClass]="{'fa-chevron-down': checkDiv('variable' + (varIndex + 1)),'fa-chevron-right': !checkDiv('variable' + (varIndex + 1))}"></i>
+                                </div>
+                                <button class="icon-button" (click)="removeVariable(varIndex)"><i class="far fa-times"></i></button>
+                            </div>
 							
 							<div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
 								<!-- Parameter ID-->
@@ -191,7 +190,7 @@
 								<div class="scenario-dropdown">
 
 									<div class="scenario-dropdown-title" (click)="checkDiv('error' + (errIndex + 1)) ? hideDiv('error' + (errIndex + 1)) : showDiv('error' + (errIndex + 1))">
-										<span>Prediction Interval</span>
+										<span>Error {{errIndex + 1}}</span>
 										<i class="fas" [ngClass]="{'fa-chevron-down': checkDiv('error' + (errIndex + 1)),'fa-chevron-right': !checkDiv('error' + (errIndex + 1))}"></i>
 									</div>
 									<!-- <div *ngIf="!checkDiv('predInt')" class="showHideScen" (click)="">Prediction Interval<i class="far fa-chevron-right"></i></div> -->

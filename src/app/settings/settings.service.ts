@@ -144,7 +144,6 @@ export class SettingsService {
             .map(res => {
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'New item was added');
                 } else {
-                    console.log(res);
                     this.outputWimMessages(res); }
                 return res.body;
             })
@@ -189,22 +188,22 @@ export class SettingsService {
     }
 
     public outputWimMessages(res) {
-        //this._toasterService.clear();
-        const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
-        const existingMsgs = [];
-        if (wimMessages) {
-            for (const key of Object.keys(wimMessages)) {
-                for (const item of wimMessages[key]) {
-                    // skip duplicates and counts
-                    if (item.indexOf('Count:') === -1 && existingMsgs.indexOf(item) == -1) {
-                        existingMsgs.push(item);
-                        //this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+            //this._toasterService.clear();
+            const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
+            const existingMsgs = [];
+            if (wimMessages) {
+                for (const key of Object.keys(wimMessages)) {
+                    for (const item of wimMessages[key]) {
+                        // skip duplicates and counts
+                        if (item.indexOf('Count:') === -1 && existingMsgs.indexOf(item) == -1) {
+                            existingMsgs.push(item);
+                            this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+                        }
                     }
                 }
+                return true;
             }
-            return true;
-        }
-        return false;
+            return false;
     }
 
     // SETTERS ///////////////////////////////////////////
@@ -246,5 +245,8 @@ export class SettingsService {
     }
     public setStationTypes(a: Array<Stationtype>) {
         this._stationTypeSubject.next(a);
+    }
+    public setGageCharacteristics(a: Array<GageCharacteristic>) {
+        this._gageCharacteristicSubject.next(a);
     }
 }

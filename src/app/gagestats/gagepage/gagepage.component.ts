@@ -72,6 +72,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           unit.abbr = unit.abbreviation;
         }
     });
+
   }  // end OnInit
   
   public getCitations(){
@@ -161,18 +162,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
   
   this.gage.characteristics.push(this.newChar);
   this.editRowClicked(this.newChar, this.newChar.id);
-    /* this._settingsservice.postEntityGageStats(newChar, this.configSettings.characteristicsURL).subscribe(
-      (response: GageCharacteristic) => { 
-        this._toasterService.pop('info', 'Info', 'Characteristic was created');
-        console.log(typeof(response), response);
-        //response.isEditing = true; 
-        this.gage.characteristics.push(response);
-        this.editRowClicked(response, response.id);
-      }, error => {
-        if (this._settingsservice.outputWimMessages(error)) {return; }
-        this._toasterService.pop('error', 'Error creating Characteristic', error._body.message || error.statusText);
-      }
-    ) */
   } 
     
   public deletePhysicalCharacteristic(deleteID: number) {
@@ -195,7 +184,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
         (res) => { 
           item.isEditing = false;
           this._settingsservice.outputWimMessages(res); 
-          console.log(res)
         }
       )
     }; if (!item.id) {  // If an item doesn't have an ID, then it needs to be added to NSS
@@ -209,26 +197,23 @@ export class GagepageComponent implements OnInit, OnDestroy {
           const url = this.configSettings.characteristicsURL + "/" + res.id;
           this._settingsservice.getEntitiesGageStats(url).subscribe((resp: GageCharacteristic) => {
               this.gage.characteristics.push(resp);  // Add new characteristic to table
+              this._toasterService.pop('info', 'Info', 'Characteristic was created');
             }
           );
-          this._toasterService.pop('info', 'Info', 'Characteristic was created');
-          console.log(res)
-        }, error => {
-          if (this._settingsservice.outputWimMessages(error)) {return; }
-          this._toasterService.pop('error', 'Error creating Characteristic', error._body.message || error.statusText);
-        } 
-      )} 
+      }, error => {
+        if (this._settingsservice.outputWimMessages(error)) {return; }
+        this._toasterService.pop('error', 'Error creating Characteristic', error._body.message || error.statusText);
+      });
+    } 
   }
 
 ///////////////////////Statistic Section/////////////////////
   
   public addStreamflowStatistic() {
     this.newStat = {
-      //name: "",
       id: null,
       stationID: this.gage.id,
       value: "",
-      //units: "",
       citationID: 0,
       citation: <Citation>{},
       comments: "",
@@ -243,12 +228,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
     } 
     this.gage.statistics.push(this.newStat);
     this.editRowClicked(this.newStat, this.newStat.id);
-    
   } 
 
   public saveStat(item, sIndex) {
     //item.unitTypeID = item.unitType.id;
-    const newItem = _.omit(item, ['id', 'regressionType', 'statisticErrors', 
+    const newItem = item.omit(item, ['id', 'regressionType', 'statisticErrors', 
     'citation', 'citationID', 'unitType', 'isEditing']);  // Copy item, delete unnecessary elements
     
     if (newItem.id) {
@@ -265,7 +249,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.gage.statistics.splice(index, 1);  // Delete newStat from table
           const url = this.configSettings.statisticsURL + "/" + res.id;
           this._settingsservice.getEntitiesGageStats(url).subscribe( (resp: GageStatistic) => {
-            console.log(resp);
             resp.unitType = this.units[resp.unitTypeID];
             this.gage.statistics.push(resp);
           }) 

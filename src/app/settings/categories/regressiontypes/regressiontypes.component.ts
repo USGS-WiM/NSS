@@ -49,7 +49,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public isEditing = false;
     public modalRef;
     public selectedStatisticGroups: Array<Statisticgroup>;
-    public selectedSatistic;
+    public selectedStatistic;
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -81,7 +81,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.selectedStatisticGroups = res;
         });
-        this.selectedSatistic = 'none';
+        this.selectedStatistic = 'none';
         this.selectedRegion = 'none';
         this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
             this.regressionTypes = res;
@@ -108,7 +108,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     }
 
     public onStatGroupSelect(e){
-        this.selectedSatistic = e;
+        this.selectedStatistic = e;
         if (e === 'none') {
             this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
                 this.statRegressionTypes = res;

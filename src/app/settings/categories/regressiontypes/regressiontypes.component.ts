@@ -36,8 +36,6 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public selectedStatGroupIDs;
     public selectedRegTypeIDs;
     public regressionTypes: Array<Regressiontype>;
-    public regRegressionTypes: Array<Regressiontype>;
-    public statRegressionTypes: Array<Regressiontype>;
     public newRegForm: FormGroup;
     public showNewRegForm: boolean;
     private CloseResult;
@@ -50,6 +48,8 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public modalRef;
     public selectedStatisticGroups: Array<Statisticgroup>;
     public selectedStatistic;
+    public selectedRegionID;
+    public selectedStatisticID;
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -85,52 +85,38 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this.selectedRegion = 'none';
         this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
             this.regressionTypes = res;
-            this.regRegressionTypes = res;
-            this.statRegressionTypes = res;
         });
     }
 
     public onRegSelect(r) {
         this.selectedRegion = r;
+        this.selectedRegionID = r.id;
         if (r === 'none') {
-            this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
-                this.regRegressionTypes = res;
-                this.compareRegressionTypes();
-            });
-        } else {
-            this._settingsservice
-                .getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.regTypeURL)
-                .subscribe(regs => {
-                    this.regRegressionTypes = regs;
-                    this.compareRegressionTypes();
-                });
+            this.selectedRegionID = "";
+        } 
+        if(this.selectedStatistic === 'none'){
+            this.selectedStatisticID = "";
         }
+        this._settingsservice
+            .getEntities(this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
+            .subscribe(regs => {
+                this.regressionTypes = regs;
+            });
+        
     }
 
     public onStatGroupSelect(e){
         this.selectedStatistic = e;
+        this.selectedStatisticID = e.id;
         if (e === 'none') {
-            this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
-                this.statRegressionTypes = res;
-                this.compareRegressionTypes();
-            });
-        } else {
-            this._settingsservice.getEntities(this.configSettings.regTypeURL+"?statisticgroups="+ e.id).subscribe(res => {
-                res.sort((a, b) => a.name.localeCompare(b.name));
-                this.statRegressionTypes = res;
-                this.compareRegressionTypes();
-            });
+            this.selectedStatisticID = "";
+        } 
+        if(this.selectedRegion === 'none'){
+            this.selectedRegionID = "";
         }
-    }
-
-    public compareRegressionTypes(){
-        this.regressionTypes = [];
-        this.regRegressionTypes.forEach(y=> {
-            this.statRegressionTypes.forEach(z=> {
-                if (y.id === z.id) {
-                    this.regressionTypes.push(y);
-                }
-            });
+        this._settingsservice.getEntities(this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.regressionTypes = res;
         });
     }
 

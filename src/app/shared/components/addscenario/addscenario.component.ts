@@ -261,6 +261,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                }
             });
         }); 
+        this.showMathjax();
         this.cloneParameters.r.errors.forEach((element,index) => {
             this.addError();
             const controlArray = <FormArray> this.newScenForm.get('regressionRegions.regressions.errors');       

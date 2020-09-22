@@ -6,6 +6,13 @@
     </div>
 
     <div class="sidebar-item">
+        <label>Limit by Region:</label>
+        <ss-multiselect-dropdown [options]="regions" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedRegions" name="regions">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
         <label>Limit by Station Type:</label>
         <ss-multiselect-dropdown [options]="stationTypes" [texts]="myMSTexts" [settings]="myRTSettings"
         [(ngModel)]="selectedStationType" name="stationType">

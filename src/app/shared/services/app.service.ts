@@ -327,11 +327,11 @@ export class NSSService {
     private _variableTypeSubjectGageStats: Subject<Array<Variabletype>> = new Subject<Array<Variabletype>>(); 
 
     public get variableTypeGageStats(): Observable<Array<Variabletype>> {
-        // getter all (regressionTypes)
+        // getter all (variableType)
         return this._variableTypeSubjectGageStats.asObservable();
     }
 
-    // get all regression types
+    // get all Variable Type
     public getVariableTypesGageStats(): void {
         this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL, { headers: this.jsonHeader })

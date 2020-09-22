@@ -283,6 +283,24 @@ export class NSSService {
     }
     // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
 
+     // -+-+-+-+-+-+ Regression Type section -+-+-+-+-+-+-+
+     public get regressionType(): Observable<Array<Regressiontype>> {
+         // getter all (regressionTypes)
+         return this._regressionTypeSubject.asObservable();
+     }
+ 
+     // get all regression types
+     public getRegressionTypes(): void {
+         this._http
+             .get(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL, { headers: this.jsonHeader })
+             .map(res => <Array<Regressiontype>>res)
+             .catch(this.handleError)
+             .subscribe(r => {
+                 this._regressionTypeSubject.next(r);
+             });
+     }
+     // -+-+-+-+-+-+ end Regression Type section -+-+-+-+-+-+-+
+
     // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
     private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
 
@@ -643,8 +661,8 @@ export class NSSService {
     }
 
     // get stations by text search, station type and other param
-    public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, agencyID: Array<Agency>, pageNumber: string, perPage: number, regionIDs: Array<Region>) {
-        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString() + "&agencies=" + agencyID.toString() + "&page=" + pageNumber + "&pageCount="+ perPage + "&regions="+ regionIDs;
+    public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, agencyID: Array<Agency>, pageNumber: string, perPage: number, regionIDs: Array<Region>, regressionTypeIDs: Array<Regressiontype>) {
+        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString() + "&agencies=" + agencyID.toString() + "&page=" + pageNumber + "&pageCount="+ perPage + "&regions="+ regionIDs + "&regressionTypes="+ regressionTypeIDs;
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
             .subscribe(res => {

@@ -7,6 +7,7 @@ import { Region } from 'app/shared/interfaces/region';
 import { SettingsService } from 'app/settings/settings.service';
 import { ConfigService } from 'app/config.service';
 import { Config } from 'protractor';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 
 @Component({
   selector: 'gs-sidebar',
@@ -18,9 +19,12 @@ export class GsSidebarComponent implements OnInit {
   // station type
   public stationTypes: Array<Stationtype>;
   public selectedStationType: Array<Stationtype> = [];
+  // regression type
+  public regressionTypes: Array<Regressiontype>;
+  public selectedRegressionType: Array<Regressiontype> = [];
   // regions
   public regions: Array<Region>;
-  public selectedRegions: Array<Stationtype> = [];
+  public selectedRegion: Array<Stationtype> = [];
   // agency
   public agencies: Array<Agency>;
   public selectedAgency: Array<Agency> = [];
@@ -39,26 +43,30 @@ export class GsSidebarComponent implements OnInit {
   ngOnInit() {
     this._nssService.selectedPageNumber.subscribe((page: string) => { 
       this.pageNumber = page;
-      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegions);
+      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType);
     });
     this._nssService.selectedPerPage.subscribe((perPage: number) => { 
       this.perPage = perPage;
-      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegions);
+      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType);
     });
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
     });
+    this._nssService.getRegressionTypes();
+    this._nssService.regressionTypes.subscribe((rt: Array<Regressiontype>) => {
+      this.regressionTypes = rt;
+    });
     this._nssService.getAgencies();
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
     });
-    this._settingsservice.getEntitiesGageStats(this.configSettings.gageStatsRegionURL).subscribe(regions => {
+    this._settingsservice.getEntitiesGageStats(this.configSettings.regionURL).subscribe(regions => {
       this.regions = regions;
     });
 
     // trigger initial stations search
-    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegions);
+    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType);
 
     this.myRTSettings = {
       pullRight: false,
@@ -86,7 +94,7 @@ export class GsSidebarComponent implements OnInit {
   // search stations
   public onSearch() {
     this.pageNumber = '1';
-    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegions);
+    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType);
   }
 
 }

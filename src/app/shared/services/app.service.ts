@@ -283,6 +283,26 @@ export class NSSService {
     }
     // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
 
+    // -+-+-+-+-+-+ Statistic Group section for Gagestats-+-+-+-+-+-+-+
+    private _statisticGroupSubjectGageStats: Subject<Array<Statisticgroup>> = new Subject<Array<Statisticgroup>>(); 
+
+    public get statisticGroupGageStats(): Observable<Array<Statisticgroup>> {
+        // getter all (Statistic Group)
+        return this._statisticGroupSubjectGageStats.asObservable();
+    }
+
+    // get all Statistic Group 
+    public getStatisticGroupGageStats(): void {
+        this._http
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL, { headers: this.jsonHeader })
+            .map(res => <Array<Statisticgroup>>res)
+            .catch(this.handleError)
+            .subscribe(r => {
+                this._statisticGroupSubjectGageStats.next(r);
+            });
+    }
+    // -+-+-+-+-+-+ end Statistic Group Type for Gagestats section -+-+-+-+-+-+-+
+
     // -+-+-+-+-+-+ Regression Type section for Gagestats-+-+-+-+-+-+-+
     private _regressionTypeSubjectGageStats: Subject<Array<Regressiontype>> = new Subject<Array<Regressiontype>>(); 
 
@@ -683,8 +703,8 @@ export class NSSService {
     }
 
     // get stations by text search, station type and other param
-    public searchStations(searchText: string, stationTypeIDs: Array<Stationtype>, agencyIDs: Array<Agency>, pageNumber: string, perPage: number, regionIDs: Array<Region>, regressionTypeIDs: Array<Regressiontype>, variableTypeIDs: Array<Variabletype>) {
-        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIDs.toString() + "&agencies=" + agencyIDs.toString() + "&page=" + pageNumber + "&pageCount="+ perPage + "&regions="+ regionIDs + "&regressionTypes="+ regressionTypeIDs + "&variableTypes="+ variableTypeIDs;
+    public searchStations(searchText: string, stationTypeIDs: Array<Stationtype>, agencyIDs: Array<Agency>, pageNumber: string, perPage: number, regionIDs: Array<Region>, regressionTypeIDs: Array<Regressiontype>, variableTypeIDs: Array<Variabletype>, statisticGroupIDs: Array<Statisticgroup>) {
+        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIDs.toString() + "&agencies=" + agencyIDs.toString() + "&page=" + pageNumber + "&pageCount="+ perPage + "&regions="+ regionIDs + "&regressionTypes="+ regressionTypeIDs + "&variableTypes="+ variableTypeIDs + "&statisticGroups="+ statisticGroupIDs;
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
             .subscribe(res => {

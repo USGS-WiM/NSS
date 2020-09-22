@@ -41,6 +41,13 @@
     </div>
 
     <div class="sidebar-item">
+        <label>Limit by Statistic Groups:</label>
+        <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedStatisticGroup" name="statisticGroups">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
         <label>Search for Gage Stations:</label>
         <button class="button full" (click)="onSearch()">
             <span>Search</span>

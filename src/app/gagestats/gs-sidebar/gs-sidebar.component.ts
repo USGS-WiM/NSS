@@ -9,6 +9,7 @@ import { ConfigService } from 'app/config.service';
 import { Config } from 'protractor';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 
 @Component({
   selector: 'gs-sidebar',
@@ -23,6 +24,9 @@ export class GsSidebarComponent implements OnInit {
   // regression type
   public regressionTypes: Array<Regressiontype>;
   public selectedRegressionType: Array<Regressiontype> = [];
+  // statistic groups
+  public statisticGroups: Array<Statisticgroup>;
+  public selectedStatisticGroup: Array<Statisticgroup> = [];
   // variable type
   public variableTypes: Array<Variabletype>;
   public selectedVariableType: Array<Variabletype> = [];
@@ -47,15 +51,19 @@ export class GsSidebarComponent implements OnInit {
   ngOnInit() {
     this._nssService.selectedPageNumber.subscribe((page: string) => { 
       this.pageNumber = page;
-      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType);
+      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
     });
     this._nssService.selectedPerPage.subscribe((perPage: number) => { 
       this.perPage = perPage;
-      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType);
+      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
     });
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
+    });
+    this._nssService.getStatisticGroupGageStats();
+    this._nssService.statisticGroupGageStats.subscribe((sg: Array<Statisticgroup>) => {
+      this.statisticGroups = sg;
     });
     this._nssService.getRegressionTypesGageStats();
     this._nssService.regressionTypeGageStats.subscribe((rt: Array<Regressiontype>) => {
@@ -74,7 +82,7 @@ export class GsSidebarComponent implements OnInit {
     });
 
     // trigger initial stations search
-    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType);
+    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
 
     this.myRTSettings = {
       pullRight: false,
@@ -102,7 +110,7 @@ export class GsSidebarComponent implements OnInit {
   // search stations
   public onSearch() {
     this.pageNumber = '1';
-    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType);
+    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
   }
 
 }

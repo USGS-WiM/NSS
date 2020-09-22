@@ -61,24 +61,21 @@ export class GsSidebarComponent implements OnInit {
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
     });
-    this._nssService.getStatisticGroupGageStats();
-    this._nssService.statisticGroupGageStats.subscribe((sg: Array<Statisticgroup>) => {
-      this.statisticGroups = sg;
-    });
-    this._nssService.getRegressionTypesGageStats();
-    this._nssService.regressionTypeGageStats.subscribe((rt: Array<Regressiontype>) => {
-      this.regressionTypes = rt;
-    });
-    this._nssService.getVariableTypesGageStats();
-    this._nssService.variableTypeGageStats.subscribe((vt: Array<Variabletype>) => {
-      this.variableTypes = vt;
-    });
     this._nssService.getAgencies();
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
     });
     this._settingsservice.getEntitiesGageStats(this.configSettings.regionURL).subscribe(regions => {
       this.regions = regions;
+    });
+    this._settingsservice.getEntitiesGageStats(this.configSettings.statisticGrpURL).subscribe((sg: Array<Statisticgroup>) => {
+      this.statisticGroups = sg;
+    });
+    this._settingsservice.getEntitiesGageStats(this.configSettings.statisticGrpURL).subscribe((vt: Array<Variabletype>) => {
+      this.variableTypes = vt;
+    });
+    this._settingsservice.getEntitiesGageStats(this.configSettings.statisticGrpURL).subscribe((rt: Array<Regressiontype>) => {
+      this.regressionTypes = rt;
     });
 
     // trigger initial stations search

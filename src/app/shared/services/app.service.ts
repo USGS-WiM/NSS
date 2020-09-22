@@ -283,66 +283,6 @@ export class NSSService {
     }
     // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
 
-    // -+-+-+-+-+-+ Statistic Group section for Gagestats-+-+-+-+-+-+-+
-    private _statisticGroupSubjectGageStats: Subject<Array<Statisticgroup>> = new Subject<Array<Statisticgroup>>(); 
-
-    public get statisticGroupGageStats(): Observable<Array<Statisticgroup>> {
-        // getter all (Statistic Group)
-        return this._statisticGroupSubjectGageStats.asObservable();
-    }
-
-    // get all Statistic Group 
-    public getStatisticGroupGageStats(): void {
-        this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL, { headers: this.jsonHeader })
-            .map(res => <Array<Statisticgroup>>res)
-            .catch(this.handleError)
-            .subscribe(r => {
-                this._statisticGroupSubjectGageStats.next(r);
-            });
-    }
-    // -+-+-+-+-+-+ end Statistic Group Type for Gagestats section -+-+-+-+-+-+-+
-
-    // -+-+-+-+-+-+ Regression Type section for Gagestats-+-+-+-+-+-+-+
-    private _regressionTypeSubjectGageStats: Subject<Array<Regressiontype>> = new Subject<Array<Regressiontype>>(); 
-
-    public get regressionTypeGageStats(): Observable<Array<Regressiontype>> {
-        // getter all (regressionTypes)
-        return this._regressionTypeSubjectGageStats.asObservable();
-    }
-
-    // get all regression types
-    public getRegressionTypesGageStats(): void {
-        this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL, { headers: this.jsonHeader })
-            .map(res => <Array<Regressiontype>>res)
-            .catch(this.handleError)
-            .subscribe(r => {
-                this._regressionTypeSubjectGageStats.next(r);
-            });
-    }
-    // -+-+-+-+-+-+ end Regression Type for Gagestats section -+-+-+-+-+-+-+
-
-    // -+-+-+-+-+-+ Variable Type section for Gagestats-+-+-+-+-+-+-+
-    private _variableTypeSubjectGageStats: Subject<Array<Variabletype>> = new Subject<Array<Variabletype>>(); 
-
-    public get variableTypeGageStats(): Observable<Array<Variabletype>> {
-        // getter all (variableType)
-        return this._variableTypeSubjectGageStats.asObservable();
-    }
-
-    // get all Variable Type
-    public getVariableTypesGageStats(): void {
-        this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL, { headers: this.jsonHeader })
-            .map(res => <Array<Variabletype>>res)
-            .catch(this.handleError)
-            .subscribe(r => {
-                this._variableTypeSubjectGageStats.next(r);
-            });
-    }
-    // -+-+-+-+-+-+ end Variable Type for Gagestats section -+-+-+-+-+-+-+
-
     // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
     private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
 

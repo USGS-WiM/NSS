@@ -7,14 +7,9 @@ import { ConfigService } from 'app/config.service';
 import { Station } from 'app/shared/interfaces/station';
 import { SettingsService } from '../../settings/settings.service';
 import { GageCharacteristic } from 'app/shared/interfaces/gagecharacteristic';
-import { ThrowStmt } from '@angular/compiler';
 import { CharacteristicResponse } from 'app/shared/interfaces/characteristicresponse';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
-import { Unittype } from 'app/shared/interfaces/unittype';
-import { Regressiontype } from 'app/shared/interfaces/regressiontype';
-import { Citation } from 'app/shared/interfaces/citation';
-import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
 
 @Component({
@@ -39,6 +34,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public editId;
   public newChar: GageCharacteristic;
   public newStat: GageStatistic;
+  public variables;
+  public regressionTypes;
+  public statisticGroups;
 
   constructor(
     private _nssService: NSSService, 
@@ -70,6 +68,30 @@ export class GagepageComponent implements OnInit, OnDestroy {
         for (const unit of this.units) {
           unit.unit = unit.name;
           unit.abbr = unit.abbreviation;
+        }
+    });
+
+    // get all variable types
+    this._nssService.getVariableTypes().subscribe( res =>{
+      this.variables = res;
+        for (const variable of this.variables) {
+          variable.variable = variable.name;
+        }
+    });
+
+    // get all regression types
+    this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+      this.regressionTypes = res;
+        for (const regressionType of this.regressionTypes) {
+          regressionType.regressionType = regressionType.name;
+        }
+  });
+
+    // get all stat groups 
+    this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
+      this.statisticGroups = res;
+        for (const statisticGroup of this.statisticGroups) {
+          statisticGroup.statisticGroup = statisticGroup.name;
         }
     });
 
@@ -133,35 +155,15 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public addPhysicalCharacteristic() {
     // Create new characteristic
     this.newChar = {
-      id: null,
       stationID: this.gage.id,
       value: 1,
       comments: " ",
       variableTypeID: 1,
-      unitTypeID: null,
+      unitTypeID: 1,
       citationID: 1,
-      units: "",
-      citation: <Citation>{
-        id: 1,
-        title: "none",
-        author: "none",
-        citationURL: "null"},
-      unitType: <Unittype>{id: 1,
-        name: "dimensionless",
-        abbreviation: "dim",
-        unitSystemTypeID: 3},
-      variableType: <Variabletype>{id: 1,
-        name: "Drainage Area",
-        code: "DRNAREA",
-        description: "Area that drains to a point on a stream"},
     }
-    // Change characteristic elements 
-    this.newChar.unitTypeID = this.newChar.unitType.id;
-    this.newChar.citationID = this.newChar.citation.id;
-    this.newChar.variableTypeID = this.newChar.variableType.id;
-  
-  this.gage.characteristics.push(this.newChar);
-  this.editRowClicked(this.newChar, this.newChar.id);
+    
+  this.newChar.isEditing = true;
   } 
     
   public deletePhysicalCharacteristic(deleteID: number) {
@@ -171,35 +173,33 @@ export class GagepageComponent implements OnInit, OnDestroy {
         if (deleteID) {    // If characteristic has an ID number (if it comes from the service)
           this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.characteristicsURL).subscribe(
             (res) => {
-              this.gage.characteristics.splice(index, 1)
+              this.refreshgagepage();
+              //this.gage.characteristics.splice(index, 1)
               this._settingsservice.outputWimMessages(res);
             }
           )
-        } else { this.gage.characteristics.splice(index, 1) }  // If the char does not have an ID (if it has not been saved to the service)
+        } else { delete(this.newChar) }  // If the char does not have an ID (if it has not been saved to the service)
   }}
 
   public saveChar(item) {
     if (item.id) {  // If item has an item, then it is already in NSS
-      this._settingsservice.putEntityGageStats(item.id, item, this.configSettings.characteristicsURL).subscribe(
+      item.unitTypeID = item.unitType.id, item.variableTypeID = item.variableType.id;  // Set unit and variable IDs of edited char 
+      const newItem = JSON.parse(JSON.stringify(item));  // Copy the edited char
+      delete newItem.unitType, delete newItem.variableType, delete newItem.citation;  // Delete uneeded objects from the copy
+      this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.characteristicsURL).subscribe(
         (res) => { 
           item.isEditing = false;
-          this._settingsservice.outputWimMessages(res); 
+          this.refreshgagepage();
+          this._settingsservice.outputWimMessages(res);
         }
       )
     }; if (!item.id) {  // If an item doesn't have an ID, then it needs to be added to NSS
-      const newItem = JSON.parse(JSON.stringify(item)); // Copy item
-      delete newItem.citation, delete newItem.unitType, delete newItem.variableType;  // Delete unneeded elements
-      this._settingsservice.postEntityGageStats(newItem, this.configSettings.characteristicsURL).subscribe(
+      this._settingsservice.postEntityGageStats(item, this.configSettings.characteristicsURL).subscribe(
         (res: CharacteristicResponse) => { 
           item.isEditing = false; 
-          const index = (this.gage.characteristics.length - 1);
-          this.gage.characteristics.splice(index, 1);  // Delete newChar from table
-          const url = this.configSettings.characteristicsURL + "/" + res.id;
-          this._settingsservice.getEntitiesGageStats(url).subscribe((resp: GageCharacteristic) => {
-              this.gage.characteristics.push(resp);  // Add new characteristic to table
-              this._toasterService.pop('info', 'Info', 'Characteristic was created');
-            }
-          );
+          delete(this.newChar);
+          this.refreshgagepage();
+          this._toasterService.pop('info', 'Info', 'Characteristic was created');
       }, error => {
         if (this._settingsservice.outputWimMessages(error)) {return; }
         this._toasterService.pop('error', 'Error creating Characteristic', error._body.message || error.statusText);
@@ -211,47 +211,38 @@ export class GagepageComponent implements OnInit, OnDestroy {
   
   public addStreamflowStatistic() {
     this.newStat = {
-      id: null,
       stationID: this.gage.id,
       value: "",
-      citationID: 0,
-      citation: <Citation>{},
       comments: "",
       isPreferred: true,
       regressionTypeID: 0,
-      statisticErrors: <any>{},
-      unitType: <Unittype>{},
-      regressionType: <Regressiontype>{},
       statisticGroupTypeID: 0,
       unitTypeID: 0,
       yearsofRecord: 0,
     } 
-    this.gage.statistics.push(this.newStat);
     this.editRowClicked(this.newStat, this.newStat.id);
   } 
 
-  public saveStat(item, sIndex) {
-    //item.unitTypeID = item.unitType.id;
-    const newItem = item.omit(item, ['id', 'regressionType', 'statisticErrors', 
-    'citation', 'citationID', 'unitType', 'isEditing']);  // Copy item, delete unnecessary elements
-    
-    if (newItem.id) {
+  public saveStat(item) {
+    if (item.id) {
+      item.unitTypeID = item.unitType.id, item.regressionTypeID = item.regressionType.id;
+      const newItem = JSON.parse(JSON.stringify(item));  // Copy item, delete unnecessary elements
+      ['regressionType', 'statisticErrors', 'citation', 'citationID', 
+      'unitType', 'isEditing'].forEach(e => delete newItem[e]);  // Delete unneeded items
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
         (res) => {
           item.isEditing = false;
+          this._settingsservice.outputWimMessages(res);
+          this.refreshgagepage();
         }
       )
-    }; if (!newItem.id) {  
-      this._settingsservice.postEntityGageStats(newItem, this.configSettings.statisticsURL).subscribe(
+    }; if (!item.id) {  
+      this._settingsservice.postEntityGageStats(item, this.configSettings.statisticsURL).subscribe(
         (res: StatisticResponse) => {
           item.isEditing = false;
-          const index = (this.gage.statistics.length - 1);
-          this.gage.statistics.splice(index, 1);  // Delete newStat from table
-          const url = this.configSettings.statisticsURL + "/" + res.id;
-          this._settingsservice.getEntitiesGageStats(url).subscribe( (resp: GageStatistic) => {
-            resp.unitType = this.units[resp.unitTypeID];
-            this.gage.statistics.push(resp);
-          }) 
+          delete(this.newStat);  // Delete newStat from table
+          this.refreshgagepage();
+          this._toasterService.pop('info', 'Info', 'Statistic was created');
         } 
       ) 
     }
@@ -264,13 +255,21 @@ export class GagepageComponent implements OnInit, OnDestroy {
         if (deleteID) {    // If statistic has an ID number (if it comes from the service)
           this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.statisticsURL).subscribe(
             (res) => {
-              this.gage.statistics.splice(index, 1)
+              this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
             }
           )
-        } else { this.gage.statistics.splice(index, 1) }  // If the stat does not have an ID (if it has not been saved to the service)
+        } else { delete(this.newStat) }  // If the stat does not have an ID (if it has not been saved to the service)
       }
   } 
+
+  private refreshgagepage() {
+    this._nssService.getGagePageInfo(this.code).subscribe(res => {
+      this.gage = res;
+      this.getCitations();
+    });
+  }
+
   compareObjects(Obj1, Obj2) {
     // used to make sure the existing options are showing in selects
     return Obj1 && Obj2 ? Obj1.id === Obj2.id : Obj1 === Obj2;

@@ -1,5 +1,9 @@
 <div id="printArea" class = "app-content">
 
+    <!-- toaster directive -->
+    <toaster-container [toasterconfig]="config"></toaster-container>
+    <!-- / toaster directive -->
+
     <h2 class="bold">{{title}}</h2>
 
     <h4>{{timestamp | date:"MMMM d, y hh:mma"}}</h4>

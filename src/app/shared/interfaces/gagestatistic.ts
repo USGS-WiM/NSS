@@ -1,11 +1,10 @@
 import { Citation } from './citation';
 import { Unittype } from './unitType';
 import { Regressiontype } from './regressiontype';
+import { Statisticgroup } from './statisticgroup';
 
 export interface GageStatistic {
-    //name: string;
-    //units: string;
-    id: number;
+    id?: number;
     statisticGroupTypeID: number;
     regressionTypeID: number;
     stationID: number;
@@ -14,9 +13,10 @@ export interface GageStatistic {
     comments: string;
     isPreferred: boolean;
     yearsofRecord: number;
-    citationID: number;
-    statisticErrors: Array<any>;
-    citation: Citation;
-    unitType: Unittype;
-    regressionType: Regressiontype;
+    statisticGroupType?: Statisticgroup;
+    citationID?: number;
+    statisticErrors?: Array<any>;
+    citation?: Citation;
+    unitType?: Unittype;
+    regressionType?: Regressiontype;
 }

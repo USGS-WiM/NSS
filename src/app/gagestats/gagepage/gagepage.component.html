@@ -98,9 +98,8 @@
 							<th class="width-5"></th>
 							<th>Characteristic</th>
 							<th>Value</th>
-							<th>Variable ID</th>
+							
 							<th>Units</th>
-							<th>Unit ID</th>
 							<th>Citation ID</th>
 						</tr>
 					</thead>
@@ -122,35 +121,72 @@
 									</button>
 								</div>
 							</td>
-							<td style="width: 130px;">
+							<td style="width: 200px;">
 								<span *ngIf="!c.isEditing">{{c.variableType.name}}</span>
-								<span *ngIf="c.isEditing"><input [(ngModel)]="c.variableType.name" size="10"></span>
+								<span *ngIf="c.isEditing">
+									<ng-select [compareWith]="compareObjects" name="variableType" [(ngModel)]="c.variableType" [clearable]="false">
+										<ng-option *ngFor="let variable of variables" [value]="variable">{{variable.variable}}</ng-option> 
+									</ng-select>
+								</span>
 							</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.value}}</span>
 								<span *ngIf="c.isEditing"><input [(ngModel)]="c.value" size="2">*</span>
 							</td>
-							<td >
-								<span *ngIf="!c.isEditing">{{c.variableTypeID}}</span>
-								<span *ngIf="c.isEditing"><input [(ngModel)]="c.variableTypeID" size="2">*</span>
-							</td>
-							<td style="width: 120px;">
+							
+							<td style="width: 160px;">
 								<span *ngIf="!c.isEditing">{{c.unitType.name}}</span>
 								<span *ngIf="c.isEditing">
-									<select [compareWith]="compareObjects" name="unitType" [(ngModel)]="c.unitType">
-										<option *ngFor="let unit of units" [ngValue]="unit">{{unit.unit}}</option>
-									</select>
+									<ng-select [compareWith]="compareObjects" name="unitType" [(ngModel)]="c.unitType" [clearable]="false">
+										<ng-option *ngFor="let unit of units" [value]="unit">{{unit.unit}}</ng-option>
+									</ng-select>
 								</span>
 							</td>
 							<td>
-								<span *ngIf="!c.isEditing">{{c.unitType.id}}</span>
-								<span *ngIf="c.isEditing"><input [(ngModel)]="c.unitType.id" size="2">*</span>
-							</td>
-							<td>
 								<span *ngIf="!c.isEditing">{{c.citationID}}</span>
-								<span *ngIf="c.isEditing"><input [(ngModel)]="c.citationID" size="5">*</span>
+								<span *ngIf="c.isEditing"><input [(ngModel)]="c.citationID" size="2">*</span>
 							</td>
 						<tr>
+						<tr *ngIf="newChar">
+							<td>	
+								<div class="table-icon-buttons">
+									<button type="button" *ngIf="!newChar.isEditing" title="Edit Parameter" (click)="editRowClicked(newChar, cIndex)" class="icon-button" aria-hidden="true">
+										<i class="far fa-pencil"></i>
+									</button>
+									<button type="button" *ngIf="newChar.isEditing" title="Save Parameter" (click)="saveChar(newChar)"  class="icon-button" aria-hidden="true">
+										<i class="far fa-floppy-o"></i>
+									</button>
+									<button type="button" *ngIf="newChar.isEditing" title="Delete" (click)="deletePhysicalCharacteristic(newChar.id)"  class="icon-button" aria-hidden="true">
+										<i class="far fa-times"></i>
+									</button>
+								</div>
+							</td>
+							<td style="width: 200px;">
+								<span *ngIf="!newChar.isEditing">{{newChar.variableTypeID}}</span>
+								<span *ngIf="newChar.isEditing">
+									<ng-select [compareWith]="compareObjects" name="variableType" [(ngModel)]="newChar.variableTypeID" [clearable]="false">
+										<ng-option *ngFor="let variable of variables" [value]="variable.id">{{variable.variable}}</ng-option> 
+									</ng-select>
+								</span>
+							</td>
+							<td>
+								<span *ngIf="!newChar.isEditing">{{newChar.value}}</span>
+								<span *ngIf="newChar.isEditing"><input [(ngModel)]="newChar.value" size="2">*</span>
+							</td>
+							
+							<td style="width: 160px;">
+								<span *ngIf="!newChar.isEditing">{{newChar.unitType.name}}</span>
+								<span *ngIf="newChar.isEditing">
+									<ng-select [compareWith]="compareObjects" name="unitType" [(ngModel)]="newChar.unitTypeID" [clearable]="false">
+										<ng-option *ngFor="let unit of units" [value]="unit.id">{{unit.unit}}</ng-option>
+									</ng-select>
+								</span>
+							</td>
+							<td>
+								<span *ngIf="!newChar.isEditing">{{newChar.citationID}}</span>
+								<span *ngIf="newChar.isEditing"><input [(ngModel)]="newChar.citationID" size="2">*</span>
+							</td>
+						</tr>
 						</tbody>
 				</table>
 			</div>
@@ -202,9 +238,8 @@
 									<th>Statistic</th>
 									<th>Value</th>
 									<th>Units</th> 
-									<th>Unit ID</th>
+									<th>Stat Group</th>
 									<th>Stat Group ID</th>
-									<th>Regression Type ID</th>
 									<th>Preferred</th>
 									<th>Years of Record</th> 
 								</tr>
@@ -216,7 +251,7 @@
 											<button type="button" *ngIf="!s.isEditing" title="Edit Parameter" (click)="editRowClicked(s, sIndex)" class="icon-button" aria-hidden="true">
 												<i class="far fa-pencil"></i>
 											</button>
-											<button type="button" *ngIf="s.isEditing" title="Save Parameter" (click)="saveStat(s, sIndex)"  class="icon-button" aria-hidden="true">
+											<button type="button" *ngIf="s.isEditing" title="Save Parameter" (click)="saveStat(s)"  class="icon-button" aria-hidden="true">
 												<i class="far fa-floppy-o"></i>
 											</button>
 											<button type="button" *ngIf="s.isEditing" title="Cancel Edit" (click)="cancelEditRowClicked(s)"  class="icon-button" aria-hidden="true">
@@ -227,33 +262,37 @@
 											</button>
 										</div>
 									</td>
-									<td style="width: 130px;">
+									<td style="width: 170px;">
 										<span *ngIf="!s.isEditing">{{s.regressionType.name}}</span>
-										<span *ngIf="s.isEditing"><input [(ngModel)]="s.regressionType.name" size=10></span>
+										<span *ngIf="s.isEditing">
+											<ng-select  [(ngModel)]="s.regressionType" name="regressionType" [compareWith]="compareObjects" [clearable]="false">
+												<ng-option *ngFor="let regressionType of regressionTypes" [value]="regressionType">{{regressionType.regressionType}}</ng-option>
+											</ng-select>
+										</span>
 									</td>
 									<td>
 										<span *ngIf="!s.isEditing">{{s.value}}</span>
 										<span *ngIf="s.isEditing"><input [(ngModel)]="s.value" size="1">*</span>
 									</td>
-									<td style="width: 110px;">
+									<td style="width: 140px;">
 										<span *ngIf="!s.isEditing">{{s.unitType.name}}</span>
 										<span *ngIf="s.isEditing" >
-											<select [(ngModel)]="s.unitType" name="unitType" [compareWith]="compareObjects">
-                                                <option *ngFor="let unit of units" [ngValue]="unit">{{unit.unit}}</option>
-                                            </select>
+											<ng-select [(ngModel)]="s.unitType" name="unitType" [compareWith]="compareObjects" [clearable]="false">
+                                                <ng-option *ngFor="let unit of units" [value]="unit">{{unit.unit}}</ng-option>
+                                            </ng-select>
 										</span>
-									</td> 
+									</td>
 									<td>
-										<span *ngIf="!s.isEditing">{{s.unitType.id}}</span>
-										<span *ngIf="s.isEditing"><input [(ngModel)]="s.unitType.id" size="1">*</span>
+									<!--	<span *ngIf="!s.isEditing">{{s.statisticGroupType.name}}</span>
+										<span *ngIf="s.isEditing">
+											<select [(ngModel)]="s.statisticGroupType" name="statisticGroupType" [compareWith]="compareObjects">
+												<option *ngFor="let statisticGroup of statisticGroups" [ngValue]="statisticGroup">{{statisticGroup.statisticGroup}}</option>
+											</select>
+										</span> -->
 									</td>
 									<td style="width: 70px;">
 										<span *ngIf="!s.isEditing">{{s.statisticGroupTypeID}}</span>
 										<span *ngIf="s.isEditing"><input [(ngModel)]="s.statisticGroupTypeID" size="1">*</span>
-									</td>
-									<td style="width: 90px;">
-										<span *ngIf="!s.isEditing">{{s.regressionTypeID}}</span>
-										<span *ngIf="s.isEditing"><input [(ngModel)]="s.regressionTypeID" size="1">*</span>
 									</td>
 									<td>
 										<span *ngIf="!s.isEditing">{{s.isPreferred}}</span>
@@ -262,6 +301,61 @@
 									<td style="width: 70px;">
 										<span *ngIf="!s.isEditing">{{s.yearsofRecord}}</span>
 										<span *ngIf="s.isEditing"><input [(ngModel)]="s.yearsofRecord" size="1">*</span>
+									</td>
+								</tr>
+								<tr *ngIf="newStat">
+									<td>	
+										<div class="table-icon-buttons">
+											<button type="button" *ngIf="!newStat.isEditing" title="Edit Parameter" (click)="editRowClicked(newStat, sIndex)" class="icon-button" aria-hidden="true">
+												<i class="far fa-pencil"></i>
+											</button>
+											<button type="button" *ngIf="newStat.isEditing" title="Save Parameter" (click)="saveStat(newStat)"  class="icon-button" aria-hidden="true">
+												<i class="far fa-floppy-o"></i>
+											</button>
+											<button type="button" *ngIf="newStat.isEditing" title="Delete" (click)="deleteStatistic(newStat.id)"  class="icon-button" aria-hidden="true">
+												<i class="far fa-times"></i>
+											</button>
+										</div>
+									</td>
+									<td style="width: 170px;">
+										<span *ngIf="!newStat.isEditing">{{newStat.regressionType.name}}</span>
+										<span *ngIf="newStat.isEditing">
+											<ng-select  [(ngModel)]="newStat.regressionTypeID" name="regressionType" [compareWith]="compareObjects" [clearable]="false">
+												<ng-option *ngFor="let regressionType of regressionTypes" [value]="regressionType.id">{{regressionType.regressionType}}</ng-option>
+											</ng-select>
+										</span>
+									</td>
+									<td>
+										<span *ngIf="!newStat.isEditing">{{newStat.value}}</span>
+										<span *ngIf="newStat.isEditing"><input [(ngModel)]="newStat.value" size="1">*</span>
+									</td>
+									<td style="width: 140px;">
+										<span *ngIf="!newStat.isEditing">{{newStat.unitType.name}}</span>
+										<span *ngIf="newStat.isEditing" >
+											<ng-select [(ngModel)]="newStat.unitTypeID" name="unitType" [compareWith]="compareObjects" [clearable]="false">
+                                                <ng-option *ngFor="let unit of units" [value]="unit.id">{{unit.unit}}</ng-option>
+                                            </ng-select>
+										</span>
+									</td> 
+									<td>
+									<!--	<span *ngIf="!s.isEditing">{{s.statisticGroupType.name}}</span>
+										<span *ngIf="s.isEditing">
+											<select [(ngModel)]="s.statisticGroupTypeID" name="statisticGroupType" [compareWith]="compareObjects">
+												<option *ngFor="let statisticGroup of statisticGroups" [ngValue]="statisticGroup.id">{{statisticGroup.statisticGroup}}</option>
+											</select>
+										</span>  -->
+									</td>
+									<td style="width: 70px;">
+										<span *ngIf="!newStat.isEditing">{{newStat.statisticGroupTypeID}}</span>
+										<span *ngIf="newStat.isEditing"><input [(ngModel)]="newStat.statisticGroupTypeID" size="1">*</span>
+									</td>
+									<td>
+										<span *ngIf="!newStat.isEditing">{{newStat.isPreferred}}</span>
+										<span *ngIf="newStat.isEditing"><input [(ngModel)]="newStat.isPreferred" size="3">*</span>
+									</td>
+									<td style="width: 70px;">
+										<span *ngIf="!newStat.isEditing">{{newStat.yearsofRecord}}</span>
+										<span *ngIf="newStat.isEditing"><input [(ngModel)]="newStat.yearsofRecord" size="1">*</span>
 									</td>
 								</tr>
 							</tbody>

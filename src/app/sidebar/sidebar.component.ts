@@ -301,9 +301,6 @@ export class SidebarComponent implements OnInit {
             // now post the scenario to get the results to pass to mainview
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
             const sParams = '?regressiontypes=' + regTypesIDstring;
-            console.log("this.selectedRegion.id", this.selectedRegion.id);
-            console.log("this.scenarios", this.scenarios);
-            console.log("sParams", sParams);
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
         }
     }

@@ -5,18 +5,21 @@
 			<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 		</div>
 
-		<div class="modal-body modal-body-fixed">
+		<div class="modal-body modal-body-fixed side-padding">
 			<!-- Search Input -->
 			<div>
 				<input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
 			</div>
 
-			<table class="custom-table table-striped table-scroll mtop-sm">
+			<table class="custom-table table-striped table-scroll mtop-sm no-scrollbars">
 				<thead>
 					<tr>
 						<th class="width-60">Citation</th>
 						<th class="width-35">Associated Regression Regions</th>
-						<th class="width-5"></th>
+						<th class="width-5 empty-cell">
+							<!-- Filler button - not used for anything -->
+							<div class="cell-buttons"><button class="icon-button" aria-hidden="true"><i class="far fa-circle"></i></button></div>
+						</th>
 					</tr>
 				</thead>
 				<tbody>

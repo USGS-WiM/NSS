@@ -34,17 +34,17 @@ declare var MathJax: {
 };
 
 @Component({
-	selector: 'wim-mainview',
+    selector: 'wim-mainview',
     templateUrl: './mainview.component.html',
     styleUrls: ['./mainview.component.scss']
 })
 export class MainviewComponent implements OnInit {
     @ViewChildren('inputsTable', { read: ViewContainerRef }) inputTable;
     @ViewChildren('resultsTable', { read: ViewContainerRef }) resultTable;
-    @ViewChild('editScenarioForm', {static: true}) editScenarioForm;
-    @ViewChild('values', {static: true}) public valuesRef: TemplateRef<any>;
-    @ViewChild('add', {static: true}) public addRef: TemplateRef<any>;
-    @ViewChild('CitationForm', {static: true}) citationForm;
+    @ViewChild('editScenarioForm', { static: true }) editScenarioForm;
+    @ViewChild('values', { static: true }) public valuesRef: TemplateRef<any>;
+    @ViewChild('add', { static: true }) public addRef: TemplateRef<any>;
+    @ViewChild('CitationForm', { static: true }) citationForm;
     public newCitForm: FormGroup;
     public title: string;
     public resultsBack: boolean; // flag that swaps content on mainpage from scenarios w/o results to those with results
@@ -119,7 +119,7 @@ export class MainviewComponent implements OnInit {
     public addCitation: boolean;
     public uploadPolygon: boolean;
     public editSGIndex; public editRRindex; public editIdx;
-    public config: ToasterConfig = new ToasterConfig({timeout: 0});
+    public config: ToasterConfig = new ToasterConfig({ timeout: 0 });
     public regressionRegions;
     public addRegReg: boolean;
     public selectedRegRegion;
@@ -220,12 +220,14 @@ export class MainviewComponent implements OnInit {
             this.showWeights = false; this.multipleRegRegions = false;
             this.scenarios.forEach(s => {
                 this.appendixEquationsforExport = [];
-                // show weight inputs if more than 1 regression region chosen
-                const firstRegname = s.regressionRegions[0].name;
-                if (s.regressionRegions.length > 1) {
-                    this.showWeights = true;
-                    this.multipleRegRegions = true;
-                } else if (this.uniqueRegRegions.indexOf(firstRegname) === -1) { this.uniqueRegRegions.push(firstRegname); }
+                if (s.regressionRegions[0] != undefined) {
+                    // show weight inputs if more than 1 regression region chosen
+                    const firstRegname = s.regressionRegions[0].name;
+                    if (s.regressionRegions.length > 1) {
+                        this.showWeights = true;
+                        this.multipleRegRegions = true;
+                    } else if (this.uniqueRegRegions.indexOf(firstRegname) === -1) { this.uniqueRegRegions.push(firstRegname); }
+                }
                 if (this.uniqueRegRegions.length > 1) { this.multipleRegRegions = true; }
 
                 s.regressionRegions.forEach((rr, index) => {
@@ -267,7 +269,7 @@ export class MainviewComponent implements OnInit {
                         rr.parameters.forEach(p => {
                             // is this param code already in array list?
                             let pIndex = this.uniqueParameters
-                                .map(function(parame) {
+                                .map(function (parame) {
                                     return parame.code;
                                 })
                                 .indexOf(p.code);
@@ -276,13 +278,14 @@ export class MainviewComponent implements OnInit {
                                 if (p.limits != undefined) {
                                     p.limits.rrID = regID;
                                     p.limitArray.push(p.limits);
-                                } else {p.limits = {max: null, min: null}}
+                                } else { p.limits = { max: null, min: null } }
                                 this.uniqueParameters.push(p);
                             } else {
                                 // already in here. find the matching one and add it's limits to the LimitArray
                                 const limArray = this.uniqueParameters[pIndex].limitArray;
-                                if (p.limits !== undefined) { p.limits.rrID = regID;
-                                } else {p.limits = {min: null, max: null}}
+                                if (p.limits !== undefined) {
+                                    p.limits.rrID = regID;
+                                } else { p.limits = { min: null, max: null } }
                                 // check if limit array already in list (some duplicates due to statistic/regression groups)
                                 if (!this.containsObject(p.limits, limArray)) {
                                     limArray.push(p.limits);
@@ -290,7 +293,7 @@ export class MainviewComponent implements OnInit {
                             }
                             // is this unitType already in the array list?
                             let uIndex = this.uniqueUnitTypes
-                                .map(function(unit) {
+                                .map(function (unit) {
                                     return unit.abbr;
                                 })
                                 .indexOf(p.unitType.abbr);
@@ -546,7 +549,7 @@ export class MainviewComponent implements OnInit {
                             }
                         ],
                         tooltip: {
-                            formatter: function() {
+                            formatter: function () {
                                 var s = '<b>(' + this.x + ', ' + this.y + ')</b>';
                                 return s;
                             }
@@ -617,13 +620,13 @@ export class MainviewComponent implements OnInit {
         });
     } // end ngOnInit()
 
-    public saveFilters(){
+    public saveFilters() {
         this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
         this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
         this.tempSelectedRegType = this.selectedRegType;
     }
 
-    public requeryFilters(){
+    public requeryFilters() {
         this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
         this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
         this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
@@ -924,7 +927,7 @@ export class MainviewComponent implements OnInit {
         this.charts[i].series[0].update({
             dataLabels: {
                 enabled: value,
-                formatter: function() {
+                formatter: function () {
                     return '(' + this.x + ', ' + this.y + ')';
                 }
             }
@@ -994,7 +997,7 @@ export class MainviewComponent implements OnInit {
             this.freqChart.xAxis[0].update({
                 reversed: true,
                 labels: {
-                    formatter: function() {
+                    formatter: function () {
                         return Highcharts.numberFormat(this.value, 0, ',') + '%';
                     }
                 }
@@ -1015,7 +1018,7 @@ export class MainviewComponent implements OnInit {
             this.freqChart.xAxis[0].update({
                 reversed: true,
                 labels: {
-                    formatter: function() {
+                    formatter: function () {
                         return this.value;
                     }
                 }
@@ -1036,7 +1039,7 @@ export class MainviewComponent implements OnInit {
             this.freqChart.xAxis[0].update({
                 reversed: false,
                 labels: {
-                    formatter: function() {
+                    formatter: function () {
                         return this.value;
                     }
                 }
@@ -1130,7 +1133,7 @@ export class MainviewComponent implements OnInit {
         this.freqChart.series[0].update({
             dataLabels: {
                 enabled: value,
-                formatter: function() {
+                formatter: function () {
                     return '(' + this.x + 'yr, ' + this.y + ')';
                 }
             }
@@ -1158,7 +1161,7 @@ export class MainviewComponent implements OnInit {
     // want to edit the selected/computed scenario. remove Result
     public editScenario() {
         this.scenarios.forEach(s => {
-            let areaWeighed = s.regressionRegions.map(function(r) {
+            let areaWeighed = s.regressionRegions.map(function (r) {
                 return r.id;
             }).indexOf(0);
             if (areaWeighed > -1) s.regressionRegions.splice(areaWeighed, 1); //remove the area weighted regRegion
@@ -1185,7 +1188,7 @@ export class MainviewComponent implements OnInit {
         // find first non-numeric value (often "/") after superscript to prevent everything following the caret from being superscripted
         const strAfterCaret = unit.substring(indexOfSup + 1);
         const nonNumeric = strAfterCaret.match(/\D/);
-        if (nonNumeric) {endSupIndex = strAfterCaret.indexOf(nonNumeric[0]); }
+        if (nonNumeric) { endSupIndex = strAfterCaret.indexOf(nonNumeric[0]); }
         if (indexOfSup > -1 && endSupIndex > -1) {
             newUnitWithSupTag = unit.substring(0, indexOfSup) + '<sup>' + strAfterCaret.substring(0, endSupIndex)
                 + '</sup>' + strAfterCaret.substring(endSupIndex);
@@ -1235,7 +1238,7 @@ export class MainviewComponent implements OnInit {
         this.editRRindex = rrIndex; this.editSGIndex = sgIndex; // setting indices because the cancel function wasn't overwriting things
         this.itemBeingEdited = item;
         item.isEditing = true;
-        if (item.equation) {this.showMathjax(item); }
+        if (item.equation) { this.showMathjax(item); }
         if (idx === undefined) {
             // do we need the citation IDs?
             const rrIdx = this.regressionRegions.findIndex(rr => rr.id === item.id);
@@ -1269,7 +1272,8 @@ export class MainviewComponent implements OnInit {
                 this.requeryFilters();
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
-                if (error.headers) {this._nssService.outputWimMessages(error);
+                if (error.headers) {
+                    this._nssService.outputWimMessages(error);
                 } else { this._nssService.handleError(error); }
             });
         }
@@ -1283,19 +1287,20 @@ export class MainviewComponent implements OnInit {
                 this.requeryFilters();
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
-                if (error.headers) {this._nssService.outputWimMessages(error);
+                if (error.headers) {
+                    this._nssService.outputWimMessages(error);
                 } else { this._nssService.handleError(error); }
             });
         }
     }
 
     /////////////////////// Clone Scenarios Section ///////////////////////////
-    newCloneScenario(cloneScen){
+    newCloneScenario(cloneScen) {
         this._nssService.changeItem(cloneScen);
     }
 
     public cloneRowClicked(statisticGroupID, r, rr) {
-        this.cloneScen={r,rr,statisticGroupID};
+        this.cloneScen = { r, rr, statisticGroupID };
         this.newCloneScenario(this.cloneScen);
         this.showCloneScenarioModal();
     }
@@ -1326,10 +1331,10 @@ export class MainviewComponent implements OnInit {
                     this.requeryFilters();
                     this._nssService.outputWimMessages(response);
                 }, error => {
-                    if (this._settingsService.outputWimMessages(error)) {return; }
+                    if (this._settingsService.outputWimMessages(error)) { return; }
                     this._toasterService.pop('error', 'Error removing Citation', error._body.message || error.statusText);
                 }
-            );
+                );
         }
     }
 
@@ -1342,13 +1347,14 @@ export class MainviewComponent implements OnInit {
             if (reg.equation.indexOf(p.code) > -1) {
                 // only send back first regression whose equation contains the edited parameter
                 this.editScen.regressionRegions[0].regressions = [reg];
-                reg.expected = {value: '', parameters: {}, intervalBounds: null};
+                reg.expected = { value: '', parameters: {}, intervalBounds: null };
                 // if regression has prediction interval, need to ask for expected bounds
                 if (!reg.predictionInterval.student_T_Statistic || !reg.predictionInterval.variance
-                    || !reg.predictionInterval.xiRowVector || !reg.predictionInterval.covarianceMatrix) {reg.predictionInterval = null;
+                    || !reg.predictionInterval.xiRowVector || !reg.predictionInterval.covarianceMatrix) {
+                        reg.predictionInterval = null;
                 } else {
                     this.getBounds = true;
-                    reg.expected.intervalBounds = {lower: null, upper: null};
+                    reg.expected.intervalBounds = { lower: null, upper: null };
                 }
                 this.paramsNeeded = [];
                 // add necessary params to expected results
@@ -1369,13 +1375,14 @@ export class MainviewComponent implements OnInit {
         this.editScen = JSON.parse(JSON.stringify(this.scenarios[sgIndex]));
         this.editScen.regressionRegions = [this.editScen.regressionRegions[rrIndex]];
         const reg = this.editScen.regressionRegions[0].regressions[rIndex];
-        reg.expected = {value: '', parameters: {}, intervalBounds: null};
+        reg.expected = { value: '', parameters: {}, intervalBounds: null };
         // check prediction interval inputs
         const count = this.checkPredInt(reg);
-        if (count <= 1) { reg.predictionInterval = null; // if only id exists
+        if (count <= 1) {
+            reg.predictionInterval = null; // if only id exists
         } else if (count === 6) {
             this.getBounds = true;
-            reg.expected.intervalBounds = {lower: null, upper: null};
+            reg.expected.intervalBounds = { lower: null, upper: null };
         } else {
             this._toasterService.pop('error', 'Error', 'Prediction Interval not complete.');
             return;
@@ -1395,15 +1402,15 @@ export class MainviewComponent implements OnInit {
     public checkPredInt(reg) {
         let count = 0;
         Object.keys(reg.predictionInterval).forEach((key) => {
-            if (reg.predictionInterval[key] != null && reg.predictionInterval[key] !== '') {count ++; }
+            if (reg.predictionInterval[key] != null && reg.predictionInterval[key] !== '') { count++; }
         });
         return count;
     }
 
-    public getUnusedRegRegions(){
+    public getUnusedRegRegions() {
         this.regRegionsScenarios = [];
-        this.regressionRegions.forEach(x=> {
-            this.scenarios.forEach(s=> {
+        this.regressionRegions.forEach(x => {
+            this.scenarios.forEach(s => {
                 s.regressionRegions.forEach(rr => {
                     if (x.id == rr.id) {
                         this.regRegionsScenarios.push(x)
@@ -1413,14 +1420,14 @@ export class MainviewComponent implements OnInit {
         });
         this.unusedRegRegions = this.regressionRegions.filter(entry1 => !this.regRegionsScenarios.some(entry2 => entry1.id === entry2.id));
     }
-    
+
     public getStatusDescription(sID) {
         let statusName;
         this.status.forEach(z => {
-                    if (sID === z.id) {
-                        statusName = z.name;
-                    }
-                });
+            if (sID === z.id) {
+                statusName = z.name;
+            }
+        });
         return statusName;
     }
 
@@ -1428,8 +1435,8 @@ export class MainviewComponent implements OnInit {
         // get list of region's regression regions, remove if we take out the citations IDs
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
             .subscribe((res) => {
-                if (res.length > 1) { 
-                    res.sort((a, b) => a.name.localeCompare(b.name)); 
+                if (res.length > 1) {
+                    res.sort((a, b) => a.name.localeCompare(b.name));
                 }
                 this.regressionRegions = res;
                 this.getUnusedRegRegions();
@@ -1471,7 +1478,7 @@ export class MainviewComponent implements OnInit {
                 if (document.querySelector('body > .modal')) {
                     document.body.classList.add('modal-open');
                 }
-            CloseResult = `Closed with: ${result}`;
+                CloseResult = `Closed with: ${result}`;
             },
             reason => {
                 CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -1489,10 +1496,10 @@ export class MainviewComponent implements OnInit {
                 this._nssService.outputWimMessages(response);
                 this.modalRef.close();
             }, error => {
-                if (this._settingsService.outputWimMessages(error)) {return; }
+                if (this._settingsService.outputWimMessages(error)) { return; }
                 this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
             }
-        );
+            );
     }
 
     outputWimMessages(msg) {
@@ -1513,15 +1520,15 @@ export class MainviewComponent implements OnInit {
         // updates Mathjax as the user edits the equation
         const equ = document.getElementById('mathjaxEq' + reg.id);
         equ.style.visibility = 'hidden';
-        if (equ.firstChild) {equ.removeChild(equ.firstChild); }
+        if (equ.firstChild) { equ.removeChild(equ.firstChild); }
         const equation = '`' + reg.equation.replace(/_/g, ' \\_') + '`';
         reg.equationMathJax = equation;
         equ.insertAdjacentHTML('afterbegin', '<span [MathJax]>' + equation + '</span');
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathjaxEq' + reg.id],
-            function() {
+            function () {
                 equ.style.visibility = '';
             });
-            // use this in original equations too??
+        // use this in original equations too??
     }
 
     // trying to PUT peak flow regs to low flow on button click, holding off for now
@@ -1590,22 +1597,24 @@ export class MainviewComponent implements OnInit {
         const rridx = this.regressionRegions.findIndex(item => item.id === rr.id);
         const currentRR = this.regressionRegions[rridx];
         Object.keys(currentRR).forEach(key => {
-            if (!this.editScenarioForm.value[key]) {this.editScenarioForm.value[key] = currentRR[key]; }
+            if (!this.editScenarioForm.value[key]) { this.editScenarioForm.value[key] = currentRR[key]; }
         });
         this._settingsService.putEntity(rr.id, this.editScenarioForm.value, this.configSettings.regRegionURL).subscribe(res => {
-                this.CancelEditRowClicked();
-                this.requeryFilters();
-                if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression Region was updated');
-                } else {this._settingsService.outputWimMessages(res); }
-            }, error => {
-                if (this._settingsService.outputWimMessages(error)) {return; }
-                this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText); }
-            );
+            this.CancelEditRowClicked();
+            this.requeryFilters();
+            if (!res.headers) {
+                this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+            } else { this._settingsService.outputWimMessages(res); }
+        }, error => {
+            if (this._settingsService.outputWimMessages(error)) { return; }
+            this._toasterService.pop('error', 'Error creating Regression Region', error._body.message || error.statusText);
+        }
+        );
     }
 
     public checkLimits(val, min, max) {
         // make sure value is between the min/max limits
-        if (val <= max && val >= min) {return true; }
+        if (val <= max && val >= min) { return true; }
         return false;
     }
     /////////////////////// Finish Add/Edit/Delete Scenarios Section ///////////////////////////
@@ -1615,21 +1624,21 @@ export class MainviewComponent implements OnInit {
         this.saveFilters();
         this._settingsService.postEntity(this.newCitForm.value, this.configSettings.regRegionURL + '/' + rr.id + '/' +
             this.configSettings.citationURL)
-            .subscribe((res:any) => {
+            .subscribe((res: any) => {
                 this.newCitForm.reset();
                 this.addCitation = false;
                 rr.citationID = res.id;
                 if (!res.headers) {
                     this._toasterService.pop('info', 'Info', 'Citation was added');
                 } else {
-                    this._settingsService.outputWimMessages(res); 
+                    this._settingsService.outputWimMessages(res);
                 }
                 this.requeryFilters();
             }, error => {
-                if (this._settingsService.outputWimMessages(error)) {return; }
+                if (this._settingsService.outputWimMessages(error)) { return; }
                 this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
             }
-        );
+            );
     }
 
     private getDismissReason(reason: any): string {

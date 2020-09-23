@@ -224,14 +224,14 @@
 						<table #resultsTable class="custom-table">
 							<thead>
 								<tr>
-									<th class="width-50">{{rr.name}} Region</th>
+									<th class="width-40">{{rr.name}} Region</th>
 									<th class="width-10">Value</th>
 									<th class="width-20" *ngIf="rr.results[0].intervalBounds" colspan="2">Prediction Interval</th>
 									<th class="width-10" *ngIf="rr.results[0].errors && rr.results[0].errors.length > 0" [attr.colspan]="rr.results[0].errors.length">Errors (%)</th>
 									<th class="width-10" *ngIf="rr.results[0].equivalentYears>0">Equivalent Yrs.</th>
 								</tr>
 								<tr>
-									<th class="width-50">Description</th>
+									<th class="width-40">Description</th>
 									<th class="width-10">(<span [innerHTML]="setSuperScript(rr.results[0].unit.abbr)"></span>)</th>
 									<th class="width-10" *ngIf="rr.results[0].intervalBounds">Low</th>
 									<th class="width-10" *ngIf="rr.results[0].intervalBounds">High</th>
@@ -993,7 +993,7 @@
                                             <div [class.hidden]="loggedInRole != 'Administrator'">Bias Correction Factor: {{r.predictionInterval.biasCorrectionFactor}}<br></div>
                                             Student's T Statistics for 90% confidence interval: {{r.predictionInterval.student_T_Statistic}}<br>
                                             Variance: {{r.predictionInterval.variance}}<br>
-                                            XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
+											XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
                                             Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}<br>
                                         </span>
                                         <span *ngIf="!r.isEditing && !r.predictionInterval.biasCorrectionFactor && !r.predictionInterval.student_T_Statistic && !r.predictionInterval.variance 
@@ -1005,9 +1005,11 @@
                                             <input type="number" name="student_T_Statistic" [(ngModel)]="r.predictionInterval.student_T_Statistic">
                                             <label>Variance:</label>
                                             <input type="number" name="variance" [(ngModel)]="r.predictionInterval.variance">
-                                            <label>XI Row Vector:</label>
-                                            <input type="text" name="xiRowVector" [(ngModel)]="r.predictionInterval.xiRowVector">
-                                            <label>Covariance Matrix:</label>
+											<label>XI Row Vector:</label>
+											<label class="example-text form-group">Example: ["logN(DRNAREA,10)","logN((1+LAKEAREA),10)"]</label>
+											<input type="text" name="xiRowVector" [(ngModel)]="r.predictionInterval.xiRowVector">
+											<label>Covariance Matrix:</label>
+											<label class="example-text">Example: [["0.0038028","-0.001987","0.00076235"],["-0.001987","0.0032803","-0.0058925"],["0.00076235","-0.0058925","0.023215"]]</label>
                                             <input type="text" name="covarianceMatrix" [(ngModel)]="r.predictionInterval.covarianceMatrix">
                                         </span>
                                     </td>

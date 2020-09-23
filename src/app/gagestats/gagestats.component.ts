@@ -7,6 +7,10 @@ import { Agency } from 'app/shared/interfaces/agencies';
 import { StationType } from 'app/shared/interfaces/stationtypes';
 import { Toast } from 'angular2-toaster/src/toast';
 import { GagePage } from 'app/shared/interfaces/gagepage';
+import { Region } from 'app/shared/interfaces/region';
+import { SettingsService } from 'app/settings/settings.service';
+import { ConfigService } from 'app/config.service';
+import { Config } from 'protractor';
 
 @Component({
   selector: 'app-gagestats',
@@ -20,17 +24,21 @@ export class GagestatsComponent implements OnInit {
   public previousUrl;
   public selectedStations: Array<Station>;
   public agencies: Array<Agency>;
+  public regions: Array<Region>;
   public stationTypes: Array<StationType>;
   public loggedInRole;
   public lastPageNumber;
   public currentPageNumber;
   public itemPerPage = [15,25,50,100]; 
   public perPage = 50;
+  private configSettings: Config;
 
   constructor(
     private router: Router,
     private _nssService: NSSService,
-    private gagestatsService: GagestatsService
+    private gagestatsService: GagestatsService,
+    public _settingsservice: SettingsService, 
+    private _configService: ConfigService
     ){
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationStart) {
@@ -38,6 +46,7 @@ export class GagestatsComponent implements OnInit {
           this.previousUrl = e.url;
       }
     });
+    this.configSettings = this._configService.getConfiguration();
     }
 
   ngOnInit() {
@@ -55,6 +64,9 @@ export class GagestatsComponent implements OnInit {
     // subscribe to all station types
     this._nssService.stationTypes.subscribe((stationtypes: Array<StationType>) => {
       this.stationTypes = stationtypes;
+    });
+    this._settingsservice.getEntitiesGageStats(this.configSettings.gageStatsRegionURL).subscribe(regions => {
+      this.regions = regions;
     });
     //subscribe to page number related information
     this._nssService.pageResponse.subscribe((pageText: string) => {
@@ -90,6 +102,12 @@ export class GagestatsComponent implements OnInit {
   public getAgencyName(aID) {
     if (this.agencies) {
       return (this.agencies.find(a => a.id === aID).name);
+    }
+  }
+
+  public getRegionName(rID) {
+    if (this.regions) {
+      return (this.regions.find(r => r.id === rID).name);
     }
   }
 

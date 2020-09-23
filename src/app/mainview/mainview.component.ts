@@ -226,7 +226,6 @@ export class MainviewComponent implements OnInit {
                     this.showWeights = true;
                     this.multipleRegRegions = true;
                 } else if (this.uniqueRegRegions.indexOf(firstRegname) === -1) { this.uniqueRegRegions.push(firstRegname); }
-
                 if (this.uniqueRegRegions.length > 1) { this.multipleRegRegions = true; }
 
                 s.regressionRegions.forEach((rr, index) => {

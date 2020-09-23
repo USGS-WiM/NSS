@@ -735,19 +735,25 @@ export class NSSService {
 
     // calculate Scenarios (POST)
     postScenarios(id: number, s: Scenario[], searchArgs?: string) {
-        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };       
+        const options = { headers: this.jsonHeader, observe: 'response' as 'response' }; 
+        console.log("s in postScenarios", s);      
         return this._http
             .post(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/scenarios/estimate/' + searchArgs, s, options)
             // .map(sResult => sResult.json())
             .subscribe(
                 res => {
                     if (res.headers) { this.outputWimMessages(res); }
+                    console.log("res.headers", res.headers);
                     const sResult: any = res.body;
+                    console.log("sResult", sResult); 
                     sResult.forEach(scen => {
                         if (scen.regressionRegions.length > 0) {
+                            console.log("scen.regressionRegions", scen.regressionRegions);
                             // get citations
                             const i = scen.links[0].href.indexOf('?');
-                            const param = '?' + scen.links[0].href.substring(i + 1);
+                            console.log("scen.links[0]", scen.links[0]);
+                            const param = '?' + scen.links[0].href.substring(i + 1); 
+                            console.log("param", param);
                             this.getCitations(param).subscribe(
                                 c => {
                                     if (!(c.length === 1 && c[0] === null)) { scen.citations = c; }
@@ -761,6 +767,7 @@ export class NSSService {
                         }
                     });
                     this._scenarioSubject.next(sResult);
+                    console.log("this._scenarioSubject", this._scenarioSubject);
                 },
                 error => {
                     this._loaderService.hideFullPageLoad();

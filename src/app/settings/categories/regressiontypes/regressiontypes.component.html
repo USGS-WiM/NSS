@@ -69,6 +69,7 @@
 </form>
 <br />
 
+
 <!-- new regression type form -->
 <ng-template #add let-c="close" let-d="dismiss">
 	<div class="modal-header">
@@ -76,7 +77,6 @@
 		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 	</div>
     <div class="modal-body">
-        <h3 class="">New Regression Type</h3>
         <form [formGroup]="newRegForm">
             <!-- Regression Type Name* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newRegForm.get('name').valid && newRegForm.get('name').dirty}">
@@ -106,6 +106,6 @@
 	<!-- Footer / Buttons -->
 	<div class="modal-body-footer">
 		<button type="button" (click)="d('closed')" class="button">Cancel</button>
-		<button type="button" (click)="createNewRegression()" [disabled]="!newRegForm.valid" class="button-blue">Create</button>
+		<button type="button" (click)="createNewRegression()" [disabled]="!newRegForm.valid" class="button blue">Create</button>
 	</div>
 </ng-template>

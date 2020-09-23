@@ -13,7 +13,7 @@
 
 
     <div class="sidebar-item" *ngIf="statisticGroups">
-        <span>
+        <span class="xs-f-btw">
             <label>Limit by Statistic Group(s):</label>
             <i *ngIf="loggedInRole != 'Administrator'" class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>
@@ -40,7 +40,7 @@
 
 
     <div class="sidebar-item" *ngIf="regressionTypes">
-        <span>
+        <span class="xs-f-btw">
             <label>Limit by Statistic(s):</label>
             <i *ngIf="loggedInRole != 'Administrator'" class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="Contact your administrator to add new items." triggers="click"></i>
         </span>

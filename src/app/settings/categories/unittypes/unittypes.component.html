@@ -70,7 +70,7 @@
             </div>
 
             <!-- Abbreviation* -->
-            <div class="form-group">
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUnitForm.get('abbreviation').valid && newUnitForm.get('abbreviation').dirty}">
                 <label class="req" for="abbreviation">Abbr:</label>
                 <input class="form-control" type="text" formControlName="abbreviation">
                 <div class="input-invalid-warning" *ngIf="!newUnitForm.get('abbreviation').valid && newUnitForm.get('abbreviation').dirty">Abbreviation

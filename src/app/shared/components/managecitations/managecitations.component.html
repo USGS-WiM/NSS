@@ -96,21 +96,17 @@
 							</div>
 						</td>
 						<!-- Col 3, Associated Regression Region and Buttons -->
-							<td class="width-35">
-								<div *ngFor="let e of c.regressionRegions">{{e.name}}
-									<!-- <button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button" [disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
-										<i class="far fa-pencil"></i>
-									</button> -->
-								</div>
-							</td>
-
-							<td class="width-5">
-								<div *ngFor="let e of c.regressionRegions" [class.hidden]="!showAddCitations" class="cell-buttons">
-									<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button" [disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
-										<i class="far fa-pencil"></i>
-									</button>
-								</div>
-							</td> 
+						<td class="width-35">
+							<div *ngFor="let e of c.regressionRegions; let lst = last;">{{e.name}}<span *ngIf = "!lst"><hr></span></div>
+						</td>
+						<!-- Col 4 - Regression Buttons -->
+						<td class="width-5">
+							<div *ngFor="let e of c.regressionRegions; let lst = last;" [class.hidden]="!showAddCitations" class="cell-buttons">
+								<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button" [disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
+									<i class="far fa-pencil"></i>
+								</button><span *ngIf = "!lst"><hr></span>
+							</div>
+						</td> 
 					</tr>
 				</tbody>
 			</table>

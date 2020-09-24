@@ -65,7 +65,7 @@ export class GagestatsComponent implements OnInit {
     this._nssService.stationTypes.subscribe((stationtypes: Array<StationType>) => {
       this.stationTypes = stationtypes;
     });
-    this._settingsservice.getEntitiesGageStats(this.configSettings.gageStatsRegionURL).subscribe(regions => {
+    this._settingsservice.getEntitiesGageStats(this.configSettings.regionURL).subscribe(regions => {
       this.regions = regions;
     });
     //subscribe to page number related information

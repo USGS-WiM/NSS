@@ -49,7 +49,7 @@
             <div *ngIf="userInfo.isEditing" [ngClass]="{'form-invalid': userInfo.password && passwordTest && userInfo.password !== passwordTest}" class="profile-page-row">
                 <label>Retype Password: </label>
                 <span><input type="password" name="password" [(ngModel)]="passwordTest"required>
-                <div class="form-invalid" *ngIf="userInfo.password && passwordTest && userInfo.password !== passwordTest">Passwords don't match.</div></span>
+                <div class="form-error" *ngIf="userInfo.password && passwordTest && userInfo.password !== passwordTest">Passwords don't match.</div></span>
 			</div>
 
 			<div class="ptop-md"></div>

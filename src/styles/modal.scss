@@ -55,6 +55,11 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+		padding: 0 !important;
+
+		&.side-padding{
+			padding: 10px 10px 0 10px !important;
+		}
 
 		table{
 			flex-grow: 3;
@@ -80,6 +85,7 @@
 // Styles
 .nav-tabs{
 	padding-bottom: 0;
+	min-height: 46px;
 	.nav-item{
 		padding: 0;
 

@@ -71,10 +71,10 @@ export class GsSidebarComponent implements OnInit {
     this._settingsservice.getEntitiesGageStats(this.configSettings.statisticGrpURL).subscribe((sg: Array<Statisticgroup>) => {
       this.statisticGroups = sg;
     });
-    this._settingsservice.getEntitiesGageStats(this.configSettings.statisticGrpURL).subscribe((vt: Array<Variabletype>) => {
+    this._settingsservice.getEntitiesGageStats(this.configSettings.variablesURL).subscribe((vt: Array<Variabletype>) => {
       this.variableTypes = vt;
     });
-    this._settingsservice.getEntitiesGageStats(this.configSettings.statisticGrpURL).subscribe((rt: Array<Regressiontype>) => {
+    this._settingsservice.getEntitiesGageStats(this.configSettings.regTypeURL).subscribe((rt: Array<Regressiontype>) => {
       this.regressionTypes = rt;
     });
 

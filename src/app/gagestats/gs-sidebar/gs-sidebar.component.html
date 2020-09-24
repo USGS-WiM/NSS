@@ -27,6 +27,13 @@
     </div>
 
     <div class="sidebar-item">
+        <label>Limit by Statistic Groups:</label>
+        <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedStatisticGroup" name="statisticGroups">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
         <label>Limit by Regression Types:</label>
         <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="myRTSettings"
         [(ngModel)]="selectedRegressionType" name="regressionTypes">
@@ -37,13 +44,6 @@
         <label>Limit by Variable Types:</label>
         <ss-multiselect-dropdown [options]="variableTypes" [texts]="myMSTexts" [settings]="myRTSettings"
         [(ngModel)]="selectedVariableType" name="variableTypes">
-        </ss-multiselect-dropdown>
-    </div>
-
-    <div class="sidebar-item">
-        <label>Limit by Statistic Groups:</label>
-        <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="selectedStatisticGroup" name="statisticGroups">
         </ss-multiselect-dropdown>
     </div>
 

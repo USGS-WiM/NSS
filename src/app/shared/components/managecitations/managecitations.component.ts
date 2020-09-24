@@ -264,7 +264,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public checkManagerRegressionRegions(r){
         let tempRegressionRegions = [];
         this.managerRegressionRegions.forEach(m => {
-            m.forEach(x =>{
+            m.forEach(x => {
                 tempRegressionRegions.push(x);
             })
         })

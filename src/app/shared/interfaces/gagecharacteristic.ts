@@ -9,7 +9,6 @@ export interface GageCharacteristic {
     variableTypeID: number;
     unitTypeID: number;
     value: number;
-    units?: string;
     comments: string;
     citationID: number;
     citation?: Citation;

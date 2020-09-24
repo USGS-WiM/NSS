@@ -63,49 +63,25 @@
 			</div>
 		</div>
 		<!--Physical Characteristics-->
-		<div *ngIf="gage.characteristics.length > 0 && !editGage">
-			<div class="table-title">Physical Characteristics</div>
-			<div>
-				<table style="border:solid 1px gray" class="custom-table"> 
-					<thead>
-						<tr>
-							<th>Characteristic</th>
-							<th>Value</th>
-							<th>Units</th>
-							<th>Citation ID</th>
-						</tr>
-					</thead>
-					<tbody >
-						<tr *ngFor="let c of gage.characteristics">
-							<td>{{c.variableType.name}}</td>
-							<td>{{c.value}}</td>
-							<td>{{c.unitType.name}}</td>
-							<td>{{c.citationID}}</td>
-						<tr>
-						</tbody>
-				</table>
-			</div>
-		</div>
-		<!--Physcial Characteristics Edit Table-->
-		<div *ngIf="editGage">
+		<div>
 			<div class="table-title">Physical Characteristics
-				<button *ngIf="loggedInRole" type="button" class="button small blue mright-xs"  (click)="addPhysicalCharacteristic(cIndex)">Add Physical Characteristic</button> * Required
+				<button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs"  (click)="addPhysicalCharacteristic(cIndex)">Add Physical Characteristic</button> * Required
 			</div>
-			<div>
+			<div *ngIf="gage.characteristics.length > 0 || editGage">
 				<table style="border:solid 1px gray" class="custom-table"> 
 					<thead>
 						<tr>
-							<th class="width-5"></th>
+							<th class="width-5" *ngIf="editGage"></th>
 							<th>Characteristic</th>
 							<th>Value</th>
-							
 							<th>Units</th>
-							<th>Citation ID</th>
+                            <th>Citation ID</th>
+                            <th>Comments</th>
 						</tr>
 					</thead>
 					<tbody >
 						<tr *ngFor="let c of gage.characteristics, let cIndex = index">
-							<td>	
+							<td *ngIf="editGage">	
 								<div class="table-icon-buttons">
 									<button type="button" *ngIf="!c.isEditing" title="Edit Parameter" (click)="editRowClicked(c, cIndex)" class="icon-button" aria-hidden="true">
 										<i class="far fa-pencil"></i>
@@ -124,27 +100,31 @@
 							<td style="width: 200px;">
 								<span *ngIf="!c.isEditing">{{c.variableType.name}}</span>
 								<span *ngIf="c.isEditing">
-									<ng-select [compareWith]="compareObjects" name="variableType" [(ngModel)]="c.variableType" [clearable]="false">
-										<ng-option *ngFor="let variable of variables" [value]="variable">{{variable.variable}}</ng-option> 
+									<ng-select name="variableTypeID" [(ngModel)]="c.variableTypeID" [clearable]="false">
+										<ng-option *ngFor="let variable of variables" [value]="variable.id">{{variable.name}}</ng-option> 
 									</ng-select>
 								</span>
 							</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.value}}</span>
-								<span *ngIf="c.isEditing"><input [(ngModel)]="c.value" size="2">*</span>
+								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.value" size="2">*</span>
 							</td>
 							
 							<td style="width: 160px;">
 								<span *ngIf="!c.isEditing">{{c.unitType.name}}</span>
 								<span *ngIf="c.isEditing">
-									<ng-select [compareWith]="compareObjects" name="unitType" [(ngModel)]="c.unitType" [clearable]="false">
-										<ng-option *ngFor="let unit of units" [value]="unit">{{unit.unit}}</ng-option>
+									<ng-select name="unitTypeID" [(ngModel)]="c.unitTypeID" [clearable]="false">
+										<ng-option *ngFor="let unit of units" [value]="unit.id">{{unit.name}}</ng-option>
 									</ng-select>
 								</span>
 							</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.citationID}}</span>
-								<span *ngIf="c.isEditing"><input [(ngModel)]="c.citationID" size="2">*</span>
+								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.citationID" size="2">*</span>
+                            </td>
+                            <td>
+								<span *ngIf="!c.isEditing">{{c.comments}}</span>
+								<span *ngIf="c.isEditing"><textarea [(ngModel)]="c.comments" size="2"></textarea>*</span>
 							</td>
 						<tr>
 						<tr *ngIf="newChar">
@@ -164,8 +144,8 @@
 							<td style="width: 200px;">
 								<span *ngIf="!newChar.isEditing">{{newChar.variableTypeID}}</span>
 								<span *ngIf="newChar.isEditing">
-									<ng-select [compareWith]="compareObjects" name="variableType" [(ngModel)]="newChar.variableTypeID" [clearable]="false">
-										<ng-option *ngFor="let variable of variables" [value]="variable.id">{{variable.variable}}</ng-option> 
+									<ng-select name="variableTypeID" [(ngModel)]="newChar.variableTypeID" [clearable]="false">
+										<ng-option *ngFor="let variable of variables" [value]="variable.id">{{variable.name}}</ng-option> 
 									</ng-select>
 								</span>
 							</td>
@@ -177,56 +157,28 @@
 							<td style="width: 160px;">
 								<span *ngIf="!newChar.isEditing">{{newChar.unitType.name}}</span>
 								<span *ngIf="newChar.isEditing">
-									<ng-select [compareWith]="compareObjects" name="unitType" [(ngModel)]="newChar.unitTypeID" [clearable]="false">
-										<ng-option *ngFor="let unit of units" [value]="unit.id">{{unit.unit}}</ng-option>
+									<ng-select name="unitTypeID" [(ngModel)]="newChar.unitTypeID" [clearable]="false">
+										<ng-option *ngFor="let unit of units" [value]="unit.id">{{unit.name}}</ng-option>
 									</ng-select>
 								</span>
 							</td>
 							<td>
 								<span *ngIf="!newChar.isEditing">{{newChar.citationID}}</span>
-								<span *ngIf="newChar.isEditing"><input [(ngModel)]="newChar.citationID" size="2">*</span>
+								<span *ngIf="newChar.isEditing"><input type="number" [(ngModel)]="newChar.citationID" size="2">*</span>
+                            </td>
+                            <td>
+								<span *ngIf="!newChar.isEditing">{{newChar.comments}}</span>
+								<span *ngIf="newChar.isEditing"><textarea [(ngModel)]="newChar.comments" size="2"></textarea></span>
 							</td>
 						</tr>
 						</tbody>
 				</table>
 			</div>
 		</div>
-		<!--Streamflow Statistics-->
-		<div *ngIf="gage.statistics.length > 0 && !editGage">
-			<div class="table-title">Streamflow Statistics</div>
-			<div>
-				<div>
-					<div>
-						<table style="border:solid 1px gray" class="custom-table"> 
-							<thead>
-								<tr>
-									<th>Statistic</th>
-									<th>Value</th>
-									<th>Units</th>
-									<th>Citation ID</th>
-									<th>Preferred?</th>
-									<th>Years of Record</th> 
-								</tr>
-							</thead>
-							<tbody >
-								<tr *ngFor="let s of gage.statistics">
-									<td>{{s.regressionType.name}}</td>
-									<td>{{s.value}}</td>
-									<td>{{s.unitType.name}}</td>
-									<td>{{s.citationID}}</td>
-									<td>{{s.isPreferred}}</td>
-									<td>{{s.yearsofRecord}}</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!--Streamflow Statistics Edit Table-->
-		<div *ngIf="editGage">
+		<!--Streamflow Statistics Table-->
+		<div>
 			<div class="table-title">Streamflow Statistics
-				<button *ngIf="loggedInRole" type="button" class="button small blue mright-xs"  (click)="addStreamflowStatistic()">Add Streamflow Statistic</button> * Required
+				<button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs"  (click)="addStreamflowStatistic()">Add Streamflow Statistic</button> * Required
 			</div>
 			<div>
 				<div>
@@ -234,19 +186,20 @@
 						<table style="border:solid 1px gray" class="custom-table"> 
 							<thead>
 								<tr>
-									<th class="width-5"></th>
+									<th class="width-5" *ngIf="editGage"></th>
 									<th>Statistic</th>
 									<th>Value</th>
-									<th>Units</th> 
-									<th>Stat Group</th>
-									<th>Stat Group ID</th>
+                                    <th>Units</th> 
+                                    <th>Citation ID</th>
+									<th>Statistic Group</th>
 									<th>Preferred</th>
-									<th>Years of Record</th> 
+                                    <th>Years of Record</th> 
+                                    <th>Comments</th>
 								</tr>
 							</thead>
 							<tbody >
 								<tr *ngFor="let s of gage.statistics,  let sIndex = index">
-									<td>	
+									<td *ngIf="editGage">	
 										<div class="table-icon-buttons">
 											<button type="button" *ngIf="!s.isEditing" title="Edit Parameter" (click)="editRowClicked(s, sIndex)" class="icon-button" aria-hidden="true">
 												<i class="far fa-pencil"></i>
@@ -265,8 +218,8 @@
 									<td style="width: 170px;">
 										<span *ngIf="!s.isEditing">{{s.regressionType.name}}</span>
 										<span *ngIf="s.isEditing">
-											<ng-select  [(ngModel)]="s.regressionType" name="regressionType" [compareWith]="compareObjects" [clearable]="false">
-												<ng-option *ngFor="let regressionType of regressionTypes" [value]="regressionType">{{regressionType.regressionType}}</ng-option>
+											<ng-select  [(ngModel)]="s.regressionTypeID" name="regressionTypeID" [clearable]="false">
+												<ng-option *ngFor="let regressionType of regressionTypes" [value]="regressionType.id">{{regressionType.name}}</ng-option>
 											</ng-select>
 										</span>
 									</td>
@@ -277,31 +230,36 @@
 									<td style="width: 140px;">
 										<span *ngIf="!s.isEditing">{{s.unitType.name}}</span>
 										<span *ngIf="s.isEditing" >
-											<ng-select [(ngModel)]="s.unitType" name="unitType" [compareWith]="compareObjects" [clearable]="false">
-                                                <ng-option *ngFor="let unit of units" [value]="unit">{{unit.unit}}</ng-option>
+											<ng-select [(ngModel)]="s.unitTypeID" name="unitTypeID" [clearable]="false">
+                                                <ng-option *ngFor="let unit of units" [value]="unit.id">{{unit.name}}</ng-option>
                                             </ng-select>
+										</span>
+                                    </td>
+                                    <td>
+									    <span *ngIf="!s.isEditing">{{s.citationID}}</span>
+                                        <span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.citationID" size="2">*</span>
+									</td>
+									<td>
+									    <span *ngIf="!s.isEditing">{{getStatGroup(s.statisticGroupTypeID)}}</span>
+										<span *ngIf="s.isEditing">
+											<select [(ngModel)]="s.statisticGroupTypeID" name="statisticGroupTypeID">
+												<option *ngFor="let statisticGroup of statisticGroups" [value]="statisticGroup.id">{{statisticGroup.name}}</option>
+											</select>
 										</span>
 									</td>
 									<td>
-									<!--	<span *ngIf="!s.isEditing">{{s.statisticGroupType.name}}</span>
-										<span *ngIf="s.isEditing">
-											<select [(ngModel)]="s.statisticGroupType" name="statisticGroupType" [compareWith]="compareObjects">
-												<option *ngFor="let statisticGroup of statisticGroups" [ngValue]="statisticGroup">{{statisticGroup.statisticGroup}}</option>
-											</select>
-										</span> -->
-									</td>
-									<td style="width: 70px;">
-										<span *ngIf="!s.isEditing">{{s.statisticGroupTypeID}}</span>
-										<span *ngIf="s.isEditing"><input [(ngModel)]="s.statisticGroupTypeID" size="1">*</span>
-									</td>
-									<td>
-										<span *ngIf="!s.isEditing">{{s.isPreferred}}</span>
-										<span *ngIf="s.isEditing"><input [(ngModel)]="s.isPreferred" size="3">*</span>
+										<span *ngIf="!s.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"/></span>
+										<span *ngIf="s.isEditing"><input type="checkbox" [(ngModel)]="s.isPreferred" size="3">*</span>
 									</td>
 									<td style="width: 70px;">
 										<span *ngIf="!s.isEditing">{{s.yearsofRecord}}</span>
 										<span *ngIf="s.isEditing"><input [(ngModel)]="s.yearsofRecord" size="1">*</span>
-									</td>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!s.isEditing">{{s.comments}}</span>
+                                        <span *ngIf="s.isEditing"><textarea [(ngModel)]="s.comments" size="2"></textarea></span>
+                                    </td>
+                                    
 								</tr>
 								<tr *ngIf="newStat">
 									<td>	
@@ -320,43 +278,47 @@
 									<td style="width: 170px;">
 										<span *ngIf="!newStat.isEditing">{{newStat.regressionType.name}}</span>
 										<span *ngIf="newStat.isEditing">
-											<ng-select  [(ngModel)]="newStat.regressionTypeID" name="regressionType" [compareWith]="compareObjects" [clearable]="false">
-												<ng-option *ngFor="let regressionType of regressionTypes" [value]="regressionType.id">{{regressionType.regressionType}}</ng-option>
+											<ng-select  [(ngModel)]="newStat.regressionTypeID" name="regressionType" [clearable]="false">
+												<ng-option *ngFor="let regressionType of regressionTypes" [value]="regressionType.id">{{regressionType.name}}</ng-option>
 											</ng-select>
 										</span>
 									</td>
 									<td>
 										<span *ngIf="!newStat.isEditing">{{newStat.value}}</span>
-										<span *ngIf="newStat.isEditing"><input [(ngModel)]="newStat.value" size="1">*</span>
+										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.value" size="1">*</span>
 									</td>
 									<td style="width: 140px;">
 										<span *ngIf="!newStat.isEditing">{{newStat.unitType.name}}</span>
 										<span *ngIf="newStat.isEditing" >
-											<ng-select [(ngModel)]="newStat.unitTypeID" name="unitType" [compareWith]="compareObjects" [clearable]="false">
-                                                <ng-option *ngFor="let unit of units" [value]="unit.id">{{unit.unit}}</ng-option>
+											<ng-select [(ngModel)]="newStat.unitTypeID" name="unitTypeID" [clearable]="false">
+                                                <ng-option *ngFor="let unit of units" [value]="unit.id">{{unit.name}}</ng-option>
                                             </ng-select>
 										</span>
-									</td> 
+                                    </td> 
+                                    <td>
+									    <span *ngIf="!newStat.isEditing">{{newStat.citationID}}</span>
+                                        <span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.citationID" size="2">*</span>
+									</td>
 									<td>
-									<!--	<span *ngIf="!s.isEditing">{{s.statisticGroupType.name}}</span>
-										<span *ngIf="s.isEditing">
-											<select [(ngModel)]="s.statisticGroupTypeID" name="statisticGroupType" [compareWith]="compareObjects">
-												<option *ngFor="let statisticGroup of statisticGroups" [ngValue]="statisticGroup.id">{{statisticGroup.statisticGroup}}</option>
+									    <span *ngIf="!newStat.isEditing">{{getStatGroup(newStat.statisticGroupTypeID)}}</span>
+										<span *ngIf="newStat.isEditing">
+											<select [(ngModel)]="newStat.statisticGroupTypeID" name="statisticGroupTypeID">
+												<option *ngFor="let statisticGroup of statisticGroups" [value]="statisticGroup.id">{{statisticGroup.name}}</option>
 											</select>
-										</span>  -->
-									</td>
-									<td style="width: 70px;">
-										<span *ngIf="!newStat.isEditing">{{newStat.statisticGroupTypeID}}</span>
-										<span *ngIf="newStat.isEditing"><input [(ngModel)]="newStat.statisticGroupTypeID" size="1">*</span>
+										</span>
 									</td>
 									<td>
-										<span *ngIf="!newStat.isEditing">{{newStat.isPreferred}}</span>
-										<span *ngIf="newStat.isEditing"><input [(ngModel)]="newStat.isPreferred" size="3">*</span>
+										<span *ngIf="!newStat.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"/></span>
+										<span *ngIf="newStat.isEditing"><input type="checkbox" [(ngModel)]="newStat.isPreferred" size="3">*</span>
 									</td>
 									<td style="width: 70px;">
 										<span *ngIf="!newStat.isEditing">{{newStat.yearsofRecord}}</span>
 										<span *ngIf="newStat.isEditing"><input [(ngModel)]="newStat.yearsofRecord" size="1">*</span>
-									</td>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!newStat.isEditing">{{newStat.comments}}</span>
+                                        <span *ngIf="newStat.isEditing"><textarea [(ngModel)]="newStat.comments" size="2"></textarea></span>
+                                    </td>
 								</tr>
 							</tbody>
 						</table>

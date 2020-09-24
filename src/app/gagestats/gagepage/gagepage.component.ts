@@ -65,34 +65,21 @@ export class GagepageComponent implements OnInit, OnDestroy {
     // get all unit types 
     this._nssService.getUnitTypes().subscribe(res => {
       this.units = res;
-        for (const unit of this.units) {
-          unit.unit = unit.name;
-          unit.abbr = unit.abbreviation;
-        }
     });
 
     // get all variable types
     this._nssService.getVariableTypes().subscribe( res =>{
       this.variables = res;
-        for (const variable of this.variables) {
-          variable.variable = variable.name;
-        }
     });
 
     // get all regression types
     this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
       this.regressionTypes = res;
-        for (const regressionType of this.regressionTypes) {
-          regressionType.regressionType = regressionType.name;
-        }
   });
 
     // get all stat groups 
     this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
       this.statisticGroups = res;
-        for (const statisticGroup of this.statisticGroups) {
-          statisticGroup.statisticGroup = statisticGroup.name;
-        }
     });
 
   }  // end OnInit
@@ -156,11 +143,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
     // Create new characteristic
     this.newChar = {
       stationID: this.gage.id,
-      value: 1,
-      comments: " ",
-      variableTypeID: 1,
-      unitTypeID: 1,
-      citationID: 1,
+      value: null,
+      comments: "",
+      variableTypeID: null,
+      unitTypeID: null,
+      citationID: null,
     }
     
   this.newChar.isEditing = true;
@@ -182,8 +169,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }}
 
   public saveChar(item) {
-    if (item.id) {  // If item has an item, then it is already in NSS
-      item.unitTypeID = item.unitType.id, item.variableTypeID = item.variableType.id;  // Set unit and variable IDs of edited char 
+    if (item.id) {  // If item has an id, then it is already in NSS DB
       const newItem = JSON.parse(JSON.stringify(item));  // Copy the edited char
       delete newItem.unitType, delete newItem.variableType, delete newItem.citation;  // Delete uneeded objects from the copy
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.characteristicsURL).subscribe(
@@ -212,22 +198,22 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public addStreamflowStatistic() {
     this.newStat = {
       stationID: this.gage.id,
-      value: "",
+      value: null,
       comments: "",
       isPreferred: true,
-      regressionTypeID: 0,
-      statisticGroupTypeID: 0,
-      unitTypeID: 0,
-      yearsofRecord: 0,
+      regressionTypeID: null,
+      statisticGroupTypeID: null,
+      unitTypeID: null,
+      yearsofRecord: null,
+      citationID: null
     } 
     this.editRowClicked(this.newStat, this.newStat.id);
   } 
 
   public saveStat(item) {
     if (item.id) {
-      item.unitTypeID = item.unitType.id, item.regressionTypeID = item.regressionType.id;
       const newItem = JSON.parse(JSON.stringify(item));  // Copy item, delete unnecessary elements
-      ['regressionType', 'statisticErrors', 'citation', 'citationID', 
+      ['regressionType', 'citation', 
       'unitType', 'isEditing'].forEach(e => delete newItem[e]);  // Delete unneeded items
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
         (res) => {
@@ -236,7 +222,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.refreshgagepage();
         }
       )
-    }; if (!item.id) {  
+    } else {  
       this._settingsservice.postEntityGageStats(item, this.configSettings.statisticsURL).subscribe(
         (res: StatisticResponse) => {
           item.isEditing = false;
@@ -268,6 +254,10 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.gage = res;
       this.getCitations();
     });
+  }
+
+  getStatGroup(id) {
+      return this.statisticGroups.find(sg => sg.id == id).name;
   }
 
   compareObjects(Obj1, Obj2) {

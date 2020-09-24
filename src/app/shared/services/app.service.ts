@@ -735,7 +735,7 @@ export class NSSService {
 
     // calculate Scenarios (POST)
     postScenarios(id: number, s: Scenario[], searchArgs?: string) {
-        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };       
+        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };      
         return this._http
             .post(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/scenarios/estimate/' + searchArgs, s, options)
             // .map(sResult => sResult.json())
@@ -747,7 +747,7 @@ export class NSSService {
                         if (scen.regressionRegions.length > 0) {
                             // get citations
                             const i = scen.links[0].href.indexOf('?');
-                            const param = '?' + scen.links[0].href.substring(i + 1);
+                            const param = '?' + scen.links[0].href.substring(i + 1); 
                             this.getCitations(param).subscribe(
                                 c => {
                                     if (!(c.length === 1 && c[0] === null)) { scen.citations = c; }

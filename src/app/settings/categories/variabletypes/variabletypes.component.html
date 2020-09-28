@@ -73,6 +73,14 @@
                 <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
             </div>
 
+            <!-- Unit Type -->
+            <div class="form-group">
+                <label for="description">Unit Type:</label>
+                <ng-select formControlName="unitTypeID"  bindLabel="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                    <ng-option *ngFor="let ut of unitTypes" [value]="ut.id">{{ut.name}} ({{ut.abbr}})</ng-option>
+                </ng-select>
+            </div>
+
             <!-- Short Name -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('code').valid && newVarForm.get('code').dirty}">
                 <label class="req" for="code">Code:</label>

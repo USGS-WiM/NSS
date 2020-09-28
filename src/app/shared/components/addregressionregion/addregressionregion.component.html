@@ -60,7 +60,7 @@
           <div class="form-group required">
               <label for="title">Title:</label>
               <textarea [readonly]="!newCitation" class="form-control" rows="3" placeholder="" formControlName="title"></textarea>
-              <div class="input-invalid-warning" *ngIf="!newCitForm.get('title').valid && newCitForm.get('title').dirty">Author
+              <div class="input-invalid-warning" *ngIf="!newCitForm.get('title').valid && newCitForm.get('title').dirty">Title
                       is required</div>
           </div>
           <!-- Author* -->

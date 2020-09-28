@@ -6,6 +6,13 @@
     </div>
 
     <div class="sidebar-item">
+        <label>Limit by Region:</label>
+        <ss-multiselect-dropdown [options]="regions" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedRegion" name="regions">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
         <label>Limit by Station Type:</label>
         <ss-multiselect-dropdown [options]="stationTypes" [texts]="myMSTexts" [settings]="myRTSettings"
         [(ngModel)]="selectedStationType" name="stationType">
@@ -20,6 +27,27 @@
     </div>
 
     <div class="sidebar-item">
+        <label>Limit by Statistic Groups:</label>
+        <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedStatisticGroup" name="statisticGroups">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
+        <label>Limit by Regression Types:</label>
+        <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedRegressionType" name="regressionTypes">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
+        <label>Limit by Variable Types:</label>
+        <ss-multiselect-dropdown [options]="variableTypes" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedVariableType" name="variableTypes">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
         <label>Search for Gage Stations:</label>
         <button type="submit" class="button full" (click)="onSearch()">
             <span>Search</span>
@@ -30,7 +58,7 @@
 	<div class="flex-spacer"></div>
 
     <div class="sidebar-footer">
-        <div class="identification">Powered by <a href="https://wim.usgs.gov/" target="_blank">WiM <img src="assets/img/favicon-pin.png"/></a></div>
+        <div class="identification">Powered by <a href="https://wim.usgs.gov/" target="_blank">WIM <img src="assets/img/favicon-pin.png"/></a></div>
         <div class="sidebar-footer-links">
             <a href="https://usgs.gov" target="_blank">USGS Home</a><a href="https://answers.usgs.gov" target="_blank">Contact
                 USGS</a>

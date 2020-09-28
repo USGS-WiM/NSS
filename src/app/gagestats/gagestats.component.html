@@ -32,6 +32,7 @@
                 <tr>
                     <th class="col-xs-1">Code</th>
                     <th class="col-xs-4">Name</th>
+                    <th class="col-xs-4">Region</th>
                     <th class="col-xs-1">Latitude</th>
                     <th class="col-xs-1">Longitude</th>
                     <th class="col-xs-1">Type</th>
@@ -43,6 +44,7 @@
                 <tr (click) = showGagePageModal(s.code) *ngFor = "let s of selectedStations">
                     <td>{{s.code}}</td>
                     <td>{{s.name}}</td>
+                    <td>{{getRegionName(s.regionID)}}</td>
                     <td>{{s.location.coordinates[1]}}</td>
                     <td>{{s.location.coordinates[0]}}</td>
                     <td>{{getStationType(s.stationTypeID)}}</td>

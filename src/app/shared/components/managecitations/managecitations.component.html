@@ -10,11 +10,41 @@
 			<div>
 				<input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
 			</div>
+			<div  [class.hidden]="showNewCitation" class = "mtop-sm">
+				<button type="button" (click)="showNewCitation = true" class="button blue">Create New Citation</button>
+			</div>
+			<form *ngIf="showNewCitation" [formGroup]="newCitForm" class="newCitForm">
+				<label>New Citation</label>
+				<!-- Title -->
+				<div class="form-group required">
+					<label for="title">Title:</label>
+					<textarea class="form-control" rows="3" placeholder="" formControlName="title"></textarea>
+					<div class="input-invalid-warning" *ngIf="!newCitForm.get('title').valid && newCitForm.get('title').dirty">Author
+							is required</div>
+				</div>
+				<!-- Author* -->
+				<div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('author').valid && newCitForm.get('author').dirty}">
+					<label class="req" for="author">Author:</label>
+					<input class="form-control" type="text" formControlName="author" required>
+					<div class="input-invalid-warning" *ngIf="!newCitForm.get('author').valid && newCitForm.get('author').dirty">Author
+						is required</div>
+				</div>
+				<!-- Short Name -->
+				<div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty}">
+					<label class="req" for="citationURL">Citation URL:</label>
+					<input class="form-control" type="text" formControlName="citationURL">
+					<div class="input-invalid-warning" *ngIf="!newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty">URL
+						is required</div>
+				</div>
+				<button type="button" (click)="showNewCitation = false; clearCitation()" class="button">Cancel</button>
+				<button type="button" (click)="createNewCitation()" [disabled]="!newCitForm.valid" class="button blue">Create</button>
+			</form>
 
 			<table class="custom-table table-striped table-scroll mtop-sm no-scrollbars">
 				<thead>
 					<tr>
 						<th class="width-60">Citation</th>
+						<th class="width-5"></th>
 						<th class="width-35">Associated Regression Regions</th>
 						<th class="width-5 empty-cell">
 							<!-- Filler button - not used for anything -->
@@ -41,13 +71,7 @@
 								<span *ngIf="c.isEditing"><textarea  class='break' name="citationURL" [(ngModel)]="c.citationURL" required></textarea></span>
 							</div>
 						</td>
-						<!-- Col 2, Associated Regression Region -->
-						<td class="width-35">
-							<span *ngFor="let e of c.regressionRegions">
-								<div>{{e.name}}</div>
-							</span>
-						</td>
-						<!-- Col 3 - Buttons -->
+						<!-- Col 2 - Citation Buttons -->
 						<td class="width-5">
 							<!-- Editing -->
 							<div [class.hidden]="!showAddCitations" class="cell-buttons">
@@ -60,7 +84,7 @@
 								<button *ngIf="c.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()" class="icon-button" aria-hidden="true">
 									<i class="far fa-history"></i>
 								</button>
-								<button *ngIf="!c.isEditing" title="Delete Citation" (click)="deleteCitation(c.id)" class="icon-button" [disabled]="c.regressionRegions?.length>0" aria-hidden="true">
+								<button *ngIf="loggedInRole === 'Administrator' && !c.isEditing" title="Delete Citation" (click)="deleteCitation(c.id)" class="icon-button" [disabled]="c.regressionRegions?.length>0" aria-hidden="true">
 									<i class="far fa-times"></i>
 								</button>
 							</div>
@@ -71,6 +95,18 @@
 								</button>
 							</div>
 						</td>
+						<!-- Col 3, Associated Regression Region and Buttons -->
+						<td class="width-35">
+							<div *ngFor="let e of c.regressionRegions; let lst = last;">{{e.name}}<span *ngIf = "!lst"><hr></span></div>
+						</td>
+						<!-- Col 4 - Regression Buttons -->
+						<td class="width-5">
+							<div *ngFor="let e of c.regressionRegions; let lst = last;" [class.hidden]="!showAddCitations" class="cell-buttons">
+								<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button" [disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
+									<i class="far fa-pencil"></i>
+								</button><span *ngIf = "!lst"><hr></span>
+							</div>
+						</td> 
 					</tr>
 				</tbody>
 			</table>

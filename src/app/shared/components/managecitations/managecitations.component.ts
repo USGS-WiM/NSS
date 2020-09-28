@@ -17,6 +17,12 @@ import { ToasterService } from 'angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
+import { Regressionregion } from 'app/shared/interfaces/regressionregion';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
+import { Region } from 'app/shared/interfaces/region';
 
 @Component({
     selector: 'manageCitationsModal',
@@ -38,15 +44,35 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public filteredData;
     public filterText;
     public showAddCitations;
+    public showNewCitation = false;
     public itemBeingEdited;
     public tempData;
     public editIdx;
     public managerCitations: any[];
+    public newCitForm: FormGroup;
+    public regions: Array<Region>;
+    public managerRegressionRegions: any[] = [];
+
+    public tempSelectedStatisticGrp: Array<Statisticgroup>;
+    public get selectedStatisticGrp(): Array<Statisticgroup> {
+        return this._nssService.selectedStatGroups;
+    }
+    public selectedRegressionRegion: Array<Regressionregion>;
+    public tempSelectedRegressionRegion: Array<Regressionregion>;
+    public tempSelectedRegType: Array<Regressiontype>;
+    public get selectedRegType(): Array<Regressiontype> {
+        return this._nssService.selectedRegressionTypes;
+    }
 
     constructor(private _http: HttpClient, private _nssService: NSSService, private _modalService: NgbModal,
-        private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
+        private _settingsService: SettingsService, private _configService: ConfigService,  private _fb: FormBuilder, private _toasterService: ToasterService,
         private _authService: AuthService) {
         this.configSettings = this._configService.getConfiguration();
+        this.newCitForm = _fb.group({
+            'title': new FormControl(null, Validators.required),
+            'author': new FormControl(null, Validators.required),
+            'citationURL': new FormControl(null, Validators.required)
+        });
     }
 
     ngOnInit() {
@@ -68,6 +94,9 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.selectedRegion = region;
             if (region && region.id) {this.getRegRegions(); }
         });
+        this._nssService.regions.subscribe((regions: Array<Region>) => {
+            this.regions = regions;
+        });
         // subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
             this.scenarios = s;
@@ -75,6 +104,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.getRegRegions(); // get list of regression regions for the region
             if (this.loggedInRole == 'Manager') {
                 this.getManagerCitations();
+                this.getManagerRegressionRegions();
             }
         });
         this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((result: ManageCitation) => {
@@ -86,6 +116,17 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
         // Subscribe to server with '?bycitation=true'
         // Copy settingservice getEntities on regions.component.ts file
+    }
+
+    public saveFilters(){
+        this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
+        this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
+        this.tempSelectedRegType = this.selectedRegType;
+    }
+    
+    public requeryFilters(){
+        this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+        this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
     }
 
     public filter(input:string) {
@@ -110,6 +151,14 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this._nssService.addExistingCitation(citation);   
     }
 
+    public editRegRegion(id) {
+        const addRegRegForm: AddRegressionRegion = {
+            show: true,
+            regRegionID: id
+        }
+        this._nssService.setAddRegressionRegionModal(addRegRegForm);
+    }
+    
     public showModal(): void {
         if (this.selectedRegion) {this.getRegRegions(); }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
@@ -144,6 +193,29 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
                 this._toasterService.pop('error', 'Error editing Citation', error._body.message || error.statusText);
             }
         );
+    }
+    
+    public clearCitation(){
+        this.newCitForm.reset();
+    }
+
+    public createNewCitation(){
+        this.saveFilters();
+          // add new citation
+        this._settingsService.postEntity(this.newCitForm.value, this.configSettings.citationURL)
+        .subscribe((response: any) => {
+            this.newCitForm.reset();
+            this.showNewCitation = false;
+            if (!response.headers) {
+                this._toasterService.pop('info', 'Info', 'Citation was added');
+            } else { 
+                this._settingsService.outputWimMessages(response); 
+            }
+            this.requeryFilters();
+        }, error => {
+            if (this._settingsService.outputWimMessages(error)) { return; }
+            this._toasterService.pop('error', 'Error creating Citation', error.message || error._body.message || error.statusText);
+        });
     }
 
     outputWimMessages(msg) {
@@ -189,10 +261,34 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         }
     }
 
+    public checkManagerRegressionRegions(r){
+        let tempRegressionRegions = [];
+        this.managerRegressionRegions.forEach(m => {
+            m.forEach(x => {
+                tempRegressionRegions.push(x);
+            })
+        })
+        if (this.loggedInRole == "Manager") {
+            return tempRegressionRegions.filter(mc => mc.id == r.id).length > 0;
+        } else {
+            return true;
+        }
+    }
+
     public getManagerCitations() {
         this._settingsService.getEntities(this.configSettings.citationURL)
         .subscribe(res => {
            this.managerCitations = res.filter(item => item !== null);
+        });
+    }
+
+    public getManagerRegressionRegions(){
+        this.managerRegressionRegions = [];
+        this.regions.forEach(r => {
+            this._settingsService.getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.regRegionURL)
+            .subscribe(res => {
+                this.managerRegressionRegions.push(res);
+            });
         })
     }
 

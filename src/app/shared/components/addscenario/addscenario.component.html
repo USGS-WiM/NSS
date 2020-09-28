@@ -94,7 +94,7 @@
 								<!-- Parameter ID-->
 								<div class="form-group required">
 									<label class="req" for="code">Explanatory Variable:</label>
-										<ng-select formControlName="code" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+										<ng-select formControlName="code" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (change)="defaultUnit($event, varIndex)">
 											<ng-option *ngFor="let v of variables" [value]="v.code">{{v.code}} ({{v.description}})</ng-option>
 										</ng-select>
 								</div>

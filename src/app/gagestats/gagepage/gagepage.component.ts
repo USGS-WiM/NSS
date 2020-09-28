@@ -111,7 +111,16 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public endEditGageStats() {
     this.editGage = false;
-
+    if (this.itemBeingEdited) {
+      this.itemBeingEdited.isEditing = false;
+    }
+    if (this.newChar) {
+      this.deletePhysicalCharacteristic(this.newChar.id);
+    }
+    if (this.newStat) {
+      this.deleteStatistic(this.newStat.id);
+    }
+    this.refreshgagepage();
   } 
 
   public editRowClicked(item, index) {
@@ -151,6 +160,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     }
     
   this.newChar.isEditing = true;
+  //this.itemBeingEdited = this.newChar;
   } 
     
   public deletePhysicalCharacteristic(deleteID: number) {

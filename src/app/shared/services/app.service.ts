@@ -789,7 +789,7 @@ export class NSSService {
 
     public outputWimMessages(res) {
         this._toasterService.clear();
-        const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages')); console.log(wimMessages)
+        const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages')); 
         const existingMsgs = [];
         if (wimMessages) {
             for (const key of Object.keys(wimMessages)) {

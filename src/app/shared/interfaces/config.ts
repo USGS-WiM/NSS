@@ -9,9 +9,10 @@
 export interface Config {
     agenciesURL: string;
     nssBaseURL: string;
-    gageStatsBaseURL: string;
+    characteristicsURL: string;
     citationURL: string;
     errorsURL: string;
+    gageStatsBaseURL: string;
     loginURL: string;
     managersURL: string;
     regionURL: string;
@@ -21,6 +22,7 @@ export interface Config {
     scenariosURL: string;
     stationsURL: string;
     stationTypeURL: string;
+    statisticsURL: string;
     statisticGrpURL: string;
     unitsURL: string;
     unitSystemsURL: string;

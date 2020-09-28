@@ -1,12 +1,16 @@
 <div id="printArea" class = "app-content">
 
+    <!-- toaster directive -->
+    <toaster-container [toasterconfig]="config"></toaster-container>
+    <!-- / toaster directive -->
+
     <h2 class="bold">{{title}}</h2>
 
     <h4>{{timestamp | date:"MMMM d, y hh:mma"}}</h4>
 
     <div class="hidden-print">
         <button *ngIf="loggedInRole" type="button" class="button small blue mright-xs"  (click)="showAddStationModal()">Add Station</button>
-        <button *ngIf="loggedInRole" class="button small mright-xs" (click)="bulkUpload()">Bulk Upload</button>
+        <button *ngIf="loggedInRole" type="button" class="button small mright-xs" (click)="bulkUpload()">Bulk Upload</button>
         <button *ngIf="loggedInRole" type="button" class="button small mright-xs" (click)="export()">Export</button>
     </div>
    

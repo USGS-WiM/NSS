@@ -71,7 +71,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this._settingsservice.getEntitiesGageStats(this.configSettings.agenciesURL).subscribe(res => {
-            this.agencies = res;
+            this.agencies = <Array<any>>res;
         });
 
         // get new agencies when new one posted/edited

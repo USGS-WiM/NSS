@@ -71,7 +71,7 @@ export class StationTypesComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this._settingsservice.getEntitiesGageStats(this.configSettings.stationTypeURL).subscribe(res => {
-            this.stationTypes = res;
+            this.stationTypes = <Array<any>>res;
         });
 
         // get new station types when new one posted/edited

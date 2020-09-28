@@ -140,7 +140,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error creating Unit', error._body.message || error.statusText);
-        }
+            }
         );
     }
 

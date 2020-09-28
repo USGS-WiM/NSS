@@ -32,7 +32,7 @@ export class GsSidebarComponent implements OnInit {
   public selectedVariableType: Array<Variabletype> = [];
   // regions
   public regions: Array<Region>;
-  public selectedRegion: Array<Stationtype> = [];
+  public selectedRegion: Array<Region> = [];
   // agency
   public agencies: Array<Agency>;
   public selectedAgency: Array<Agency> = [];
@@ -65,7 +65,7 @@ export class GsSidebarComponent implements OnInit {
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
     });
-    this._settingsservice.getEntitiesGageStats(this.configSettings.regionURL).subscribe(regions => {
+    this._settingsservice.getEntitiesGageStats(this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
     this._settingsservice.getEntitiesGageStats(this.configSettings.statisticGrpURL).subscribe((sg: Array<Statisticgroup>) => {

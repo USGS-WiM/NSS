@@ -9,6 +9,7 @@ import { AuthService } from 'app/shared/services/auth.service';
 import { Config } from 'app/shared/interfaces/config';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from 'app/shared/interfaces/station';
+import { Region } from  'app/shared/interfaces/region';
 import { StationType } from 'app/shared/interfaces/stationtypes';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
@@ -23,6 +24,7 @@ export class AddStationModal implements OnInit {
   private modalElement: any;
   public agencies: Array<Agency>;
   public stationTypes: Array<StationType>;
+  public regions: Array<Region>;
   public modalSubscription: any;
   public modalRef;
   public addStationForm: FormGroup;
@@ -36,6 +38,8 @@ export class AddStationModal implements OnInit {
       agencyID : new FormControl(null, Validators.required),
       name : new FormControl(null),
       stationTypeID : new FormControl( null, Validators.required),
+      isRegulated : new FormControl(false),
+      regionID : new FormControl(null, Validators.required),
       latitude : new FormControl(null, [Validators.min(-90), Validators.max(90), Validators.required] ),
       longitude : new FormControl(null, [Validators.min(-180), Validators.max(180), Validators.required]),
 
@@ -53,9 +57,12 @@ export class AddStationModal implements OnInit {
     this._nssService.agencies.subscribe((agencyList: Array<Agency>) => {
       this.agencies = agencyList;
     });
-    this._nssService.stationTypes.subscribe((stationTypeList: Array<StationType>) =>{
+    this._nssService.stationTypes.subscribe((stationTypeList: Array<StationType>) => {
       this.stationTypes = stationTypeList;
     })
+    this._nssService.regions.subscribe((regionList: Array<Region>) => {
+      this.regions = regionList;
+    });
   }
 
   public showModal(): void {

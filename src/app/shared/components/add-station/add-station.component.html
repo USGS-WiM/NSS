@@ -42,6 +42,20 @@
                         is required</div>
                 </div>
 
+                <div class="form-group form-check" >
+                    <input formControlName="isRegulated" type="checkbox" >
+                    <label for="isRegulated">  Station is Regulated:</label>
+                </div>
+
+                <div class="form-group required" [ngClass]="{ 'form-invalid': !addStationForm.get('regionID').valid && addStationForm.get('regionID').touched }">
+                    <label class="req" for="regionID">Region:</label><br/>
+                    <ng-select formControlName="regionID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                        <ng-option *ngFor="let region of regions" [value]="region.id">{{region.name}}</ng-option>
+                    </ng-select>
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('agencyID').valid && addStationForm.get('agencyID').touched">Agency ID
+                        is required</div>
+                </div>
+
                 
                 <!-- latitude -->
                 <div class="form-group required width-40">
@@ -63,13 +77,15 @@
                     </div>
                 </div>
                 
-                <br> <div>form Valid {{addStationForm.valid}}</div>
+                <!--visual output for testing validation-->
+               <!--  <br> <div>form Valid {{addStationForm.valid}}</div>
                 <div>code valid {{addStationForm.get('code').valid}}</div>
                 <div>agencyID Valid {{addStationForm.get('agencyID').valid}}</div>
                 <div>name Valid {{addStationForm.get('name').valid}}</div>
                 <div>station Valid {{addStationForm.get('stationTypeID').valid}}</div>
+                <div>isRegulated Value {{addStationForm.get('isRegulated').value}}</div>
                 <div>lat Valid {{addStationForm.get('latitude').valid}}</div>
-                <div>long Valid {{addStationForm.get('longitude').valid}}</div>
+                <div>long Valid {{addStationForm.get('longitude').valid}}</div> -->
             </form>
             
     

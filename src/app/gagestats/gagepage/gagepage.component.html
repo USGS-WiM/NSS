@@ -107,7 +107,7 @@
 							</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.value}}</span>
-								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.value" size="2"></span>
+								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.value" size="1" class="input-100"></span>
 							</td>
 							
 							<td class="160width">
@@ -151,7 +151,7 @@
 							</td>
 							<td>
 								<span *ngIf="!newChar.isEditing">{{newChar.value}}</span>
-								<span *ngIf="newChar.isEditing"><input type="number" [(ngModel)]="newChar.value" size="2" class="input-50"></span>
+								<span *ngIf="newChar.isEditing"><input type="number" [(ngModel)]="newChar.value" size="2" class="input-100"></span>
 							</td>
 							
 							<td class="160width">
@@ -188,11 +188,11 @@
 								<tr>
 									<th class="width-5" *ngIf="editGage"></th>
 									<th class="width-15">Statistic</th>
-									<th class="width-5">Value</th>
+									<th class="width-10">Value</th>
                                     <th class="width-15">Units</th> 
                                     <th class="width-10">Citation ID</th>
 									<th class="width-15">Statistic Group</th>
-									<th class="width-10">Preferred</th>
+									<th>Preferred</th>
                                     <th class="width-10">Years of Record</th> 
                                     <th class="width-15">Comments</th>
 								</tr>
@@ -225,7 +225,7 @@
 									</td>
 									<td>
 										<span *ngIf="!s.isEditing">{{s.value}}</span>
-										<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.value" size="1" class="input-50"></span>
+										<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.value" size="1" class="input-100"></span>
 									</td>
 									<td>
 										<span *ngIf="!s.isEditing">{{s.unitType.name}}</span>

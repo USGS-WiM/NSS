@@ -192,11 +192,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
     }
 
-    public defaultUnit(varName, varIndex) {
+    public defaultUnit(varCode, varIndex) {
         const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
-        if (this.variables.find(r => r.name === varName)){
+        if (this.variables.find(r => r.code === varCode).unitTypeID){
             this.unitTypes.forEach((element,index) => {  
-                if (element.id.toString() == this.variables.find(r => r.name === varName).unitTypeID){
+                if (element.id.toString() == this.variables.find(r => r.code === varCode).unitTypeID){
                     controlArray.controls[varIndex].get('unitType').setValue(this.unitTypes[index]);
                 }
             });               

@@ -147,6 +147,14 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
         }
     }
 
+    public getUnitName(unitID){
+        if (this.unitTypes && this.unitTypes.find(s => s.id === unitID)) {
+            return (this.unitTypes.find(s => s.id === unitID).name);
+        }else{
+            return ('None')
+        }
+    }
+
     // edits made, save clicked
     public saveVariable(u: Variabletype, i: number) {
         if (u.name === undefined || u.code === undefined) {

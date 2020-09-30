@@ -11,9 +11,10 @@
             <thead>
                 <tr>
                     <th class="width-5"></th>
-                    <th class="width-40">Name</th>
-                    <th class="width-45">Description</th>
+                    <th class="width-30">Name</th>
+                    <th class="width-40">Description</th>
                     <th class="col-xs-10">Code</th>
+                    <th class="col-xs-25">Default Unit</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,6 +44,14 @@
                     <td>
                         <span *ngIf="!v.isEditing">{{ v.code }}</span>
                         <span *ngIf="v.isEditing"><input type="text" name="code" [(ngModel)]="v.code" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ getUnitName(v.unitTypeID) }}</span>
+                        <span *ngIf="v.isEditing">
+                            <ng-select  bindLabel="id" [(ngModel)]="v.unitTypeID" name = "unitID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                                <ng-option *ngFor="let ut of unitTypes" [value]="ut.id">{{ut.name}} ({{ut.abbr}})</ng-option>
+                            </ng-select>
+                        </span>
                     </td>
                 </tr>
             </tbody>

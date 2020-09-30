@@ -210,7 +210,21 @@ select{
 }
 
 .input-small{
-	max-width: 300px;
+	max-width: 300px !important;
+}
+
+// Input sizes
+.input-50{
+	max-width: 50px !important;
+}
+.input-100{
+	max-width: 100px !important;
+}
+.input-150{
+	max-width: 150px !important;
+}
+.input-200{
+	max-width: 200px !important;
 }
 
 ////////////////////////////////
@@ -472,6 +486,7 @@ button{
 
 	&:hover{
 		cursor: pointer;
+		color: var(--blue);
 		opacity: 1;
 		transition: var(--transition);
 	}

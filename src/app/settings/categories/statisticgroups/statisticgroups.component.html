@@ -29,7 +29,7 @@
 						<button *ngIf="!r.isEditing" title="Edit Statistic Group" (click)="EditRowClicked(i)" class="icon-button">
 							<i class="far fa-pencil"></i>
 						</button>
-						<button *ngIf="!r.isEditing" title="Delete Statistic Group" (click)="deleteStatGroup(r.id)" class="icon-button">
+						<button *ngIf="!r.isEditing" title="Delete Statistic Group" (click)="deleteStatGroup(r.id)" class="icon-button hover-red">
 							<i class="far fa-times"></i>
 						</button>
 						<button *ngIf="r.isEditing" title="Save Statistic Group" (click)="saveStatGroup(r,i)" class="icon-button">

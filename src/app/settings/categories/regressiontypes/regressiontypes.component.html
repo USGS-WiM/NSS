@@ -40,7 +40,7 @@
 						<button *ngIf="!r.isEditing" title="Edit Regression Type" (click)="EditRowClicked(i)" class="icon-button">
 							<i class="far fa-pencil"></i>
 						</button>
-						<button *ngIf="!r.isEditing" title="Delete Regression Type" (click)="deleteRegression(r.id)" class="icon-button">
+						<button *ngIf="!r.isEditing" title="Delete Regression Type" (click)="deleteRegression(r.id)" class="icon-button hover-red">
 							<i class="far fa-times"></i>
 						</button>
 						<button *ngIf="r.isEditing" title="Save Regression Type" (click)="saveRegression(r,i)" class="icon-button">

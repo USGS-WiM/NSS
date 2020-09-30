@@ -128,3 +128,13 @@
 	box-sizing: border-box;
 	border-top: 1px solid #eceeef;
 }
+
+// Xl modal
+.modal-xl{
+	max-width: 1200px;
+}
+@media (min-width: 576px){
+	.modal-dialog.modal-xl {
+		max-width: 1200px !important;
+	}
+}

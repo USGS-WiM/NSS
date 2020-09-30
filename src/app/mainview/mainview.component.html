@@ -1,4 +1,4 @@
-<div class="app-content">
+<div>
 
 	<!-- toaster directive -->
 	<toaster-container [toasterconfig]="config"></toaster-container>
@@ -12,7 +12,7 @@
 
 
 	<!-- Region -->
-	<div *ngIf="showRegion" class="app-body-section">
+	<div *ngIf="showRegion" class="app-body-section" id="regionSection">
 		<label class="big">Region:</label>
 		<h5 class="bold">{{selectedRegion.name}}</h5>
 	</div>
@@ -176,7 +176,7 @@
 			</table>
 
 			<!-- Citations -->
-			<h2 class="mtop-lg">Citations</h2>
+			<h3 class="mtop-lg">Citations</h3>
 			<div *ngFor="let sc of scenarios">
 				<div *ngIf="sc.citations">
 					<label *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</label>
@@ -308,7 +308,7 @@
 		</div> <!-- end for each Scenario-->
 
 		<!-- Citations -->
-		<h2 id="citations" class="ptop-xs">Citations</h2>
+		<h3 id="citations" class="ptop-xs">Citations</h3>
 		<div *ngFor="let sc of scenarios">
 			<div *ngFor="let c of sc.citations">
 				<!--" | unique">-->
@@ -855,7 +855,7 @@
 			<div class="divider"></div>
 		</div>
 
-		<h2 id="appendix" class="ptop-xs">Appendix</h2>
+		<h3 id="appendix" class="ptop-xs">Appendix</h3>
 
 		<h5 class="ptop-xs">Equations</h5>
 
@@ -939,7 +939,7 @@
 						</button>
 						<!-- Delete Reg Region -->
 						<button *ngIf="!rr.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(rr.id)"
-							class="icon-button mright-sm" aria-hidden="true">
+							class="icon-button mright-sm hover-red" aria-hidden="true">
 							<i class="far fa-times"></i>
 						</button>
 
@@ -1143,7 +1143,7 @@
 										</button>
 										<button *ngIf="!r.isEditing" title="Delete Regression"
 											(click)="deleteRegression(s.statisticGroupID, rr.id, r.id)"
-											class="icon-button" aria-hidden="true">
+											class="icon-button hover-red" aria-hidden="true">
 											<i class="far fa-times"></i>
 										</button>
 										<button *ngIf="r.isEditing" title="Save Regression"

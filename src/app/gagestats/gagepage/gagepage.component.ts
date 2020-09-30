@@ -100,7 +100,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   public showGagePageForm(){
-    this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'xl' });
+    this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl' });
   }
 
 ///////////////////Edit Gage Info Section//////////////////////////////

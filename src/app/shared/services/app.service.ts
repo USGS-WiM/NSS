@@ -654,8 +654,8 @@ export class NSSService {
     }
 
     // get stations by text search, station type and other param
-    public searchStations(searchText: string, stationTypeIds: Array<Stationtype>, agencyID: Array<Agency>, pageNumber: string, perPage: number) {
-        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIds.toString() + "&agencies=" + agencyID.toString() + "&page=" + pageNumber + "&pageCount="+ perPage;
+    public searchStations(searchText: string, stationTypeIDs: Array<Stationtype>, agencyIDs: Array<Agency>, pageNumber: string, perPage: number, regionIDs: Array<Region>, regressionTypeIDs: Array<Regressiontype>, variableTypeIDs: Array<Variabletype>, statisticGroupIDs: Array<Statisticgroup>) {
+        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIDs.toString() + "&agencies=" + agencyIDs.toString() + "&page=" + pageNumber + "&pageCount="+ perPage + "&regions="+ regionIDs + "&regressionTypes="+ regressionTypeIDs + "&variableTypes="+ variableTypeIDs + "&statisticGroups="+ statisticGroupIDs;
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
             .subscribe(res => {
@@ -746,7 +746,7 @@ export class NSSService {
 
     // calculate Scenarios (POST)
     postScenarios(id: number, s: Scenario[], searchArgs?: string) {
-        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };       
+        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };      
         return this._http
             .post(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/scenarios/estimate/' + searchArgs, s, options)
             // .map(sResult => sResult.json())
@@ -758,7 +758,7 @@ export class NSSService {
                         if (scen.regressionRegions.length > 0) {
                             // get citations
                             const i = scen.links[0].href.indexOf('?');
-                            const param = '?' + scen.links[0].href.substring(i + 1);
+                            const param = '?' + scen.links[0].href.substring(i + 1); 
                             this.getCitations(param).subscribe(
                                 c => {
                                     if (!(c.length === 1 && c[0] === null)) { scen.citations = c; }
@@ -800,7 +800,7 @@ export class NSSService {
 
     public outputWimMessages(res) {
         this._toasterService.clear();
-        const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
+        const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages')); 
         const existingMsgs = [];
         if (wimMessages) {
             for (const key of Object.keys(wimMessages)) {

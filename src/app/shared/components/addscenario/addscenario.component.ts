@@ -56,6 +56,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public selectedRegressionRegion: Array<Regressionregion>;
     public tempSelectedRegressionRegion: Array<Regressionregion>;
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
+    public filteredRegressionTypes;
+    public filtered = true;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -161,9 +163,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public showModal(): void {
+        this.onStatGroupSelect('');
         this.selectedRegion = this.originalRegion;
-        if (this.selectedRegion) {
-        }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
             result => {
@@ -181,9 +182,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         if (this.cloneParameters != " "){
             this.clearScenario();
             this.clone = true;
+            this.filtered = false;
             this.cloneScenario();
             this.newScenForm.addControl('region', this._fb.control('', Validators.required));
         }else{
+            this.filtered = true;
             this.clearScenario();
             this.clone = false;
         }
@@ -220,6 +223,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 } 
             }
         });
+        this.onStatGroupSelect(this.cloneParameters.statisticGroupID);
         //Prediction Interval
         if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null){
             this.addPredInt = true
@@ -261,6 +265,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                }
             });
         }); 
+        this.showMathjax();
         this.cloneParameters.r.errors.forEach((element,index) => {
             this.addError();
             const controlArray = <FormArray> this.newScenForm.get('regressionRegions.regressions.errors');       
@@ -347,6 +352,13 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             parmControl.removeAt(i);
         }
         this.addPredInt = false
+    }
+
+    public onStatGroupSelect(e){
+        this._settingsService.getEntities(this.configSettings.regTypeURL+"?statisticgroups="+ e).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.filteredRegressionTypes = res;
+        });
     }
 
     createNewScenario() {

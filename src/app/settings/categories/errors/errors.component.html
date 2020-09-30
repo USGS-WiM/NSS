@@ -55,17 +55,17 @@
     <div class="modal-body">
         <form [formGroup]="newErrForm">
             <!-- Name -->
-            <div class="form-group required">
+            <div class="form-group required" [ngClass]="{'form-invalid': !newErrForm.get('name').valid && newErrForm.get('name').dirty}">
                 <label for="name">Name:</label>
                 <textarea class="form-control" rows="3" placeholder="" formControlName="name"></textarea>
-                <div class="input-invalid-warning" *ngIf="!newErrForm.get('name').valid && newErrForm.get('name').dirty">Author
+                <div class="input-invalid-warning" *ngIf="!newErrForm.get('name').valid && newErrForm.get('name').dirty">Error Name
                         is required</div>
             </div>
             <!-- Code* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newErrForm.get('code').valid && newErrForm.get('code').dirty}">
                 <label class="req" for="name">Code:</label>
                 <input class="form-control" type="text" formControlName="code" required>
-                <div class="input-invalid-warning" *ngIf="!newErrForm.get('code').valid && newErrForm.get('code').dirty">Author
+                <div class="input-invalid-warning" *ngIf="!newErrForm.get('code').valid && newErrForm.get('code').dirty">Error Code
                     is required</div>
             </div>
 

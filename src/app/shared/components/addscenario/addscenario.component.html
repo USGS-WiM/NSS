@@ -19,7 +19,7 @@
 				<!-- Statistic Group* -->
 				<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty}">
 					<label class="req" for="statisticGroupID">Statistic Group:</label>
-						<ng-select formControlName="statisticGroupID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+						<ng-select formControlName="statisticGroupID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (ngModelChange)="onStatGroupSelect($event)">
 							<ng-option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}}</ng-option>
 						</ng-select>
 					<div class="input-invalid-warning" *ngIf="!newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty">Statistic Group
@@ -43,9 +43,24 @@
 
 					<div formArrayName="regressions">
 						<!-- Regression Type/Statistic-->
-						<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
+						<div *ngIf="filtered" class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
 							<label class="req" for="ID">Regression Variable:</label>
-								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+							<button (click)="filtered=false; selectDropdownOn.handleClearClick()"><i class="fa fa-toggle-on" ></i> AutoFilter</button>
+							<span class="hint hidden-print">
+								<i class="fas fa-question-circle"></i>
+								<div class="hint-text">Filters the regression variables by the selected statistic group. Removing the filter shows all available regression variables.</div>
+							</span>
+								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" #selectDropdownOn>
+									<ng-option *ngFor="let rt of filteredRegressionTypes" [value]="rt.id">{{rt.name}}</ng-option>
+								</ng-select>
+							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty">Regression Type
+								is required</div>
+						</div>
+
+						<div *ngIf= "!filtered"  class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
+							<label class="req" for="ID">Regression Variable:</label>
+							<button (click)="filtered=true; selectDropDownOff.handleClearClick()"><i class="fa fa-toggle-off"></i> AutoFilter</button>
+								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" #selectDropDownOff>
 									<ng-option *ngFor="let rt of regressionTypes" [value]="rt.id">{{rt.name}}</ng-option>
 								</ng-select>
 							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty">Regression Type
@@ -66,14 +81,15 @@
 					<!-- Parameters-->
 					<div formArrayName="parameters">
 						<div *ngFor="let var of newScenForm.get('regressionRegions.parameters').controls; let varIndex = index">
+
 							<div class="scenario-dropdown">
-								<button class="icon-button hover-blue" (click)="removeVariable(varIndex)">
-									<i class="far fa-times"></i>
-								</button>
-								<div *ngIf="checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="hideDiv('variable' + (varIndex + 1))">Explanatory Variable {{varIndex + 1}}
-									<i class="far fa-chevron-double-down"></i></div>
-								<div *ngIf="!checkDiv('variable' + (varIndex + 1))" class="showHideScen" (click)="showDiv('variable' + (varIndex + 1))">Explanatory Variable {{varIndex + 1}}<i class="far fa-chevron-double-right"></i></div>
-							</div>
+                                <div class="scenario-dropdown-title" (click)="checkDiv('variable' + (varIndex + 1)) ? hideDiv('variable' + (varIndex + 1)) : showDiv('variable' + (varIndex + 1))">
+                                    <span>Explanatory Variable {{varIndex + 1}}</span>
+                                    <i class="fas" [ngClass]="{'fa-chevron-down': checkDiv('variable' + (varIndex + 1)),'fa-chevron-right': !checkDiv('variable' + (varIndex + 1))}"></i>
+                                </div>
+                                <button class="icon-button" (click)="removeVariable(varIndex)"><i class="far fa-times"></i></button>
+                            </div>
+							
 							<div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
 								<!-- Parameter ID-->
 								<div class="form-group required">
@@ -119,13 +135,10 @@
 						<!--Prediction Interval-->
 						<!-- Toggle -->
 						<div *ngIf="addPredInt" class="scenario-dropdown">
-							<div *ngIf="checkDiv('predInt')" class="scenario-dropdown-title" (click)="hideDiv('predInt');">
+
+							<div class="scenario-dropdown-title" (click)="checkDiv('predInt') ? hideDiv('predInt') : showDiv('predInt')">
 								<span>Prediction Interval</span>
-								<i class="fas fa-chevron-down"></i>
-							</div>
-							<div *ngIf="!checkDiv('predInt')" class="scenario-dropdown-title" (click)="showDiv('predInt')">
-								<span>Prediction Interval</span>
-								<i class="fas fa-chevron-right"></i>
+								<i class="fas" [ngClass]="{'fa-chevron-down': checkDiv('predInt'),'fa-chevron-right': !checkDiv('predInt')}"></i>
 							</div>
 							<!-- <div *ngIf="!checkDiv('predInt')" class="showHideScen" (click)="">Prediction Interval<i class="far fa-chevron-right"></i></div> -->
 							<button class="icon-button" (click)="addPredInt = false"><i class="far fa-times"></i></button>
@@ -190,13 +203,10 @@
 							<div *ngFor="let err of newScenForm.get('regressionRegions.regressions.errors').controls; let errIndex = index">
 								
 								<div class="scenario-dropdown">
-									<div *ngIf="checkDiv('error' + (errIndex + 1))" class="scenario-dropdown-title" (click)="hideDiv('error' + (errIndex + 1))">
+
+									<div class="scenario-dropdown-title" (click)="checkDiv('error' + (errIndex + 1)) ? hideDiv('error' + (errIndex + 1)) : showDiv('error' + (errIndex + 1))">
 										<span>Error {{errIndex + 1}}</span>
-										<i class="fas fa-chevron-down"></i>
-									</div>
-									<div *ngIf="!checkDiv('error' + (errIndex + 1))" class="scenario-dropdown-title" (click)="showDiv('error' + (errIndex + 1))">
-										<span>Error {{errIndex + 1}}</span>
-										<i class="fas fa-chevron-right"></i>
+										<i class="fas" [ngClass]="{'fa-chevron-down': checkDiv('error' + (errIndex + 1)),'fa-chevron-right': !checkDiv('error' + (errIndex + 1))}"></i>
 									</div>
 									<!-- <div *ngIf="!checkDiv('predInt')" class="showHideScen" (click)="">Prediction Interval<i class="far fa-chevron-right"></i></div> -->
 									<button class="icon-button" (click)="removeError(errIndex)"><i class="far fa-times"></i></button>

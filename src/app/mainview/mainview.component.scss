@@ -28,6 +28,12 @@
 	padding-left: 15px;
 }
 
+.example-text {
+    color: #6f7697;
+    padding: 0!important;
+    font-size: 11px!important;
+}
+
 
 .download-divider{
 	display: flex;
@@ -76,7 +82,7 @@
 	flex-wrap: wrap;
 
 	.equation-table{
-		width: 350px;
+		width: auto;
 		margin-right: 25px;
 	}
 }

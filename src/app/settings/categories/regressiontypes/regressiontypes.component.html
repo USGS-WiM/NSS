@@ -10,6 +10,14 @@
     </select>
 </div>
 
+<div class="statSelect">
+	<label class="block" for="region">Filter By Statistic Group:</label>
+    <select [ngModel]="selectedStatistic" (ngModelChange)="onStatGroupSelect($event)" name="statistic" class="input-small">
+        <option value="none">None</option>
+        <option [ngValue]="i" *ngFor="let i of selectedStatisticGroups">{{i.name}}</option>
+    </select>
+</div>
+
 <button type="button" class="button blue small mtop-sm" (click)="showNewRegressionForm()">
 	<i class="far fa-plus" aria-hidden="true"></i> 
 	<span>Add New Regression Type</span>
@@ -61,6 +69,7 @@
 </form>
 <br />
 
+
 <!-- new regression type form -->
 <ng-template #add let-c="close" let-d="dismiss">
 	<div class="modal-header">
@@ -68,7 +77,6 @@
 		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 	</div>
     <div class="modal-body">
-        <h3 class="">New Regression Type</h3>
         <form [formGroup]="newRegForm">
             <!-- Regression Type Name* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newRegForm.get('name').valid && newRegForm.get('name').dirty}">
@@ -98,6 +106,6 @@
 	<!-- Footer / Buttons -->
 	<div class="modal-body-footer">
 		<button type="button" (click)="d('closed')" class="button">Cancel</button>
-		<button type="button" (click)="createNewRegression()" [disabled]="!newRegForm.valid" class="button-blue">Create</button>
+		<button type="button" (click)="createNewRegression()" [disabled]="!newRegForm.valid" class="button blue">Create</button>
 	</div>
 </ng-template>

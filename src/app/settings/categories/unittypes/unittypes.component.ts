@@ -61,7 +61,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         this.newUnitForm = _fb.group({
             id: new FormControl(null),
             name: new FormControl(null, Validators.required),
-            abbreviation: new FormControl(null),
+            abbreviation: new FormControl(null, Validators.required),
             unitSystemTypeID: new FormControl(null, Validators.required)
         });
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -140,7 +140,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error creating Unit', error._body.message || error.statusText);
-        }
+            }
         );
     }
 

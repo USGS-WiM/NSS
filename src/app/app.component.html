@@ -4,12 +4,13 @@
 <manageCitationsModal></manageCitationsModal>
 <addStationModal></addStationModal>
 <gagePageModal></gagePageModal>
+<app-loading-screen></app-loading-screen>
 
 
 <!-- Top Nav bar -->
 <nav id="main">
 	<!-- Mobile menu toggle -->
-	<button class="sidebar-toggle" (click)="showMobileMenu = !showMobileMenu">
+	<button type="button" class="sidebar-toggle" (click)="showMobileMenu = !showMobileMenu">
 	<!-- <button class="sidebar-toggle" (click)="toggleSidebar()"> -->
 		<i class="far fa-bars"></i>
 	</button>
@@ -74,9 +75,6 @@
 		<router-outlet></router-outlet>
 	</div>
 </div>
-
-<!-- Loading Screen -->
-<app-loading-screen></app-loading-screen>
 
 <!-- Login modal -->
 <ng-template #login let-c="close" let-d="dismiss" id="loginModal">

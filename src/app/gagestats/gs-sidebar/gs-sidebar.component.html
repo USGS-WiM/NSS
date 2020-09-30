@@ -6,6 +6,13 @@
     </div>
 
     <div class="sidebar-item">
+        <label>Limit by Region:</label>
+        <ss-multiselect-dropdown [options]="regions" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedRegion" name="regions">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
         <label>Limit by Station Type:</label>
         <ss-multiselect-dropdown [options]="stationTypes" [texts]="myMSTexts" [settings]="myRTSettings"
         [(ngModel)]="selectedStationType" name="stationType">
@@ -20,8 +27,29 @@
     </div>
 
     <div class="sidebar-item">
+        <label>Limit by Statistic Groups:</label>
+        <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedStatisticGroup" name="statisticGroups">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
+        <label>Limit by Regression Types:</label>
+        <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedRegressionType" name="regressionTypes">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
+        <label>Limit by Variable Types:</label>
+        <ss-multiselect-dropdown [options]="variableTypes" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedVariableType" name="variableTypes">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
         <label>Search for Gage Stations:</label>
-        <button class="button full" (click)="onSearch()">
+        <button type="submit" class="button full" (click)="onSearch()">
             <span>Search</span>
         </button>
     </div>

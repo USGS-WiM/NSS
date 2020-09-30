@@ -19,6 +19,7 @@ import { SettingsService } from '../../settings.service';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 
 @Component({
     moduleId: module.id,
@@ -45,6 +46,10 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public tempData;
     public isEditing = false;
     public modalRef;
+    public selectedStatisticGroups: Array<Statisticgroup>;
+    public selectedStatistic;
+    public selectedRegionID;
+    public selectedStatisticID;
     constructor(
         public _nssService: NSSService,
         public _settingsservice: SettingsService,
@@ -72,21 +77,47 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(reg => {
             this.regions = reg;
         });
+        this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.selectedStatisticGroups = res;
+        });
+        this.selectedStatistic = 'none';
         this.selectedRegion = 'none';
-        this.getAllRegTypes();
+        this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+            this.regressionTypes = res;
+        });
     }
 
     public onRegSelect(r) {
         this.selectedRegion = r;
+        this.selectedRegionID = r.id;
         if (r === 'none') {
-            this.getAllRegTypes();
-        } else {
-            this._settingsservice
-                .getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.regTypeURL)
-                .subscribe(regs => {
-                    this.regressionTypes = regs;
-                });
+            this.selectedRegionID = "";
+        } 
+        if(this.selectedStatistic === 'none'){
+            this.selectedStatisticID = "";
         }
+        this._settingsservice
+            .getEntities(this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
+            .subscribe(regs => {
+                this.regressionTypes = regs;
+            });
+        
+    }
+
+    public onStatGroupSelect(e){
+        this.selectedStatistic = e;
+        this.selectedStatisticID = e.id;
+        if (e === 'none') {
+            this.selectedStatisticID = "";
+        } 
+        if(this.selectedRegion === 'none'){
+            this.selectedRegionID = "";
+        }
+        this._settingsservice.getEntities(this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.regressionTypes = res;
+        });
     }
 
     public getAllRegTypes() {

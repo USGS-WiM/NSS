@@ -11,6 +11,7 @@ import { Region } from 'app/shared/interfaces/region';
 import { SettingsService } from 'app/settings/settings.service';
 import { ConfigService } from 'app/config.service';
 import { Config } from 'protractor';
+import { ToasterConfig } from 'angular2-toaster';
 
 @Component({
   selector: 'app-gagestats',
@@ -32,6 +33,8 @@ export class GagestatsComponent implements OnInit {
   public itemPerPage = [15,25,50,100]; 
   public perPage = 50;
   private configSettings: Config;
+  public config: ToasterConfig = new ToasterConfig({ timeout: 0 });
+
 
   constructor(
     private router: Router,

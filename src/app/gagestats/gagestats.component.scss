@@ -144,3 +144,19 @@
 	max-height: 460px !important;
 	padding: 0 !important;
 }
+
+
+.page-nav-icon{
+	opacity: 0.65;
+
+	&:hover{
+		opacity: 1;
+	}
+
+	&.fa-angle-left{
+		padding-right: 10px;
+	}
+	&.fa-angle-right{
+		padding-left: 8px;
+	}
+}

@@ -21,7 +21,7 @@
 						<button *ngIf="!v.isEditing" title="Edit Region" (click)="EditRowClicked(i)" class="icon-button">
 							<i class="far fa-pencil"></i>
 						</button>
-						<button *ngIf="!v.isEditing" title="Delete Region" (click)="deleteRegion(v.id)" class="icon-button">
+						<button *ngIf="!v.isEditing" title="Delete Region" (click)="deleteRegion(v.id)" class="icon-button hover-red">
 							<i class="far fa-times"></i>
 						</button>
 						<button *ngIf="v.isEditing" title="Save Region" (click)="saveRegion(v,i)" class="icon-button">

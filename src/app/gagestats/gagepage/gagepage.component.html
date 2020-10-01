@@ -8,7 +8,7 @@
 
 	<div class="modal-body modal-body-fixed side-padding">
 		<!--Buttons-->
-		<div class="xs-f-start pbottom-sm ptop-sm">
+		<div class="xs-f-start mbottom-sm">
 			<button *ngIf="loggedInRole && !editGage" type="button" class="button small blue mright-sm" (click)="editGageStats()">
 				<i class="far fa-pencil-alt"></i>
 				<span>Edit Gage</span>
@@ -72,11 +72,11 @@
 					<thead>
 						<tr>
 							<th class="width-5" *ngIf="editGage"></th>
-							<th>Characteristic</th>
-							<th>Value</th>
-							<th>Units</th>
-                            <th>Citation ID</th>
-                            <th>Comments</th>
+							<th class="width-20">Characteristic</th>
+							<th class="width-10">Value</th>
+							<th class="width-20">Units</th>
+                            <th class="width-10">Citation ID</th>
+                            <th class="width-35">Comments</th>
 						</tr>
 					</thead>
 					<tbody >
@@ -107,7 +107,7 @@
 							</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.value}}</span>
-								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.value" size="2"></span>
+								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.value" size="1" class="input-100"></span>
 							</td>
 							
 							<td class="160width">
@@ -120,7 +120,7 @@
 							</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.citationID}}</span>
-								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.citationID" size="2"></span>
+								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.citationID" size="2" class="input-100"></span>
                             </td>
                             <td>
 								<span *ngIf="!c.isEditing">{{c.comments}}</span>
@@ -151,7 +151,7 @@
 							</td>
 							<td>
 								<span *ngIf="!newChar.isEditing">{{newChar.value}}</span>
-								<span *ngIf="newChar.isEditing"><input type="number" [(ngModel)]="newChar.value" size="2"></span>
+								<span *ngIf="newChar.isEditing"><input type="number" [(ngModel)]="newChar.value" size="2" class="input-100"></span>
 							</td>
 							
 							<td class="160width">
@@ -186,15 +186,15 @@
 						<table style="border:solid 1px gray" class="custom-table"> 
 							<thead>
 								<tr>
-									<th class="width-2" *ngIf="editGage"></th>
-									<th>Statistic</th>
-									<th>Value</th>
-                                    <th>Units</th> 
-                                    <th>Citation ID</th>
-									<th>Statistic Group</th>
+									<th class="width-5" *ngIf="editGage"></th>
+									<th class="width-15">Statistic</th>
+									<th class="width-10">Value</th>
+                                    <th class="width-15">Units</th> 
+                                    <th class="width-10">Citation ID</th>
+									<th class="width-15">Statistic Group</th>
 									<th>Preferred</th>
-                                    <th>Years of Record</th> 
-                                    <th>Comments</th>
+                                    <th class="width-10">Years of Record</th> 
+                                    <th class="width-15">Comments</th>
 								</tr>
 							</thead>
 							<tbody >
@@ -215,7 +215,7 @@
 											</button>
 										</div>
 									</td>
-									<td class="120width">
+									<td>
 										<span *ngIf="!s.isEditing">{{s.regressionType.name}}</span>
 										<span *ngIf="s.isEditing">
 											<ng-select  [(ngModel)]="s.regressionTypeID" name="regressionTypeID" [clearable]="false">
@@ -223,11 +223,11 @@
 											</ng-select>
 										</span>
 									</td>
-									<td class="50width">
+									<td>
 										<span *ngIf="!s.isEditing">{{s.value}}</span>
-										<span *ngIf="s.isEditing"><input [(ngModel)]="s.value" size="1"></span>
+										<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.value" size="1" class="input-100"></span>
 									</td>
-									<td class="120width">
+									<td>
 										<span *ngIf="!s.isEditing">{{s.unitType.name}}</span>
 										<span *ngIf="s.isEditing" >
 											<ng-select [(ngModel)]="s.unitTypeID" name="unitTypeID" [clearable]="false">
@@ -235,11 +235,11 @@
                                             </ng-select>
 										</span>
                                     </td>
-                                    <td class="40width">
+                                    <td>
 									    <span *ngIf="!s.isEditing">{{s.citationID}}</span>
-                                        <span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.citationID" size="2"></span>
+                                        <span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.citationID" size="2" class="input-100"></span>
 									</td>
-									<td class="130width">
+									<td>
 									    <span *ngIf="!s.isEditing">{{getStatGroup(s.statisticGroupTypeID)}}</span>
 										<span *ngIf="s.isEditing">
 											<select [(ngModel)]="s.statisticGroupTypeID" name="statisticGroupTypeID">
@@ -247,13 +247,13 @@
 											</select>
 										</span>
 									</td>
-									<td class="40width">
+									<td>
 										<span *ngIf="!s.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"/></span>
 										<span *ngIf="s.isEditing"><input type="checkbox" [(ngModel)]="s.isPreferred" size="3"></span>
 									</td>
-									<td class="70width">
+									<td>
 										<span *ngIf="!s.isEditing">{{s.yearsofRecord}}</span>
-										<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.yearsofRecord" size="1"></span>
+										<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.yearsofRecord" size="1" class="input-100"></span>
                                     </td>
                                     <td>
                                         <span *ngIf="!s.isEditing">{{s.comments}}</span>
@@ -311,7 +311,7 @@
 										<span *ngIf="!newStat.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"/></span>
 										<span *ngIf="newStat.isEditing"><input type="checkbox" [(ngModel)]="newStat.isPreferred" size="3"></span>
 									</td>
-									<td class="70width">
+									<td>
 										<span *ngIf="!newStat.isEditing">{{newStat.yearsofRecord}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.yearsofRecord" size="1"></span>
                                     </td>

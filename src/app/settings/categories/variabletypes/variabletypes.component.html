@@ -11,9 +11,10 @@
             <thead>
                 <tr>
                     <th class="width-5"></th>
-                    <th class="width-40">Name</th>
-                    <th class="width-45">Description</th>
+                    <th class="width-30">Name</th>
+                    <th class="width-40">Description</th>
                     <th class="col-xs-10">Code</th>
+                    <th class="col-xs-25">Default Unit</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,7 +23,7 @@
 						<button *ngIf="!v.isEditing" title="Edit Variable Type" (click)="EditRowClicked(i)" class="icon-button">
 							<i class="far fa-pencil"></i>
 						</button>
-						<button *ngIf="!v.isEditing" title="Delete Variable Type" (click)="deleteVariable(v.id)" class="icon-button">
+						<button *ngIf="!v.isEditing" title="Delete Variable Type" (click)="deleteVariable(v.id)" class="icon-button hover-red">
 							<i class="far fa-times"></i>
 						</button>
 						<button *ngIf="v.isEditing" title="Save Variable Type" (click)="saveVariable(v,i)" class="icon-button">
@@ -43,6 +44,14 @@
                     <td>
                         <span *ngIf="!v.isEditing">{{ v.code }}</span>
                         <span *ngIf="v.isEditing"><input type="text" name="code" [(ngModel)]="v.code" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ getUnitName(v.unitTypeID) }}</span>
+                        <span *ngIf="v.isEditing">
+                            <ng-select  bindLabel="id" [(ngModel)]="v.unitTypeID" name = "unitID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                                <ng-option *ngFor="let ut of unitTypes" [value]="ut.id">{{ut.name}} ({{ut.abbr}})</ng-option>
+                            </ng-select>
+                        </span>
                     </td>
                 </tr>
             </tbody>
@@ -71,6 +80,14 @@
             <div class="form-group">
                 <label for="description">Description:</label>
                 <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
+            </div>
+
+            <!-- Unit Type -->
+            <div class="form-group">
+                <label for="description">Unit Type:</label>
+                <ng-select formControlName="unitTypeID"  bindLabel="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                    <ng-option *ngFor="let ut of unitTypes" [value]="ut.id">{{ut.name}} ({{ut.abbr}})</ng-option>
+                </ng-select>
             </div>
 
             <!-- Short Name -->

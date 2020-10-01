@@ -22,7 +22,7 @@
 						<button *ngIf="!v.isEditing" title="Edit Agency" (click)="EditRowClicked(i)" class="icon-button">
 							<i class="far fa-pencil"></i>
 						</button>
-						<button *ngIf="!v.isEditing" title="Delete Agency" (click)="deleteAgency(v.id)" class="icon-button">
+						<button *ngIf="!v.isEditing" title="Delete Agency" (click)="deleteAgency(v.id)" class="icon-button hover-red">
 							<i class="far fa-times"></i>
 						</button>
 						<button *ngIf="v.isEditing" title="Save Agency" (click)="saveAgency(v,i)" class="icon-button">

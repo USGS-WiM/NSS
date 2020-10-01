@@ -194,12 +194,12 @@
 				font-size: 18px;
 			}
 
-			&:hover{
-				color: var(--blue);
-				i{
-					color: var(--blue);
-				}
-			}
+			// &:hover{
+			// 	color: var(--blue);
+			// 	i{
+			// 		color: var(--blue);
+			// 	}
+			// }
 		}
 	}
 
@@ -245,3 +245,12 @@
 .max-500{width: 500px;}
 .max-400{width: 400px;}
 .max-300{width: 300px;}
+
+
+// Dropdowns within tables
+table .ng-select{
+	max-width: 140px;
+}
+table .ng-dropdown-panel-items{
+	min-width: 220px;
+}

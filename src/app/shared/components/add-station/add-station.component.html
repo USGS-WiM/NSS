@@ -38,13 +38,14 @@
                     <ng-select formControlName="stationTypeID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                         <ng-option *ngFor="let type of stationTypes" [value]="type.id">{{type.name}} ({{type.code}})</ng-option>
                     </ng-select>
-                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('agencyID').valid && addStationForm.get('agencyID').touched">Agency ID
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('stationTypeID').valid && addStationForm.get('stationTypeID').dirty">Station Type
                         is required</div>
                 </div>
 
                 <div class="form-group form-check" >
-                    <input formControlName="isRegulated" type="checkbox" >
-                    <label for="isRegulated">  Station is Regulated:</label>
+                    <label for="isRegulated" style="padding-right:5px">  Station is Regulated:</label>
+                    <input formControlName="isRegulated" type="checkbox">
+                    
                 </div>
 
                 <div class="form-group required" [ngClass]="{ 'form-invalid': !addStationForm.get('regionID').valid && addStationForm.get('regionID').touched }">
@@ -52,7 +53,7 @@
                     <ng-select formControlName="regionID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                         <ng-option *ngFor="let region of regions" [value]="region.id">{{region.name}}</ng-option>
                     </ng-select>
-                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('agencyID').valid && addStationForm.get('agencyID').touched">Agency ID
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('regionID').valid && addStationForm.get('regionID').touched">Region ID
                         is required</div>
                 </div>
 
@@ -72,8 +73,8 @@
                     <i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="format DD.DDD (between -180 and 180)" triggers="click"></i>
                     <input class="form-control"  type="number" formControlName="longitude" >
                      <div class="input-invalid-warning" *ngIf="!addStationForm.get('longitude').valid && (addStationForm.get('longitude').touched || addStationForm.get('longitude').dirty) " >
-                        <div class="input-invalid-warning" *ngIf="addStationForm.get('longitude').errors.max">Longitude must be greater than -180.00 degrees</div> 
-                        <div class="input-invalid-warning" *ngIf="addStationForm.get('longitude').errors.min">Longitude must be less than 180.00 degrees</div> 
+                        <div class="input-invalid-warning" *ngIf="addStationForm.get('longitude').errors.min">Longitude must be greater than -180.00 degrees</div> 
+                        <div class="input-invalid-warning" *ngIf="addStationForm.get('longitude').errors.max">Longitude must be less than 180.00 degrees</div> 
                     </div>
                 </div>
                 

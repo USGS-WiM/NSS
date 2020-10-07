@@ -1443,8 +1443,8 @@ export class MainviewComponent implements OnInit {
                 methodName = z.name;
             }
         });
-        if(methodName){
-        return (", Method: "+ methodName);
+        if (methodName) {
+            return (", Method: "+ methodName);
         }
     }
 

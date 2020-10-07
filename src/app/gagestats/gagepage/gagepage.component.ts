@@ -37,6 +37,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public variables;
   public regressionTypes;
   public statisticGroups;
+  public statIds = [];
 
   constructor(
     private _nssService: NSSService, 
@@ -57,6 +58,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this.gage = res;
             this.getCitations();
             this.showGagePageForm();
+            this.getDisplayStatGroupID(this.gage);
           });
         }
     });
@@ -101,6 +103,21 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public showGagePageForm(){
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl' });
+  }
+
+  public getDisplayStatGroupID(g) {
+      var statGroup1;
+      var statGroup2;
+      const ids = [];
+      g.statistics.forEach( function(item, index) {
+        statGroup2 = item.statisticGroupTypeID;
+        if ( statGroup1 != statGroup2 ) {
+            statGroup1 = statGroup2
+            ids.push((index + 1))
+         }
+        })
+      this.statIds = ids;
+      console.log(this.statIds)
   }
 
 ///////////////////Edit Gage Info Section//////////////////////////////

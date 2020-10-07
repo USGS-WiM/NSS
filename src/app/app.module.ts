@@ -53,7 +53,7 @@ import { AddRegressionRegionModal } from './shared/components/addregressionregio
 import { GagestatsComponent } from './gagestats/gagestats.component';
 import { GsSidebarComponent } from './gagestats/gs-sidebar/gs-sidebar.component';
 import { GagestatsService } from './gagestats/gagestats.service';
-import { AddStationModal } from './shared/components/add-station/add-station.component';
+import { AddStationModal } from './gagestats/add-station/add-station.component';
 import { GagepageComponent } from './gagestats/gagepage/gagepage.component';
 
 

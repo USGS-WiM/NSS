@@ -1,0 +1,25 @@
+<h3 class="mbottom-md">Methods</h3>
+
+
+<form #User TypeForm="ngForm">
+    <div class="form-group" *ngIf="methods">
+        <table class="custom-table mtop-sm">
+            <thead>
+                <tr>
+                    <th class="width-15">Name</th>
+                    <th class="width-15">Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let m of methods">
+                    <td>
+                        <span>{{ m.name }}</span>
+                    </td>
+                    <td>
+                        <span>{{ m.code }}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>

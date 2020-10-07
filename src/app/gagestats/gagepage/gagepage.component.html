@@ -13,6 +13,10 @@
 				<i class="far fa-pencil-alt"></i>
 				<span>Edit Gage</span>
 			</button>
+			<button *ngIf="loggedInRole && !editGage" type="button" class="button small red mright-sm" (click)="deleteGageStats()">
+				<i class="far fa-trash"></i>
+				<span>Delete Gage</span>
+			</button>
 			<button *ngIf="loggedInRole && editGage" type="button" class="button small green mright-sm" (click)="endEditGageStats()">
 				<i class="far fa-check"></i>
 				<span>Finish Edits</span>

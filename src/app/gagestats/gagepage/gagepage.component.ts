@@ -103,10 +103,14 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl' });
   }
 
-///////////////////Edit Gage Info Section//////////////////////////////
+///////////////////Gage Info Section//////////////////////////////
   
   public editGageStats() {
     this.editGage = true;
+  }
+
+  public deleteGageStats(){
+
   }
 
   public endEditGageStats() {
@@ -126,7 +130,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public editRowClicked(item, index) {
     this.tempItem = JSON.parse(JSON.stringify(item));
     this.itemBeingEdited = item;
-    this.editId = index
+    this.editId = index;
     item.isEditing = true;
   }
 
@@ -142,7 +146,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   public submitGage() {
-    const url = ''
+    const url = '';
     this._settingsservice.putEntityGageStats('', this.configSettings.stationsURL, url).subscribe()
   }
 

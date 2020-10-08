@@ -55,6 +55,7 @@ export class MainviewComponent implements OnInit {
     public selectedRegion;
     private navigationSubscription;
     public selectedRegressionRegion: Array<Regressionregion>;
+    public originalRegRegion;
     public tempSelectedRegressionRegion: Array<Regressionregion>;
 
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
@@ -208,6 +209,8 @@ export class MainviewComponent implements OnInit {
         this._authService.loggedInRole().subscribe(role => {
             this.loggedInRole = role;
         });
+        // subscribe to temRegRegion
+        this._nssService.currentTempRegRegion.subscribe(originalRegRegion => this.originalRegRegion = originalRegRegion);
         // subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
             this.scenarios = s;
@@ -1160,6 +1163,9 @@ export class MainviewComponent implements OnInit {
     }
     // want to edit the selected/computed scenario. remove Result
     public editScenario() {
+        if (this.originalRegRegion[0] != null) {
+            this.scenarios[0].regressionRegions = this.originalRegRegion;
+        }
         this.scenarios.forEach(s => {
             let areaWeighed = s.regressionRegions.map(function (r) {
                 return r.id;
@@ -1351,7 +1357,7 @@ export class MainviewComponent implements OnInit {
                 // if regression has prediction interval, need to ask for expected bounds
                 if (!reg.predictionInterval.student_T_Statistic || !reg.predictionInterval.variance
                     || !reg.predictionInterval.xiRowVector || !reg.predictionInterval.covarianceMatrix) {
-                        reg.predictionInterval = null;
+                    reg.predictionInterval = null;
                 } else {
                     this.getBounds = true;
                     reg.expected.intervalBounds = { lower: null, upper: null };

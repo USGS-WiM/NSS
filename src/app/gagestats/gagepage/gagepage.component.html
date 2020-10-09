@@ -179,6 +179,14 @@
 		<div>
 			<div class="table-title">Streamflow Statistics
 				<button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs"  (click)="addStreamflowStatistic()">Add Streamflow Statistic</button>
+				<ng-container>
+					<ss-multiselect-dropdown [options]="filteredStatGroups" [texts]="myMSTexts" [settings]="myRTSettings"
+					[(ngModel)]="selectedStatGroup">
+					</ss-multiselect-dropdown>
+				</ng-container>
+				<button class="button small blue mright-xs" *ngIf="preferred" (click)="setPreferred()">Show Preferred Stats</button>
+				<button class="button small green mright-xs" *ngIf="!preferred" (click)="setPreferred()">Show All Stats</button>
+				<button class="button small blue mright-xs" (click)="filterByStats()">Search</button>
 			</div>
 			<div>
 				<div>
@@ -198,7 +206,7 @@
 								</tr>
 							</thead>
 							<tbody >
-								<ng-container  *ngFor="let s of gage.statistics,  let sIndex = index">
+								<ng-container  *ngFor="let s of filteredGage.statistics,  let sIndex = index">
 									<tr *ngIf="statIds.includes(s.id)" >
 										<th  colspan="9">{{getStatGroup(s.statisticGroupTypeID)}}</th>
 									</tr>

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NSSService } from 'app/shared/services/app.service';
 import { NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { IMultiSelectSettings, IMultiSelectTexts} from '../../../../node_modules/angular-2-dropdown-multiselect';
 import { GagePage } from 'app/shared/interfaces/gagepage';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -23,6 +24,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   private configSettings: Config;
   private modalElement: any;
   public modalRef;
+  public myMSTexts: IMultiSelectTexts;
+  public myRTSettings: IMultiSelectSettings;
   public loggedInRole;
   public code;
   public gage: Station;
@@ -38,6 +41,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public regressionTypes;
   public statisticGroups;
   public statIds = [];
+  public filteredStatGroups;
+  public statGroupIds = [];
+  public selectedStatGroup = [];
+  public filteredGage: Station;
+  public preferred: boolean = true;
 
   constructor(
     private _nssService: NSSService, 
@@ -55,10 +63,15 @@ export class GagepageComponent implements OnInit, OnDestroy {
       if (result.show) { 
           this.code = result.gageCode;
           this._nssService.getGagePageInfo(this.code).subscribe(res => {
-            this.gage = res;
+            res.statistics.sort(function(a, b){
+              return a.statisticGroupTypeID - b.statisticGroupTypeID;
+            });
+            this.gage = res
+            this.filteredGage = this.gage;
             this.getCitations();
-            this.showGagePageForm();
             this.getDisplayStatGroupID(this.gage);
+            this.filterStatIds();
+            this.showGagePageForm();
           });
         }
     });
@@ -83,6 +96,27 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
       this.statisticGroups = res;
     });
+
+    this.myRTSettings = {
+      pullRight: false,
+      enableSearch: false,
+      checkedStyle: 'glyphicon', // 'checkboxes',
+      buttonClasses: 'btn btn-default',
+      selectionLimit: 0,
+      closeOnSelect: false,
+      showCheckAll: true,
+      showUncheckAll: true,
+      dynamicTitleMaxItems: 2,
+      maxHeight: '300px'
+    };
+
+    this.myMSTexts = {
+      checkAll: 'Check all',
+      uncheckAll: 'Uncheck all',
+      checked: 'checked',
+      checkedPlural: 'checked',
+      defaultTitle: 'Select'
+    };
 
   }  // end OnInit
   
@@ -109,15 +143,17 @@ export class GagepageComponent implements OnInit, OnDestroy {
       var statGroup1;
       var statGroup2;
       const ids = [];
+      const groupIds = [];
       g.statistics.forEach( function(item, index) {
         statGroup2 = item.statisticGroupTypeID;
         if ( statGroup1 != statGroup2 ) {
             statGroup1 = statGroup2
-            ids.push((index + 1))
+            ids.push((item.id))
+            groupIds.push(statGroup2)
          }
         })
       this.statIds = ids;
-      console.log(this.statIds)
+      this.statGroupIds = groupIds;
   }
 
 ///////////////////Edit Gage Info Section//////////////////////////////
@@ -283,8 +319,31 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
   }
 
-  getStatGroup(id) {
+  public getStatGroup(id) {
       return this.statisticGroups.find(sg => sg.id == id).name;
+  }
+
+  public filterStatIds() {
+    this.filteredStatGroups = this.statisticGroups.filter((sg) => this.statGroupIds.includes(sg.id));
+  }
+
+  public filterByStats() {
+    if (this.selectedStatGroup.length == 0) {
+      this.filteredGage = JSON.parse(JSON.stringify(this.gage));
+    } else{
+      this.filteredGage = JSON.parse(JSON.stringify(this.gage));
+      const x = this.selectedStatGroup;;
+      const y = this.filteredGage.statistics;
+      this.filteredGage.statistics = y.filter((s) => x.includes(s.statisticGroupTypeID));
+    } 
+  }
+
+  public setPreferred() {
+    if (!this.preferred) {
+      this.preferred = true
+    } else {
+      this.preferred = false
+    }
   }
 
   compareObjects(Obj1, Obj2) {

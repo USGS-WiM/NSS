@@ -13,4 +13,6 @@ export interface Station {
     characteristics: Array<GageCharacteristic>;
     statistics: Array<GageStatistic>;
     citations: Array<Citation>;
+    filter?;
+    sort?;
 }

@@ -123,7 +123,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           if (result.headers) { 
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
-            // refresh gages 
+            // refresh gagestats component
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -134,13 +134,14 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public saveGageInfo(gage){
     console.log(gage)
-    const newItem = JSON.parse(JSON.stringify(gage));  // Copy item, delete unnecessary elements
-    ['agency', 'stationType'].forEach(e => delete newItem[e]);  // Delete unneeded items
+    const newItem = JSON.parse(JSON.stringify(gage)); 
+    ['agency', 'stationType'].forEach(e => delete newItem[e]);  
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.stationsURL).subscribe(
         (res) => {
           this.editGageInfo = false;
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
+          //refresh gagestats component
         }
       )
   }

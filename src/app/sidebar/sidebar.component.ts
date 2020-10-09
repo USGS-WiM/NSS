@@ -203,6 +203,8 @@ export class SidebarComponent implements OnInit {
 
     // select Region. get regressionRegions, regressionTypes, StatisticGroups
     public onRegSelect(r: Region) {
+        this.originalRegRegion = [];
+        this._nssService.showTempRegRegion(this.originalRegRegion);
         this._loaderService.showFullPageLoad();
         this.selectedRegRegionIDs = [];
         this.selectedStatGrpIDs = [];
@@ -315,6 +317,8 @@ export class SidebarComponent implements OnInit {
 
     // clear all selected stat groups, reg regions and reg types
     public clearSelections() {
+        this.originalRegRegion = [];
+        this._nssService.showTempRegRegion(this.originalRegRegion);
         this._loaderService.showFullPageLoad();
         this.selectedStatGrpIDs = [];
         this.selectedRegRegionIDs = [];
@@ -332,6 +336,8 @@ export class SidebarComponent implements OnInit {
     }
 
     public showAddRegRegion() {
+        this.originalRegRegion = [];
+        this._nssService.showTempRegRegion(this.originalRegRegion);
         const addRegRegForm: AddRegressionRegion = {
             show: true,
             regRegionID: null

@@ -30,6 +30,7 @@ export class GagestatsComponent implements OnInit {
   public loggedInRole;
   public lastPageNumber;
   public currentPageNumber;
+  public totalGages;
   public itemPerPage = [15,25,50,100]; 
   public perPage = 50;
   private configSettings: Config;
@@ -77,6 +78,7 @@ export class GagestatsComponent implements OnInit {
       if (numbers != null) {
           this.currentPageNumber = Number(numbers[0]); // first occurrence of a number
           this.lastPageNumber = Number(numbers[1]); // second occurrence of a number
+          this.totalGages = Number(numbers[2])
       }
     });
   }   

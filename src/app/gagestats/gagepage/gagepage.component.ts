@@ -11,6 +11,8 @@ import { CharacteristicResponse } from 'app/shared/interfaces/characteristicresp
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
 import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
+import { Agency } from 'app/shared/interfaces/agency';
+import { Stationtype } from 'app/shared/interfaces/stationtype';
 
 @Component({
   selector: 'gagePageModal',
@@ -26,7 +28,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public loggedInRole;
   public code;
   public gage: Station;
-  public editGage: boolean;
+  public editGage: boolean = false;
+  public editGageInfo: boolean = false;
   public units;
   public tempItem;
   public itemBeingEdited;
@@ -37,6 +40,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public variables;
   public regressionTypes;
   public statisticGroups;
+  agencies: Agency[];
+  stationTypes: Stationtype[];
 
   constructor(
     private _nssService: NSSService, 
@@ -48,7 +53,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.editGage = false;
     this.loggedInRole = localStorage.getItem('loggedInRole');
     this.modalSubscript = this._nssService.showGagePageModal.subscribe((result: GagePage) => {
       if (result.show) { 
@@ -66,20 +70,27 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this._nssService.getUnitTypes().subscribe(res => {
       this.units = res;
     });
-
     // get all variable types
     this._nssService.getVariableTypes().subscribe( res =>{
       this.variables = res;
     });
-
     // get all regression types
     this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
       this.regressionTypes = res;
-  });
-
+    });
     // get all stat groups 
     this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
       this.statisticGroups = res;
+    });
+    // get all agencys
+    this._nssService.getAgencies();
+    this._nssService.agencies.subscribe((ag: Array<Agency>) => {
+      this.agencies = ag;
+    });
+    // get all station types
+    this._nssService.getStationTypes();
+    this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
+      this.stationTypes = st;
     });
 
   }  // end OnInit
@@ -105,16 +116,48 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
 ///////////////////Gage Info Section//////////////////////////////
   
-  public editGageStats() {
-    this.editGage = true;
+  public deleteGageStats(id){
+    const check = confirm('Are you sure you want to delete this Gage?');
+    if (check) {
+      this._settingsservice.deleteEntityGageStats(id, this.configSettings.stationsURL).subscribe(result => {
+          if (result.headers) { 
+            this._nssService.outputWimMessages(result); 
+            this.modalRef.close();    
+            // refresh gages 
+          }
+      }, error => {
+          if (error.headers) {this._nssService.outputWimMessages(error);
+          } else { this._nssService.handleError(error); }
+      });
+    }
   }
 
-  public deleteGageStats(){
+  public saveGageInfo(gage){
+    console.log(gage)
+    const newItem = JSON.parse(JSON.stringify(gage));  // Copy item, delete unnecessary elements
+    ['agency', 'stationType'].forEach(e => delete newItem[e]);  // Delete unneeded items
+      this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.stationsURL).subscribe(
+        (res) => {
+          this.editGageInfo = false;
+          this._settingsservice.outputWimMessages(res);
+          this.refreshgagepage();
+        }
+      )
+  }
 
+  public editGageInformation(item) {
+    this.editGageInfo = true;
+    this.tempItem = JSON.parse(JSON.stringify(item));
+  }
+
+  public cancelEditGageInfo() {
+    this.gage = this.tempItem;
+    this.editGageInfo = false;
   }
 
   public endEditGageStats() {
     this.editGage = false;
+    this.editGageInfo = false;
     if (this.itemBeingEdited) {
       this.itemBeingEdited.isEditing = false;
     }
@@ -141,7 +184,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     else if (this.itemBeingEdited.statisticGroupTypeID) {  // is a statistic
       this.gage.statistics[this.editId] = this.tempItem;
     }
-    
     item.isEditing = false;
   }
 

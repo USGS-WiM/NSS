@@ -1217,13 +1217,13 @@
 									<td>
 										<span *ngIf="!r.isEditing && (r.predictionInterval.biasCorrectionFactor || r.predictionInterval.student_T_Statistic || r.predictionInterval.variance 
                                         || r.predictionInterval.xiRowVector || r.predictionInterval.covarianceMatrix)">
-											<div [class.hidden]="loggedInRole != 'Administrator'">Bias Correction
-												Factor: {{r.predictionInterval.biasCorrectionFactor}}<br></div>
-											Student's T Statistics for 90% confidence interval:
+											<div [class.hidden]="loggedInRole != 'Administrator'"><b>Bias Correction
+												Factor: </b>{{r.predictionInterval.biasCorrectionFactor}}<br></div>
+											<b>Student's T Statistics for 90% confidence interval:</b>
 											{{r.predictionInterval.student_T_Statistic}}<br>
-											Variance: {{r.predictionInterval.variance}}<br>
-											XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
-											Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}<br>
+											<b>Variance:</b> {{r.predictionInterval.variance}}<br>
+											<b>XI Row Vector:</b> {{r.predictionInterval.xiRowVector}}<br>
+											<b>Covariance Matrix:</b> {{r.predictionInterval.covarianceMatrix}}<br>
 										</span>
 										<span
 											*ngIf="!r.isEditing && !r.predictionInterval.biasCorrectionFactor && !r.predictionInterval.student_T_Statistic && !r.predictionInterval.variance 

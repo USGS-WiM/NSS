@@ -97,6 +97,13 @@ export class NSSService {
         this._showHideCloneScenarioModal.next(val);
     }
 
+     // -+-+-+-+-+-+-+-+-+ Add Station modal (gagestats) -+-+-+-+-+-+-+-+
+     private _showHideAddStationModal: Subject<boolean> = new Subject<boolean>();
+     public setAddStationModal(val: any) { 
+         this._showHideAddStationModal.next(val);
+     }
+    
+
     private itemSource = new BehaviorSubject<any>(' ');
     currentItem = this.itemSource.asObservable();
 
@@ -119,6 +126,10 @@ export class NSSService {
     // show the add scenario modal in the mainview
     public get showCloneScenarioModal(): any {
         return this._showHideCloneScenarioModal.asObservable();
+    }
+
+    public get showAddStationModal(): any {
+        return this._showHideAddStationModal.asObservable();
     }
     // -+-+-+-+-+-+-+-+-+ manage citations modal -+-+-+-+-+-+-+-+
     private _showHideManageCitationsModal: Subject<ManageCitation> = new Subject<ManageCitation>();

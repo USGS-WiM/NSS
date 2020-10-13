@@ -28,6 +28,7 @@ export interface Config {
     unitSystemsURL: string;
     variablesURL: string;
     statusURL: string;
+    methodURL: string;
     loginShow: boolean;
     showGageStats: boolean;
 }

@@ -60,6 +60,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public newCitation: boolean = false;
   public rr;
   public status;
+  public methods;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
@@ -82,6 +83,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.newRegRegForm = _fb.group({
       name: new FormControl(null, Validators.required),
       description: new FormControl(null),
+      methodID: new FormControl(null, Validators.required),
       statusID: new FormControl(null, Validators.required),
       code: new FormControl(null, Validators.required),
       region: new FormControl(null, Validators.required),
@@ -125,6 +127,9 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
     this._settingsService.getEntities(this.configSettings.statusURL).subscribe(res => {
       this.status = res;
+    });
+    this._settingsService.getEntities(this.configSettings.methodURL).subscribe(res => {
+      this.methods = res;
     });
     this._nssService.currentCitation.subscribe(item => {
       this.currentCitation = item;
@@ -254,6 +259,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this.newRegRegForm.controls['code'].setValue(this.selectedRegRegion.code);
           this.newRegRegForm.controls['location'].setValue(this.selectedRegRegion.location);
           this.newRegRegForm.controls['statusID'].setValue(this.selectedRegRegion.statusID);
+          this.newRegRegForm.controls['methodID'].setValue(this.selectedRegRegion.methodID);
           if (this.selectedRegRegion.citationID) { // if there is a citation set values in modal
             this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
             this.addCitation = true;

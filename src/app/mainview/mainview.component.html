@@ -88,7 +88,11 @@
 
 				<!-- No results -->
 				<div *ngIf="sc.regressionRegions.length == 0">
-					<h3>There are no Results for your selection. Please try another...</h3>
+					<h3>There are no results for your selection. Please try another...</h3>
+					<button type="button" class="button small hidden-print mbottom-xs" (click)="editScenario()">
+						<i class="far fa-pencil-alt"></i>
+						<span>Edit Scenario Explanatory Variables</span>
+					</button>
 				</div>
 			</div> <!-- end ngFor scenarios -->
 

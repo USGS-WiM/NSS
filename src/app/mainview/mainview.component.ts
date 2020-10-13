@@ -144,7 +144,7 @@ export class MainviewComponent implements OnInit {
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
             if (e instanceof NavigationStart) {
                 this.router.navigated = false;
-                if (this.previousUrl === '/settings' || this.previousUrl === '/profile') {
+                if (this.previousUrl === '/settings' || this.previousUrl === '/profile'|| this.previousUrl === '/gagestats') {
                     this._nssService.setSelectedRegion(undefined);
                     this.showRegion = false;
                 }

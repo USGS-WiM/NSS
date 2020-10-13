@@ -42,7 +42,10 @@ ng build --prod --base-href
 
 ## Deployment
 
-Deploy to AWS S3 bucket test.wim.usgs.gov, nss directory
+Deploy directly onto a server (instructions for https://test.streamstats.usgs.gov/nss-dev/):
+1. Copy the files in the /dist/ folder to C:/inetpub/wwwroot/nss-dev/ on the test.streamstats.usgs.gov server
+2. Make sure the index.html base href="/nss-dev/"
+3. Make sure the web.config in the assets folder is placed at the app root: C:/inetpub/wwwroot/nss-dev/
 
 ## Built With
 

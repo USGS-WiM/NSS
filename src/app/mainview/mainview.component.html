@@ -249,7 +249,8 @@
 								</tr>
 								<tr>
 									<th class="width-40">Description</th>
-									<th class="width-10">(<span [innerHTML]="setSuperScript(rr.results[0].unit.abbr)"></span>)</th>
+									<th class="width-10">(<span
+											[innerHTML]="setSuperScript(rr.results[0].unit.abbr)"></span>)</th>
 									<th class="width-10" *ngIf="rr.results[0].intervalBounds">Low</th>
 									<th class="width-10" *ngIf="rr.results[0].intervalBounds">High</th>
 									<th class="width-10" *ngFor="let e of rr.results[0]?.errors">{{e.code}}</th>
@@ -1217,13 +1218,23 @@
 									<td>
 										<span *ngIf="!r.isEditing && (r.predictionInterval.biasCorrectionFactor || r.predictionInterval.student_T_Statistic || r.predictionInterval.variance 
                                         || r.predictionInterval.xiRowVector || r.predictionInterval.covarianceMatrix)">
-											<div [class.hidden]="loggedInRole != 'Administrator'"><b>Bias Correction
-												Factor: </b>{{r.predictionInterval.biasCorrectionFactor}}<br></div>
-											<b>Student's T Statistics for 90% confidence interval:</b>
-											{{r.predictionInterval.student_T_Statistic}}<br>
+											<div [class.hidden]="loggedInRole != 'Administrator'">
+												<span *ngIf="r.predictionInterval.biasCorrectionFactor !=='null' && r.predictionInterval.biasCorrectionFactor !==''"></span>
+												<b>Bias Correction
+													Factor: </b>{{r.predictionInterval.biasCorrectionFactor}}<br></div>
+											<span *ngIf="r.predictionInterval.student_T_Statistic !=='null' && r.predictionInterval.student_T_Statistic !==''"> <b>Student's T
+													Statistics for 90% confidence interval:</b>
+												{{r.predictionInterval.student_T_Statistic}}<br></span>
+											<span *ngIf="r.predictionInterval.variance !=='null' && r.predictionInterval.variance !==''" >
 											<b>Variance:</b> {{r.predictionInterval.variance}}<br>
+										</span>
+										<span *ngIf="r.predictionInterval.xiRowVector !=='null' && r.predictionInterval.xiRowVector !==''">
 											<b>XI Row Vector:</b> {{r.predictionInterval.xiRowVector}}<br>
-											<b>Covariance Matrix:</b> {{r.predictionInterval.covarianceMatrix}}<br>
+										</span>
+											<span *ngIf="r.predictionInterval.covarianceMatrix !=='null' && r.predictionInterval.covarianceMatrix !==''">
+												<b>Covariance Matrix:</b>
+												{{r.predictionInterval.covarianceMatrix}}<br>
+											</span>
 										</span>
 										<span
 											*ngIf="!r.isEditing && !r.predictionInterval.biasCorrectionFactor && !r.predictionInterval.student_T_Statistic && !r.predictionInterval.variance 

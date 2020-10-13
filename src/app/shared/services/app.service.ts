@@ -212,6 +212,7 @@ export class NSSService {
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
     private _regionSubject: Subject<Array<Region>> = new Subject<Array<Region>>(); // array of regions that sidebar and mainview use
     private _selectedRegion: BehaviorSubject<Region> = new BehaviorSubject<any>(''); // selectedregion
+    private _selectedRegionGageStats: BehaviorSubject<Region> = new BehaviorSubject<any>(''); // selectedregion
 
     public get regions(): Observable<Array<Region>> {
         // getter (regions)
@@ -251,6 +252,16 @@ export class NSSService {
                 this._regionSubject.next(r);
             });
     }
+
+    
+    // setter (selectedRegion) for gagestats
+     public setSelectedRegionGageSats(r: Region) {
+        this._selectedRegionGageStats.next(r);
+    }
+    // getter (selectedRegion) for gagestats
+    public get selectedRegionGageStats(): Observable<Region> {
+        return this._selectedRegionGageStats.asObservable();
+    }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ pages section-+-+-+-+-+-+
@@ -276,6 +287,7 @@ export class NSSService {
 
     // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
     private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use
+    private _selectedStationType = new BehaviorSubject<any>(' ');
 
     public get stationTypes(): Observable<Array<Stationtype>> {
         // getter all (station type)
@@ -292,10 +304,37 @@ export class NSSService {
                 this._stationTypeSubject.next(r);
             });
     }
+
+    selectedStationType = this._selectedStationType.asObservable();
+    public setSelectedStationType(stationType: any){
+        this._selectedStationType.next(stationType);
+    }
     // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ variable section -+-+-+-+-+-+-+
+    private _selectedVariableType = new BehaviorSubject<any>(' ');
+
+    // get variable types
+    public getVariableTypes(params?: string) {
+        let url = this.configSettings.variablesURL
+        if (params) {
+            url += params; 
+        }
+        return this._http
+            .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
+            .map(res => <Array<Variabletype>>res);
+    }
+
+    selectedVariableType = this._selectedVariableType.asObservable();
+    public setSelectedVariableType(variableType: any){
+        this._selectedVariableType.next(variableType);
+    }
+    // -+-+-+-+-+-+ end variable type section -+-+-+-+-+-+-+
+
 
     // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
     private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
+    private _selectedAgency = new BehaviorSubject<any>(' ');
 
     public get agencies(): Observable<Array<Agency>> {
         // getter all (agencies)
@@ -312,7 +351,21 @@ export class NSSService {
                 this._agencySubject.next(r);
             });
     }
+
+    selectedAgency = this._selectedAgency.asObservable();
+    public setSelectedAgency(agency: any){
+        this._selectedAgency.next(agency);
+    }
     // -+-+-+-+-+-+ end agency section -+-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
+    private _selectedKeyword = new BehaviorSubject<any>(' ');
+
+    selectedKeyword = this._selectedKeyword.asObservable();
+    public setSelectedKeyword(keyword: any){
+        this._selectedKeyword.next(keyword);
+    }
+    // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ regressionregion -+-+-+-+-+-+-+
     private _regressionRegionSubject: Subject<Array<Regressionregion>> = new Subject<Array<Regressionregion>>();
@@ -412,6 +465,8 @@ export class NSSService {
 
     // -+-+-+-+-+-+ statisticgroups section -+-+-+-+-+-+-+-+-+-+
     private _statisticGroupSubject: Subject<Array<Statisticgroup>> = new Subject<Array<Statisticgroup>>();
+    private _selectedStatGrpGageStats: Subject<Array<Statisticgroup>> = new Subject<Array<Statisticgroup>>();
+
     public get statisticGroups(): Observable<Array<Statisticgroup>> {
         return this._statisticGroupSubject.asObservable();
     }
@@ -506,11 +561,33 @@ export class NSSService {
         }
         this._statisticGroupSubject.next(sg);
     }
+
+    // setter (selectedStatGrp) for gagestats
+    public setSelectedStatGrpGageSats(sg: any) {
+        this._selectedStatGrpGageStats.next(sg);
+    }
+    // getter (selectedStatGrp) for gagestats
+    public get selectedStatGrpGageStats(): any {
+        return this._selectedStatGrpGageStats.asObservable();
+    }
     // -+-+-+-+-+-+ end statisticgroups section -+-+-+-+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ regressionTypes -+-+-+-+-+-+-+-+-+-+-+-+
     private _regressionTypeSubject: Subject<Array<Regressiontype>> = new Subject<Array<Regressiontype>>();
     private _selectedRegressionTypes: Array<Regressiontype>;
+    private _selectedRegressionTypesGageStats: Subject<Array<Regressiontype>> = new Subject<Array<Regressiontype>>();
+
+
+     // setter (selectedRegType) for gagestats
+     public setSelectedRegTypesGageSats(rt: any) {
+        this._selectedRegressionTypesGageStats.next(rt);
+    }
+    // getter (selectedRegType) for gagestats
+    public get selectedRegTypeGageStats(): any {
+        return this._selectedRegressionTypesGageStats.asObservable();
+    }
+
+
 
     public get regressionTypes(): Observable<Array<Regressiontype>> {
         return this._regressionTypeSubject.asObservable();
@@ -640,17 +717,6 @@ export class NSSService {
         return this._http
         .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
         .map(res => <Array<Unittype>>res);
-    }
-
-    // get variable types
-    public getVariableTypes(params?: string) {
-        let url = this.configSettings.variablesURL
-        if (params) {
-            url += params; 
-        }
-        return this._http
-            .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
-            .map(res => <Array<Variabletype>>res);
     }
 
     // get stations by text search, station type and other param

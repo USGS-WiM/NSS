@@ -82,6 +82,7 @@ export class GagestatsComponent implements OnInit {
           this.totalGages = Number(numbers[2])
       }
     });
+
   }   
 
   showAddStationModal(): void{

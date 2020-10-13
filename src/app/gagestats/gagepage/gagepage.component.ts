@@ -40,8 +40,17 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public variables;
   public regressionTypes;
   public statisticGroups;
-  agencies: Agency[];
-  stationTypes: Stationtype[];
+  public agencies: Agency[];
+  public stationTypes: Stationtype[];
+  public selectedRegion;
+  public selectedKeyword;
+  public selectedStatGroup;
+  public selectedRegType;
+  public selectedVarType; 
+  public selectedAgency;
+  public selectedStationType;
+  public perPage;
+  public pageNumber;
 
   constructor(
     private _nssService: NSSService, 
@@ -93,6 +102,34 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.stationTypes = st;
     });
 
+    //subscirbe to selected parameters
+    this._nssService.selectedStationType.subscribe((stationType: Stationtype) => { 
+      this.selectedStationType = stationType;
+    });
+    this._nssService.selectedAgency.subscribe((agency: Agency) => { 
+      this.selectedAgency = agency;
+    });
+    this._nssService.selectedRegionGageStats.subscribe(region => {
+      this.selectedRegion = region;
+    });
+    this._nssService.selectedKeyword.subscribe(keyword => {
+      this.selectedKeyword = keyword;
+    });
+    this._nssService.selectedStatGrpGageStats.subscribe(statGroup => {
+      this.selectedStatGroup = statGroup;
+    });
+    this._nssService.selectedRegTypeGageStats.subscribe(regType => {
+      this.selectedRegType = regType;
+    });
+    this._nssService.selectedVariableType.subscribe(varType => {
+      this.selectedVarType = varType;
+    });
+    this._nssService.selectedPageNumber.subscribe((page: string) => { 
+      this.pageNumber = page;
+    });
+    this._nssService.selectedPerPage.subscribe((perPage: number) => { 
+      this.perPage = perPage;
+    });
   }  // end OnInit
   
   public getCitations(){
@@ -123,7 +160,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           if (result.headers) { 
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
-            // refresh gagestats component
+            this._nssService.searchStations(this.selectedKeyword, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegType, this.selectedVarType, this.selectedStatGroup);
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -133,7 +170,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   public saveGageInfo(gage){
-    console.log(gage)
     const newItem = JSON.parse(JSON.stringify(gage)); 
     ['agency', 'stationType'].forEach(e => delete newItem[e]);  
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.stationsURL).subscribe(
@@ -141,7 +177,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.editGageInfo = false;
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
-          //refresh gagestats component
+          this._nssService.searchStations(this.selectedKeyword, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegType, this.selectedVarType, this.selectedStatGroup);
         }
       )
   }

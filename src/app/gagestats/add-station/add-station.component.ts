@@ -16,7 +16,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 @Component({
   selector: 'addStationModal',
   templateUrl: './add-station.component.html',
-  styleUrls: ['./add-station.component.css']
+  styleUrls: ['./add-station.component.scss']
 })
 export class AddStationModal implements OnInit {
   @ViewChild('addStation', {static: true}) public addStationModal;

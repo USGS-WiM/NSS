@@ -10,7 +10,7 @@
             <form [formGroup]="addStationForm" >
                 <div class="form-group required" >
                     <label class="req" for="code">Code:</label><br/>
-                    <label class="example-text">Example: "1111"</label>
+                    <label class="example-text">Example: "01234567"</label>
                     <input class="form-control code" type="text" formControlName="code">
                     <div class="input-invalid-warning" *ngIf="!addStationForm.get('code').valid && addStationForm.get('code').touched">Station Code
                         is required</div>
@@ -61,7 +61,7 @@
                 <!-- latitude -->
                 <div class="form-group required width-40">
                     <label class="req" for="latitude">Latitude:</label>
-                    <i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="format DD.DDD " triggers="click"></i>
+                    <i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="format DD.DDD (between -90 and 90)" triggers="click"></i>
                     <input class="form-control"  type="number" formControlName="latitude" >
                     <!--out of range errors-->
                     <div class="input-invalid-warning" *ngIf="addStationForm.get('latitude').errors?.min">Latitude must be greater than -90.00</div>

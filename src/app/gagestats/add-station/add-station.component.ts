@@ -87,29 +87,13 @@ export class AddStationModal implements OnInit {
 
   public submitStation() {
     const location = {type: 'Point', coordinates: [ this.addStationForm.get('latitude').value, this.addStationForm.get('longitude').value]}
-    
+    //modify form values to fit endpoint format
     let station = JSON.parse(JSON.stringify(this.addStationForm.value));
     delete station.latitude;
     delete station.longitude;
-    station = {...station, 'location': location}
-     /*
-      STATION OBJECT EXAMPLE Format
-      {
-        "code":"11111111",
-        "agencyID": 1,
-        "name":"example station 1 at example location, ex. river",
-        "stationTypeID":"1",
-        "location": {
-            "type": "Point",
-            "coordinates": [
-                "0": -99.999,
-                "1": 44.444
-            ]
-        }
-    }*/
+    station = {...station, 'location': location};
 
-    //console.log('station: ', station);
-    this._settingsService.postEntityGageStats(station, 'stations')
+    this._settingsService.postEntityGageStats(station, this.configSettings.stationsURL)
       .subscribe((response:any) =>{
         if(!response.headers){
           this._toasterService.pop('info', 'Info', 'Station Added');

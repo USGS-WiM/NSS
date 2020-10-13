@@ -104,34 +104,28 @@ export class GsSidebarComponent implements OnInit {
 
   }  // end OnInit()
 
+  //Set selected parameters
   public onStationTypeSelect(s){
     this._nssService.setSelectedStationType(s);
   }
-
   public onAgencySelect(a) {
     this._nssService.setSelectedAgency(a);
   }
-
   public onRegionSelect(r) {
     this._nssService.setSelectedRegionGageSats(r);
   }
-
   public onKeywordSelect(kw) {
     this._nssService.setSelectedKeyword(kw);
   }
-
   public onStatGrpSelect(sg){
     this._nssService.setSelectedStatGrpGageSats(sg);
   }
-
   public onRegTypeSelect(rt){
     this._nssService.setSelectedRegTypesGageSats(rt)
   }
-
   public onVarTypeSelect(vt){
     this._nssService.setSelectedVariableType(vt)
   }
-
 
   // search stations
   public onSearch() {

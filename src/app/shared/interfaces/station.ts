@@ -8,8 +8,8 @@ export interface Station {
     id: number;
     location: Location;
     name: string;
-    stationTypeID: string;
     isRegulated: boolean;
+    stationTypeID: string;
     characteristics: Array<GageCharacteristic>;
     statistics: Array<GageStatistic>;
     citations: Array<Citation>;

@@ -13,6 +13,7 @@ import { ConfigService } from 'app/config.service';
 import { Config } from 'protractor';
 import { ToasterConfig } from 'angular2-toaster';
 
+
 @Component({
   selector: 'app-gagestats',
   templateUrl: './gagestats.component.html',
@@ -84,6 +85,8 @@ export class GagestatsComponent implements OnInit {
   }   
 
   showAddStationModal(): void{
+    //TODO Accepted both changes to check to make sure this is correct
+    this._nssService.setAddStationModal(true);
     this.gagestatsService.addStation();
   }
 

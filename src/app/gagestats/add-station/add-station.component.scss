@@ -1,0 +1,34 @@
+.modal-body {
+	p {
+		padding-top: 15px;
+	}
+}
+.modal-title {
+	color: #6f7697;
+	padding-top: 0;
+	font-size: 21px !important;
+}
+.modal-footer {
+	align-items: center;
+	text-align: center;
+	display: block;
+}
+.example-text {
+	color: #6f7697;
+	padding: 0 !important;
+	font-size: 11px !important;
+}
+button {
+	margin: 0px 5px 5px 0px;
+}
+.form-group.col-md-6 {
+	padding-left: 0;
+}
+.ion-information-circled {
+	margin: 0px 5px;
+	cursor: pointer;
+}
+.ion-plus-circled {
+	margin: 0px 5px;
+	cursor: pointer;
+}

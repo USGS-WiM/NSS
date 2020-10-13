@@ -56,17 +56,17 @@
 								<span *ngIf="editGageInfo"><input type="text" [(ngModel)]="gage.name"></span>
 							</td>
 						</tr>
-										<tr>
-											<td>Station Type</td>
-											<td>
-												<span *ngIf="!editGageInfo">{{gage.stationType.name}}</span>
-												<span *ngIf="editGageInfo">
-													<ng-select name="stationName" [(ngModel)]="gage.stationTypeID" [clearable]="false">
-														<ng-option *ngFor="let s of stationTypes" [value]="s.id">{{s.name}}</ng-option>
-													</ng-select>
-												</span>
-											</td>
-										</tr>
+						<tr>
+							<td>Station Type</td>
+							<td>
+								<span *ngIf="!editGageInfo">{{gage.stationType.name}}</span>
+								<span *ngIf="editGageInfo">
+									<ng-select name="stationName" [(ngModel)]="gage.stationTypeID" [clearable]="false">
+										<ng-option *ngFor="let s of stationTypes" [value]="s.id">{{s.name}}</ng-option>
+									</ng-select>
+								</span>
+							</td>
+						</tr>
 						<tr>
 							<td>Latitude</td>
 							<td>
@@ -89,16 +89,16 @@
 							</td>
 						</tr>
 						<tr>
-												<td>Agency</td>
-												<td>
-													<span *ngIf="!editGageInfo">{{gage.agency.name}}</span>
-													<span *ngIf="editGageInfo">
-														<ng-select name="agencyName" [(ngModel)]="gage.agencyID" [clearable]="false">
-															<ng-option *ngFor="let a of agencies" [value]="a.id">{{a.name}}</ng-option>
-														</ng-select>
-													</span>
-												</td>
-											</tr>
+						<td>Agency</td>
+						<td>
+							<span *ngIf="!editGageInfo">{{gage.agency.name}}</span>
+							<span *ngIf="editGageInfo">
+								<ng-select name="agencyName" [(ngModel)]="gage.agencyID" [clearable]="false">
+									<ng-option *ngFor="let a of agencies" [value]="a.id">{{a.name}}</ng-option>
+								</ng-select>
+							</span>
+						</td>
+					</tr>
 					</tbody>
 				</table>
 			</div>

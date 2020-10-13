@@ -253,14 +253,14 @@ export class NSSService {
             });
     }
 
+    // set and get selectedRegion for Gagestats
     selectedRegionGageStats = this._selectedRegionGageStats.asObservable();
-    // setter (selectedRegion) for gagestats
-     public setSelectedRegionGageSats(r: Region) {
+    public setSelectedRegionGageSats(r: Region) {
         this._selectedRegionGageStats.next(r);
     }
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
-    // -+-+-+-+-+-+ pages section-+-+-+-+-+-+
+    // -+-+-+-+-+-+ pages section -+-+-+-+-+-+
     private _pagesSubject: BehaviorSubject<string> = new BehaviorSubject<any>('');
     private _selectedPageNumber = new BehaviorSubject<any>(' ');
     private _selectedPerPage = new BehaviorSubject<any>(' ');
@@ -283,7 +283,7 @@ export class NSSService {
 
     // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
     private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use
-    private _selectedStationType: BehaviorSubject<Stationtype> = new BehaviorSubject<any>('');
+    private _selectedStationType: BehaviorSubject<Stationtype> = new BehaviorSubject<any>(''); // selectedStationsTypes for Gagestats
 
     public get stationTypes(): Observable<Array<Stationtype>> {
         // getter all (station type)
@@ -301,6 +301,7 @@ export class NSSService {
             });
     }
 
+    // set and get selectedStationTypes for Gagestats
     selectedStationType = this._selectedStationType.asObservable();
     public setSelectedStationType(stationType: Stationtype){
         this._selectedStationType.next(stationType);
@@ -308,7 +309,7 @@ export class NSSService {
     // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ variable section -+-+-+-+-+-+-+
-    private _selectedVariableType: BehaviorSubject<Variabletype> = new BehaviorSubject<any>('');
+    private _selectedVariableType: BehaviorSubject<Variabletype> = new BehaviorSubject<any>(''); // selectedVariableTypes for Gagestats 
 
     // get variable types
     public getVariableTypes(params?: string) {
@@ -321,6 +322,7 @@ export class NSSService {
             .map(res => <Array<Variabletype>>res);
     }
 
+    // set and get selectedVariable for Gagestats
     selectedVariableType = this._selectedVariableType.asObservable();
     public setSelectedVariableType(variableType: Variabletype){
         this._selectedVariableType.next(variableType);
@@ -329,14 +331,14 @@ export class NSSService {
 
     // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
     private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
-    private _selectedAgency: BehaviorSubject<Agency> = new BehaviorSubject<any>('');
+    private _selectedAgency: BehaviorSubject<Agency> = new BehaviorSubject<any>('');  // selectedAgencies for Gagestats 
 
     public get agencies(): Observable<Array<Agency>> {
         // getter all (agencies)
         return this._agencySubject.asObservable();
     }
 
-    // get all station types
+    // get all agencies types
     public getAgencies(): void {
         this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL, { headers: this.jsonHeader })
@@ -347,20 +349,21 @@ export class NSSService {
             });
     }
 
+    // set and get selectedAgencies for Gagestats
     selectedAgency = this._selectedAgency.asObservable();
     public setSelectedAgency(agency: Agency){
         this._selectedAgency.next(agency);
     }
     // -+-+-+-+-+-+ end agency section -+-+-+-+-+-+-+
 
-    // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
+    // -+-+-+-+-+-+ Keyword section -+-+-+-+-+-+-+
     private _selectedKeyword = new BehaviorSubject<any>(' ');
 
     selectedKeyword = this._selectedKeyword.asObservable();
     public setSelectedKeyword(keyword: any){
         this._selectedKeyword.next(keyword);
     }
-    // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
+    // -+-+-+-+-+-+ end Keyword section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ regressionregion -+-+-+-+-+-+-+
     private _regressionRegionSubject: Subject<Array<Regressionregion>> = new Subject<Array<Regressionregion>>();
@@ -460,7 +463,7 @@ export class NSSService {
 
     // -+-+-+-+-+-+ statisticgroups section -+-+-+-+-+-+-+-+-+-+
     private _statisticGroupSubject: Subject<Array<Statisticgroup>> = new Subject<Array<Statisticgroup>>();
-    private _selectedStatGrpGageStats: Subject<Statisticgroup> = new BehaviorSubject<any>(''); 
+    private _selectedStatGrpGageStats: Subject<Statisticgroup> = new BehaviorSubject<any>('');  // selectedStatGroups for Gagestats 
 
     public get statisticGroups(): Observable<Array<Statisticgroup>> {
         return this._statisticGroupSubject.asObservable();
@@ -557,8 +560,8 @@ export class NSSService {
         this._statisticGroupSubject.next(sg);
     }
 
+    // set and get selectedStatGroups for Gagestats
     selectedStatGrpGageStats = this._selectedStatGrpGageStats.asObservable();
-    // setter (selectedStatGrp) for gagestats
     public setSelectedStatGrpGageSats(sg: Statisticgroup) {
         this._selectedStatGrpGageStats.next(sg);
     }
@@ -567,7 +570,7 @@ export class NSSService {
     // -+-+-+-+-+-+ regressionTypes -+-+-+-+-+-+-+-+-+-+-+-+
     private _regressionTypeSubject: Subject<Array<Regressiontype>> = new Subject<Array<Regressiontype>>();
     private _selectedRegressionTypes: Array<Regressiontype>;
-    private _selectedRegressionTypesGageStats: Subject<Regressiontype> = new BehaviorSubject<any>(''); 
+    private _selectedRegressionTypesGageStats: Subject<Regressiontype> = new BehaviorSubject<any>(''); // selectedRegTypes for Gagestats 
 
     public get regressionTypes(): Observable<Array<Regressiontype>> {
         return this._regressionTypeSubject.asObservable();
@@ -660,8 +663,8 @@ export class NSSService {
         this._regressionTypeSubject.next(rt);
     }
 
+    // set and get selectedRegTypes for Gagestats
     selectedRegTypeGageStats = this._selectedRegressionTypesGageStats.asObservable();
-    // setter (selectedRegType) for gagestats
     public setSelectedRegTypesGageSats(rt: Regressiontype) {
         this._selectedRegressionTypesGageStats.next(rt);
     }

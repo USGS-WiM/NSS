@@ -102,6 +102,7 @@ export class MainviewComponent implements OnInit {
     public units;
     public errors;
     public status;
+    public methods;
     public regTypes;
     public tempData;
     public itemBeingEdited;
@@ -617,6 +618,10 @@ export class MainviewComponent implements OnInit {
         // get all status types (use for options in edit/add scenario selects)
         this._settingsService.getEntities(this.configSettings.statusURL).subscribe(res => {
             this.status = res;
+        });
+        // get all method types
+        this._settingsService.getEntities(this.configSettings.methodURL).subscribe(res => {
+            this.methods = res;
         });
     } // end ngOnInit()
 
@@ -1429,6 +1434,18 @@ export class MainviewComponent implements OnInit {
             }
         });
         return statusName;
+    }
+
+    public getMethodName(mID) {
+        let methodName;
+        this.methods.forEach(z => {
+            if (mID === z.id) {
+                methodName = z.name;
+            }
+        });
+        if (methodName) {
+            return (", Method: "+ methodName);
+        }
     }
 
     public getRegRegions() {

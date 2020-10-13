@@ -129,5 +129,8 @@ select {
   padding: 0px !important;
   }
 
-
-
+  .tooltip {
+	top: unset !important;
+	left: unset !important;
+	transform: unset !important;
+}

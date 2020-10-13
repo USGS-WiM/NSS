@@ -1168,6 +1168,7 @@ export class MainviewComponent implements OnInit {
     }
     // want to edit the selected/computed scenario. remove Result
     public editScenario() {
+        //make sure that if there were any regression regions deleted, that they are added back in
         if (this.originalRegRegion[0] != null) {
             this.scenarios[0].regressionRegions = this.originalRegRegion;
         }

@@ -257,6 +257,7 @@ export class SidebarComponent implements OnInit {
 
     // submit / Compute button click
     public CalculateScenario(): void {
+        //store original regression regions
         this.originalRegRegion = this.scenarios[0].regressionRegions;
         this._nssService.showTempRegRegion(this.originalRegRegion);
         this._loaderService.showFullPageLoad();

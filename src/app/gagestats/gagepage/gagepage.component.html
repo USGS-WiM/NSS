@@ -26,13 +26,13 @@
 		<div>
 			<div class="table-title">Gage Information
 				<button *ngIf="loggedInRole && editGage && !editGageInfo" type="button" class="button small blue"  (click)="editGageInformation(gage)">Edit Gage Information</button>
-				<button *ngIf="loggedInRole && editGageInfo" type="button" title="Save Gage Information" class="icon-button" (click)="saveGageInfo(gage)">
-					<i class="far fa-floppy-o"></i>
-				</button>
-				<button *ngIf="loggedInRole && editGageInfo" type="button" title="Cancel Gage Information Edits" class="icon-button" (click)="cancelEditGageInfo()">
-					<i class="far fa-history"></i>
-				</button>
 			</div>
+			<button *ngIf="loggedInRole && editGageInfo" type="button" title="Save Gage Information" class="icon-button" (click)="saveGageInfo(gage)">
+				<i class="far fa-floppy-o"></i>
+			</button>
+			<button *ngIf="loggedInRole && editGageInfo" type="button" title="Cancel Gage Information Edits" class="icon-button" (click)="cancelEditGageInfo()">
+				<i class="far fa-history"></i>
+			</button>
 			<div>
 				<table style="border:solid 1px gray" class="custom-table"> 
 					<thead>

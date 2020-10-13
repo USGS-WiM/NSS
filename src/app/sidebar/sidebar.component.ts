@@ -257,12 +257,6 @@ export class SidebarComponent implements OnInit {
 
     // submit / Compute button click
     public CalculateScenario(): void {
-        /*
-        if (this.originalRegRegion[0] != null) {
-            this.scenarios[0].regressionRegions = this.originalRegRegion;
-        }
-        */
-        console.log("this.scenarios", this.scenarios);
         this.originalRegRegion = this.scenarios[0].regressionRegions;
         this._nssService.showTempRegRegion(this.originalRegRegion);
         this._loaderService.showFullPageLoad();

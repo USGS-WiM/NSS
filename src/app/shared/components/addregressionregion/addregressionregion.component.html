@@ -32,9 +32,9 @@
               </div>
           </div>
 
-          <!-- Method Property* -->
+          <!-- Method* -->
           <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('methodID').valid && newRegRegForm.get('methodID').dirty }">
-            <label class="req" for="methodID">Method Property:</label>
+            <label class="req" for="methodID">Method:</label>
             <select class="form-control" formControlName="methodID">
                 <option *ngFor="let m of methods" [value]="m.id">{{ m.name }}</option>
             </select>

@@ -125,7 +125,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this._nssService.regressionRegions.subscribe(res => {
              if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
              this.regressionRegions = res;
-             console.log(this.regressionRegions)
          });
         this._nssService.getVersion.subscribe((v: string) => {
             this.appVersion = v;
@@ -162,7 +161,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this._settingsService.getEntities(this.configSettings.errorsURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.errors = res;
-            console.log(this.errors)
         });
     }
 

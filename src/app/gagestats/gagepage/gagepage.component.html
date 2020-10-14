@@ -32,7 +32,7 @@
 					<tbody>
 						<tr>
 							<td>USGS Station Number</td>
-							<td><a href="https://waterdata.usgs.gov/monitoring-location/{{gage.code}}">{{gage.code}}&nbsp;&nbsp;</a><a href="https://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.code}}">(Legacy NWIS link)</a></td> 
+							<td><a href="https://waterdata.usgs.gov/monitoring-location/{{gage.code}}" target="_blank">{{gage.code}}&nbsp;&nbsp;</a><a href="https://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.code}}" target="_blank">(Legacy NWIS link)</a></td> 
 						</tr>
 						<tr>
 							<td>Station Name</td>
@@ -352,7 +352,7 @@
 					<tbody >
 						<tr *ngFor="let c of gage.citations">
 							<td>{{c.id}}</td>
-							<td><a href="{{c.url}}">{{c.author}}&nbsp;{{c.title}}</a></td>
+							<td><a href="{{c.citationURL}}" target="_blank">{{c.author}}&nbsp;{{c.title}}</a></td>
 						</tr>
 					</tbody>
 				</table>

@@ -45,7 +45,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public statGroupIds = [];
   public selectedStatGroup = [];
   public filteredGage: Station;
-  public preferred: boolean = true;
+  public preferred: boolean = false;
 
   constructor(
     private _nssService: NSSService, 
@@ -329,18 +329,35 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public filterByStats() {
     if (this.selectedStatGroup.length == 0) {
+      if (!this.preferred) {
       this.filteredGage = JSON.parse(JSON.stringify(this.gage));
-    } else{
-      this.filteredGage = JSON.parse(JSON.stringify(this.gage));
-      const x = this.selectedStatGroup;;
-      const y = this.filteredGage.statistics;
-      this.filteredGage.statistics = y.filter((s) => x.includes(s.statisticGroupTypeID));
+      } else {
+        this.filteredGage = JSON.parse(JSON.stringify(this.gage));
+        const y = this.filteredGage.statistics;
+        this.filteredGage.statistics = y.filter((s) => s.isPreferred);
+      }
+    } 
+    if (this.selectedStatGroup.length !== 0) {
+      if (!this.preferred) {
+        this.filteredGage = JSON.parse(JSON.stringify(this.gage));
+        const x = this.selectedStatGroup;
+        const y = this.filteredGage.statistics;
+        this.filteredGage.statistics = y.filter((s) => x.includes(s.statisticGroupTypeID));
+      } else {
+        this.filteredGage = JSON.parse(JSON.stringify(this.gage));
+        const x = this.selectedStatGroup;
+        const y = this.filteredGage.statistics;
+        this.filteredGage.statistics = y.filter((s) => x.includes(s.statisticGroupTypeID));
+        const z = this.filteredGage.statistics;
+        this.filteredGage.statistics = z.filter((s) => s.isPreferred);
+      }
     } 
   }
 
   public setPreferred() {
     if (!this.preferred) {
       this.preferred = true
+
     } else {
       this.preferred = false
     }

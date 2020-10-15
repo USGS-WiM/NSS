@@ -211,6 +211,7 @@ export class MainviewComponent implements OnInit {
         });
         // subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
+            if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
             this.scenarios = s;
             this.getCitations(); // get full list of citations
             this.getRegRegions(); // get list of regression regions for the region
@@ -1265,6 +1266,7 @@ export class MainviewComponent implements OnInit {
             equ.style.visibility = 'hidden';
             MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']);
         }
+        this.itemBeingEdited = "";
     }
 
     /////////////////////// Delete Scenarios Section ///////////////////////////

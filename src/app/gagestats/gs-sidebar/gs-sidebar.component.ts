@@ -19,28 +19,12 @@ import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
 })
 export class GsSidebarComponent implements OnInit {
   private configSettings: Config;
-  // station type
   public stationTypes: Array<Stationtype>;
-  public selectedStationType: Array<Stationtype> = [];
-  // regression type
   public regressionTypes: Array<Regressiontype>;
-  public selectedRegressionType: Array<Regressiontype> = [];
-  // statistic groups
   public statisticGroups: Array<Statisticgroup>;
-  public selectedStatisticGroup: Array<Statisticgroup> = [];
-  // variable type
   public variableTypes: Array<Variabletype>;
-  public selectedVariableType: Array<Variabletype> = [];
-  // regions
   public regions: Array<Region>;
-  public selectedRegion: Array<Region> = [];
-  // agency
   public agencies: Array<Agency>;
-  public selectedAgency: Array<Agency> = [];
-  // search and page parameters
-  public searchText: string = '';
-  public pageNumber = '1';
-  public perPage = 50;
   // Dropdown menu default text
   public myMSTexts: IMultiSelectTexts;
   public myRTSettings: IMultiSelectSettings;

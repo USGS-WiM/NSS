@@ -43,16 +43,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public statisticGroups;
   public agencies: Agency[];
   public stationTypes: Stationtype[];
-  public selectedRegion;
-  public selectedKeyword;
-  public selectedStatGroup;
-  public selectedRegType;
-  public selectedVarType; 
-  public selectedAgency;
-  public selectedStationType;
-  public perPage;
-  public pageNumber;
-  selectedParams: GageStatsSearchFilter;
+  public selectedParams: GageStatsSearchFilter;
 
   constructor(
     private _nssService: NSSService, 

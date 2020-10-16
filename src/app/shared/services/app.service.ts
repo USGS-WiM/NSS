@@ -28,6 +28,7 @@ import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from '../interfaces/station';
 import { GagePage } from '../interfaces/gagepage';
+import { GageStatsSearchFilter } from '../interfaces/gagestatsfilter';
 
 @Injectable()
 export class NSSService {
@@ -258,9 +259,20 @@ export class NSSService {
                 this._regionSubject.next(r);
             });
     }
+
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
-    // -+-+-+-+-+-+ pages section-+-+-+-+-+-+
+    // -+-+-+-+-+-+ gage stats filter section -+-+-+-+-+-+-+
+    private _selectedFilterParams: BehaviorSubject<GageStatsSearchFilter> = new BehaviorSubject<any>(''); // selectedregion for Gagestats
+
+     // set and get selectedRegion for Gagestats
+     selectedFilterParams = this._selectedFilterParams.asObservable();
+     public setSelectedFilterParams(params: GageStatsSearchFilter) {
+         this._selectedFilterParams.next(params);
+     }
+    // -+-+-+-+-+-+ end gage stats filter section -+-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ pages section -+-+-+-+-+-+
     private _pagesSubject: BehaviorSubject<string> = new BehaviorSubject<any>('');
     private _selectedPageNumber = new BehaviorSubject<any>(' ');
     private _selectedPerPage = new BehaviorSubject<any>(' ');
@@ -299,6 +311,7 @@ export class NSSService {
                 this._stationTypeSubject.next(r);
             });
     }
+
     // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
@@ -309,7 +322,7 @@ export class NSSService {
         return this._agencySubject.asObservable();
     }
 
-    // get all station types
+    // get all agencies types
     public getAgencies(): void {
         this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL, { headers: this.jsonHeader })
@@ -319,6 +332,7 @@ export class NSSService {
                 this._agencySubject.next(r);
             });
     }
+
     // -+-+-+-+-+-+ end agency section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ regressionregion -+-+-+-+-+-+-+
@@ -419,6 +433,7 @@ export class NSSService {
 
     // -+-+-+-+-+-+ statisticgroups section -+-+-+-+-+-+-+-+-+-+
     private _statisticGroupSubject: Subject<Array<Statisticgroup>> = new Subject<Array<Statisticgroup>>();
+
     public get statisticGroups(): Observable<Array<Statisticgroup>> {
         return this._statisticGroupSubject.asObservable();
     }
@@ -513,6 +528,7 @@ export class NSSService {
         }
         this._statisticGroupSubject.next(sg);
     }
+
     // -+-+-+-+-+-+ end statisticgroups section -+-+-+-+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ regressionTypes -+-+-+-+-+-+-+-+-+-+-+-+
@@ -609,6 +625,7 @@ export class NSSService {
         }
         this._regressionTypeSubject.next(rt);
     }
+
     // -+-+-+-+-+-+ end regressionTypes section -+-+-+-+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ Scenarios section -+-+-+-+-+-+-+-+-+-+
@@ -651,18 +668,18 @@ export class NSSService {
 
     // get variable types
     public getVariableTypes(params?: string) {
-        let url = this.configSettings.variablesURL
-        if (params) {
-            url += params; 
-        }
-        return this._http
-            .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
-            .map(res => <Array<Variabletype>>res);
+    let url = this.configSettings.variablesURL
+    if (params) {
+        url += params; 
+    }
+    return this._http
+        .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
+        .map(res => <Array<Variabletype>>res);
     }
 
     // get stations by text search, station type and other param
-    public searchStations(searchText: string, stationTypeIDs: Array<Stationtype>, agencyIDs: Array<Agency>, pageNumber: string, perPage: number, regionIDs: Array<Region>, regressionTypeIDs: Array<Regressiontype>, variableTypeIDs: Array<Variabletype>, statisticGroupIDs: Array<Statisticgroup>) {
-        const url = "?filterText=" + searchText + "&stationTypes=" + stationTypeIDs.toString() + "&agencies=" + agencyIDs.toString() + "&page=" + pageNumber + "&pageCount="+ perPage + "&regions="+ regionIDs + "&regressionTypes="+ regressionTypeIDs + "&variableTypes="+ variableTypeIDs + "&statisticGroups="+ statisticGroupIDs;
+    public searchStations(filter: GageStatsSearchFilter) {
+        const url = "?filterText=" + filter.keyword + "&stationTypes=" + filter.stationType.toString() + "&agencies=" + filter.agency.toString() + "&page=" + filter.page.toString() + "&pageCount="+ filter.pageCount.toString() + "&regions="+ filter.region + "&regressionTypes="+ filter.regressionType + "&variableTypes="+ filter.variableType + "&statisticGroups="+ filter.statisticGroup;
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
             .subscribe(res => {

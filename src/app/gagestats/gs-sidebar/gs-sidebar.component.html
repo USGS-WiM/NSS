@@ -2,56 +2,49 @@
 
     <div class="sidebar-item">
         <label>Search by keyword:</label>
-            <input type="text" [(ngModel)]="searchText"  placeholder="Search">
+            <input type="text" [(ngModel)]="searchText" (ngModelChange)="params.keyword=$event; onSearch()" placeholder="Search">
     </div>
 
     <div class="sidebar-item">
         <label>Limit by Region:</label>
         <ss-multiselect-dropdown [options]="regions" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="selectedRegion" name="regions">
+        [(ngModel)]="selectedRegion" (ngModelChange)="params.region=$event; onSearch()" name="regions">
         </ss-multiselect-dropdown>
     </div>
 
     <div class="sidebar-item">
         <label>Limit by Station Type:</label>
         <ss-multiselect-dropdown [options]="stationTypes" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="selectedStationType" name="stationType">
+        [(ngModel)]="selectedStationType" (ngModelChange)="params.stationType=$event; onSearch()" name="stationType">
         </ss-multiselect-dropdown>
     </div>
     
     <div class="sidebar-item">
         <label>Limit by Agency:</label>
         <ss-multiselect-dropdown [options]="agencies" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="selectedAgency" name="agency">
+        [(ngModel)]="selectedAgency" (ngModelChange)="params.agency=$event; onSearch()" name="agency">
         </ss-multiselect-dropdown>
     </div>
 
     <div class="sidebar-item">
         <label>Limit by Statistic Groups:</label>
         <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="selectedStatisticGroup" name="statisticGroups">
+        [(ngModel)]="selectedStatisticGroup" (ngModelChange)="params.statisticGroup=$event; onSearch()" name="statisticGroups">
         </ss-multiselect-dropdown>
     </div>
 
     <div class="sidebar-item">
         <label>Limit by Regression Types:</label>
         <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="selectedRegressionType" name="regressionTypes">
+        [(ngModel)]="selectedRegressionType" (ngModelChange)="params.regressionType=$event; onSearch()" name="regressionTypes">
         </ss-multiselect-dropdown>
     </div>
 
     <div class="sidebar-item">
         <label>Limit by Variable Types:</label>
         <ss-multiselect-dropdown [options]="variableTypes" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="selectedVariableType" name="variableTypes">
+        [(ngModel)]="selectedVariableType" (ngModelChange)="params.variableType=$event; onSearch()" name="variableTypes">
         </ss-multiselect-dropdown>
-    </div>
-
-    <div class="sidebar-item">
-        <label>Search for Gage Stations:</label>
-        <button type="submit" class="button full" (click)="onSearch()">
-            <span>Search</span>
-        </button>
     </div>
 
     	<!-- Spacer - fills space to align footer at bottom -->

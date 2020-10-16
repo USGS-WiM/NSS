@@ -2,16 +2,20 @@
 	<div>
 		<div class="modal-header">
 			<div class="title">GagePage</div>  
-			<!-- <button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button> -->                
+			<button class="icon-button" (click)="d('closed'); editGage=false; cancelEditGageInfo()"><i class="far fa-times"></i></button>                    
 		</div>
 	</div>
 
 	<div class="modal-body modal-body-fixed side-padding">
 		<!--Buttons-->
 		<div class="xs-f-start mbottom-sm">
-			<button *ngIf="loggedInRole && !editGage" type="button" class="button small blue mright-sm" (click)="editGageStats()">
+			<button *ngIf="loggedInRole && !editGage" type="button" class="button small blue mright-sm" (click)="editGage = true">
 				<i class="far fa-pencil-alt"></i>
 				<span>Edit Gage</span>
+			</button>
+			<button *ngIf="loggedInRole && !editGage" type="button" class="button small red mright-sm" (click)="deleteGageStats(gage.id)">
+				<i class="far fa-trash"></i>
+				<span>Delete Gage</span>
 			</button>
 			<button *ngIf="loggedInRole && editGage" type="button" class="button small green mright-sm" (click)="endEditGageStats()">
 				<i class="far fa-check"></i>
@@ -20,7 +24,15 @@
 		</div>
 		<!--Gage Information-->
 		<div>
-			<div class="table-title">Gage Information</div>
+			<div class="table-title">Gage Information
+				<button *ngIf="loggedInRole && editGage && !editGageInfo" type="button" class="button small blue"  (click)="editGageInformation(gage)">Edit Gage Information</button>
+			</div>
+			<button *ngIf="loggedInRole && editGageInfo" type="button" title="Save Gage Information" class="icon-button" (click)="saveGageInfo(gage)">
+				<i class="far fa-floppy-o"></i>
+			</button>
+			<button *ngIf="loggedInRole && editGageInfo" type="button" title="Cancel Gage Information Edits" class="icon-button" (click)="cancelEditGageInfo()">
+				<i class="far fa-history"></i>
+			</button>
 			<div>
 				<table style="border:solid 1px gray" class="custom-table"> 
 					<thead>
@@ -32,32 +44,61 @@
 					<tbody>
 						<tr>
 							<td>USGS Station Number</td>
-							<td><a href="https://waterdata.usgs.gov/monitoring-location/{{gage.code}}">{{gage.code}}&nbsp;&nbsp;</a><a href="https://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.code}}">(Legacy NWIS link)</a></td> 
+							<td>
+								<span *ngIf="!editGageInfo"><a href="https://waterdata.usgs.gov/monitoring-location/{{gage.code}}">{{gage.code}}&nbsp;&nbsp;</a><a href="https://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.code}}">(Legacy NWIS link)</a></span>
+								<span *ngIf="editGageInfo"><input type="text" [(ngModel)]="gage.code"></span>
+							</td>
 						</tr>
 						<tr>
 							<td>Station Name</td>
-							<td>{{gage.name}}</td>
+							<td>
+								<span *ngIf="!editGageInfo">{{gage.name}}</span>
+								<span *ngIf="editGageInfo"><input type="text" [(ngModel)]="gage.name"></span>
+							</td>
 						</tr>
 						<tr>
 							<td>Station Type</td>
-							<td>{{gage.stationType.name}}</td>
+							<td>
+								<span *ngIf="!editGageInfo">{{gage.stationType.name}}</span>
+								<span *ngIf="editGageInfo">
+									<ng-select name="stationName" [(ngModel)]="gage.stationTypeID" [clearable]="false">
+										<ng-option *ngFor="let s of stationTypes" [value]="s.id">{{s.name}}</ng-option>
+									</ng-select>
+								</span>
+							</td>
 						</tr>
 						<tr>
 							<td>Latitude</td>
-							<td>{{gage.location.coordinates[1]}}</td>
+							<td>
+								<span *ngIf="!editGageInfo">{{gage.location.coordinates[1]}}</span>
+								<span *ngIf="editGageInfo"><input type="number"  [(ngModel)]="gage.location.coordinates[1]"></span>
+							</td>
 						</tr>
 						<tr>
 							<td>Longitude</td>
-							<td>{{gage.location.coordinates[0]}}</td>
+							<td>
+								<span *ngIf="!editGageInfo">{{gage.location.coordinates[0]}}</span>
+								<span *ngIf="editGageInfo"><input type="number" [(ngModel)]="gage.location.coordinates[0]"></span>
+							</td>
 						</tr>
 						<tr>
 							<td>Is regulated?</td>
-							<td>{{gage.isRegulated}}</td> 
+							<td>
+								<span *ngIf="!editGageInfo">{{gage.isRegulated}}</span>
+								<span *ngIf="editGageInfo"><input type="checkbox" [(ngModel)]="gage.isRegulated"/></span>
+							</td>
 						</tr>
 						<tr>
-							<td>Agency</td>
-							<td>{{gage.agency.name}}</td>
-						</tr>
+						<td>Agency</td>
+						<td>
+							<span *ngIf="!editGageInfo">{{gage.agency.name}}</span>
+							<span *ngIf="editGageInfo">
+								<ng-select name="agencyName" [(ngModel)]="gage.agencyID" [clearable]="false">
+									<ng-option *ngFor="let a of agencies" [value]="a.id">{{a.name}}</ng-option>
+								</ng-select>
+							</span>
+						</td>
+					</tr>
 					</tbody>
 				</table>
 			</div>
@@ -350,6 +391,6 @@
 
 	<!-- Footer / Buttons -->
 	<div class="modal-body-footer">
-		<button type="button" (click)="d('closed')" [disabled]="editGage" class="button black">Close</button>
+		<button type="button" (click)="d('closed'); editGage=false; cancelEditGageInfo()" [disabled]="editGage" class="button black">Close</button>
 	</div>
 </ng-template>

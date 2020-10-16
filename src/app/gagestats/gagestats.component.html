@@ -25,7 +25,8 @@
             <select style= "width: 80px" class="mleft-sm" [(ngModel)]="perPage" (change)="changePerPage(perPage)">
                 <option *ngFor="let i of itemPerPage">{{i}}</option>
             </select>
-            <label>&nbsp;per page</label>
+            <label>&nbsp;gages per page</label>
+            <label style="float: right">{{totalGages}} gage(s) returned</label>
 		</div>
 		
         <table style="border:solid 1px gray" class="custom-table sortable"> 

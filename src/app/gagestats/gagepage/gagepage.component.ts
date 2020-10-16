@@ -175,6 +175,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.stationsURL).subscribe(
         (res) => {
           this.editGageInfo = false;
+          this.code = res.body['code']; // update code in case user changed it
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
           this._nssService.searchStations(this.selectedKeyword, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegType, this.selectedVarType, this.selectedStatGroup);

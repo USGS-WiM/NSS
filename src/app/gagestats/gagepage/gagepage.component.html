@@ -71,14 +71,14 @@
 							<td>Latitude</td>
 							<td>
 								<span *ngIf="!editGageInfo">{{gage.location.coordinates[1]}}</span>
-								<span *ngIf="editGageInfo"><input type="text"  [(ngModel)]="gage.location.coordinates[1]"></span>
+								<span *ngIf="editGageInfo"><input type="number"  [(ngModel)]="gage.location.coordinates[1]"></span>
 							</td>
 						</tr>
 						<tr>
 							<td>Longitude</td>
 							<td>
 								<span *ngIf="!editGageInfo">{{gage.location.coordinates[0]}}</span>
-								<span *ngIf="editGageInfo"><input type="text" [(ngModel)]="gage.location.coordinates[0]"></span>
+								<span *ngIf="editGageInfo"><input type="number" [(ngModel)]="gage.location.coordinates[0]"></span>
 							</td>
 						</tr>
 						<tr>

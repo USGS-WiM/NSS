@@ -79,6 +79,13 @@ export class NSSService {
     public get showAboutModal(): any {
         return this._showHideAboutModal.asObservable();
     }
+    //+++++++ Used to reset regression regions when the editScenario button is clicked++++++++
+    //Stores user's original regression regions selection 
+    private tempRegRegion = new BehaviorSubject<any>([]);
+    currentTempRegRegion = this.tempRegRegion.asObservable();
+    showTempRegRegion(tempRR : any) {
+        this.tempRegRegion.next(tempRR);
+    }
     // -+-+-+-+-+-+-+-+-+ add scenario modal -+-+-+-+-+-+-+-+
     private _showHideAddScenarioModal: Subject<boolean> = new Subject<boolean>();
     public setAddScenarioModal(val: any) { 

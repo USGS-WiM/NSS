@@ -10,6 +10,7 @@ import { Config } from 'protractor';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
+import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
 
 @Component({
   selector: 'gs-sidebar',
@@ -43,6 +44,17 @@ export class GsSidebarComponent implements OnInit {
   // Dropdown menu default text
   public myMSTexts: IMultiSelectTexts;
   public myRTSettings: IMultiSelectSettings;
+  public params: GageStatsSearchFilter = {
+    keyword: "",
+    region: [],
+    stationType: [],
+    agency: [],
+    statisticGroup: [],
+    regressionType: [],
+    variableType: [],
+    page: 1,
+    pageCount: 50
+  };
 
   constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) { 
     this.configSettings = this._configService.getConfiguration();
@@ -50,12 +62,12 @@ export class GsSidebarComponent implements OnInit {
 
   ngOnInit() {
     this._nssService.selectedPageNumber.subscribe((page: string) => { 
-      this.pageNumber = page;
-      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
+      this.params.page = page;
+      this._nssService.searchStations(this.params);
     });
     this._nssService.selectedPerPage.subscribe((perPage: number) => { 
-      this.perPage = perPage;
-      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
+      this.params.pageCount = perPage;
+      this._nssService.searchStations(this.params);
     });
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
@@ -79,7 +91,7 @@ export class GsSidebarComponent implements OnInit {
     });
 
     // trigger initial stations search
-    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
+    this._nssService.searchStations(this.params);
 
     this.myRTSettings = {
       pullRight: false,
@@ -106,31 +118,38 @@ export class GsSidebarComponent implements OnInit {
 
   //Set selected parameters
   public onStationTypeSelect(s){
-    this._nssService.setSelectedStationType(s);
+    this.params.stationType = s; 
+    this._nssService.setSelectedFilterParams(this.params);
   }
   public onAgencySelect(a) {
-    this._nssService.setSelectedAgency(a);
+    this.params.agency = a; 
+    this._nssService.setSelectedFilterParams(this.params);
   }
   public onRegionSelect(r) {
-    this._nssService.setSelectedRegionGageSats(r);
+    this.params.region = r; 
+    this._nssService.setSelectedFilterParams(this.params);
   }
   public onKeywordSelect(kw) {
-    this._nssService.setSelectedKeyword(kw);
+    this.params.keyword = kw; 
+    this._nssService.setSelectedFilterParams(this.params);
   }
   public onStatGrpSelect(sg){
-    this._nssService.setSelectedStatGrpGageSats(sg);
+    this.params.statisticGroup = sg; 
+    this._nssService.setSelectedFilterParams(this.params);
   }
   public onRegTypeSelect(rt){
-    this._nssService.setSelectedRegTypesGageSats(rt)
+    this.params.regressionType = rt; 
+    this._nssService.setSelectedFilterParams(this.params);
   }
   public onVarTypeSelect(vt){
-    this._nssService.setSelectedVariableType(vt)
+    this.params.variableType = vt; 
+    this._nssService.setSelectedFilterParams(this.params);
   }
 
   // search stations
   public onSearch() {
-    this.pageNumber = '1';
-    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
+    this.params.page = 1;
+    this._nssService.searchStations(this.params);
   }
 
 }

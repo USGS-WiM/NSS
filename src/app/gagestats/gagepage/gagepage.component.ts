@@ -13,6 +13,7 @@ import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
 import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
+import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
 
 @Component({
   selector: 'gagePageModal',
@@ -51,6 +52,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public selectedStationType;
   public perPage;
   public pageNumber;
+  selectedParams: GageStatsSearchFilter;
 
   constructor(
     private _nssService: NSSService, 
@@ -102,33 +104,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.stationTypes = st;
     });
 
-    //subscirbe to selected parameters
-    this._nssService.selectedStationType.subscribe((stationType: Stationtype) => { 
-      this.selectedStationType = stationType;
-    });
-    this._nssService.selectedAgency.subscribe((agency: Agency) => { 
-      this.selectedAgency = agency;
-    });
-    this._nssService.selectedRegionGageStats.subscribe(region => {
-      this.selectedRegion = region;
-    });
-    this._nssService.selectedKeyword.subscribe(keyword => {
-      this.selectedKeyword = keyword;
-    });
-    this._nssService.selectedStatGrpGageStats.subscribe(statGroup => {
-      this.selectedStatGroup = statGroup;
-    });
-    this._nssService.selectedRegTypeGageStats.subscribe(regType => {
-      this.selectedRegType = regType;
-    });
-    this._nssService.selectedVariableType.subscribe(varType => {
-      this.selectedVarType = varType;
-    });
-    this._nssService.selectedPageNumber.subscribe((page: string) => { 
-      this.pageNumber = page;
-    });
-    this._nssService.selectedPerPage.subscribe((perPage: number) => { 
-      this.perPage = perPage;
+    //subscribe to selected Filters
+    this._nssService.selectedFilterParams.subscribe((selectedParams: GageStatsSearchFilter) => { 
+      this.selectedParams = selectedParams;
     });
   }  // end OnInit
   
@@ -160,7 +138,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           if (result.headers) { 
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
-            this._nssService.searchStations(this.selectedKeyword, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegType, this.selectedVarType, this.selectedStatGroup);
+            this._nssService.searchStations(this.selectedParams);
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -178,7 +156,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.code = res.body['code']; // update code in case user changed it
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
-          this._nssService.searchStations(this.selectedKeyword, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegType, this.selectedVarType, this.selectedStatGroup);
+          this._nssService.searchStations(this.selectedParams);
         }
       )
   }

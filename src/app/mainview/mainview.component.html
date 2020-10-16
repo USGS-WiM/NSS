@@ -1218,10 +1218,11 @@
 										<span *ngIf="!r.isEditing && (r.predictionInterval.biasCorrectionFactor || r.predictionInterval.student_T_Statistic || r.predictionInterval.variance 
                                         || r.predictionInterval.xiRowVector || r.predictionInterval.covarianceMatrix)">
 											<div [class.hidden]="loggedInRole != 'Administrator'">
-												<span *ngIf="r.predictionInterval.biasCorrectionFactor !=='null' && r.predictionInterval.biasCorrectionFactor !==''"></span>
-												<b>Bias Correction
-													Factor: </b>{{r.predictionInterval.biasCorrectionFactor}}<br></div>
-											<span *ngIf="r.predictionInterval.student_T_Statistic !=='null' && r.predictionInterval.student_T_Statistic !==''"> <b>Student's T
+												<span *ngIf="r.predictionInterval.biasCorrectionFactor && r.predictionInterval.biasCorrectionFactor !=='null' && r.predictionInterval.biasCorrectionFactor !==''">
+													<b>Bias Correction Factor: </b>{{r.predictionInterval.biasCorrectionFactor}}<br>
+												</span>
+												</div>
+											<span *ngIf="r.predictionInterval.student_T_Statistic && r.predictionInterval.student_T_Statistic !=='null' && r.predictionInterval.student_T_Statistic !==''"> <b>Student's T
 													Statistics for 90% confidence interval:</b>
 												{{r.predictionInterval.student_T_Statistic}}<br></span>
 											<span *ngIf="r.predictionInterval.variance !=='null' && r.predictionInterval.variance !==''" >

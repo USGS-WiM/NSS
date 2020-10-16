@@ -100,43 +100,6 @@ export class GsSidebarComponent implements OnInit {
 
   }  // end OnInit()
 
-  //Set selected filter parameters
-  public onStationTypeSelect(s){
-    this.params.stationType = s; 
-    this._nssService.setSelectedFilterParams(this.params);
-    this.onSearch();
-  }
-  public onAgencySelect(a) {
-    this.params.agency = a; 
-    this._nssService.setSelectedFilterParams(this.params);
-    this.onSearch();
-  }
-  public onRegionSelect(r) {
-    this.params.region = r; 
-    this._nssService.setSelectedFilterParams(this.params);
-    this.onSearch();
-  }
-  public onKeywordSelect(kw) {
-    this.params.keyword = kw; 
-    this._nssService.setSelectedFilterParams(this.params);
-    this.onSearch();
-  }
-  public onStatGrpSelect(sg){
-    this.params.statisticGroup = sg; 
-    this._nssService.setSelectedFilterParams(this.params);
-    this.onSearch();
-  }
-  public onRegTypeSelect(rt){
-    this.params.regressionType = rt; 
-    this._nssService.setSelectedFilterParams(this.params);
-    this.onSearch();
-  }
-  public onVarTypeSelect(vt){
-    this.params.variableType = vt; 
-    this._nssService.setSelectedFilterParams(this.params);
-    this.onSearch();
-  }
-
   // search stations
   public onSearch() {
     this.params.page = 1;

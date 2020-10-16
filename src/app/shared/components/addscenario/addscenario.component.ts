@@ -129,6 +129,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this._nssService.getVersion.subscribe((v: string) => {
             this.appVersion = v;
         });
+        this.getEntities();
+        this.modalElement = this.addScenarioModal;
+    }
+    
+    public getEntities(){   // Moved to own function in order to reload properties in case new property was added in settings
         this._settingsService.getEntities(this.configSettings.regionURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.regions = res;
@@ -157,12 +162,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.errors = res;
         });
-
-        this.modalElement = this.addScenarioModal;
-
     }
 
     public showModal(): void {
+        this.getEntities();
         this.onStatGroupSelect('');
         this.selectedRegion = this.originalRegion;
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });

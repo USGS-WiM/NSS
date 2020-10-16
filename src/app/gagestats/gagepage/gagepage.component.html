@@ -2,7 +2,7 @@
 	<div>
 		<div class="modal-header">
 			<div class="title">GagePage</div>  
-			<button class="icon-button" (click)="d('closed'); editGage=false"><i class="far fa-times"></i></button>                    
+			<button class="icon-button" (click)="d('closed'); editGage=false; cancelEditGageInfo()"><i class="far fa-times"></i></button>                    
 		</div>
 	</div>
 
@@ -391,6 +391,6 @@
 
 	<!-- Footer / Buttons -->
 	<div class="modal-body-footer">
-		<button type="button" (click)="d('closed'); editGage=false" [disabled]="editGage" class="button black">Close</button>
+		<button type="button" (click)="d('closed'); editGage=false; cancelEditGageInfo()" [disabled]="editGage" class="button black">Close</button>
 	</div>
 </ng-template>

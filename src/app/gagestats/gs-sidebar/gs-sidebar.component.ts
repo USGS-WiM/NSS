@@ -11,6 +11,7 @@ import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
+import { LoaderService } from 'app/shared/services/loader.service';
 
 @Component({
   selector: 'gs-sidebar',
@@ -40,7 +41,7 @@ export class GsSidebarComponent implements OnInit {
     pageCount: 50
   };
 
-  constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) { 
+  constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService, private _loaderService: LoaderService) { 
     this.configSettings = this._configService.getConfiguration();
   }
 
@@ -104,36 +105,52 @@ export class GsSidebarComponent implements OnInit {
   public onStationTypeSelect(s){
     this.params.stationType = s; 
     this._nssService.setSelectedFilterParams(this.params);
+    this.onSearch();
+
   }
   public onAgencySelect(a) {
     this.params.agency = a; 
     this._nssService.setSelectedFilterParams(this.params);
+    this.onSearch();
+
   }
   public onRegionSelect(r) {
     this.params.region = r; 
     this._nssService.setSelectedFilterParams(this.params);
+    this.onSearch();
+
   }
   public onKeywordSelect(kw) {
     this.params.keyword = kw; 
     this._nssService.setSelectedFilterParams(this.params);
+    
+    this.onSearch();
+
   }
   public onStatGrpSelect(sg){
     this.params.statisticGroup = sg; 
     this._nssService.setSelectedFilterParams(this.params);
+    this.onSearch();
+
   }
   public onRegTypeSelect(rt){
     this.params.regressionType = rt; 
     this._nssService.setSelectedFilterParams(this.params);
+    this.onSearch();
+
   }
   public onVarTypeSelect(vt){
     this.params.variableType = vt; 
     this._nssService.setSelectedFilterParams(this.params);
+    this.onSearch();
   }
 
   // search stations
   public onSearch() {
+    this._loaderService.showFullPageLoad();
     this.params.page = 1;
     this._nssService.searchStations(this.params);
+    this._loaderService.hideFullPageLoad();
   }
 
 }

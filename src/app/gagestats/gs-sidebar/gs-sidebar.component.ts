@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NSSService } from 'app/shared/services/app.service';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
-import { IMultiSelectSettings, IMultiSelectTexts} from '../../../../node_modules/angular-2-dropdown-multiselect';
+import { IMultiSelectSettings, IMultiSelectTexts } from '../../../../node_modules/angular-2-dropdown-multiselect';
 import { Region } from 'app/shared/interfaces/region';
 import { SettingsService } from 'app/settings/settings.service';
 import { ConfigService } from 'app/config.service';
@@ -18,6 +18,13 @@ import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
   styleUrls: ['./gs-sidebar.component.scss']
 })
 export class GsSidebarComponent implements OnInit {
+  public searchText = '';
+  public selectedRegion = [];
+  public selectedStationType = [];
+  public selectedAgency = [];
+  public selectedStatisticGroup = [];
+  public selectedRegressionType = [];
+  public selectedVariableType = [];
   private configSettings: Config;
   public stationTypes: Array<Stationtype>;
   public regressionTypes: Array<Regressiontype>;
@@ -40,16 +47,16 @@ export class GsSidebarComponent implements OnInit {
     pageCount: 50
   };
 
-  constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) { 
+  constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
   }
 
   ngOnInit() {
-    this._nssService.selectedPageNumber.subscribe((page: string) => { 
+    this._nssService.selectedPageNumber.subscribe((page: string) => {
       this.params.page = page;
       this._nssService.searchStations(this.params);
     });
-    this._nssService.selectedPerPage.subscribe((perPage: number) => { 
+    this._nssService.selectedPerPage.subscribe((perPage: number) => {
       this.params.pageCount = perPage;
       this._nssService.searchStations(this.params);
     });
@@ -104,7 +111,30 @@ export class GsSidebarComponent implements OnInit {
   public onSearch() {
     this.params.page = 1;
     this._nssService.searchStations(this.params);
-    console.log("params", this.params.agency.length);
+  }
+
+  //Clear filters
+  public clearGagestatsFilters() {
+    //Reset search parameters to bring gage table back to default view
+    this.params.keyword = "";
+    this.params.region = [];
+    this.params.stationType = [];
+    this.params.agency = [];
+    this.params.stationType = [];
+    this.params.regressionType = [];
+    this.params.variableType = [];
+    
+    //Reset the selections in the sidebar
+    this.searchText = '';
+    this.selectedRegion = [];
+    this.selectedStationType = [];
+    this.selectedAgency = [];
+    this.selectedStatisticGroup = [];
+    this.selectedRegressionType = [];
+    this.selectedVariableType = [];
+
+    //Refresh the search without any filters selected
+    this.onSearch();
   }
 
 }

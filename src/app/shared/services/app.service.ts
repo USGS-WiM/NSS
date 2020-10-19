@@ -730,6 +730,8 @@ export class NSSService {
 
     // get scenarios by region
     private getRegionScenario(id: number, params?: string) {
+        console.log("id", id);
+        console.log("params", params);
         let url = this.configSettings.scenariosURL 
         if (params) {
             url += params; 

@@ -184,9 +184,8 @@
 					[(ngModel)]="selectedStatGroup">
 					</ss-multiselect-dropdown>
 				</ng-container>
-				<button  *ngIf="!preferred" (click)="setPreferred()">Show Preferred Stats  <i class="fa fa-toggle-off" ></i></button>
-				<button  *ngIf="preferred" (click)="setPreferred()">Show Preferred Stats  <i class="fa fa-toggle-on" ></i></button>
-				<button class="button small blue mright-xs" (click)="filterByStats()">Filter Statistics</button>
+				<button class="button small grey mright-xs"  *ngIf="!preferred" (click)="setPreferred()">Show Preferred Stats  <i class="fa fa-toggle-off" ></i></button>
+				<button class="button small grey mright-xs" *ngIf="preferred" (click)="setPreferred()">Show Preferred Stats  <i class="fa fa-toggle-on" ></i></button>
 			</div>
 			<div>
 				<div>
@@ -205,8 +204,8 @@
                                     <th class="width-15">Comments</th>
 								</tr>
 							</thead>
-							<tbody >
-								<ng-container  *ngFor="let s of filteredGage.statistics,  let sIndex = index">
+							<tbody *ngFor="let s of gage.statistics,  let sIndex = index">
+								<ng-container *ngIf="selectedStatGroup == 0 && (!preferred || s.isPreferred) || selectedStatGroup.includes(s.statisticGroupTypeID) && (!preferred || s.isPreferred)">
 									<tr *ngIf="statIds.includes(s.id)" >
 										<th  colspan="9">{{getStatGroup(s.statisticGroupTypeID)}}</th>
 									</tr>
@@ -272,7 +271,7 @@
 											<span *ngIf="s.isEditing"><textarea [(ngModel)]="s.comments" size="2"></textarea></span>
 										</td>
 									</tr>
-								</ng-container>
+								</ng-container>	
 								<tr *ngIf="newStat">
 									<td>	
 										<div class="table-icon-buttons">

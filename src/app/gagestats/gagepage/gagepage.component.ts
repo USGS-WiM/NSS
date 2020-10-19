@@ -43,7 +43,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public statIds = [];
   public filteredStatGroups;
   public statGroupIds = [];
-  public selectedStatGroup = [];
+  public selectedStatGroup;
   public filteredGage: Station;
   public preferred: boolean = false;
 
@@ -67,11 +67,12 @@ export class GagepageComponent implements OnInit, OnDestroy {
               return a.statisticGroupTypeID - b.statisticGroupTypeID;
             });
             this.gage = res
-            this.filteredGage = this.gage;
+            //this.filteredGage = this.gage;
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);
             this.filterStatIds();
             this.showGagePageForm();
+            this.selectedStatGroup = [];
           });
         }
     });
@@ -129,6 +130,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
 
     this.gage.statistics.forEach(s => {
+      s.statisticGroupName = this.getStatGroup(s.statisticGroupTypeID)
       if (s.citationID && !this.gage.citations.some(cit => cit.id === s.citationID)) {
         this.gage.citations.push(s.citation);
       }
@@ -325,33 +327,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public filterStatIds() {
     this.filteredStatGroups = this.statisticGroups.filter((sg) => this.statGroupIds.includes(sg.id));
-  }
-
-  public filterByStats() {
-    if (this.selectedStatGroup.length == 0) {
-      if (!this.preferred) {
-      this.filteredGage = JSON.parse(JSON.stringify(this.gage));
-      } else {
-        this.filteredGage = JSON.parse(JSON.stringify(this.gage));
-        const y = this.filteredGage.statistics;
-        this.filteredGage.statistics = y.filter((s) => s.isPreferred);
-      }
-    } 
-    if (this.selectedStatGroup.length !== 0) {
-      if (!this.preferred) {
-        this.filteredGage = JSON.parse(JSON.stringify(this.gage));
-        const x = this.selectedStatGroup;
-        const y = this.filteredGage.statistics;
-        this.filteredGage.statistics = y.filter((s) => x.includes(s.statisticGroupTypeID));
-      } else {
-        this.filteredGage = JSON.parse(JSON.stringify(this.gage));
-        const x = this.selectedStatGroup;
-        const y = this.filteredGage.statistics;
-        this.filteredGage.statistics = y.filter((s) => x.includes(s.statisticGroupTypeID));
-        const z = this.filteredGage.statistics;
-        this.filteredGage.statistics = z.filter((s) => s.isPreferred);
-      }
-    } 
+    console.log(this.filteredStatGroups)
   }
 
   public setPreferred() {

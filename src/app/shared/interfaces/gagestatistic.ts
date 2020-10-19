@@ -19,4 +19,5 @@ export interface GageStatistic {
     citation?: Citation;
     unitType?: Unittype;
     regressionType?: Regressiontype;
+    statisticGroupName?: string;
 }

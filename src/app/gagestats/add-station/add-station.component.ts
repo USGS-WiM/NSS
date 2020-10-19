@@ -82,7 +82,11 @@ export class AddStationModal implements OnInit {
   
   public clearStation() {
     this.addStationForm.reset();
+  }
 
+  public cancelSubmitStation() {
+    this.addStationForm.reset();
+    this.modalRef.close();
   }
 
   public submitStation() {
@@ -100,6 +104,7 @@ export class AddStationModal implements OnInit {
         } else {
           this._settingsService.outputWimMessages(response);
         }
+        this.cancelSubmitStation();
       }, error => {
         if (!this._settingsService.outputWimMessages(error)) {
           this._toasterService.pop('error', 'Error adding Station', error.message || error.statusText);

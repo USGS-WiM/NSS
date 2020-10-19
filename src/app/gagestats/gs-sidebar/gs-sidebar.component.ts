@@ -104,6 +104,7 @@ export class GsSidebarComponent implements OnInit {
   public onSearch() {
     this.params.page = 1;
     this._nssService.searchStations(this.params);
+    console.log("params", this.params.agency.length);
   }
 
 }

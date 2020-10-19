@@ -5,13 +5,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'app/settings/settings.service';
 import { ConfigService } from 'app/config.service';
 import { ToasterService } from 'angular2-toaster';
-import { AuthService } from 'app/shared/services/auth.service';
 import { Config } from 'app/shared/interfaces/config';
 import { Agency } from 'app/shared/interfaces/agency';
-import { Station } from 'app/shared/interfaces/station';
 import { Region } from  'app/shared/interfaces/region';
 import { StationType } from 'app/shared/interfaces/stationtypes';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
 
 @Component({
   selector: 'addStationModal',
@@ -28,11 +26,11 @@ export class AddStationModal implements OnInit {
   public modalSubscription: any;
   public modalRef;
   public addStationForm: FormGroup;
+  public selectedParams: GageStatsSearchFilter;
 
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
-    private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
-    private _authService: AuthService) {
+    private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService) {
     this.addStationForm = _fb.group({
       code : new FormControl(null, Validators.required),
       agencyID : new FormControl(null, Validators.required),
@@ -42,7 +40,6 @@ export class AddStationModal implements OnInit {
       regionID : new FormControl(null, Validators.required),
       latitude : new FormControl(null, [Validators.min(-90), Validators.max(90), Validators.required] ),
       longitude : new FormControl(null, [Validators.min(-180), Validators.max(180), Validators.required]),
-
     });
 
     this.configSettings = this._configService.getConfiguration();
@@ -63,20 +60,22 @@ export class AddStationModal implements OnInit {
     this._nssService.regions.subscribe((regionList: Array<Region>) => {
       this.regions = regionList;
     });
+    //subscribe to selected Filters
+    this._nssService.selectedFilterParams.subscribe((selectedParams: GageStatsSearchFilter) => { 
+      this.selectedParams = selectedParams;
+      console.log(this.selectedParams)
+    });
   }
 
   public showModal(): void {
-    
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
     this.modalRef.result.then(
-        result => {
-            // this is the solution for the first modal losing scrollability
-            if (document.querySelector('body > .modal')) {
-                document.body.classList.add('modal-open');
-            }
-            
-        
+      result => {
+        // this is the solution for the first modal losing scrollability
+        if (document.querySelector('body > .modal')) {
+          document.body.classList.add('modal-open');
         }
+      }
     );
   }
   
@@ -105,6 +104,7 @@ export class AddStationModal implements OnInit {
           this._settingsService.outputWimMessages(response);
         }
         this.cancelSubmitStation();
+        this._nssService.searchStations(this.selectedParams);
       }, error => {
         if (!this._settingsService.outputWimMessages(error)) {
           this._toasterService.pop('error', 'Error adding Station', error.message || error.statusText);

@@ -11,6 +11,7 @@ import { CharacteristicResponse } from 'app/shared/interfaces/characteristicresp
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
 import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
+import { ManageCitation } from 'app/shared/interfaces/managecitations';
 
 @Component({
   selector: 'gagePageModal',
@@ -19,6 +20,7 @@ import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
 })
 export class GagepageComponent implements OnInit, OnDestroy {
   @ViewChild('gagePage', {static: true}) public gagePageModal; // : ModalDirective;  //modal for validator
+  @ViewChild('CitationForm', { static: true }) citationForm;
   private modalSubscript;
   private configSettings: Config;
   private modalElement: any;
@@ -37,6 +39,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public variables;
   public regressionTypes;
   public statisticGroups;
+  public addCitation: boolean;
 
   constructor(
     private _nssService: NSSService, 
@@ -269,6 +272,19 @@ export class GagepageComponent implements OnInit, OnDestroy {
   getStatGroup(id) {
       return this.statisticGroups.find(sg => sg.id == id).name;
   }
+
+///////////////////////Citation Modal Section/////////////////////
+
+  public showManageCitationsModal() {
+    const addManageCitationForm: ManageCitation = {
+        show: true,
+        addCitation: true
+    }
+    this._nssService.setManageCitationsModal(addManageCitationForm);
+}
+
+
+///////////////////////////////////////////////////////////////////////
 
   compareObjects(Obj1, Obj2) {
     // used to make sure the existing options are showing in selects

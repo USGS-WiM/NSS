@@ -129,7 +129,7 @@ export class NSSService {
     public setManageCitationsModal(val: ManageCitation) { 
         this._showHideManageCitationsModal.next(val);
     }
-    // show the manage citations modal in the mainview
+    // show the manage citations modal 
     public get showManageCitationsModal(): any {
         return this._showHideManageCitationsModal.asObservable();
     }
@@ -139,6 +139,15 @@ export class NSSService {
     addExistingCitation(item: any){
         this.citationSource.next(item);
     }
+    // set selected citation
+    private _selectedCitation: Subject<Citation> = new Subject<Citation>();
+    public setSelectedCitation(val: Citation) {
+        this._selectedCitation.next(val);
+    }
+    public get selectedCitation(): Observable<Citation> {
+        return this._selectedCitation.asObservable();
+    }
+
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
     private _showHideAddRegressioRegionModal: Subject<AddRegressionRegion> = new Subject<AddRegressionRegion>();
     public setAddRegressionRegionModal(val: AddRegressionRegion) {

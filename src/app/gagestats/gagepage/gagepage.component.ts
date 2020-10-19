@@ -40,6 +40,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public regressionTypes;
   public statisticGroups;
   public addCitation: boolean;
+  public selectedCitation;
 
   constructor(
     private _nssService: NSSService, 
@@ -58,12 +59,19 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.code = result.gageCode;
           this._nssService.getGagePageInfo(this.code).subscribe(res => {
             this.gage = res;
+            this._nssService.setSelectedRegion(this.gage.region);
             this.getCitations();
             this.showGagePageForm();
           });
         }
     });
     this.modalElement = this.gagePageModal;
+
+    this._nssService.selectedCitation.subscribe(c => {
+      this.selectedCitation = c;
+      this.newChar.citationID = this.selectedCitation.id;
+      console.log(this.newChar)
+    }); 
 
     // get all unit types 
     this._nssService.getUnitTypes().subscribe(res => {
@@ -163,7 +171,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     }
     
   this.newChar.isEditing = true;
-  //this.itemBeingEdited = this.newChar;
   } 
     
   public deletePhysicalCharacteristic(deleteID: number) {
@@ -174,7 +181,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.characteristicsURL).subscribe(
             (res) => {
               this.refreshgagepage();
-              //this.gage.characteristics.splice(index, 1)
               this._settingsservice.outputWimMessages(res);
             }
           )
@@ -278,10 +284,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public showManageCitationsModal() {
     const addManageCitationForm: ManageCitation = {
         show: true,
-        addCitation: true
-    }
+        addCitation: true,
+        inGagePage: true
+    } 
     this._nssService.setManageCitationsModal(addManageCitationForm);
-}
+  }
 
 
 ///////////////////////////////////////////////////////////////////////

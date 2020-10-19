@@ -52,6 +52,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public newCitForm: FormGroup;
     public regions: Array<Region>;
     public managerRegressionRegions: any[] = [];
+    public inGagePage: boolean;
 
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
@@ -110,6 +111,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((result: ManageCitation) => {
             if (result.show) { 
                 this.showAddCitations = result.addCitation;
+                this.inGagePage = result.inGagePage;
               }
           });
         this.modalElement = this.manageCitationsModal;
@@ -216,6 +218,12 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             if (this._settingsService.outputWimMessages(error)) { return; }
             this._toasterService.pop('error', 'Error creating Citation', error.message || error._body.message || error.statusText);
         });
+    }
+
+    public setSelectedCitation(c) {
+        if(this.inGagePage) {
+            this._nssService.setSelectedCitation(c);
+        }
     }
 
     outputWimMessages(msg) {

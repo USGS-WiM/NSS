@@ -164,8 +164,9 @@
 							</td>
 							<td>
 								<span *ngIf="!newChar.isEditing">{{newChar.citationID}}</span>
-								<span *ngIf="newChar.isEditing"><input type="number" [(ngModel)]="newChar.citationID" size="2"></span>
-								<button *ngIf="newChar.isEditing" type="button" class="button small blue mright-xs" (click)="showManageCitationsModal()">Add Citation</button>
+								<span *ngIf="selectedCitation">{{selectedCitation.id}}</span>
+								<button *ngIf="newChar.isEditing && !selectedCitation" type="button" class="button small blue mright-xs" (click)="showManageCitationsModal()">Add Citation</button>
+								<button *ngIf="newChar.isEditing && selectedCitation" type="button" (click)="showManageCitationsModal()"><i class="far fa-pencil"></i></button>
                             </td>
                             <td>
 								<span *ngIf="!newChar.isEditing">{{newChar.comments}}</span>

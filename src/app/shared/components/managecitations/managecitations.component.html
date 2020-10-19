@@ -45,8 +45,8 @@
 					<tr>
 						<th class="width-60">Citation</th>
 						<th class="width-5"></th>
-						<th class="width-35">Associated Regression Regions</th>
-						<th class="width-5 empty-cell">
+						<th class="width-35" *ngIf="!inGagePage">Associated Regression Regions</th>
+						<th class="width-5 empty-cell" *ngIf="!inGagePage">
 							<!-- Filler button - not used for anything -->
 							<div class="cell-buttons"><button class="icon-button" aria-hidden="true"><i class="far fa-circle"></i></button></div>
 						</th>
@@ -55,7 +55,7 @@
 				<tbody>
 					<tr *ngFor="let c of filteredData; let cIndex = index">
 						<!-- Col 1, Citation -->
-						<td class="width-60">
+						<td class="width-60" (click)= "setSelectedCitation(c); d('closed')">
 							<div class="half-space">
 								<span *ngIf="!c.isEditing">{{ c.author }}</span>
 								<span *ngIf="c.isEditing"><textarea class='break' name="author" [(ngModel)]="c.author" required></textarea></span>
@@ -96,11 +96,11 @@
 							</div>
 						</td>
 						<!-- Col 3, Associated Regression Region and Buttons -->
-						<td class="width-35">
+						<td class="width-35" *ngIf="!inGagePage">
 							<div *ngFor="let e of c.regressionRegions; let lst = last;">{{e.name}}<span *ngIf = "!lst"><hr></span></div>
 						</td>
 						<!-- Col 4 - Regression Buttons -->
-						<td class="width-5">
+						<td class="width-5" *ngIf="!inGagePage">
 							<div *ngFor="let e of c.regressionRegions; let lst = last;" [class.hidden]="!showAddCitations" class="cell-buttons">
 								<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button" [disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
 									<i class="far fa-pencil"></i>

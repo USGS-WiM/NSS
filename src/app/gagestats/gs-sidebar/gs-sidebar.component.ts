@@ -28,6 +28,7 @@ export class GsSidebarComponent implements OnInit {
   // Dropdown menu default text
   public myMSTexts: IMultiSelectTexts;
   public myRTSettings: IMultiSelectSettings;
+  // Default filter parameters for sidebar
   public params: GageStatsSearchFilter = {
     keyword: "",
     region: [],

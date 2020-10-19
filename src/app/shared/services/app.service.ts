@@ -679,7 +679,6 @@ export class NSSService {
 
     // get stations by text search, station type and other param
     public searchStations(filter: GageStatsSearchFilter) {
-        console.log(filter)
         const url = "?filterText=" + filter.keyword + "&stationTypes=" + filter.stationType.toString() + "&agencies=" + filter.agency.toString() + "&page=" + filter.page.toString() + "&pageCount="+ filter.pageCount.toString() + "&regions="+ filter.region + "&regressionTypes="+ filter.regressionType + "&variableTypes="+ filter.variableType + "&statisticGroups="+ filter.statisticGroup;
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })

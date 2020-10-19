@@ -63,7 +63,6 @@ export class AddStationModal implements OnInit {
     //subscribe to selected Filters
     this._nssService.selectedFilterParams.subscribe((selectedParams: GageStatsSearchFilter) => { 
       this.selectedParams = selectedParams;
-      console.log(this.selectedParams)
     });
   }
 

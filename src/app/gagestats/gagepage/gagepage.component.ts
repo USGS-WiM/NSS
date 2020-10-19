@@ -34,7 +34,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public units;
   public tempItem;
   public itemBeingEdited;
-  public editItem;
   public editId;
   public newChar: GageCharacteristic;
   public newStat: GageStatistic;

@@ -93,6 +93,7 @@ export class GsSidebarComponent implements OnInit {
   // search stations
   public onSearch() {
     this.params.page = 1;
+    this._nssService.setSelectedFilterParams(this.params);
     this._nssService.searchStations(this.params);
   }
 

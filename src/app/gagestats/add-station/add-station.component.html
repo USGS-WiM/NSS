@@ -2,8 +2,7 @@
     <div>
         <div class="modal-header">
             <h4 class="title" > Add Station </h4>
-            <!--close and save-->
-            <button class="icon-button" (click)="c('closed')"><i class="far fa-times"></i></button>
+            <button class="icon-button" (click)="c('closed'); clearStation()"><i class="far fa-times"></i></button>
         </div>
         <div class="modal-body">
             
@@ -99,7 +98,7 @@
         <!--close and save-->
         <div class ="xs-f-btw">
             <button type="button" (click)="clearStation()" class="button red mright-xs">Clear All</button>
-            <button type="button" (click)="c('closed')" class="button black">Cancel</button>
+            <button type="button" (click)="c('closed'); clearStation()" class="button black">Cancel</button>
             <div class="flex-spacer"></div>
             <button type="button" (click)="submitStation()" [disabled]="!addStationForm.valid" class="button blue">Add</button>
         </div>

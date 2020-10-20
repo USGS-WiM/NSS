@@ -10,7 +10,7 @@ import { Config } from 'protractor';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
-import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
+import { GageStatsFilterClass, GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
 
 @Component({
   selector: 'gs-sidebar',
@@ -35,17 +35,7 @@ export class GsSidebarComponent implements OnInit {
   // Dropdown menu default text
   public myMSTexts: IMultiSelectTexts;
   public myRTSettings: IMultiSelectSettings;
-  public params: GageStatsSearchFilter = {
-    keyword: "",
-    region: [],
-    stationType: [],
-    agency: [],
-    statisticGroup: [],
-    regressionType: [],
-    variableType: [],
-    page: 1,
-    pageCount: 50
-  };
+  public params: GageStatsSearchFilter = new GageStatsFilterClass();
 
   constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
@@ -116,13 +106,8 @@ export class GsSidebarComponent implements OnInit {
   //Clear filters
   public clearGagestatsFilters() {
     //Reset search parameters to bring gage table back to default view
-    this.params.keyword = "";
-    this.params.region = [];
-    this.params.stationType = [];
-    this.params.agency = [];
-    this.params.stationType = [];
-    this.params.regressionType = [];
-    this.params.variableType = [];
+
+    this.params = new GageStatsFilterClass();
     
     //Reset the selections in the sidebar
     this.searchText = '';

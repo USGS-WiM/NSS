@@ -18,13 +18,6 @@ import { GageStatsFilterClass, GageStatsSearchFilter } from 'app/shared/interfac
   styleUrls: ['./gs-sidebar.component.scss']
 })
 export class GsSidebarComponent implements OnInit {
-  public searchText = '';
-  public selectedRegion = [];
-  public selectedStationType = [];
-  public selectedAgency = [];
-  public selectedStatisticGroup = [];
-  public selectedRegressionType = [];
-  public selectedVariableType = [];
   private configSettings: Config;
   public stationTypes: Array<Stationtype>;
   public regressionTypes: Array<Regressiontype>;
@@ -106,20 +99,11 @@ export class GsSidebarComponent implements OnInit {
   //Clear filters
   public clearGagestatsFilters() {
     //Reset search parameters to bring gage table back to default view
-
     this.params = new GageStatsFilterClass();
-    
-    //Reset the selections in the sidebar
-    this.searchText = '';
-    this.selectedRegion = [];
-    this.selectedStationType = [];
-    this.selectedAgency = [];
-    this.selectedStatisticGroup = [];
-    this.selectedRegressionType = [];
-    this.selectedVariableType = [];
 
     //Refresh the search without any filters selected
     this.onSearch();
   }
 
 }
+

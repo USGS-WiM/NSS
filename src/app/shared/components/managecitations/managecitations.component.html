@@ -63,7 +63,7 @@
 				<tbody>
 					<tr *ngFor="let c of filteredData; let cIndex = index">
 						<!-- Col 1, Citation -->
-						<td style="width: 445px;">
+						<td style="width: 450px;">
 							<div class="half-space">
 								<span *ngIf="!c.isEditing">{{ c.author }}</span>
 								<span *ngIf="c.isEditing"><textarea class='break' name="author" [(ngModel)]="c.author"
@@ -116,20 +116,20 @@
 						<td>
 						<div *ngFor="let e of c.regressionRegions; last as isLast">
 							<div *ngIf="!isLast">
-								<td class=firstRow style="width: 228px; border-top-style:none; border-left-style:none; max-height:100%">{{e.name}}{{a}}
+								<td class=firstRow style="width: 228px; border-top-style:none; border-left-style:none; max-height:100%">{{e.name}}
 								
 								</td>
-								<td style="width:45px; border-top-style:none; border-right-style: none">
+								<td style="width:45px; border-top-style:none; border-right-style: none" [class.hidden]="!showAddCitations">
 									<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button"
 										[disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
 										<i class="far fa-pencil"></i>
 									</button></td>
 							 </div>
 							<div *ngIf="isLast">
-								<td class=firstRow style="width: 228px; border-top-style:none; border-bottom-style:none; border-left-style:none; max-height:100%">{{e.name}}{{a}}
+								<td class=firstRow style="width: 228px; border-top-style:none; border-bottom-style:none; border-left-style:none; max-height:100%">{{e.name}}
 								
 								</td>
-								<td style="width:45px; border-top-style:none; border-right-style: none; border-bottom-style:none;">
+								<td style="width:45px; border-top-style:none; border-right-style: none; border-bottom-style:none;" [class.hidden]="!showAddCitations" >
 									<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button"
 										[disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
 										<i class="far fa-pencil"></i>

@@ -46,6 +46,7 @@
 					class="button blue">Create</button>
 			</form>
 
+			<div style="width:100%;">
 			<table class="custom-table table-striped table-scroll mtop-sm no-scrollbars">
 				<thead>
 					<tr>
@@ -112,16 +113,20 @@
 							</div>
 						</td>
 						<!-- Col 3, Associated Regression Region and Buttons -->
-						<div  style="height:100%; border-bottom-style: none;"  *ngFor="let e of c.regressionRegions; let lst = last;">
-							<td style="width: 228px; height:100%; border-bottom-style: none; border-left-style: none;">{{e.name}}
-
+						<td>
+						<div *ngFor="let e of c.regressionRegions; let lst = last;">
+							<td class=firstRow style="width: 228px; border-top-style:none; border-left-style:none; max-height:100%">{{e.name}}
+								
 							</td>
-							<td style="width:45px; height:100%; border-bottom-style: none;">
+							<td style="width:45px; border-top-style:none; border-right-style: none">
 								<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button"
 									[disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
 									<i class="far fa-pencil"></i>
 								</button></td>
 						</div>
+						</td>
+					
+
 
 
 
@@ -132,6 +137,7 @@
 				</tbody>
 			</table>
 		</div>
+	</div>
 	</div>
 
 	<!-- Footer / Buttons -->

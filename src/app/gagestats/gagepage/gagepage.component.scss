@@ -3,18 +3,33 @@
 }
 
 button {
-    margin: 0px 5px 5px 0px;
+    margin: 0px 0px 5px 10px;
 }
 
 .table-title{
     font-size: 16px;
 	font-weight: 600;
-	display: flex;
-	justify-content: space-between;
+}
+
+.stat-filters div{
+    display: inline-block;
 }
 
 .modal-body{
     overflow-y: auto;
+}
+
+.stat-filters{
+    float: right;
+}
+
+.stat-filters label {
+    margin-right: 7px !important;
+    font-size: 14px;
+}
+
+.stat-table-title {
+    padding: 10px;
 }
 
 .width200 {

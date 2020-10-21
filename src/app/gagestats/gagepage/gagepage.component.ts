@@ -35,6 +35,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public itemBeingEdited;
   public editItem;
   public editId;
+  public editing: boolean = false;
   public newChar: GageCharacteristic;
   public newStat: GageStatistic;
   public variables;
@@ -107,7 +108,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       closeOnSelect: false,
       showCheckAll: true,
       showUncheckAll: true,
-      dynamicTitleMaxItems: 2,
+      dynamicTitleMaxItems: 0,
       maxHeight: '300px'
     };
 
@@ -215,7 +216,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     }
     
   this.newChar.isEditing = true;
-  //this.itemBeingEdited = this.newChar;
   } 
     
   public deletePhysicalCharacteristic(deleteID: number) {
@@ -226,7 +226,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.characteristicsURL).subscribe(
             (res) => {
               this.refreshgagepage();
-              //this.gage.characteristics.splice(index, 1)
               this._settingsservice.outputWimMessages(res);
             }
           )
@@ -272,14 +271,14 @@ export class GagepageComponent implements OnInit, OnDestroy {
       yearsofRecord: null,
       citationID: null
     } 
-    this.editRowClicked(this.newStat, this.newStat.id);
+    this.newStat.isEditing = true;
   } 
 
   public saveStat(item) {
     if (item.id) {
       const newItem = JSON.parse(JSON.stringify(item));  // Copy item, delete unnecessary elements
       ['regressionType', 'citation', 
-      'unitType', 'isEditing'].forEach(e => delete newItem[e]);  // Delete unneeded items
+      'unitType', 'isEditing', 'statisticGroupType'].forEach(e => delete newItem[e]);  // Delete unneeded items
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
         (res) => {
           item.isEditing = false;

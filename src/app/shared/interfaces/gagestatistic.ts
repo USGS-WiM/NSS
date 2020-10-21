@@ -13,11 +13,12 @@ export interface GageStatistic {
     comments: string;
     isPreferred: boolean;
     yearsofRecord: number;
-    statisticGroupType?: Statisticgroup;
+    //statisticGroupType?: Statisticgroup;
     citationID?: number;
     statisticErrors?: Array<any>;
     citation?: Citation;
     unitType?: Unittype;
     regressionType?: Regressiontype;
     statisticGroupName?: string;
+    isEditing?;
 }

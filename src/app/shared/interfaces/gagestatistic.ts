@@ -20,5 +20,6 @@ export interface GageStatistic {
     unitType?: Unittype;
     regressionType?: Regressiontype;
     statisticGroupName?: string;
-    isEditing?;
+    predictionInterval?: Object;
+    isEditing?
 }

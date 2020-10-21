@@ -35,7 +35,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public itemBeingEdited;
   public editItem;
   public editId;
-  public editing: boolean = false;
   public newChar: GageCharacteristic;
   public newStat: GageStatistic;
   public variables;
@@ -47,6 +46,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public selectedStatGroup;
   public filteredGage: Station;
   public preferred: boolean = false;
+  public predIntervals: boolean = false;
 
   constructor(
     private _nssService: NSSService, 
@@ -68,12 +68,12 @@ export class GagepageComponent implements OnInit, OnDestroy {
               return a.statisticGroupTypeID - b.statisticGroupTypeID;
             });
             this.gage = res
-            //this.filteredGage = this.gage;
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);
             this.filterStatIds();
             this.showGagePageForm();
             this.selectedStatGroup = [];
+            this.getPredictionIntervals();
           });
         }
     });
@@ -159,6 +159,19 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.statGroupIds = groupIds;
   }
 
+  public getPredictionIntervals() {
+    var pred = false;
+    this.gage.statistics.forEach( function(item, idex) {
+      if (item.predictionInterval) {
+        
+        console.log(item.predictionInterval)
+        return pred = true;
+      }
+    })
+    this.predIntervals = pred;
+    console.log(this.predIntervals, pred)
+  }
+
 ///////////////////Edit Gage Info Section//////////////////////////////
   
   public editGageStats() {
@@ -183,6 +196,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this.tempItem = JSON.parse(JSON.stringify(item));
     this.itemBeingEdited = item;
     this.editId = index
+    if (!item.predictionInterval) {
+      item.predictionInterval = {variance: 0, lowerPredictionInterval: 0, upperPredictionInterval: 0};
+    }
     item.isEditing = true;
   }
 
@@ -317,6 +333,10 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this._nssService.getGagePageInfo(this.code).subscribe(res => {
       this.gage = res;
       this.getCitations();
+      this.getDisplayStatGroupID(this.gage);
+      this.filterStatIds();
+      this.selectedStatGroup = [];
+      this.getPredictionIntervals();
     });
   }
 
@@ -326,7 +346,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public filterStatIds() {
     this.filteredStatGroups = this.statisticGroups.filter((sg) => this.statGroupIds.includes(sg.id));
-    console.log(this.filteredStatGroups)
   }
 
   public setPreferred() {

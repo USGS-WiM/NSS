@@ -94,7 +94,7 @@
 									</button>
 								</div>
 							</td>
-							<td class="200width">
+							<td>
 								<span *ngIf="!newChar.isEditing">{{newChar.variableTypeID}}</span>
 								<span *ngIf="newChar.isEditing">
 									<ng-select name="variableTypeID" [(ngModel)]="newChar.variableTypeID" [clearable]="false">
@@ -107,7 +107,7 @@
 								<span *ngIf="newChar.isEditing"><input type="number" [(ngModel)]="newChar.value" size="2" class="input-100"></span>
 							</td>
 							
-							<td class="160width">
+							<td>
 								<span *ngIf="!newChar.isEditing">{{newChar.unitType.name}}</span>
 								<span *ngIf="newChar.isEditing">
 									<ng-select name="unitTypeID" [(ngModel)]="newChar.unitTypeID" [clearable]="false">
@@ -141,7 +141,7 @@
 									</button>
 								</div>
 							</td>
-							<td class="200width">
+							<td>
 								<span *ngIf="!c.isEditing">{{c.variableType.name}}</span>
 								<span *ngIf="c.isEditing">
 									<ng-select name="variableTypeID" [(ngModel)]="c.variableTypeID" [clearable]="false">
@@ -154,7 +154,7 @@
 								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.value" size="1" class="input-100"></span>
 							</td>
 							
-							<td class="160width">
+							<td>
 								<span *ngIf="!c.isEditing">{{c.unitType.name}}</span>
 								<span *ngIf="c.isEditing">
 									<ng-select name="unitTypeID" [(ngModel)]="c.unitTypeID" [clearable]="false">
@@ -198,12 +198,15 @@
 								<tr>
 									<th class="width-5" *ngIf="editGage"></th>
 									<th class="width-15">Statistic</th>
-									<th class="width-10">Value</th>
-                                    <th class="width-15">Units</th> 
-                                    <th class="width-10">Citation ID</th>
+									<th class="width-5">Value</th>
+                                    <th class="width-10">Units</th> 
+                                    <th class="width-7">Citation ID</th>
 									<th *ngIf="editGage" class="width-15">Statistic Group</th>
+									<th class="width-7" *ngIf="predIntervals || editGage">Variance</th>
+									<th class="width-7" *ngIf="predIntervals || editGage">Lower 90% Prediction Interval</th>
+									<th class="width-7" *ngIf="predIntervals || editGage">Upper 90% Prediction Interval</th>
 									<th>Preferred</th>
-                                    <th class="width-10">Years of Record</th> 
+                                    <th class="width-7">Years of Record</th> 
                                     <th class="width-15">Comments</th>
 								</tr>
 							</thead>
@@ -222,7 +225,7 @@
 											</button>
 										</div>
 									</td>
-									<td class="170width">
+									<td>
 										<span *ngIf="!newStat.isEditing">{{newStat.regressionType.name}}</span>
 										<span *ngIf="newStat.isEditing">
 											<ng-select  [(ngModel)]="newStat.regressionTypeID" name="regressionType" [clearable]="false">
@@ -234,7 +237,7 @@
 										<span *ngIf="!newStat.isEditing">{{newStat.value}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.value" size="1"></span>
 									</td>
-									<td class="140width">
+									<td>
 										<span *ngIf="!newStat.isEditing">{{newStat.unitType.name}}</span>
 										<span *ngIf="newStat.isEditing" >
 											<ng-select [(ngModel)]="newStat.unitTypeID" name="unitTypeID" [clearable]="false">
@@ -254,6 +257,15 @@
 											</select>
 										</span>
 									</td>
+									<td *ngIf="predIntervals || editGage">
+										
+									</td>
+									<td *ngIf="predIntervals || editGage">
+
+									</td>
+									<td *ngIf="predIntervals || editGage">
+
+									</td>
 									<td>
 										<span *ngIf="!newStat.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"/></span>
 										<span *ngIf="newStat.isEditing"><input type="checkbox" [(ngModel)]="newStat.isPreferred" size="3"></span>
@@ -270,7 +282,7 @@
 								<ng-container *ngFor="let s of gage.statistics,  let sIndex = index">
 									<ng-container *ngIf="selectedStatGroup == 0 && (!preferred || s.isPreferred) || selectedStatGroup.includes(s.statisticGroupTypeID) && (!preferred || s.isPreferred)">
 										<tr *ngIf="statIds.includes(s.id)" >
-											<th  colspan="9">{{getStatGroup(s.statisticGroupTypeID)}}</th>
+											<th  colspan="15">{{getStatGroup(s.statisticGroupTypeID)}}</th>
 										</tr>
 										<tr>									
 											<td *ngIf="editGage">	
@@ -320,6 +332,18 @@
 														<option *ngFor="let statisticGroup of statisticGroups" [value]="statisticGroup.id">{{statisticGroup.name}}</option>
 													</select>
 												</span>
+											</td>
+											<td *ngIf="predIntervals || editGage">
+												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.variance}}</span>
+												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.variance" class="input-100"></span>
+											</td>
+											<td *ngIf="predIntervals || editGage">
+												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.lowerConfidenceInterval}}</span>
+												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.lowerConfidenceInterval" class="input-100"></span>
+											</td>
+											<td *ngIf="predIntervals || editGage">
+												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.upperConfidenceInterval}}</span>
+												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.upperConfidenceInterval" class="input-100"></span>
 											</td>
 											<td>
 												<span *ngIf="!s.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"></span>

@@ -120,7 +120,8 @@
 							</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.citationID}}</span>
-								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.citationID" size="2" class="input-100"></span>
+								<span *ngIf="c.isEditing">{{c.citationID}}</span>
+								<button *ngIf="c.isEditing" type="button" (click)="showManageCitationsModal()"><i class="far fa-pencil"></i></button>
                             </td>
                             <td>
 								<span *ngIf="!c.isEditing">{{c.comments}}</span>

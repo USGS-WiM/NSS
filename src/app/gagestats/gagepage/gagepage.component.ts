@@ -69,8 +69,17 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
     this._nssService.selectedCitation.subscribe(c => {
       this.selectedCitation = c;
-      this.newChar.citationID = this.selectedCitation.id;
-      console.log(this.newChar)
+      if (this.newChar){  //If a new characteristic is created
+        this.newChar.citationID = this.selectedCitation.id; //Set the citationID to the id of the selected citation from the citation modal
+        console.log(this.newChar)
+      } if (!this.itemBeingEdited.yearsofRecord) {  //If a characteristic is being edited
+          this.itemBeingEdited.citationID = this.selectedCitation.id;
+          console.log(this.itemBeingEdited)
+      } if (this.newStat) { //If a new stat is created
+          this.newStat.citationID = this.selectedCitation.id
+      } if (this.itemBeingEdited.yearsofRecord) { //If itemBeingEdited is a stat
+          this.itemBeingEdited.citationID = this.selectedCitation.id
+      }
     }); 
 
     // get all unit types 
@@ -135,10 +144,18 @@ export class GagepageComponent implements OnInit, OnDestroy {
   } 
 
   public editRowClicked(item, index) {
-    this.tempItem = JSON.parse(JSON.stringify(item));
-    this.itemBeingEdited = item;
-    this.editId = index
-    item.isEditing = true;
+    if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
+        this.cancelEditRowClicked(this.itemBeingEdited);
+        this.tempItem = JSON.parse(JSON.stringify(item));
+        this.itemBeingEdited = item;
+        this.editId = index
+        item.isEditing = true;
+    } else {
+      this.tempItem = JSON.parse(JSON.stringify(item));
+      this.itemBeingEdited = item;
+      this.editId = index
+      item.isEditing = true;
+    }
   }
 
   public cancelEditRowClicked(item) {
@@ -148,7 +165,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     else if (this.itemBeingEdited.statisticGroupTypeID) {  // is a statistic
       this.gage.statistics[this.editId] = this.tempItem;
     }
-    
     item.isEditing = false;
   }
 
@@ -199,6 +215,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         }
       )
     }; if (!item.id) {  // If an item doesn't have an ID, then it needs to be added to NSS
+      delete item.isEditing;
       this._settingsservice.postEntityGageStats(item, this.configSettings.characteristicsURL).subscribe(
         (res: CharacteristicResponse) => { 
           item.isEditing = false; 

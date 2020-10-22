@@ -159,17 +159,14 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.statGroupIds = groupIds;
   }
 
-  public getPredictionIntervals() {
+  public getPredictionIntervals() {  //Search gage for stats w/ a prediction interval, return true if present
     var pred = false;
     this.gage.statistics.forEach( function(item, idex) {
       if (item.predictionInterval) {
-        
-        console.log(item.predictionInterval)
         return pred = true;
       }
     })
     this.predIntervals = pred;
-    console.log(this.predIntervals, pred)
   }
 
 ///////////////////Edit Gage Info Section//////////////////////////////
@@ -285,15 +282,16 @@ export class GagepageComponent implements OnInit, OnDestroy {
       statisticGroupTypeID: null,
       unitTypeID: null,
       yearsofRecord: null,
-      citationID: null
+      citationID: null,
+      predictionInterval: {}
     } 
     this.newStat.isEditing = true;
   } 
 
   public saveStat(item) {
-    if (item.id) {
-      const newItem = JSON.parse(JSON.stringify(item));  // Copy item, delete unnecessary elements
-      ['regressionType', 'citation', 
+    if (item.id) {  //If statistic has an id, it is already in the SS DB, make PUT request to edit
+      const newItem = JSON.parse(JSON.stringify(item));  // Copy item
+      ['regressionType', 'citation',
       'unitType', 'isEditing', 'statisticGroupType'].forEach(e => delete newItem[e]);  // Delete unneeded items
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
         (res) => {
@@ -302,7 +300,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.refreshgagepage();
         }
       )
-    } else {  
+    } else {  //If statistic doesn't have an id, it needs to be added to the DB, make POST request
       this._settingsservice.postEntityGageStats(item, this.configSettings.statisticsURL).subscribe(
         (res: StatisticResponse) => {
           item.isEditing = false;
@@ -331,11 +329,14 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   private refreshgagepage() {
     this._nssService.getGagePageInfo(this.code).subscribe(res => {
+      res.statistics.sort(function(a, b){
+        return a.statisticGroupTypeID - b.statisticGroupTypeID;
+      });
       this.gage = res;
       this.getCitations();
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();
-      this.selectedStatGroup = [];
+      //this.selectedStatGroup = [];
       this.getPredictionIntervals();
     });
   }
@@ -350,10 +351,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public setPreferred() {
     if (!this.preferred) {
-      this.preferred = true
-
+      this.preferred = true;
     } else {
-      this.preferred = false
+      this.preferred = false;
     }
   }
 

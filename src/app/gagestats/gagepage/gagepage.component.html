@@ -65,7 +65,9 @@
 		<!--Physical Characteristics-->
 		<div>
 			<div class="table-title">Physical Characteristics
-				<div class="stat-filters inner"><button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs"  (click)="addPhysicalCharacteristic(cIndex)">Add Physical Characteristic</button></div>
+				<div class="stat-filters">
+					<div><button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs"  (click)="addPhysicalCharacteristic(cIndex)">Add Physical Characteristic</button></div>
+				</div>
 			</div>
 			<div *ngIf="gage.characteristics.length > 0 || editGage">
 				<table style="border:solid 1px gray" class="custom-table"> 
@@ -207,7 +209,7 @@
 									<th class="width-7" *ngIf="predIntervals || editGage">Upper 90% Prediction Interval</th>
 									<th>Preferred</th>
                                     <th class="width-7">Years of Record</th> 
-                                    <th class="width-15">Comments</th>
+                                    <th>Comments</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -258,13 +260,16 @@
 										</span>
 									</td>
 									<td *ngIf="predIntervals || editGage">
-										
+										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.variance}}</span>
+										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.variance" class="input-100"></span>
 									</td>
 									<td *ngIf="predIntervals || editGage">
-
+										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.lowerConfidenceInterval}}</span>
+										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.lowerConfidenceInterval" class="input-100"></span>
 									</td>
 									<td *ngIf="predIntervals || editGage">
-
+										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.upperConfidenceInterval}}</span>
+										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.upperConfidenceInterval" class="input-100"></span>
 									</td>
 									<td>
 										<span *ngIf="!newStat.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"/></span>

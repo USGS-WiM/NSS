@@ -52,7 +52,7 @@
                     <ng-select formControlName="regionID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                         <ng-option *ngFor="let region of regions" [value]="region.id">{{region.name}}</ng-option>
                     </ng-select>
-                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('regionID').valid && addStationForm.get('regionID').touched">Study Area ID
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('regionID').valid && addStationForm.get('regionID').touched">Study Area
                         is required</div>
                 </div>
 

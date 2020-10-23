@@ -1462,7 +1462,7 @@ export class MainviewComponent implements OnInit {
         this._nssService.scenarioCitations.subscribe((c: Array<any>) => {
             this.scenarioCitations = c;
             this.scenarios.forEach((s => {
-                s.citations = []
+                s.citations = [];
                 s.regressionRegions.forEach(rr => {
                     s.citations.push(this.scenarioCitations.find(c=>c.id === rr.citationID));
                 });
@@ -1488,7 +1488,7 @@ export class MainviewComponent implements OnInit {
                         });
                     }));
                 }
-                this.getStatCitations()
+                this.getStatCitations();
             });
     }
 

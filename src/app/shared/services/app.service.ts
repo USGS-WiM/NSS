@@ -753,7 +753,7 @@ export class NSSService {
                         // get citations
                         scen.regressionRegions.forEach(test =>{
                             if (this.citationTest.findIndex(i => i == test.id) === -1) {
-                                this.citationTest.push(test.id)
+                                this.citationTest.push(test.id);
                             }
                         })
                         // clear Parameter.'Value'
@@ -772,7 +772,7 @@ export class NSSService {
                             }
                         });
                     });
-                    this.citationTest = this.citationTest.map(String)
+                    this.citationTest = this.citationTest.map(String);
                     const testParam =  '?regressionregions=' + this.citationTest;
                     this.getCitations(testParam).subscribe(c => {
                         if (!(c.length === 1 && c[0] === null)) { 

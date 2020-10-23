@@ -53,6 +53,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public agencies: Agency[];
   public stationTypes: Stationtype[];
   public selectedParams: GageStatsSearchFilter;
+  public editButtonClicked: boolean = false; 
 
   constructor(
     private _nssService: NSSService, 
@@ -250,6 +251,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       item.predictionInterval = {variance: 0, lowerPredictionInterval: 0, upperPredictionInterval: 0};
     }
     item.isEditing = true;
+    this.editButtonClicked = true;
   }
 
   public cancelEditRowClicked(item) {

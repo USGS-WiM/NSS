@@ -126,7 +126,7 @@
 						<tr *ngIf="newChar">
 							<td>	
 								<div class="table-icon-buttons">
-									<button type="button" *ngIf="!newChar.isEditing" title="Edit Parameter" (click)="editRowClicked(newChar, cIndex)" class="icon-button" aria-hidden="true">
+									<button type="button" *ngIf="!newChar.isEditing" title="Edit Parameter" (click)="editRowClicked(newChar, cIndex)" class="icon-button" aria-hidden="true", [disabled]=false>
 										<i class="far fa-pencil"></i>
 									</button>
 									<button type="button" *ngIf="newChar.isEditing" title="Save Parameter" (click)="saveChar(newChar)"  class="icon-button" aria-hidden="true">
@@ -170,7 +170,7 @@
 						<tr *ngFor="let c of gage.characteristics, let cIndex = index">
 							<td *ngIf="editGage">	
 								<div class="table-icon-buttons">
-									<button type="button" *ngIf="!c.isEditing" title="Edit Parameter" (click)="editRowClicked(c, cIndex)" class="icon-button" aria-hidden="true">
+									<button type="button" *ngIf="!c.isEditing" title="Edit Parameter" (click)="editRowClicked(c, cIndex)" class="icon-button" aria-hidden="true" [disabled]="editButtonClicked">
 										<i class="far fa-pencil"></i>
 									</button>
 									<button type="button" *ngIf="c.isEditing" title="Save Parameter" (click)="saveChar(c)"  class="icon-button" aria-hidden="true">
@@ -257,7 +257,7 @@
 								<tr *ngIf="newStat">
 									<td>	
 										<div class="table-icon-buttons">
-											<button type="button" *ngIf="!newStat.isEditing" title="Edit Parameter" (click)="editRowClicked(newStat, sIndex)" class="icon-button" aria-hidden="true">
+											<button type="button" *ngIf="!newStat.isEditing" title="Edit Parameter" (click)="editRowClicked(newStat, sIndex)" class="icon-button" aria-hidden="true" >
 												<i class="far fa-pencil"></i>
 											</button>
 											<button type="button" *ngIf="newStat.isEditing" title="Save Parameter" (click)="saveStat(newStat)"  class="icon-button" aria-hidden="true">
@@ -333,7 +333,7 @@
 										<tr>									
 											<td *ngIf="editGage">	
 												<div class="table-icon-buttons">
-													<button type="button" *ngIf="!s.isEditing" title="Edit Parameter" (click)="editRowClicked(s, sIndex)" class="icon-button" aria-hidden="true">
+													<button type="button" *ngIf="!s.isEditing" title="Edit Parameter" (click)="editRowClicked(s, sIndex)" class="icon-button" aria-hidden="true" [disabled]="editButtonClicked">
 														<i class="far fa-pencil"></i>
 													</button>
 													<button type="button" *ngIf="s.isEditing" title="Save Parameter" (click)="saveStat(s)"  class="icon-button" aria-hidden="true">

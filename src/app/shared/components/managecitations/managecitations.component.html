@@ -11,7 +11,7 @@
 				<input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
 			</div>
 			<div [class.hidden]="showNewCitation" class="mtop-sm">
-				<button type="button" (click)="showNewCitation = true" class="button blue">Create New Citation</button>
+				<button type="button" (click)="showNewCitation = true" class="button blue"><i class="far fa-plus" aria-hidden="true"></i>Create New Citation</button>
 			</div>
 			<form *ngIf="showNewCitation" [formGroup]="newCitForm" class="newCitForm">
 				<label>New Citation</label>
@@ -46,14 +46,14 @@
 					class="button blue">Create</button>
 			</form>
 
-			<div style="width:100%;">
+			
 			<table class="custom-table table-striped table-scroll mtop-sm no-scrollbars">
 				<thead>
 					<tr>
-						<th style="width: 595px; border-right-style: none;">Citation</th>
-						<th style="width: 50px; border-right-style: none; border-left-style: none;"></th>
-						<th style="width: 300px; border-right-style: none; border-left-style: none;">Associated Regression Regions</th>
-						<th style="width: 50px; border-left-style: none;" class="empty-cell">
+						<th class=citationHeader>Citation</th>
+						<th class=citationEditHeader></th>
+						<th class=regRegionHeader>Associated Regression Regions</th>
+						<th class="empty-cell regRegionEditHeader">
 							<!-- Filler button - not used for anything -->
 							<div class="cell-buttons"><button class="icon-button" aria-hidden="true"><i
 										class="far fa-circle"></i></button></div>
@@ -63,7 +63,7 @@
 				<tbody>
 					<tr *ngFor="let c of filteredData; let cIndex = index">
 						<!-- Col 1, Citation -->
-						<td style="width: 450px;">
+						<td class=col1>
 							<div class="half-space">
 								<span *ngIf="!c.isEditing">{{ c.author }}</span>
 								<span *ngIf="c.isEditing"><textarea class='break' name="author" [(ngModel)]="c.author"
@@ -83,7 +83,7 @@
 							</div>
 						</td>
 						<!-- Col 2 - Citation Buttons -->
-						<td style="width: 41px">
+						<td class=editCol>
 							<!-- Editing -->
 							<div [class.hidden]="!showAddCitations" class="cell-buttons">
 								<button *ngIf="!c.isEditing" title="Edit Citation" (click)="editRowClicked(c, cIndex)"
@@ -114,7 +114,7 @@
 						</td>
 						<!-- Col 3, Associated Regression Region -->
 						<td>
-						<div *ngFor="let e of c.regressionRegions; last as isLast">
+						<div *ngFor="let e of c.regressionRegions; last as isLast" class=regRegionFields>
 								<!-- Col 3, Associated Regression Region (all but the last one) -->
 								<td [class.regRegionLast]=isLast [class.regRegion]=!isLast>{{e.name}}
 								</td>
@@ -129,7 +129,7 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
+		
 	</div>
 	</div>
 

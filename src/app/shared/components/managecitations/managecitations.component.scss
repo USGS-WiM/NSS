@@ -21,7 +21,6 @@ button {
     border-top-style:none; 
     border-bottom-style:none; 
     border-left-style:none; 
-    max-height:100%;
 }
 
 .editRegRegion {
@@ -35,4 +34,34 @@ button {
     border-top-style:none; 
     border-right-style: none; 
     border-bottom-style:none;
+}
+
+.citationHeader {
+    width: 595px; 
+    border-right-style: none;
+}
+
+.citationEditHeader {
+    width: 50px; 
+    border-right-style: none; 
+    border-left-style: none;
+}
+
+.regRegionHeader {
+    width: 300px; 
+    border-right-style: none; 
+    border-left-style: none;
+}
+
+.regRegionEditHeader {
+    width: 50px; 
+    border-left-style: none;
+}
+
+.col1 {
+    width: 450px;
+}
+
+.editCol {
+    width: 41px;
 }

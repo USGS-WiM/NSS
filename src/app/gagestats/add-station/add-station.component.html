@@ -1,0 +1,107 @@
+<ng-template #addStation let-c="close" let-d="dismiss" >
+    <div>
+        <div class="modal-header">
+            <h4 class="title" > Add Station </h4>
+            <button class="icon-button" (click)="c('closed'); clearStation()"><i class="far fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            
+            <form [formGroup]="addStationForm" >
+                <div class="form-group required" >
+                    <label class="req" for="code">Code:</label><br/>
+                    <label class="example-text">Example: "01234567"</label>
+                    <input class="form-control code" type="text" formControlName="code">
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('code').valid && addStationForm.get('code').touched">Station Code
+                        is required</div>
+                </div>
+
+                <div class="form-group required" [ngClass]="{ 'form-invalid': !addStationForm.get('agencyID').valid && addStationForm.get('agencyID').touched }">
+                    <label class="req" for="agencyID">Agency:</label><br/>
+                    <ng-select formControlName="agencyID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                        <ng-option *ngFor="let ag of agencies" [value]="ag.id">{{ag.name}}</ng-option>
+                    </ng-select>
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('agencyID').valid && addStationForm.get('agencyID').touched">Agency ID
+                        is required</div>
+                </div>
+
+                <div class="form-group required">
+                    <label class="req" for="name">Station Name:</label><br/>
+                    <label class="example-text">Example: "station 1 at crooked creek"</label>
+                    <input class="form-control code" type="text" formControlName="name" >
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('name').valid && addStationForm.get('name').touched">Station Code
+                        is required</div>
+                </div>
+
+                <div class="form-group required" [ngClass]="{ 'form-invalid': !addStationForm.get('stationTypeID').valid && addStationForm.get('stationTypeID').touched }">
+                    <label class="req" for="stationTypeID">Station Type:</label><br/>
+                    <ng-select formControlName="stationTypeID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                        <ng-option *ngFor="let type of stationTypes" [value]="type.id">{{type.name}} ({{type.code}})</ng-option>
+                    </ng-select>
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('stationTypeID').valid && addStationForm.get('stationTypeID').dirty">Station Type
+                        is required</div>
+                </div>
+
+                <div class="form-group form-check" >
+                    <label for="isRegulated" style="padding-right:5px">  Station is Regulated:</label>
+                    <input formControlName="isRegulated" type="checkbox">
+                    
+                </div>
+
+                <div class="form-group required" [ngClass]="{ 'form-invalid': !addStationForm.get('regionID').valid && addStationForm.get('regionID').touched }">
+                    <label class="req" for="regionID">Study Area:</label><br/>
+                    <ng-select formControlName="regionID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                        <ng-option *ngFor="let region of regions" [value]="region.id">{{region.name}}</ng-option>
+                    </ng-select>
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('regionID').valid && addStationForm.get('regionID').touched">Study Area
+                        is required</div>
+                </div>
+
+                
+                <!-- latitude -->
+                <div class="form-group required width-40">
+                    <label class="req" for="latitude">Latitude:</label>
+                    <i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="format DD.DDD (between -90 and 90)" triggers="click"></i>
+                    <input class="form-control"  type="number" formControlName="latitude" >
+                    <!--out of range errors-->
+                    <div class="input-invalid-warning" *ngIf="addStationForm.get('latitude').errors?.min">Latitude must be greater than -90.00</div>
+                    <div class="input-invalid-warning" *ngIf="addStationForm.get('latitude').errors?.max">Latitude must be less than  90.00</div>
+                </div>
+                <!-- Longitude -->
+                <div class="form-group required width-40" >
+                    <label class="req" for="longitude">Longitude:</label>
+                    <i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="format DD.DDD (between -180 and 180)" triggers="click"></i>
+                    <input class="form-control"  type="number" formControlName="longitude" >
+                     <div class="input-invalid-warning" *ngIf="!addStationForm.get('longitude').valid && (addStationForm.get('longitude').touched || addStationForm.get('longitude').dirty) " >
+                        <div class="input-invalid-warning" *ngIf="addStationForm.get('longitude').errors.min">Longitude must be greater than -180.00 degrees</div> 
+                        <div class="input-invalid-warning" *ngIf="addStationForm.get('longitude').errors.max">Longitude must be less than 180.00 degrees</div> 
+                    </div>
+                </div>
+                
+                <!--visual output for testing validation-->
+               <!--  <br> <div>form Valid {{addStationForm.valid}}</div>
+                <div>code valid {{addStationForm.get('code').valid}}</div>
+                <div>agencyID Valid {{addStationForm.get('agencyID').valid}}</div>
+                <div>name Valid {{addStationForm.get('name').valid}}</div>
+                <div>station Valid {{addStationForm.get('stationTypeID').valid}}</div>
+                <div>isRegulated Value {{addStationForm.get('isRegulated').value}}</div>
+                <div>lat Valid {{addStationForm.get('latitude').valid}}</div>
+                <div>long Valid {{addStationForm.get('longitude').valid}}</div> -->
+            </form>
+            
+    
+    
+            
+        </div>
+    </div>
+
+    <div class="modal-body-footer">
+        <!--close and save-->
+        <div class ="xs-f-btw">
+            <button type="button" (click)="clearStation()" class="button red mright-xs">Clear All</button>
+            <button type="button" (click)="c('closed'); clearStation()" class="button black">Cancel</button>
+            <div class="flex-spacer"></div>
+            <button type="button" (click)="submitStation()" [disabled]="!addStationForm.valid" class="button blue">Add</button>
+        </div>
+        
+    </div>
+</ng-template>

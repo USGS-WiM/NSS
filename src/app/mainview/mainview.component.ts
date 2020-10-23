@@ -55,6 +55,7 @@ export class MainviewComponent implements OnInit {
     public selectedRegion;
     private navigationSubscription;
     public selectedRegressionRegion: Array<Regressionregion>;
+    public originalRegRegion;
     public tempSelectedRegressionRegion: Array<Regressionregion>;
 
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
@@ -102,6 +103,7 @@ export class MainviewComponent implements OnInit {
     public units;
     public errors;
     public status;
+    public methods;
     public regTypes;
     public tempData;
     public itemBeingEdited;
@@ -144,7 +146,7 @@ export class MainviewComponent implements OnInit {
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
             if (e instanceof NavigationStart) {
                 this.router.navigated = false;
-                if (this.previousUrl === '/settings' || this.previousUrl === '/profile') {
+                if (this.previousUrl === '/settings' || this.previousUrl === '/profile'|| this.previousUrl === '/gagestats') {
                     this._nssService.setSelectedRegion(undefined);
                     this.showRegion = false;
                 }
@@ -208,8 +210,11 @@ export class MainviewComponent implements OnInit {
         this._authService.loggedInRole().subscribe(role => {
             this.loggedInRole = role;
         });
+        // subscribe to temRegRegion
+        this._nssService.currentTempRegRegion.subscribe(originalRegRegion => this.originalRegRegion = originalRegRegion);
         // subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
+            if (this.itemBeingEdited) { this.CancelEditRowClicked(); }
             this.scenarios = s;
             this.getCitations(); // get full list of citations
             this.getRegRegions(); // get list of regression regions for the region
@@ -617,6 +622,10 @@ export class MainviewComponent implements OnInit {
         // get all status types (use for options in edit/add scenario selects)
         this._settingsService.getEntities(this.configSettings.statusURL).subscribe(res => {
             this.status = res;
+        });
+        // get all method types
+        this._settingsService.getEntities(this.configSettings.methodURL).subscribe(res => {
+            this.methods = res;
         });
     } // end ngOnInit()
 
@@ -1160,6 +1169,10 @@ export class MainviewComponent implements OnInit {
     }
     // want to edit the selected/computed scenario. remove Result
     public editScenario() {
+        //make sure that if there were any regression regions deleted, that they are added back in
+        if (this.originalRegRegion[0] != null) {
+            this.scenarios[0].regressionRegions = this.originalRegRegion;
+        }
         this.scenarios.forEach(s => {
             let areaWeighed = s.regressionRegions.map(function (r) {
                 return r.id;
@@ -1260,6 +1273,7 @@ export class MainviewComponent implements OnInit {
             equ.style.visibility = 'hidden';
             MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathJax1']);
         }
+        this.itemBeingEdited = "";
     }
 
     /////////////////////// Delete Scenarios Section ///////////////////////////
@@ -1351,7 +1365,7 @@ export class MainviewComponent implements OnInit {
                 // if regression has prediction interval, need to ask for expected bounds
                 if (!reg.predictionInterval.student_T_Statistic || !reg.predictionInterval.variance
                     || !reg.predictionInterval.xiRowVector || !reg.predictionInterval.covarianceMatrix) {
-                        reg.predictionInterval = null;
+                    reg.predictionInterval = null;
                 } else {
                     this.getBounds = true;
                     reg.expected.intervalBounds = { lower: null, upper: null };
@@ -1429,6 +1443,18 @@ export class MainviewComponent implements OnInit {
             }
         });
         return statusName;
+    }
+
+    public getMethodName(mID) {
+        let methodName;
+        this.methods.forEach(z => {
+            if (mID === z.id) {
+                methodName = z.name;
+            }
+        });
+        if (methodName) {
+            return (", Method: "+ methodName);
+        }
     }
 
     public getRegRegions() {

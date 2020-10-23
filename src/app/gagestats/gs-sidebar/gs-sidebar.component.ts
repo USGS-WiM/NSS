@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NSSService } from 'app/shared/services/app.service';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
-import { IMultiSelectSettings, IMultiSelectTexts} from '../../../../node_modules/angular-2-dropdown-multiselect';
+import { IMultiSelectSettings, IMultiSelectTexts } from '../../../../node_modules/angular-2-dropdown-multiselect';
 import { Region } from 'app/shared/interfaces/region';
 import { SettingsService } from 'app/settings/settings.service';
 import { ConfigService } from 'app/config.service';
@@ -10,6 +10,7 @@ import { Config } from 'protractor';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
+import { GageStatsFilterClass, GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
 
 @Component({
   selector: 'gs-sidebar',
@@ -18,44 +19,29 @@ import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 })
 export class GsSidebarComponent implements OnInit {
   private configSettings: Config;
-  // station type
   public stationTypes: Array<Stationtype>;
-  public selectedStationType: Array<Stationtype> = [];
-  // regression type
   public regressionTypes: Array<Regressiontype>;
-  public selectedRegressionType: Array<Regressiontype> = [];
-  // statistic groups
   public statisticGroups: Array<Statisticgroup>;
-  public selectedStatisticGroup: Array<Statisticgroup> = [];
-  // variable type
   public variableTypes: Array<Variabletype>;
-  public selectedVariableType: Array<Variabletype> = [];
-  // regions
   public regions: Array<Region>;
-  public selectedRegion: Array<Region> = [];
-  // agency
   public agencies: Array<Agency>;
-  public selectedAgency: Array<Agency> = [];
-  // search and page parameters
-  public searchText: string = '';
-  public pageNumber = '1';
-  public perPage = 50;
   // Dropdown menu default text
   public myMSTexts: IMultiSelectTexts;
   public myRTSettings: IMultiSelectSettings;
+  public params: GageStatsSearchFilter = new GageStatsFilterClass();
 
-  constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) { 
+  constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
   }
 
   ngOnInit() {
-    this._nssService.selectedPageNumber.subscribe((page: string) => { 
-      this.pageNumber = page;
-      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
+    this._nssService.selectedPageNumber.subscribe((page: string) => {
+      this.params.page = page;
+      this._nssService.searchStations(this.params);
     });
-    this._nssService.selectedPerPage.subscribe((perPage: number) => { 
-      this.perPage = perPage;
-      this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
+    this._nssService.selectedPerPage.subscribe((perPage: number) => {
+      this.params.pageCount = perPage;
+      this._nssService.searchStations(this.params);
     });
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
@@ -79,11 +65,11 @@ export class GsSidebarComponent implements OnInit {
     });
 
     // trigger initial stations search
-    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
+    this._nssService.searchStations(this.params);
 
     this.myRTSettings = {
       pullRight: false,
-      enableSearch: false,
+      enableSearch: true,
       checkedStyle: 'glyphicon', // 'checkboxes',
       buttonClasses: 'btn btn-default',
       selectionLimit: 0,
@@ -106,8 +92,19 @@ export class GsSidebarComponent implements OnInit {
 
   // search stations
   public onSearch() {
-    this.pageNumber = '1';
-    this._nssService.searchStations(this.searchText, this.selectedStationType, this.selectedAgency, this.pageNumber, this.perPage, this.selectedRegion, this.selectedRegressionType, this.selectedVariableType, this.selectedStatisticGroup);
+    this.params.page = 1;
+    this._nssService.setSelectedFilterParams(this.params);
+    this._nssService.searchStations(this.params);
+  }
+
+  //Clear filters
+  public clearGagestatsFilters() {
+    //Reset search parameters to bring gage table back to default view
+    this.params = new GageStatsFilterClass();
+
+    //Refresh the search without any filters selected
+    this.onSearch();
   }
 
 }
+

@@ -12,6 +12,9 @@ import { CharacteristicResponse } from 'app/shared/interfaces/characteristicresp
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
 import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
+import { Agency } from 'app/shared/interfaces/agency';
+import { Stationtype } from 'app/shared/interfaces/stationtype';
+import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
 
 @Component({
   selector: 'gagePageModal',
@@ -29,11 +32,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public loggedInRole;
   public code;
   public gage: Station;
-  public editGage: boolean;
+  public editGage: boolean = false;
+  public editGageInfo: boolean = false;
   public units;
   public tempItem;
   public itemBeingEdited;
-  public editItem;
   public editId;
   public newChar: GageCharacteristic;
   public newStat: GageStatistic;
@@ -47,6 +50,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public filteredGage: Station;
   public preferred: boolean = false;
   public predIntervals: boolean = false;
+  public agencies: Agency[];
+  public stationTypes: Stationtype[];
+  public selectedParams: GageStatsSearchFilter;
 
   constructor(
     private _nssService: NSSService, 
@@ -58,7 +64,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.editGage = false;
     this.loggedInRole = localStorage.getItem('loggedInRole');
     this.modalSubscript = this._nssService.showGagePageModal.subscribe((result: GagePage) => {
       if (result.show) { 
@@ -83,20 +88,27 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this._nssService.getUnitTypes().subscribe(res => {
       this.units = res;
     });
-
     // get all variable types
     this._nssService.getVariableTypes().subscribe( res =>{
       this.variables = res;
     });
-
     // get all regression types
     this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
       this.regressionTypes = res;
-  });
-
+    });
     // get all stat groups 
     this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
       this.statisticGroups = res;
+    });
+    // get all agencys
+    this._nssService.getAgencies();
+    this._nssService.agencies.subscribe((ag: Array<Agency>) => {
+      this.agencies = ag;
+    });
+    // get all station types
+    this._nssService.getStationTypes();
+    this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
+      this.stationTypes = st;
     });
 
     this.myRTSettings = {
@@ -120,6 +132,10 @@ export class GagepageComponent implements OnInit, OnDestroy {
       defaultTitle: 'Select'
     };
 
+    //subscribe to selected Filters
+    this._nssService.selectedFilterParams.subscribe((selectedParams: GageStatsSearchFilter) => { 
+      this.selectedParams = selectedParams;
+    });
   }  // end OnInit
   
   public getCitations(){
@@ -171,12 +187,49 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
 ///////////////////Edit Gage Info Section//////////////////////////////
   
-  public editGageStats() {
-    this.editGage = true;
+  public deleteGageStats(id){
+    const check = confirm('Are you sure you want to delete this Gage?');
+    if (check) {
+      this._settingsservice.deleteEntityGageStats(id, this.configSettings.stationsURL).subscribe(result => {
+          if (result.headers) { 
+            this._nssService.outputWimMessages(result); 
+            this.modalRef.close();    
+            this._nssService.searchStations(this.selectedParams);
+          }
+      }, error => {
+          if (error.headers) {this._nssService.outputWimMessages(error);
+          } else { this._nssService.handleError(error); }
+      });
+    }
+  }
+
+  public saveGageInfo(gage){
+    const newItem = JSON.parse(JSON.stringify(gage)); 
+    ['agency', 'stationType'].forEach(e => delete newItem[e]);  
+      this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.stationsURL).subscribe(
+        (res) => {
+          this.editGageInfo = false;
+          this.code = res.body['code']; // update code in case user changed it
+          this._settingsservice.outputWimMessages(res);
+          this.refreshgagepage();
+          this._nssService.searchStations(this.selectedParams);
+        }
+      )
+  }
+
+  public editGageInformation(item) {
+    this.editGageInfo = true;
+    this.tempItem = JSON.parse(JSON.stringify(item));
+  }
+
+  public cancelEditGageInfo() {
+    this.gage = this.tempItem;
+    this.editGageInfo = false;
   }
 
   public endEditGageStats() {
     this.editGage = false;
+    this.editGageInfo = false;
     if (this.itemBeingEdited) {
       this.itemBeingEdited.isEditing = false;
     }
@@ -192,7 +245,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public editRowClicked(item, index) {
     this.tempItem = JSON.parse(JSON.stringify(item));
     this.itemBeingEdited = item;
-    this.editId = index
+    this.editId = index;
     if (!item.predictionInterval) {
       item.predictionInterval = {variance: 0, lowerPredictionInterval: 0, upperPredictionInterval: 0};
     }
@@ -206,12 +259,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
     else if (this.itemBeingEdited.statisticGroupTypeID) {  // is a statistic
       this.gage.statistics[this.editId] = this.tempItem;
     }
-    
     item.isEditing = false;
   }
 
   public submitGage() {
-    const url = ''
+    const url = '';
     this._settingsservice.putEntityGageStats('', this.configSettings.stationsURL, url).subscribe()
   }
 

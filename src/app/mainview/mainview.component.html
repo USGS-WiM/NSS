@@ -13,7 +13,7 @@
 
 	<!-- Region -->
 	<div *ngIf="showRegion" class="app-body-section" id="regionSection">
-		<label class="big">Region:</label>
+		<label class="big">Study Area:</label>
 		<h5 class="bold">{{selectedRegion.name}}</h5>
 	</div>
 
@@ -88,7 +88,11 @@
 
 				<!-- No results -->
 				<div *ngIf="sc.regressionRegions.length == 0">
-					<h3>There are no Results for your selection. Please try another...</h3>
+					<h3>There are no results for your selection. Please try another...</h3>
+					<button type="button" class="button small hidden-print mbottom-xs" (click)="editScenario()">
+						<i class="far fa-pencil-alt"></i>
+						<span>Edit Scenario Explanatory Variables</span>
+					</button>
 				</div>
 			</div> <!-- end ngFor scenarios -->
 
@@ -249,7 +253,8 @@
 								</tr>
 								<tr>
 									<th class="width-40">Description</th>
-									<th class="width-10">(<span [innerHTML]="setSuperScript(rr.results[0].unit.abbr)"></span>)</th>
+									<th class="width-10">(<span
+											[innerHTML]="setSuperScript(rr.results[0].unit.abbr)"></span>)</th>
 									<th class="width-10" *ngIf="rr.results[0].intervalBounds">Low</th>
 									<th class="width-10" *ngIf="rr.results[0].intervalBounds">High</th>
 									<th class="width-10" *ngFor="let e of rr.results[0]?.errors">{{e.code}}</th>
@@ -944,8 +949,7 @@
 						</button>
 
 						<!-- Regression region label -->
-						<label *ngIf="!rr.isEditing" class="big">{{rr.name}} (RG_Code: {{rr.code}}) Status:
-							{{getStatusDescription(rr.statusID)}}</label>
+						<label *ngIf="!rr.isEditing" class="big">{{rr.name}} (RG_Code: {{rr.code}}), Status: {{getStatusDescription(rr.statusID)}}{{getMethodName(rr.methodID)}}</label>
 
 						<table *ngIf="rr.isEditing" class="custom-table">
 							<thead>
@@ -1217,13 +1221,31 @@
 									<td>
 										<span *ngIf="!r.isEditing && (r.predictionInterval.biasCorrectionFactor || r.predictionInterval.student_T_Statistic || r.predictionInterval.variance 
                                         || r.predictionInterval.xiRowVector || r.predictionInterval.covarianceMatrix)">
-											<div [class.hidden]="loggedInRole != 'Administrator'">Bias Correction
-												Factor: {{r.predictionInterval.biasCorrectionFactor}}<br></div>
-											Student's T Statistics for 90% confidence interval:
-											{{r.predictionInterval.student_T_Statistic}}<br>
-											Variance: {{r.predictionInterval.variance}}<br>
-											XI Row Vector: {{r.predictionInterval.xiRowVector}}<br>
-											Covariance Matrix: {{r.predictionInterval.covarianceMatrix}}<br>
+											<div [class.hidden]="loggedInRole != 'Administrator'">
+												<span
+													*ngIf="r.predictionInterval.biasCorrectionFactor && r.predictionInterval.biasCorrectionFactor !=='null' && r.predictionInterval.biasCorrectionFactor !==''">
+													<b>Bias Correction Factor:
+													</b>{{r.predictionInterval.biasCorrectionFactor}}<br>
+												</span>
+											</div>
+											<span
+												*ngIf="r.predictionInterval.student_T_Statistic && r.predictionInterval.student_T_Statistic !=='null' && r.predictionInterval.student_T_Statistic !==''">
+												<b>Student's T
+													Statistics for 90% confidence interval:</b>
+												{{r.predictionInterval.student_T_Statistic}}<br></span>
+											<span
+												*ngIf="r.predictionInterval.variance !=='null' && r.predictionInterval.variance !==''">
+												<b>Variance:</b> {{r.predictionInterval.variance}}<br>
+											</span>
+											<span
+												*ngIf="r.predictionInterval.xiRowVector !=='null' && r.predictionInterval.xiRowVector !==''">
+												<b>XI Row Vector:</b> {{r.predictionInterval.xiRowVector}}<br>
+											</span>
+											<span
+												*ngIf="r.predictionInterval.covarianceMatrix !=='null' && r.predictionInterval.covarianceMatrix !==''">
+												<b>Covariance Matrix:</b>
+												{{r.predictionInterval.covarianceMatrix}}<br>
+											</span>
 										</span>
 										<span
 											*ngIf="!r.isEditing && !r.predictionInterval.biasCorrectionFactor && !r.predictionInterval.student_T_Statistic && !r.predictionInterval.variance 
@@ -1265,8 +1287,7 @@
 						class="far fa-pencil" aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
 					<i *ngIf="!u.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(u.id)"
 						class="far fa-times" aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
-					<label *ngIf="!u.isEditing" class="rrLabel">{{u.name}} (RG_Code: {{u.code}}) Status:
-						{{getStatusDescription(u.statusID)}}</label>
+					<label *ngIf="!u.isEditing" class="rrLabel">{{u.name}} (RG_Code: {{u.code}}), Status: {{getStatusDescription(u.statusID)}}{{getMethodName(u.methodID)}}</label>
 				</div>
 			</div>
 		</form>

@@ -214,7 +214,8 @@ export class SidebarComponent implements OnInit {
     }
 
     // select of regression region. set the selectedRegRegions
-    public onRegressionRegSelect(): void {
+    public onRegressionRegSelect(e): void {
+        //console.log(e)
         const selectedRegRegions: Array<Regressionregion> = new Array<Regressionregion>();
         this.selectedRegRegionIDs.forEach(srr => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
@@ -228,7 +229,8 @@ export class SidebarComponent implements OnInit {
     }
 
     // select of statisticgrp. update regressionregions and regressiontypes and scenario for mainView
-    public onStatGrpSelect(): void {
+    public onStatGrpSelect(e): void {
+        //console.log(e)
         const selectedStatGroups: Array<Statisticgroup> = new Array<Statisticgroup>();
         this.selectedStatGrpIDs.forEach(ssg => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
@@ -242,7 +244,8 @@ export class SidebarComponent implements OnInit {
     }
 
     // select of regression type. update statisticgrps and regressionregions
-    public onRegTypeSelect(): void {
+    public onRegTypeSelect(e): void {
+        //console.log(e)
         const selectedRegTypes: Array<Regressiontype> = new Array<Regressiontype>();
         this.selectedRegTypeIDs.forEach(srt => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main

@@ -55,12 +55,12 @@
 
           <!-- Region* -->
           <div *ngIf="addRegReg" class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty }">
-              <label class="req" for="region">Region:</label>
+              <label class="req" for="region">Study Area:</label>
               <select class="form-control" formControlName="region">
                   <option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</option>
               </select>
               <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty">
-                  Region is required
+                Study Area is required
               </div>
           </div>
       </form>

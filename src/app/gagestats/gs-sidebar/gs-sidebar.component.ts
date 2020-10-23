@@ -69,7 +69,7 @@ export class GsSidebarComponent implements OnInit {
 
     this.myRTSettings = {
       pullRight: false,
-      enableSearch: false,
+      enableSearch: true,
       checkedStyle: 'glyphicon', // 'checkboxes',
       buttonClasses: 'btn btn-default',
       selectionLimit: 0,

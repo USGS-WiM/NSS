@@ -126,10 +126,10 @@
             <!-- Regions* -->
             <div formArrayName="regionManagers"  *ngIf="role.value == 'Manager'">
                 <div *ngFor="let var of newUserForm.get('regionManagers').controls; let varIndex = index">
-                    <div (click)="removeRegion(varIndex)"><i class="ion-close"></i><span class="ml-1">Study Area {{varIndex + 1}}</span></div>
+                    <div (click)="removeRegion(varIndex)"><i class="ion-close"></i><span>Study Area {{varIndex + 1}}</span></div>
                     <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)">
                         <div class="form-group">
-                            <label class="req" for="regionID">Study Areas:</label>
+                            <label class="req" for="regionID">Study Area:</label>
                             <select class="form-control" formControlName="regionID">
                                 <option *ngFor="let region of regions" [value]="region.id">{{region.name}}</option>
                             </select>
@@ -137,9 +137,7 @@
                     </div>
                 </div>
             </div>
-
-            <button *ngIf="role.value == 'Manager'" type="button" class="btn-blue" (click)="addRegion()">Add Study Area</button>
-
+            <button *ngIf="role.value == 'Manager'"  type="button" class="button small blue mright-sm" (click)="addRegion()"><i class="far fa-plus"></i>Add Study Area</button>
         </form>
     </div>
 

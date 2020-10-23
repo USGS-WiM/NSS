@@ -1,8 +1,8 @@
-<h3 class="mbottom-md">Regions</h3>
+<h3 class="mbottom-md">Study Areas</h3>
 
 <button type="button" class="button blue small" (click)="showNewRegionForm()">
 	<i class="far fa-plus" aria-hidden="true"></i> 
-	<span>Add New Region</span>
+	<span>Add New Study Area</span>
 </button>
 
 <form #RegionForm="ngForm">
@@ -18,13 +18,13 @@
             <tbody>
                 <tr *ngFor="let v of regions; let i = index">
                     <td class="table-icon-buttons">
-						<button *ngIf="!v.isEditing" title="Edit Region" (click)="EditRowClicked(i)" class="icon-button">
+						<button *ngIf="!v.isEditing" title="Edit Study Area" (click)="EditRowClicked(i)" class="icon-button">
 							<i class="far fa-pencil"></i>
 						</button>
-						<button *ngIf="!v.isEditing" title="Delete Region" (click)="deleteRegion(v.id)" class="icon-button hover-red">
+						<button *ngIf="!v.isEditing" title="Delete Study Area" (click)="deleteRegion(v.id)" class="icon-button hover-red">
 							<i class="far fa-times"></i>
 						</button>
-						<button *ngIf="v.isEditing" title="Save Region" (click)="saveRegion(v,i)" class="icon-button">
+						<button *ngIf="v.isEditing" title="Save Study Area" (click)="saveRegion(v,i)" class="icon-button">
 							<i class="far fa-floppy-o"></i>
 						</button>
 						<button *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button">
@@ -49,7 +49,7 @@
 <!-- new region form -->
 <ng-template #add let-c="close" let-d="dismiss">
 	<div class="modal-header">
-		<div class="title">New Region</div>  
+		<div class="title">New Study Area</div>  
 		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 	</div>    
 	<div class="modal-body">
@@ -58,7 +58,7 @@
             <div class="form-group required" [ngClass]="{'form-invalid': !newRegForm.get('name').valid && newRegForm.get('name').dirty}">
                 <label class="req" for="name">Name:</label>
                 <input class="form-control" type="text" formControlName="name" required>
-                <div class="input-invalid-warning" *ngIf="!newRegForm.get('name').valid && newRegForm.get('name').dirty">Region
+                <div class="input-invalid-warning" *ngIf="!newRegForm.get('name').valid && newRegForm.get('name').dirty">Study Area
                     Name is required</div>
             </div>
 

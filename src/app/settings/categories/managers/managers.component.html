@@ -16,7 +16,7 @@
                     <th class="width-15">First name</th>
                     <th class="width-15">Last Name</th>
                     <th class="width-15">Role</th>
-                    <th class="width-20">Regions</th>
+                    <th class="width-20">Study Areas</th>
                 </tr>
             </thead>
             <tbody>
@@ -126,10 +126,10 @@
             <!-- Regions* -->
             <div formArrayName="regionManagers"  *ngIf="role.value == 'Manager'">
                 <div *ngFor="let var of newUserForm.get('regionManagers').controls; let varIndex = index">
-                    <div (click)="removeRegion(varIndex)"><i class="ion-close"></i><span class="ml-1">Region {{varIndex + 1}}</span></div>
+                    <div (click)="removeRegion(varIndex)"><i class="ion-close"></i><span class="ml-1">Study Area {{varIndex + 1}}</span></div>
                     <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)">
                         <div class="form-group">
-                            <label class="req" for="regionID">Regions:</label>
+                            <label class="req" for="regionID">Study Areas:</label>
                             <select class="form-control" formControlName="regionID">
                                 <option *ngFor="let region of regions" [value]="region.id">{{region.name}}</option>
                             </select>
@@ -138,7 +138,7 @@
                 </div>
             </div>
 
-            <button *ngIf="role.value == 'Manager'" type="button" class="btn-blue" (click)="addRegion()">Add Region</button>
+            <button *ngIf="role.value == 'Manager'" type="button" class="btn-blue" (click)="addRegion()">Add Study Area</button>
 
         </form>
     </div>

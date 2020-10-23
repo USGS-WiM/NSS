@@ -4,7 +4,7 @@
 <div class="sidebar-content">
 
     <div class="sidebar-item">
-        <label>Choose Region:</label>
+        <label>Choose Study Area:</label>
         <select id="regSelect" [(ngModel)]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region">
             <option selected hidden value=""></option>
             <option [ngValue]="i" *ngFor="let i of regions">{{i.name}}</option>
@@ -64,7 +64,7 @@
         || (selectedStatGrpIDs && selectedStatGrpIDs.length > 0)">
         <button type="button" class="button blue small" (click)="clearSelections()">
 			<i class="far fa-times"></i>
-			<span>Reset Region Filters</span>
+			<span>Reset Study Area Filters</span>
 		</button>
     </div> <!-- end sidebar-item-->
 

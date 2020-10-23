@@ -228,8 +228,8 @@
 						[(ngModel)]="selectedStatGroup">
 						</ss-multiselect-dropdown>
 					</div>
-					<div><button class="button small grey" *ngIf="!preferred" (click)="setPreferred()">Show Preferred Stats  <i class="fa fa-toggle-off" ></i></button></div>
-					<div><button class="button small grey" *ngIf="preferred" (click)="setPreferred()">Show Preferred Stats  <i class="fa fa-toggle-on" ></i></button></div>
+					<div><button class="button small grey" *ngIf="!preferred" (click)="preferred = true">Show Preferred Stats  <i class="fa fa-toggle-off" ></i></button></div>
+					<div><button class="button small grey" *ngIf="preferred" (click)="preferred = false">Show Preferred Stats  <i class="fa fa-toggle-on" ></i></button></div>
 					<div><button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs" (click)="addStreamflowStatistic()">Add Streamflow Statistic</button></div>
 				</div>
 			</div>

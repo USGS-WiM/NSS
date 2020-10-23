@@ -72,7 +72,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             res.statistics.sort(function(a, b){
               return a.statisticGroupTypeID - b.statisticGroupTypeID;
             });
-            this.gage = res
+            this.gage = res;
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);
             this.filterStatIds();
@@ -147,7 +147,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
 
     this.gage.statistics.forEach(s => {
-      s.statisticGroupName = this.getStatGroup(s.statisticGroupTypeID)
+      s.statisticGroupName = this.getStatGroup(s.statisticGroupTypeID);
       if (s.citationID && !this.gage.citations.some(cit => cit.id === s.citationID)) {
         this.gage.citations.push(s.citation);
       }
@@ -399,14 +399,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public filterStatIds() {
     this.filteredStatGroups = this.statisticGroups.filter((sg) => this.statGroupIds.includes(sg.id));
-  }
-
-  public setPreferred() {
-    if (!this.preferred) {
-      this.preferred = true;
-    } else {
-      this.preferred = false;
-    }
   }
 
   compareObjects(Obj1, Obj2) {

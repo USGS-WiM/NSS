@@ -115,29 +115,15 @@
 						<!-- Col 3, Associated Regression Region -->
 						<td>
 						<div *ngFor="let e of c.regressionRegions; last as isLast">
-							<div *ngIf="!isLast">
 								<!-- Col 3, Associated Regression Region (all but the last one) -->
-								<td class=firstRow style="width: 228px; border-top-style:none; border-left-style:none; max-height:100%;">{{e.name}}
-								
+								<td [class.regRegionLast]=isLast [class.regRegion]=!isLast>{{e.name}}
 								</td>
 								<!-- Col 4 - Regression Buttons -->
-								<td style="width:45px; border-top-style:none; border-right-style: none" [class.hidden]="!showAddCitations">
+								<td [class.editRegRegionLast]=isLast [class.editRegRegion]=!isLast [class.hidden]="!showAddCitations">
 									<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button"
 										[disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
 										<i class="far fa-pencil"></i>
 									</button></td>
-							 </div>
-							<div *ngIf="isLast">
-								<!-- Col 3, Associated Regression Region (the last one) -->
-								<td class=firstRow style="width: 228px; border-top-style:none; border-bottom-style:none; border-left-style:none; max-height:100%">{{e.name}}
-								</td>
-														<!-- Col 4 - Regression Buttons -->
-								<td style="width:45px; border-top-style:none; border-right-style: none; border-bottom-style:none;" [class.hidden]="!showAddCitations" >
-									<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button"
-										[disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
-										<i class="far fa-pencil"></i>
-									</button></td>
-							 </div>
 						</div>
 						</td>
 					</tr>

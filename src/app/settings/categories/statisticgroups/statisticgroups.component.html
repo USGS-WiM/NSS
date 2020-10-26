@@ -1,7 +1,7 @@
 <h3 class="mbottom-md">Statistic Groups</h3>
 
 <div class="regSelect pbottom-md">
-    <label for="region" class="block">Filter By Region:</label>
+    <label for="region" class="block">Filter By Study Area:</label>
     <select [ngModel]="selectedRegion" (ngModelChange)="onRegSelect($event)" name="region" class="input-small">
         <option value="none">None</option>
         <option [ngValue]="i" *ngFor="let i of regions">{{ i.name }}</option>

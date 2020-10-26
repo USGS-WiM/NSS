@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NSSService } from 'app/shared/services/app.service';
 import { NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { IMultiSelectSettings, IMultiSelectTexts} from '../../../../node_modules/angular-2-dropdown-multiselect';
 import { GagePage } from 'app/shared/interfaces/gagepage';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -26,6 +27,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   private configSettings: Config;
   private modalElement: any;
   public modalRef;
+  public myMSTexts: IMultiSelectTexts;
+  public myRTSettings: IMultiSelectSettings;
   public loggedInRole;
   public code;
   public gage: Station;
@@ -40,6 +43,13 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public variables;
   public regressionTypes;
   public statisticGroups;
+  public statIds = [];
+  public filteredStatGroups;
+  public statGroupIds = [];
+  public selectedStatGroup;
+  public filteredGage: Station;
+  public preferred: boolean = false;
+  public predIntervals: boolean = false;
   public agencies: Agency[];
   public stationTypes: Stationtype[];
   public selectedParams: GageStatsSearchFilter;
@@ -59,9 +69,16 @@ export class GagepageComponent implements OnInit, OnDestroy {
       if (result.show) { 
           this.code = result.gageCode;
           this._nssService.getGagePageInfo(this.code).subscribe(res => {
+            res.statistics.sort(function(a, b){
+              return a.statisticGroupTypeID - b.statisticGroupTypeID;
+            });
             this.gage = res;
             this.getCitations();
+            this.getDisplayStatGroupID(this.gage);
+            this.filterStatIds();
             this.showGagePageForm();
+            this.selectedStatGroup = [];
+            this.getPredictionIntervals();
           });
         }
     });
@@ -94,6 +111,27 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.stationTypes = st;
     });
 
+    this.myRTSettings = {
+      pullRight: false,
+      enableSearch: false,
+      checkedStyle: 'glyphicon', // 'checkboxes',
+      buttonClasses: 'btn btn-default',
+      selectionLimit: 0,
+      closeOnSelect: false,
+      showCheckAll: true,
+      showUncheckAll: true,
+      dynamicTitleMaxItems: 0,
+      maxHeight: '300px'
+    };
+
+    this.myMSTexts = {
+      checkAll: 'Check all',
+      uncheckAll: 'Uncheck all',
+      checked: 'checked',
+      checkedPlural: 'checked',
+      defaultTitle: 'Select'
+    };
+
     //subscribe to selected Filters
     this._nssService.selectedFilterParams.subscribe((selectedParams: GageStatsSearchFilter) => { 
       this.selectedParams = selectedParams;
@@ -109,6 +147,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
 
     this.gage.statistics.forEach(s => {
+      s.statisticGroupName = this.getStatGroup(s.statisticGroupTypeID);
       if (s.citationID && !this.gage.citations.some(cit => cit.id === s.citationID)) {
         this.gage.citations.push(s.citation);
       }
@@ -119,7 +158,34 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl' });
   }
 
-///////////////////Gage Info Section//////////////////////////////
+  public getDisplayStatGroupID(g) {
+      var statGroup1;
+      var statGroup2;
+      const ids = [];
+      const groupIds = [];
+      g.statistics.forEach( function(item, index) {
+        statGroup2 = item.statisticGroupTypeID;
+        if ( statGroup1 != statGroup2 ) {
+            statGroup1 = statGroup2
+            ids.push((item.id))
+            groupIds.push(statGroup2)
+         }
+        })
+      this.statIds = ids;
+      this.statGroupIds = groupIds;
+  }
+
+  public getPredictionIntervals() {  //Search gage for stats w/ a prediction interval, return true if present
+    var pred = false;
+    this.gage.statistics.forEach( function(item, idex) {
+      if (item.predictionInterval) {
+        return pred = true;
+      }
+    })
+    this.predIntervals = pred;
+  }
+
+///////////////////Edit Gage Info Section//////////////////////////////
   
   public deleteGageStats(id){
     const check = confirm('Are you sure you want to delete this Gage?');
@@ -180,6 +246,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this.tempItem = JSON.parse(JSON.stringify(item));
     this.itemBeingEdited = item;
     this.editId = index;
+    if (!item.predictionInterval) {
+      item.predictionInterval = {variance: 0, lowerPredictionInterval: 0, upperPredictionInterval: 0};
+    }
     item.isEditing = true;
   }
 
@@ -212,7 +281,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     }
     
   this.newChar.isEditing = true;
-  //this.itemBeingEdited = this.newChar;
   } 
     
   public deletePhysicalCharacteristic(deleteID: number) {
@@ -223,7 +291,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.characteristicsURL).subscribe(
             (res) => {
               this.refreshgagepage();
-              //this.gage.characteristics.splice(index, 1)
               this._settingsservice.outputWimMessages(res);
             }
           )
@@ -267,16 +334,17 @@ export class GagepageComponent implements OnInit, OnDestroy {
       statisticGroupTypeID: null,
       unitTypeID: null,
       yearsofRecord: null,
-      citationID: null
+      citationID: null,
+      predictionInterval: {}
     } 
-    this.editRowClicked(this.newStat, this.newStat.id);
+    this.newStat.isEditing = true;
   } 
 
   public saveStat(item) {
-    if (item.id) {
-      const newItem = JSON.parse(JSON.stringify(item));  // Copy item, delete unnecessary elements
-      ['regressionType', 'citation', 
-      'unitType', 'isEditing'].forEach(e => delete newItem[e]);  // Delete unneeded items
+    if (item.id) {  //If statistic has an id, it is already in the SS DB, make PUT request to edit
+      const newItem = JSON.parse(JSON.stringify(item));  // Copy item
+      ['regressionType', 'citation',
+      'unitType', 'isEditing', 'statisticGroupType'].forEach(e => delete newItem[e]);  // Delete unneeded items
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
         (res) => {
           item.isEditing = false;
@@ -284,7 +352,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.refreshgagepage();
         }
       )
-    } else {  
+    } else {  //If statistic doesn't have an id, it needs to be added to the DB, make POST request
       this._settingsservice.postEntityGageStats(item, this.configSettings.statisticsURL).subscribe(
         (res: StatisticResponse) => {
           item.isEditing = false;
@@ -313,13 +381,24 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   private refreshgagepage() {
     this._nssService.getGagePageInfo(this.code).subscribe(res => {
+      res.statistics.sort(function(a, b){
+        return a.statisticGroupTypeID - b.statisticGroupTypeID;
+      });
       this.gage = res;
       this.getCitations();
+      this.getDisplayStatGroupID(this.gage);
+      this.filterStatIds();
+      //this.selectedStatGroup = [];
+      this.getPredictionIntervals();
     });
   }
 
-  getStatGroup(id) {
+  public getStatGroup(id) {
       return this.statisticGroups.find(sg => sg.id == id).name;
+  }
+
+  public filterStatIds() {
+    this.filteredStatGroups = this.statisticGroups.filter((sg) => this.statGroupIds.includes(sg.id));
   }
 
   compareObjects(Obj1, Obj2) {

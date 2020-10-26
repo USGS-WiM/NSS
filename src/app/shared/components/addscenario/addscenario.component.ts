@@ -59,7 +59,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
     public filteredRegressionTypes;
     public filtered = true;
-    scen: any;
+    public scen;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -185,6 +185,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
         );
         if (this.cloneParameters.info){
+            //cloned scenario
             if (this.cloneParameters.info == "clone"){
                 this.clearScenario();
                 this.clone = true;
@@ -192,6 +193,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.filtered = false;
                 this.cloneScenario();
             }
+            //edit scenario
             else if (this.cloneParameters.info == "edit"){
                 this.clearScenario();
                 this.clone = false;
@@ -199,11 +201,12 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.filtered = false;
                 this.fillModal();
             }
+        //new scenario
         }else{
             this.filtered = true;
             this.clearScenario();
             this.clone = false;
-            this.edit = false
+            this.edit = false;
         }
     }
 
@@ -220,6 +223,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
     }
 
+    //fill the modal when cloning and editing 
     public fillModal(){
         this.newScenForm.get('region').valueChanges.subscribe(item => {
             if(item != null){
@@ -300,7 +304,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     public cloneScenario(){  
         this.newScenForm.addControl('region', this._fb.control('', Validators.required));
-
         this.regions.forEach( (element,index) => {  
             if (element.id.toString() == this.selectedRegion.id.toString()){
                 this.newScenForm.patchValue({ region: this.regions[index]});
@@ -395,7 +398,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
     }
 
-    submitScenario() {
+    public submitScenario() {
         // put scenario
         this.setUpScenario();
         this._settingsService.putEntity('', this.scen, this.configSettings.scenariosURL)
@@ -424,7 +427,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             );
     }
 
-    setUpScenario(){
+    //get scen object ready for put and post
+    public setUpScenario(){
         this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
         this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
         this.tempSelectedRegType = this.selectedRegType;

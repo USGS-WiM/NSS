@@ -59,6 +59,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
     public filteredRegressionTypes;
     public filtered = true;
+    scen: any;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -183,10 +184,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
-        console.log(this.cloneParameters)
         if (this.cloneParameters.info){
             if (this.cloneParameters.info == "clone"){
-                console.log('clone')
                 this.clearScenario();
                 this.clone = true;
                 this.edit = false;
@@ -194,7 +193,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cloneScenario();
             }
             else if (this.cloneParameters.info == "edit"){
-                console.log('edit')
                 this.clearScenario();
                 this.clone = false;
                 this.edit = true;
@@ -202,7 +200,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.fillModal();
             }
         }else{
-            console.log('new')
             this.filtered = true;
             this.clearScenario();
             this.clone = false;
@@ -308,9 +305,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             if (element.id.toString() == this.selectedRegion.id.toString()){
                 this.newScenForm.patchValue({ region: this.regions[index]});
             }
-        });
-        console.log(JSON.parse(JSON.stringify(this.newScenForm.value)))
-        
+        });        
         this.fillModal();
     }
 
@@ -401,49 +396,45 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     submitScenario() {
-        // put edited scenario
-        this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
-        this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
-        this.tempSelectedRegType = this.selectedRegType;
-        const editScen = JSON.parse(JSON.stringify(this.newScenForm.value));
-        console.log(editScen)
-        // this._settingsService.putEntity('', editScen, this.configSettings.scenariosURL)
-        //     .subscribe((response) => {
-        //         if(this.originalRegion==this.selectedRegion){
-        //             this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
-        //             this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
-        //             this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
-        //         }else{
-        //             this._nssService.setSelectedRegion(this.selectedRegion);
-        //             this._nssService.selectedStatGroups = [];
-        //             this._nssService.setSelectedRegRegions([]);
-        //             this._nssService.selectedRegressionTypes = [];
-        //         }
-        //         // clear form
-        //         if (!response.headers) {
-        //             this._toasterService.pop('info', 'Info', 'Scenario was Updated');
-        //         } else {
-        //             this._settingsService.outputWimMessages(response); 
-        //         }
-        //         this.cancelCreateScenario();
-        //     }, error => {
-        //         if (this._settingsService.outputWimMessages(error)) { return; }
-        //         this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
-        //     }
-        //     );
+        // put scenario
+        this.setUpScenario();
+        this._settingsService.putEntity('', this.scen, this.configSettings.scenariosURL)
+            .subscribe((response) => {
+                if(this.originalRegion==this.selectedRegion){
+                    this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+                    this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
+                    this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
+                }else{
+                    this._nssService.setSelectedRegion(this.selectedRegion);
+                    this._nssService.selectedStatGroups = [];
+                    this._nssService.setSelectedRegRegions([]);
+                    this._nssService.selectedRegressionTypes = [];
+                }
+                // clear form
+                if (!response.headers) {
+                    this._toasterService.pop('info', 'Info', 'Scenario was Updated');
+                } else {
+                    this._settingsService.outputWimMessages(response); 
+                }
+                this.cancelCreateScenario();
+            }, error => {
+                if (this._settingsService.outputWimMessages(error)) { return; }
+                this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
+            }
+            );
     }
 
-    createNewScenario() {
+    setUpScenario(){
         this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
         this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
         this.tempSelectedRegType = this.selectedRegType;
         // adding all necessary properties, since ngValue won't work with all the nested properties
-        const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
-        const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
-        const statGroupIndex = this.statisticGroups.findIndex(item => item.id === scen['statisticGroupID']);
+        this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
+        const regRegs = this.scen['regressionRegions']; const regs = regRegs.regressions;
+        const statGroupIndex = this.statisticGroups.findIndex(item => item.id === this.scen['statisticGroupID']);
 
-        scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
-        scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
+        this.scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
+        this.scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);
         regRegs['name'] = this.regressionRegions[regRegIndex].name;
@@ -473,11 +464,14 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
 
         // change regression region/regression to arrays
-        scen['regressionRegions'].regressions = [regs];
-        scen['regressionRegions'] = [regRegs];
+        this.scen['regressionRegions'].regressions = [regs];
+        this.scen['regressionRegions'] = [regRegs];
+    }
 
+    createNewScenario() {
         // post scenario
-        this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
+        this.setUpScenario();
+        this._settingsService.postEntity(this.scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID)
             .subscribe((response: any) => {
                 if(this.originalRegion==this.selectedRegion){
                     this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;

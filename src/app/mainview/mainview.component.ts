@@ -1464,7 +1464,9 @@ export class MainviewComponent implements OnInit {
             this.scenarios.forEach((s => {
                 s.citations = [];
                 s.regressionRegions.forEach(rr => {
-                    s.citations.push(this.scenarioCitations.find(c=>c.id === rr.citationID));
+                    if (rr.citationID){
+                        s.citations.push(this.scenarioCitations.find(c=>c.id === rr.citationID));
+                    }
                 });
                 s.citations =  s.citations.filter((v,i) => s.citations.findIndex(item => item.id == v.id) === i);
             }));

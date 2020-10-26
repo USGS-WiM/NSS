@@ -99,6 +99,8 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         // subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
             this.scenarios = s;
+            this.getRegRegions(); // get list of regression regions for the region
+            this.getCitations(); // get full list of citations
             if (this.loggedInRole == 'Manager') {
                 this.getManagerCitations();
                 this.getManagerRegressionRegions();
@@ -157,8 +159,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
     
     public showModal(): void {
-        this.getRegRegions(); // get list of regression regions for the region
-        this.getCitations(); // get full list of citations
+
         if (this.selectedRegion) {this.getRegRegions(); }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
     }

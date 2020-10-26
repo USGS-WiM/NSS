@@ -308,7 +308,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             if (element.id.toString() == this.selectedRegion.id.toString()){
                 this.newScenForm.patchValue({ region: this.regions[index]});
             }
-        });        
+        });
         this.fillModal();
     }
 

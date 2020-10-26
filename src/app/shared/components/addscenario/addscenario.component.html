@@ -12,9 +12,9 @@
 				<!-- Clone - choose region -->
 				<div class="form-group" *ngIf="clone==true">
 					<label class="req" for="region">Study Area:</label>
-					<select class="form-control" formControlName="region">
-						<option *ngFor="let r of regions" [ngValue]="r">{{r.name}}</option>
-					</select>
+					<ng-select formControlName="region" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+						<ng-option *ngFor="let r of regions" [value]="r">{{r.name}}</ng-option>
+					</ng-select>
 				</div> 
 
 				<!-- Statistic Group* -->

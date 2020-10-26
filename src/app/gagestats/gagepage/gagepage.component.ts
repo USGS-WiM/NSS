@@ -214,6 +214,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
           this._nssService.searchStations(this.selectedParams);
+          this.editButtonClicked = false;
         }
       )
   }
@@ -221,14 +222,17 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public editGageInformation(item) {
     this.editGageInfo = true;
     this.tempItem = JSON.parse(JSON.stringify(item));
+    this.editButtonClicked = true;
   }
 
   public cancelEditGageInfo() {
     this.gage = this.tempItem;
     this.editGageInfo = false;
+    this.editButtonClicked = false;
   }
 
   public endEditGageStats() {
+    this.editButtonClicked = false;
     this.editGage = false;
     this.editGageInfo = false;
     if (this.itemBeingEdited) {
@@ -236,9 +240,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
     }
     if (this.newChar) {
       this.deletePhysicalCharacteristic(this.newChar.id);
+      this.editButtonClicked = false;
     }
     if (this.newStat) {
       this.deleteStatistic(this.newStat.id);
+      this.editButtonClicked = false;
     }
     this.refreshgagepage();
   } 
@@ -262,6 +268,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.gage.statistics[this.editId] = this.tempItem;
     }
     item.isEditing = false;
+    this.editButtonClicked = false;
   }
 
   public submitGage() {
@@ -283,6 +290,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     }
     
   this.newChar.isEditing = true;
+  this.editButtonClicked = true;
   } 
     
   public deletePhysicalCharacteristic(deleteID: number) {
@@ -297,6 +305,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             }
           )
         } else { delete(this.newChar) }  // If the char does not have an ID (if it has not been saved to the service)
+        this.editButtonClicked = false;
   }}
 
   public saveChar(item) {
@@ -306,6 +315,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.characteristicsURL).subscribe(
         (res) => { 
           item.isEditing = false;
+          this.editButtonClicked = false;
           this.refreshgagepage();
           this._settingsservice.outputWimMessages(res);
         }
@@ -314,6 +324,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this._settingsservice.postEntityGageStats(item, this.configSettings.characteristicsURL).subscribe(
         (res: CharacteristicResponse) => { 
           item.isEditing = false; 
+          this.editButtonClicked = false;
           delete(this.newChar);
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Characteristic was created');
@@ -340,6 +351,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       predictionInterval: {}
     } 
     this.newStat.isEditing = true;
+    this.editButtonClicked = true;
   } 
 
   public saveStat(item) {
@@ -350,6 +362,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
         (res) => {
           item.isEditing = false;
+          this.editButtonClicked = false;
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
         }
@@ -358,6 +371,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this._settingsservice.postEntityGageStats(item, this.configSettings.statisticsURL).subscribe(
         (res: StatisticResponse) => {
           item.isEditing = false;
+          this.editButtonClicked = false;
           delete(this.newStat);  // Delete newStat from table
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Statistic was created');
@@ -379,6 +393,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           )
         } else { delete(this.newStat) }  // If the stat does not have an ID (if it has not been saved to the service)
       }
+      this.editButtonClicked = false;
   } 
 
   private refreshgagepage() {

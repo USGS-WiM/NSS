@@ -25,7 +25,7 @@
 		<!--Gage Information-->
 		<div>
 			<div class="table-title">Gage Information
-				<button *ngIf="loggedInRole && editGage && !editGageInfo" type="button" class="button small blue"  (click)="editGageInformation(gage)">Edit Gage Information</button>
+				<button *ngIf="loggedInRole && editGage && !editGageInfo" type="button" class="button small blue"  (click)="editGageInformation(gage)" [disabled]="editButtonClicked">Edit Gage Information</button>
 			</div>
 			<button *ngIf="loggedInRole && editGageInfo" type="button" title="Save Gage Information" class="icon-button" (click)="saveGageInfo(gage)">
 				<i class="far fa-floppy-o"></i>
@@ -107,7 +107,7 @@
 		<div>
 			<div class="table-title">Physical Characteristics
 				<div class="stat-filters">
-					<div><button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs"  (click)="addPhysicalCharacteristic(cIndex)">Add Physical Characteristic</button></div>
+					<div><button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs"  (click)="addPhysicalCharacteristic(cIndex)" [disabled]="editButtonClicked">Add Physical Characteristic</button></div>
 				</div>
 			</div>
 			<div *ngIf="gage.characteristics.length > 0 || editGage">
@@ -225,12 +225,12 @@
 					<div><label>Filter by Statistic Group: </label></div>
 					<div>
 						<ss-multiselect-dropdown [options]="filteredStatGroups" [texts]="myMSTexts" [settings]="myRTSettings"
-						[(ngModel)]="selectedStatGroup">
+						[(ngModel)]="selectedStatGroup" [disabled]="editButtonClicked">
 						</ss-multiselect-dropdown>
 					</div>
-					<div><button class="button small grey" *ngIf="!preferred" (click)="preferred = true">Show Preferred Stats  <i class="fa fa-toggle-off" ></i></button></div>
-					<div><button class="button small grey" *ngIf="preferred" (click)="preferred = false">Show Preferred Stats  <i class="fa fa-toggle-on" ></i></button></div>
-					<div><button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs" (click)="addStreamflowStatistic()">Add Streamflow Statistic</button></div>
+					<div><button class="button small grey" *ngIf="!preferred" (click)="preferred = true" [disabled]="editButtonClicked">Show Preferred Stats  <i class="fa fa-toggle-off" ></i></button></div>
+					<div><button class="button small grey" *ngIf="preferred" (click)="preferred = false" [disabled]="editButtonClicked">Show Preferred Stats  <i class="fa fa-toggle-on" ></i></button></div>
+					<div><button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs" (click)="addStreamflowStatistic()" [disabled]="editButtonClicked">Add Streamflow Statistic</button></div>
 				</div>
 			</div>
 			<div>

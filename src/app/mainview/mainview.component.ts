@@ -1314,7 +1314,8 @@ export class MainviewComponent implements OnInit {
     }
 
     public cloneRowClicked(statisticGroupID, r, rr) {
-        this.cloneScen = { r, rr, statisticGroupID };
+        let info = 'clone'
+        this.cloneScen = { r, rr, statisticGroupID, info};
         this.newCloneScenario(this.cloneScen);
         this.showCloneScenarioModal();
     }
@@ -1322,6 +1323,16 @@ export class MainviewComponent implements OnInit {
     public showCloneScenarioModal() {
         this._nssService.setAddScenarioModal(true);
     }
+
+     /////////////////////// Edit Scenarios Section ///////////////////////////
+
+    public editScenarioRowClicked(statisticGroupID, r, rr) {
+        let info = 'edit'
+        this.cloneScen = { r, rr, statisticGroupID, info};
+        this.newCloneScenario(this.cloneScen);
+        this.showCloneScenarioModal();
+    }
+
 
     /////////////////////// Citations Section ///////////////////////////
     public showManageCitationsModal() {

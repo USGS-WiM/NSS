@@ -47,6 +47,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public regRegion: any;
     public statisticGroup: any;
     public clone = false;
+    public edit = false;
     public selectedRegion;
     public originalRegion;
     private configSettings: Config;
@@ -182,16 +183,30 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
-        if (this.cloneParameters != " "){
-            this.clearScenario();
-            this.clone = true;
-            this.filtered = false;
-            this.cloneScenario();
-            this.newScenForm.addControl('region', this._fb.control('', Validators.required));
+        console.log(this.cloneParameters)
+        if (this.cloneParameters.info){
+            if (this.cloneParameters.info == "clone"){
+                console.log('clone')
+                this.clearScenario();
+                this.clone = true;
+                this.edit = false;
+                this.filtered = false;
+                this.cloneScenario();
+            }
+            else if (this.cloneParameters.info == "edit"){
+                console.log('edit')
+                this.clearScenario();
+                this.clone = false;
+                this.edit = true;
+                this.filtered = false;
+                this.fillModal();
+            }
         }else{
+            console.log('new')
             this.filtered = true;
             this.clearScenario();
             this.clone = false;
+            this.edit = false
         }
     }
 
@@ -208,12 +223,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
     }
 
-    cloneScenario(){  
-        this.regions.forEach( (element,index) => {  
-            if (element.id.toString() == this.selectedRegion.id.toString()){
-                this.newScenForm.patchValue({ region: this.regions[index]});
-            }
-        });
+    public fillModal(){
         this.newScenForm.get('region').valueChanges.subscribe(item => {
             if(item != null){
                 this._nssService.setSelectedRegion(item)
@@ -287,8 +297,21 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             const controlArray = <FormArray> this.newScenForm.get('regressionRegions.regressions.errors');       
             controlArray.controls[index].get('id').setValue(element.id);
             controlArray.controls[index].get('value').setValue(element.value.toString());
-        });  
+        }); 
         this.cloneParameters = " "; 
+    }
+
+    public cloneScenario(){  
+        this.newScenForm.addControl('region', this._fb.control('', Validators.required));
+
+        this.regions.forEach( (element,index) => {  
+            if (element.id.toString() == this.selectedRegion.id.toString()){
+                this.newScenForm.patchValue({ region: this.regions[index]});
+            }
+        });
+        console.log(JSON.parse(JSON.stringify(this.newScenForm.value)))
+        
+        this.fillModal();
     }
 
     addVariable() {
@@ -375,6 +398,39 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.filteredRegressionTypes = res;
         });
+    }
+
+    submitScenario() {
+        // put edited scenario
+        this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
+        this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
+        this.tempSelectedRegType = this.selectedRegType;
+        const editScen = JSON.parse(JSON.stringify(this.newScenForm.value));
+        console.log(editScen)
+        // this._settingsService.putEntity('', editScen, this.configSettings.scenariosURL)
+        //     .subscribe((response) => {
+        //         if(this.originalRegion==this.selectedRegion){
+        //             this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+        //             this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
+        //             this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
+        //         }else{
+        //             this._nssService.setSelectedRegion(this.selectedRegion);
+        //             this._nssService.selectedStatGroups = [];
+        //             this._nssService.setSelectedRegRegions([]);
+        //             this._nssService.selectedRegressionTypes = [];
+        //         }
+        //         // clear form
+        //         if (!response.headers) {
+        //             this._toasterService.pop('info', 'Info', 'Scenario was Updated');
+        //         } else {
+        //             this._settingsService.outputWimMessages(response); 
+        //         }
+        //         this.cancelCreateScenario();
+        //     }, error => {
+        //         if (this._settingsService.outputWimMessages(error)) { return; }
+        //         this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
+        //     }
+        //     );
     }
 
     createNewScenario() {

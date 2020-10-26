@@ -1,8 +1,9 @@
 <ng-template #addScenario let-c="close" let-d="dismiss">
 	<div>
 		<div class="modal-header">
-			<div class="title" *ngIf="clone==true">Clone Scenario</div>  
-			<div class="title" *ngIf="clone==false">New Scenario</div>  
+			<div class="title" *ngIf="clone==true && edit==false">Clone Scenario</div> 
+			<div class="title" *ngIf="edit==true && clone==false">Edit Scenario</div>   
+			<div class="title" *ngIf="clone==false && edit==false">New Scenario</div>  
 			<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 		</div>
 		<div class="modal-body">
@@ -299,7 +300,9 @@
 			<button type="button" (click)="clearScenario()" class="button red mright-xs">Clear All</button>
 			<button type="button" (click)="c('closed')" class="button black">Cancel</button>
 			<div class="flex-spacer"></div>
-			<button type="button" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="button blue">Create</button>
+			<button type="button" *ngIf="edit==false" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="button blue">Create</button>
+			<button type="button" *ngIf="edit==true" (click)="submitScenario()" [disabled]="!newScenForm.valid" class="button blue">Save</button>
+
 		</div>
 	</div>
 </ng-template>

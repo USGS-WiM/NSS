@@ -643,10 +643,6 @@ export class NSSService {
     public get scenarioCitations(): Observable<Array<any>> {
         return this._scenarioCitationSubject.asObservable();
     }
-    public setScenarioCitation(c: Array<any>) {
-        this._scenarioCitationSubject.next(c);
-        this.chartBind.next('');
-    }
     // -+-+-+-+-+-+ end Scenarios section -+-+-+-+-+-+-+-+-+-+
 
     // region has been selected, populate all other multiselects and get scenarios

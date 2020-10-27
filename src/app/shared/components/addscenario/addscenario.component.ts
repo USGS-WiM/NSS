@@ -303,7 +303,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public cloneScenario(){  
-        this.newScenForm.addControl('region', this._fb.control('', Validators.required));
+       this.newScenForm.addControl('region', this._fb.control('', Validators.required));
         this.regions.forEach( (element,index) => {  
             if (element.id.toString() == this.selectedRegion.id.toString()){
                 this.newScenForm.patchValue({ region: this.regions[index]});
@@ -398,16 +398,16 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
     }
 
-    public submitScenario() {
+    public async submitScenario() {
         // put scenario
         this.setUpScenario();
-        this._settingsService.putEntity('', this.scen, this.configSettings.scenariosURL)
+        await this._settingsService.putEntity('', this.scen, this.configSettings.scenariosURL)
             .subscribe((response) => {
-                if(this.originalRegion==this.selectedRegion){
+                if (this.originalRegion == this.selectedRegion) {
                     this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
                     this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
                     this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
-                }else{
+                } else {
                     this._nssService.setSelectedRegion(this.selectedRegion);
                     this._nssService.selectedStatGroups = [];
                     this._nssService.setSelectedRegRegions([]);
@@ -477,11 +477,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.setUpScenario();
         this._settingsService.postEntity(this.scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID)
             .subscribe((response: any) => {
-                if(this.originalRegion==this.selectedRegion){
+                if (this.originalRegion == this.selectedRegion) {
                     this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
                     this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
                     this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
-                }else{
+                } else {
                     this._nssService.setSelectedRegion(this.selectedRegion);
                     this._nssService.selectedStatGroups = [];
                     this._nssService.setSelectedRegRegions([]);

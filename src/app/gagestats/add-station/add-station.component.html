@@ -2,8 +2,7 @@
     <div>
         <div class="modal-header">
             <h4 class="title" > Add Station </h4>
-            <!--close and save-->
-            <button class="icon-button" (click)="c('closed')"><i class="far fa-times"></i></button>
+            <button class="icon-button" (click)="c('closed'); clearStation()"><i class="far fa-times"></i></button>
         </div>
         <div class="modal-body">
             
@@ -49,11 +48,11 @@
                 </div>
 
                 <div class="form-group required" [ngClass]="{ 'form-invalid': !addStationForm.get('regionID').valid && addStationForm.get('regionID').touched }">
-                    <label class="req" for="regionID">Region:</label><br/>
+                    <label class="req" for="regionID">Study Area:</label><br/>
                     <ng-select formControlName="regionID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                         <ng-option *ngFor="let region of regions" [value]="region.id">{{region.name}}</ng-option>
                     </ng-select>
-                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('regionID').valid && addStationForm.get('regionID').touched">Region ID
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('regionID').valid && addStationForm.get('regionID').touched">Study Area
                         is required</div>
                 </div>
 
@@ -99,7 +98,7 @@
         <!--close and save-->
         <div class ="xs-f-btw">
             <button type="button" (click)="clearStation()" class="button red mright-xs">Clear All</button>
-            <button type="button" (click)="c('closed')" class="button black">Cancel</button>
+            <button type="button" (click)="c('closed'); clearStation()" class="button black">Cancel</button>
             <div class="flex-spacer"></div>
             <button type="button" (click)="submitStation()" [disabled]="!addStationForm.valid" class="button blue">Add</button>
         </div>

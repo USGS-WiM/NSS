@@ -316,6 +316,18 @@ export class MainviewComponent implements OnInit {
                 }
             });
         });
+        this._nssService.scenarioCitations.subscribe((c: Array<any>) => {
+            this.scenarioCitations = c;
+            this.scenarios.forEach((s => {
+                s.citations = [];
+                s.regressionRegions.forEach(rr => {
+                    if (rr.citationID){
+                        s.citations.push(this.scenarioCitations.find(c=>c.id === rr.citationID));
+                    }
+                });
+                s.citations =  s.citations.filter((v,i) => s.citations.findIndex(item => item.id == v.id) === i);
+            }));
+        });
         // subscribe to getToast
         this._nssService.getToast().subscribe((t: Toast) => {
             this.toast = t;
@@ -1458,20 +1470,6 @@ export class MainviewComponent implements OnInit {
         }
     }
 
-    public getStatCitations(){
-        this._nssService.scenarioCitations.subscribe((c: Array<any>) => {
-            this.scenarioCitations = c;
-            this.scenarios.forEach((s => {
-                s.citations = [];
-                s.regressionRegions.forEach(rr => {
-                    if (rr.citationID){
-                        s.citations.push(this.scenarioCitations.find(c=>c.id === rr.citationID));
-                    }
-                });
-                s.citations =  s.citations.filter((v,i) => s.citations.findIndex(item => item.id == v.id) === i);
-            }));
-        });
-    }
 
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
@@ -1492,7 +1490,6 @@ export class MainviewComponent implements OnInit {
                         });
                     }));
                 }
-                this.getStatCitations();
             });
     }
 

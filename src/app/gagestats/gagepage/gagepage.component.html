@@ -2,7 +2,7 @@
 	<div>
 		<div class="modal-header">
 			<div class="title">GagePage</div>  
-			<button class="icon-button" (click)="d('closed'); editGage=false; cancelEditGageInfo()"><i class="far fa-times"></i></button>                    
+			<!-- <button class="icon-button" (click)="d('closed'); editGage=false; cancelEditGageInfo()"><i class="far fa-times"></i></button>  -->
 		</div>
 	</div>
 
@@ -159,9 +159,10 @@
 								</span>
 							</td>
 							<td>
-								<span *ngIf="!c.isEditing">{{c.citationID}}</span>
-								<span *ngIf="c.isEditing">{{c.citationID}}</span>
-								<button *ngIf="c.isEditing" type="button" (click)="showManageCitationsModal()"><i class="far fa-pencil"></i></button>
+								<span *ngIf="!newChar.isEditing">{{newChar.citationID}}</span>
+								<span *ngIf="selectedCitation">{{selectedCitation.id}}</span>
+								<button *ngIf="newChar.isEditing && !selectedCitation" type="button" class="button small blue mright-xs" (click)="showManageCitationsModal()">Add Citation</button>
+								<button *ngIf="newChar.isEditing && selectedCitation" type="button" (click)="showManageCitationsModal()"><i class="far fa-pencil"></i></button>
                             </td>
                             <td>
 								<span *ngIf="!newChar.isEditing">{{newChar.comments}}</span>
@@ -207,10 +208,9 @@
 								</span>
 							</td>
 							<td>
-								<span *ngIf="!newChar.isEditing">{{newChar.citationID}}</span>
-								<span *ngIf="selectedCitation">{{selectedCitation.id}}</span>
-								<button *ngIf="newChar.isEditing && !selectedCitation" type="button" class="button small blue mright-xs" (click)="showManageCitationsModal()">Add Citation</button>
-								<button *ngIf="newChar.isEditing && selectedCitation" type="button" (click)="showManageCitationsModal()"><i class="far fa-pencil"></i></button>
+								<span *ngIf="!c.isEditing">{{c.citationID}}</span>
+								<span *ngIf="c.isEditing">{{c.citationID}}</span>
+								<button *ngIf="c.isEditing" type="button" (click)="showManageCitationsModal()"><i class="far fa-pencil"></i></button>
                             </td>
                             <td>
 								<span *ngIf="!c.isEditing">{{c.comments}}</span>
@@ -292,8 +292,10 @@
 										</span>
                                     </td> 
                                     <td>
-									    <span *ngIf="!newStat.isEditing">{{newStat.citationID}}</span>
-                                        <span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.citationID" size="2"></span>
+										<span *ngIf="!newStat.isEditing">{{newStat.citationID}}</span>
+										<span *ngIf="selectedCitation">{{selectedCitation.id}}</span>
+										<button *ngIf="newStat.isEditing && !selectedCitation" type="button" class="button small blue mright-xs" (click)="showManageCitationsModal()">Add Citation</button>
+										<button *ngIf="newStat.isEditing && selectedCitation" type="button" (click)="showManageCitationsModal()"><i class="far fa-pencil"></i></button>                            
 									</td>
 									<td>
 									    <span *ngIf="!newStat.isEditing">{{getStatGroup(newStat.statisticGroupTypeID)}}</span>
@@ -372,7 +374,8 @@
 											</td>
 											<td>
 												<span *ngIf="!s.isEditing">{{s.citationID}}</span>
-												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.citationID" size="2" class="input-100"></span>
+												<span *ngIf="s.isEditing">{{s.citationID}}</span>
+												<button *ngIf="s.isEditing" type="button" (click)="showManageCitationsModal()"><i class="far fa-pencil"></i></button>
 											</td>
 											<td *ngIf="editGage">
 												<span *ngIf="!s.isEditing">{{getStatGroup(s.statisticGroupTypeID)}}</span>

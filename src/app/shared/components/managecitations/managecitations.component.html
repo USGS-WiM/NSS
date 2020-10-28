@@ -114,23 +114,22 @@
 						</td>
 						<!-- Col 3, Associated Regression Region -->
 						<td *ngIf="!inGagePage">
-						<div *ngFor="let e of c.regressionRegions; last as isLast" class=regRegionFields>
+							<div *ngFor="let e of c.regressionRegions; last as isLast">
 								<!-- Col 3, Associated Regression Region (all but the last one) -->
-								<td [class.regRegionLast]=isLast [class.regRegion]=!isLast>{{e.name}}
-								</td>
+								<td [class.regRegionLast]=isLast [class.regRegion]=!isLast>{{e.name}}</td>
 								<!-- Col 4 - Regression Buttons -->
 								<td [class.editRegRegionLast]=isLast [class.editRegRegion]=!isLast [class.hidden]="!showAddCitations">
 									<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button"
 										[disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
 										<i class="far fa-pencil"></i>
-									</button></td>
-						</div>
+									</button>
+								</td>
+							</div>
 						</td>
 					</tr>
 				</tbody>
-			</table>
-		
-	</div>
+			</table>		
+		</div>
 	</div>
 
 	<!-- Footer / Buttons -->

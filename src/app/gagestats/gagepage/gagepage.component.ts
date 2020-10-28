@@ -93,14 +93,15 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.selectedCitation = c;
       if (this.newChar){  //If a new characteristic is created
         this.newChar.citationID = this.selectedCitation.id; //Set the citationID to the id of the selected citation from the citation modal
-        console.log(this.newChar)
-      } if (!this.itemBeingEdited.yearsofRecord) {  //If a characteristic is being edited
-          this.itemBeingEdited.citationID = this.selectedCitation.id;
-          console.log(this.itemBeingEdited)
       } if (this.newStat) { //If a new stat is created
           this.newStat.citationID = this.selectedCitation.id
-      } if (this.itemBeingEdited.yearsofRecord) { //If itemBeingEdited is a stat
-          this.itemBeingEdited.citationID = this.selectedCitation.id
+      } if(this.itemBeingEdited) { // If a row is being edited
+          if (!this.itemBeingEdited.yearsofRecord) {  //If it is a characteristic is being edited
+            this.itemBeingEdited.citationID = this.selectedCitation.id;
+          }
+          if (this.itemBeingEdited.yearsofRecord) { //If itemBeingEdited is a stat
+            this.itemBeingEdited.citationID = this.selectedCitation.id
+          }
       }
     }); 
 
@@ -265,19 +266,14 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public editRowClicked(item, index) {
     if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
         this.cancelEditRowClicked(this.itemBeingEdited);
-        this.tempItem = JSON.parse(JSON.stringify(item));
-        this.itemBeingEdited = item;
-        this.editId = index
-        item.isEditing = true;
-    } else {
-      this.tempItem = JSON.parse(JSON.stringify(item));
-      this.itemBeingEdited = item;
-      this.editId = index
-      if (!item.predictionInterval) {
-        item.predictionInterval = {variance: 0, lowerPredictionInterval: 0, upperPredictionInterval: 0};
-      }
-      item.isEditing = true;
+    } if (!item.predictionInterval) { //If the stat doesn't have prediction intervals, create empty ones for display
+      item.predictionInterval = {variance: null, lowerConfidenceInterval: null, upperConfidenceInterval: null};
     }
+    this.tempItem = JSON.parse(JSON.stringify(item));
+    this.itemBeingEdited = item;
+    this.editId = index
+    item.isEditing = true;
+    delete(this.selectedCitation);
   }
 
   public cancelEditRowClicked(item) {
@@ -307,8 +303,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
       unitTypeID: null,
       citationID: null,
     }
-    
   this.newChar.isEditing = true;
+  delete(this.selectedCitation);
+  if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
+    this.cancelEditRowClicked(this.itemBeingEdited);
+  }
   } 
     
   public deletePhysicalCharacteristic(deleteID: number) {
@@ -332,6 +331,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.characteristicsURL).subscribe(
         (res) => { 
           item.isEditing = false;
+          delete(this.itemBeingEdited)
           this.refreshgagepage();
           this._settingsservice.outputWimMessages(res);
         }
@@ -367,21 +367,32 @@ export class GagepageComponent implements OnInit, OnDestroy {
       predictionInterval: {}
     } 
     this.newStat.isEditing = true;
+    delete(this.selectedCitation);
+    if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
+      this.cancelEditRowClicked(this.itemBeingEdited);
+    }
   } 
 
   public saveStat(item) {
     if (item.id) {  //If statistic has an id, it is already in the SS DB, make PUT request to edit
-      const newItem = JSON.parse(JSON.stringify(item));  // Copy item
+      const newItem = JSON.parse(JSON.stringify(item));  // Copy stat
+      if ( !newItem.predictionInterval.variance && !newItem.predictionInterval.lowerConfidenceInterval && !newItem.predictionInterval.upperConfidenceInterval ) {
+        delete(newItem.predictionInterval), delete(newItem.predictionIntervalID)  //Delete if empty
+      }
       ['regressionType', 'citation',
       'unitType', 'isEditing', 'statisticGroupType'].forEach(e => delete newItem[e]);  // Delete unneeded items
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
         (res) => {
           item.isEditing = false;
+          delete(this.itemBeingEdited)
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
         }
       )
     } else {  //If statistic doesn't have an id, it needs to be added to the DB, make POST request
+      if ( !item.predictionInterval.variance && !item.predictionInterval.lowerConfidenceInterval && !item.predictionInterval.upperConfidenceInterval ) {
+        delete(item.predictionInterval)
+      }
       this._settingsservice.postEntityGageStats(item, this.configSettings.statisticsURL).subscribe(
         (res: StatisticResponse) => {
           item.isEditing = false;
@@ -417,7 +428,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.getCitations();
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();
-      //this.selectedStatGroup = [];
       this.getPredictionIntervals();
     });
   }

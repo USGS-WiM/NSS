@@ -24,13 +24,13 @@ button {
 }
 
 .editRegRegion {
-    width:45px; 
+    width: 45px; 
     border-top-style:none; 
     border-right-style: none;
 }
 
 .editRegRegionLast {
-    width:45px; 
+    width: 45px; 
     border-top-style:none; 
     border-right-style: none; 
     border-bottom-style:none;
@@ -60,8 +60,16 @@ button {
 
 .col1 {
     width: 450px;
+
+    &.inGagePage{
+        width: 90%;
+    }
 }
 
 .editCol {
     width: 41px;
+
+    &.inGagePage{
+        width: 10%;
+    }
 }

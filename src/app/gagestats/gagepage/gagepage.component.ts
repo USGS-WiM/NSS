@@ -216,6 +216,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
             this._nssService.searchStations(this.selectedParams);
+            
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -264,9 +265,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   } 
 
   public editRowClicked(item, index) {
-    if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
-        this.cancelEditRowClicked(this.itemBeingEdited);
-    } if (!item.predictionInterval) { //If the stat doesn't have prediction intervals, create empty ones for display
+    this.limitRowEdits();
+    if (!item.predictionInterval) { //If the stat doesn't have prediction intervals, create empty ones for display
       item.predictionInterval = {variance: null, lowerConfidenceInterval: null, upperConfidenceInterval: null};
     }
     this.tempItem = JSON.parse(JSON.stringify(item));
@@ -294,6 +294,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 ///////////////////////Characteristic Section////////////////
   
   public addPhysicalCharacteristic() {
+    this.limitRowEdits();
     // Create new characteristic
     this.newChar = {
       stationID: this.gage.id,
@@ -303,11 +304,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
       unitTypeID: null,
       citationID: null,
     }
-  this.newChar.isEditing = true;
-  delete(this.selectedCitation);
-  if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
-    this.cancelEditRowClicked(this.itemBeingEdited);
-  }
+    this.newChar.isEditing = true;
+    delete(this.selectedCitation);
   } 
     
   public deletePhysicalCharacteristic(deleteID: number) {
@@ -354,6 +352,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 ///////////////////////Statistic Section/////////////////////
   
   public addStreamflowStatistic() {
+    this.limitRowEdits();
     this.newStat = {
       stationID: this.gage.id,
       value: null,
@@ -368,9 +367,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     } 
     this.newStat.isEditing = true;
     delete(this.selectedCitation);
-    if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
-      this.cancelEditRowClicked(this.itemBeingEdited);
-    }
   } 
 
   public saveStat(item) {
@@ -384,7 +380,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
         (res) => {
           item.isEditing = false;
-          delete(this.itemBeingEdited)
+          delete(this.itemBeingEdited);
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
         }
@@ -397,6 +393,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         (res: StatisticResponse) => {
           item.isEditing = false;
           delete(this.newStat);  // Delete newStat from table
+          delete(this.itemBeingEdited);
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Statistic was created');
         } 
@@ -411,6 +408,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         if (deleteID) {    // If statistic has an ID number (if it comes from the service)
           this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.statisticsURL).subscribe(
             (res) => {
+              delete(this.itemBeingEdited)
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
             }
@@ -452,6 +450,20 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public filterStatIds() {
     this.filteredStatGroups = this.statisticGroups.filter((sg) => this.statGroupIds.includes(sg.id));
+  }
+
+  public limitRowEdits() {
+    if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
+      this.cancelEditRowClicked(this.itemBeingEdited);
+    }
+    if (this.newChar) {
+      //this.deletePhysicalCharacteristic(this.newChar.id)
+      delete(this.newChar)
+    }
+    if (this.newStat) {
+      //this.deleteStatistic(this.newStat.id)
+      delete(this.newStat)
+    }
   }
 
   compareObjects(Obj1, Obj2) {

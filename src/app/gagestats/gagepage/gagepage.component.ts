@@ -38,6 +38,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public editGageInfo: boolean = false;
   public units;
   public tempItem;
+  public tempGage;
   public itemBeingEdited;
   public editId;
   public newChar: GageCharacteristic;
@@ -240,12 +241,13 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   public editGageInformation(item) {
+    this.limitRowEdits();
     this.editGageInfo = true;
-    this.tempItem = JSON.parse(JSON.stringify(item));
+    this.tempGage = JSON.parse(JSON.stringify(item));
   }
 
   public cancelEditGageInfo() {
-    this.gage = this.tempItem;
+    this.gage = this.tempGage;
     this.editGageInfo = false;
   }
 
@@ -265,13 +267,14 @@ export class GagepageComponent implements OnInit, OnDestroy {
   } 
 
   public editRowClicked(item, index) {
+    this.cancelEditGageInfo();
     this.limitRowEdits();
     if (!item.predictionInterval) { //If the stat doesn't have prediction intervals, create empty ones for display
       item.predictionInterval = {variance: null, lowerConfidenceInterval: null, upperConfidenceInterval: null};
     }
     this.tempItem = JSON.parse(JSON.stringify(item));
     this.itemBeingEdited = item;
-    this.editId = index
+    this.editId = index;
     item.isEditing = true;
     delete(this.selectedCitation);
   }
@@ -294,6 +297,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 ///////////////////////Characteristic Section////////////////
   
   public addPhysicalCharacteristic() {
+    this.cancelEditGageInfo();
     this.limitRowEdits();
     // Create new characteristic
     this.newChar = {
@@ -352,6 +356,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 ///////////////////////Statistic Section/////////////////////
   
   public addStreamflowStatistic() {
+    this.cancelEditGageInfo();
     this.limitRowEdits();
     this.newStat = {
       stationID: this.gage.id,

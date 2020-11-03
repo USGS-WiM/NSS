@@ -1222,6 +1222,13 @@ export class MainviewComponent implements OnInit {
     }
 
     /////////////////////// Edit Scenarios Section ///////////////////////////
+    public editScenarioRowClicked(statisticGroupID, r, rr) {
+        let info = 'edit';
+        this.cloneScen = { r, rr, statisticGroupID, info };
+        this.newCloneScenario(this.cloneScen);
+        this.showCloneScenarioModal();
+    }
+
     public editRegScenario() {
         this._nssService.showCompute(false);
         this.editRegionScenario = true;
@@ -1323,16 +1330,6 @@ export class MainviewComponent implements OnInit {
     public showCloneScenarioModal() {
         this._nssService.setAddScenarioModal(true);
     }
-
-     /////////////////////// Edit Scenarios Section ///////////////////////////
-
-    public editScenarioRowClicked(statisticGroupID, r, rr) {
-        let info = 'edit';
-        this.cloneScen = { r, rr, statisticGroupID, info };
-        this.newCloneScenario(this.cloneScen);
-        this.showCloneScenarioModal();
-    }
-
 
     /////////////////////// Citations Section ///////////////////////////
     public showManageCitationsModal() {

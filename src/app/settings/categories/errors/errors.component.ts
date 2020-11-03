@@ -113,10 +113,15 @@ export class ErrorsComponent implements OnInit, OnDestroy {
     }
 
     private EditRowClicked(i: number) {
-       this.rowBeingEdited = i;
-       this.tempData = Object.assign({}, this.errors[i]); // make a copy in case they cancel
-       this.errors[i].isEditing = true;
-       this.isEditing = true; // set to true so create new is disabled
+        // make a copy in case they cancel
+        this.errors[i].isEditing = true;
+        //if there is a row already being edited, cancel that edit
+        if (this.isEditing == true) {
+            this.CancelEditRowClicked(this.rowBeingEdited);
+        }
+        this.tempData = Object.assign({}, this.errors[i]); 
+        this.rowBeingEdited = i;
+        this.isEditing = true; // set to true so create new is disabled
     }
 
     public CancelEditRowClicked(i: number) {

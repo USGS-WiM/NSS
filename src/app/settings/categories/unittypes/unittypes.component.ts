@@ -113,6 +113,12 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         );
     }
 
+    public getUnitName(ID){
+        if (this.unitSystems && this.unitSystems.find(s => s.id === ID)) {
+            return (this.unitSystems.find(s => s.id === ID).unitSystem);
+        }
+    }
+
     private getDismissReason(reason: any): string {
         if (reason === ModalDismissReasons.ESC) {
             return 'by pressing ESC';

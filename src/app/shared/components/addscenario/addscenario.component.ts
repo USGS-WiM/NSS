@@ -60,6 +60,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public filteredRegressionTypes;
     public filtered = true;
     public scen;
+    public orgStatGrp;
+    public orgRegRegion;
+    public orgRegVariable;
+    public editMode: boolean;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -199,6 +203,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.clone = false;
                 this.edit = true;
                 this.filtered = false;
+                this.editMode = true;
+                this.orgStatGrp = this.cloneParameters.statisticGroupID;
+                this.orgRegRegion = this.cloneParameters.rr.id;
+                this.orgRegVariable = this.cloneParameters.r.id;
                 this.fillModal();
             }
         //new scenario
@@ -310,6 +318,27 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
         });
         this.fillModal();
+    }
+
+    public cloneOrEdit(parameter){
+        //make sure in edit mode
+        if (this.editMode == true){
+            this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
+            //change back to edit if user reselects original core dropdowns
+            if ((parameter == "statGroup" && this.orgStatGrp == this.scen.statisticGroupID) ||
+            (parameter == "regRegion" && this.orgRegRegion == this.scen.regressionRegions.ID) || 
+            (parameter == "regVariable" && this.orgRegVariable == this.scen.regressionRegions.regressions.ID)){
+                this.clone = false;
+                this.edit = true;
+                this._toasterService.clear();
+                this._toasterService.pop('info', 'Info', 'Scenario will be Edited Instead of Cloned');
+            }else{ //change to clone
+                this.clone = true;
+                this.edit = false;
+                this._toasterService.clear();
+                this._toasterService.pop('info', 'Info', 'Scenario will be Cloned Instead of Edited');
+            }
+        }
     }
 
     addVariable() {

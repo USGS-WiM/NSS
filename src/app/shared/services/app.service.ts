@@ -37,7 +37,7 @@ export class NSSService {
     private _regTypeIdParams: string;
     private _statGrpIdParams: string;
     private configSettings: Config;
-    private citationTest = [];
+    private citationIDList = [];
     private jsonHeader: HttpHeaders = new HttpHeaders({
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -747,9 +747,9 @@ export class NSSService {
                 s => {
                     s.forEach(scen => {
                         // get citations
-                        scen.regressionRegions.forEach(test =>{
-                            if (this.citationTest.findIndex(i => i == test.id) === -1) {
-                                this.citationTest.push(test.id);
+                        scen.regressionRegions.forEach(rr =>{
+                            if (this.citationIDList.findIndex(i => i == rr.id) === -1) {
+                                this.citationIDList.push(rr.id);
                             }
                         })
                         // clear Parameter.'Value'
@@ -768,9 +768,9 @@ export class NSSService {
                             }
                         });
                     });
-                    this.citationTest = this.citationTest.map(String);
-                    const testParam =  '?regressionregions=' + this.citationTest;
-                    this.getCitations(testParam).subscribe(c => {
+                    this.citationIDList = this.citationIDList.map(String);
+                    const citationParam =  '?regressionregions=' + this.citationIDList;
+                    this.getCitations(citationParam).subscribe(c => {
                         if (!(c.length === 1 && c[0] === null)) { 
                             this._scenarioCitationSubject.next(c);
                         }

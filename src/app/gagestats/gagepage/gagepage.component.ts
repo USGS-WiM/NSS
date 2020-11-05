@@ -247,23 +247,30 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   public cancelEditGageInfo() {
-    this.gage = this.tempGage;
-    this.editGageInfo = false;
+    if (this.editGageInfo) {
+      this.gage = this.tempGage;
+      this.editGageInfo = false;
+    }
   }
 
   public endEditGageStats() {
     this.editGage = false;
     this.editGageInfo = false;
-    if (this.itemBeingEdited) {
-      this.itemBeingEdited.isEditing = false;
-    }
-    if (this.newChar) {
-      this.deletePhysicalCharacteristic(this.newChar.id);
-    }
-    if (this.newStat) {
-      this.deleteStatistic(this.newStat.id);
-    }
+    this.limitRowEdits();
+    //delete(this.tempItem);
+    // if (this.itemBeingEdited) {
+    //   this.itemBeingEdited.isEditing = false;
+    // }
+    // if (this.newChar) {
+    //   this.deletePhysicalCharacteristic(this.newChar.id);
+    // }
+    // if (this.newStat) {
+    //   this.deleteStatistic(this.newStat.id);
+    // }
     this.refreshgagepage();
+    delete(this.tempGage);
+    delete(this.tempItem);
+    delete(this.itemBeingEdited);
   } 
 
   public editRowClicked(item, index) {
@@ -287,6 +294,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.gage.statistics[this.editId] = this.tempItem;
     }
     item.isEditing = false;
+    delete(this.itemBeingEdited);
   }
 
   public submitGage() {
@@ -308,6 +316,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       unitTypeID: null,
       citationID: null,
     }
+    console.log(this.newChar)
     this.newChar.isEditing = true;
     delete(this.selectedCitation);
   } 
@@ -432,6 +441,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();
       this.getPredictionIntervals();
+      //this.limitRowEdits();
     });
   }
 
@@ -463,11 +473,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
     }
     if (this.newChar) {
       //this.deletePhysicalCharacteristic(this.newChar.id)
-      delete(this.newChar)
+      delete(this.newChar);
     }
     if (this.newStat) {
       //this.deleteStatistic(this.newStat.id)
-      delete(this.newStat)
+      delete(this.newStat);
     }
   }
 

@@ -104,13 +104,13 @@
 			</div>
 		</div>
 		<!--Physical Characteristics-->
-		<div>
+		<div *ngIf="gage.characteristics.length > 0 || editGage">
 			<div class="table-title">Physical Characteristics
 				<div class="stat-filters">
 					<div><button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs"  (click)="addPhysicalCharacteristic(cIndex)">Add Physical Characteristic</button></div>
 				</div>
 			</div>
-			<div *ngIf="gage.characteristics.length > 0 || editGage">
+			<div >
 				<table style="border:solid 1px gray" class="custom-table"> 
 					<thead>
 						<tr>
@@ -222,7 +222,7 @@
 			</div>
 		</div>
 		<!--Streamflow Statistics Table-->
-		<div>
+		<div *ngIf="gage.statistics.length > 0  || editGage">
 			<div class="table-title">Streamflow Statistics
 				<div class="stat-filters">
 					<div><label>Filter by Statistic Group: </label></div>
@@ -443,6 +443,6 @@
 
 	<!-- Footer / Buttons -->
 	<div class="modal-body-footer">
-		<button type="button" (click)="d('closed'); editGage=false; cancelEditGageInfo()" [disabled]="editGage" class="button black">Close</button>
+		<button type="button" (click)="d('closed'); editGage=false" [disabled]="editGage" class="button black">Close</button>
 	</div>
 </ng-template>

@@ -27,7 +27,9 @@
                             <ng-container *ngIf="row == tableData[0]">
                                 <td *ngFor='let val of row, let valIndex = index'>
                                     <ng-select  [(ngModel)]='tableData[rowIndex][valIndex]'>
-                                        <ng-option *ngFor='let char of stationChars' [value]="char">{{char}}</ng-option>
+                                        <ng-container *ngFor='let char of getKeys(stationChars)'>
+                                            <ng-option  [value]="stationChars[char]">{{char}}</ng-option>
+                                        </ng-container>
                                     </ng-select>
                                 </td>
                             </ng-container>

@@ -257,16 +257,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this.editGage = false;
     this.editGageInfo = false;
     this.limitRowEdits();
-    //delete(this.tempItem);
-    // if (this.itemBeingEdited) {
-    //   this.itemBeingEdited.isEditing = false;
-    // }
-    // if (this.newChar) {
-    //   this.deletePhysicalCharacteristic(this.newChar.id);
-    // }
-    // if (this.newStat) {
-    //   this.deleteStatistic(this.newStat.id);
-    // }
     this.refreshgagepage();
     delete(this.tempGage);
     delete(this.tempItem);
@@ -299,7 +289,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public submitGage() {
     const url = '';
-    this._settingsservice.putEntityGageStats('', this.configSettings.stationsURL, url).subscribe()
+    this._settingsservice.putEntityGageStats('', this.configSettings.stationsURL, url).subscribe();
   }
 
 ///////////////////////Characteristic Section////////////////
@@ -316,7 +306,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
       unitTypeID: null,
       citationID: null,
     }
-    console.log(this.newChar)
     this.newChar.isEditing = true;
     delete(this.selectedCitation);
   } 
@@ -342,7 +331,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.characteristicsURL).subscribe(
         (res) => { 
           item.isEditing = false;
-          delete(this.itemBeingEdited)
+          delete(this.itemBeingEdited);
           this.refreshgagepage();
           this._settingsservice.outputWimMessages(res);
         }
@@ -422,7 +411,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         if (deleteID) {    // If statistic has an ID number (if it comes from the service)
           this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.statisticsURL).subscribe(
             (res) => {
-              delete(this.itemBeingEdited)
+              delete(this.itemBeingEdited);
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
             }
@@ -441,7 +430,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();
       this.getPredictionIntervals();
-      //this.limitRowEdits();
     });
   }
 
@@ -472,11 +460,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.cancelEditRowClicked(this.itemBeingEdited);
     }
     if (this.newChar) {
-      //this.deletePhysicalCharacteristic(this.newChar.id)
       delete(this.newChar);
     }
     if (this.newStat) {
-      //this.deleteStatistic(this.newStat.id)
       delete(this.newStat);
     }
   }

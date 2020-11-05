@@ -104,6 +104,11 @@ export class NSSService {
          this._showHideAddStationModal.next(val);
      }
     
+     // -+-+-+-+-+-+-+-+-+ Batch Upload modal -+-+-+-+-+-+-+-+
+     private _showHideBatchUploadModal: Subject<boolean> = new Subject<boolean>();
+     public setBatchUploadModal(val: any) { 
+         this._showHideBatchUploadModal.next(val);
+     }
 
     private itemSource = new BehaviorSubject<any>(' ');
     currentItem = this.itemSource.asObservable();
@@ -128,10 +133,15 @@ export class NSSService {
     public get showCloneScenarioModal(): any {
         return this._showHideCloneScenarioModal.asObservable();
     }
-
+    // show the add station modal in the gagestats page
     public get showAddStationModal(): any {
         return this._showHideAddStationModal.asObservable();
     }
+    // show the add station modal in the gagestats page
+    public get showBatchUploadModal(): any {
+        return this._showHideBatchUploadModal.asObservable();
+    }
+
     // -+-+-+-+-+-+-+-+-+ manage citations modal -+-+-+-+-+-+-+-+
     private _showHideManageCitationsModal: Subject<ManageCitation> = new Subject<ManageCitation>();
     public setManageCitationsModal(val: ManageCitation) { 

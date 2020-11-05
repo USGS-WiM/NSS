@@ -1,0 +1,85 @@
+<ng-template #batchUpload let-c="close" let-d="dismiss" >
+    <div>
+        <div class="modal-header">
+            <h4 class="title" > Batch Upload </h4>
+            <button class="icon-button" (click)="c('closed')"><i class="far fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div>    
+                <button *ngIf='!selectUpload' type="button" class="button small blue mright-xs" (click)='selectUpload = true; uploadStations = true'>Upload Stations</button>
+                <button *ngIf='!selectUpload' type="button" class="button small blue mright-xs" (click)='selectUpload = true; uploadStats = true'>Upload Statistics</button>
+                <button *ngIf='!selectUpload' type="button" class="button small blue mright-xs" (click)='selectUpload = true; uploadChars = true'>Upload Characteristics</button>
+                <button *ngIf='selectUpload' type="button" class="button small green mright-xs" (click)='selectUpload = false'>Back</button>
+                <!-- <button *ngIf='selectUpload' type="button" class="button small blue mright-xs" (click)='selectFile()'>Select File</button> -->
+                <input *ngIf='selectUpload' (change)="selectFile($event)" type='file' multiple='false'/>
+                <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true'>Edit Table</button>
+                <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
+            </div>
+            <div *ngIf='uploadStations'>
+                <table style="border:solid 1px gray" class="custom-table">
+                    <thead>
+                        <tr>
+                           <th *ngFor='let header of headers'>{{header}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of tableData, let rowIndex = index">
+                            <ng-container *ngIf="row == tableData[0]">
+                                <td *ngFor='let val of row, let valIndex = index'>
+                                    <ng-select  [(ngModel)]='tableData[rowIndex][valIndex]'>
+                                        <ng-option *ngFor='let char of stationChars' [value]="char">{{char}}</ng-option>
+                                    </ng-select>
+                                </td>
+                            </ng-container>
+                            <ng-container *ngIf="row != tableData[0]">
+                                <td *ngFor='let val of row, let valIndex = index'>
+                                    <span *ngIf='!tableEdit'>{{val}}</span>
+                                    <span *ngIf='tableEdit'><input [(ngModel)]='tableData[rowIndex][valIndex]'></span>
+                                </td>
+                            </ng-container>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div *ngIf='uploadStats'>
+                <table>
+                    <thead>
+                        <tr>
+                            <th *ngFor='let header of headers'>{{header}}</th>
+                         </tr>
+                         <tr>
+                             <th *ngFor='let header of headers'>
+                                 <ng-select>
+                                     <ng-option *ngFor='let char of statChars'>{{char}}</ng-option>
+                                 </ng-select>
+                             </th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of tableData">
+                            <td *ngFor='let val of row'>{{val}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div *ngIf='uploadChars'>
+                <table>
+                    <thead></thead>
+                    <tbody>
+                        <tr *ngFor="let row of tableData">
+                            <td *ngFor='let val of row'>{{val}}</td>
+                        </tr>
+                    </tbody> 
+                </table>
+            </div>
+            <div>
+                <button *ngIf='tableDisplay && !tableEdit' type="button" class="button small blue mright-xs" (click)='submitStations()'>Submit</button>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div class="modal-body-footer">
+    </div>
+</ng-template>

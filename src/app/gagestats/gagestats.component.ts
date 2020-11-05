@@ -135,7 +135,8 @@ export class GagestatsComponent implements OnInit {
   }
 
   //TODO: Bulk Upload Button
-  bulkUpload(): void{
+  openBatchUpload(): void{
+    this._nssService.setBatchUploadModal(true);
   }
 
   //TODO: Export Button

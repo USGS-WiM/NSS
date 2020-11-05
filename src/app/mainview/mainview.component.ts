@@ -1494,6 +1494,7 @@ export class MainviewComponent implements OnInit {
     }
 
     public getCitations() {
+        console.log('mainview')
         this._settingsService.getEntities(this.configSettings.citationURL)
             .subscribe(res => {
                 this.citations = res;

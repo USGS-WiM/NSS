@@ -38,7 +38,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     private configSettings: Config;
     public modalRef;
     public loggedInRole;
-    public citations;
+    public citations = [];
     public tempCitations;
     public scenarios: Scenario[];
     public filteredData;
@@ -99,8 +99,6 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         // subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
             this.scenarios = s;
-            this.getRegRegions(); // get list of regression regions for the region
-            this.getCitations(); // get full list of citations
             if (this.loggedInRole == 'Manager') {
                 this.getManagerCitations();
                 this.getManagerRegressionRegions();
@@ -159,7 +157,8 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
     
     public showModal(): void {
-
+        this.getRegRegions(); // get list of regression regions for the region
+        this.getCitations(); // get full list of citations
         if (this.selectedRegion) {this.getRegRegions(); }
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
     }
@@ -240,8 +239,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         const header: HttpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
         });
-
-        this._http.get(this.configSettings.nssBaseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
+        this._http.get<any>(this.configSettings.nssBaseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
             .subscribe(res => {
                 this.citations = res.body;
                 this.filteredData = this.citations.filter(function (filter) {

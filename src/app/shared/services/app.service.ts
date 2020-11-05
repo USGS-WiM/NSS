@@ -747,7 +747,7 @@ export class NSSService {
                 s => {
                     s.forEach(scen => {
                         // get citations
-                        scen.regressionRegions.forEach(rr =>{
+                        scen.regressionRegions.forEach(rr => {
                             if (this.citationIDList.findIndex(i => i == rr.id) === -1) {
                                 this.citationIDList.push(rr.id);
                             }

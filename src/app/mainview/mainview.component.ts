@@ -321,7 +321,7 @@ export class MainviewComponent implements OnInit {
             this.scenarios.forEach((s => {
                 s.citations = [];
                 s.regressionRegions.forEach(rr => {
-                    if (rr.citationID){
+                    if (rr.citationID) {
                         s.citations.push(this.scenarioCitations.find(c => c.id === rr.citationID));
                     }
                 });
@@ -1494,7 +1494,6 @@ export class MainviewComponent implements OnInit {
     }
 
     public getCitations() {
-        console.log('mainview')
         this._settingsService.getEntities(this.configSettings.citationURL)
             .subscribe(res => {
                 this.citations = res;

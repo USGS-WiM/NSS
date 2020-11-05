@@ -117,10 +117,15 @@ export class RegionsComponent implements OnInit, OnDestroy {
     }
 
     private EditRowClicked(i: number) {
-       this.rowBeingEdited = i;
-       this.tempData = Object.assign({}, this.regions[i]); // make a copy in case they cancel
-       this.regions[i].isEditing = true;
-       this.isEditing = true; // set to true so create new is disabled
+        // make a copy in case they cancel
+        this.regions[i].isEditing = true;
+        //if there is a row already being edited, cancel that edit
+        if (this.isEditing == true) {
+            this.CancelEditRowClicked(this.rowBeingEdited);
+        }
+        this.tempData = Object.assign({}, this.regions[i]); 
+        this.rowBeingEdited = i;
+        this.isEditing = true; // set to true so create new is disabled
     }
 
     public CancelEditRowClicked(i: number) {
@@ -159,7 +164,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
 
     // delete category type
     public deleteRegion(deleteID: number) {
-        const check = confirm('Are you sure you want to delete this Region?');
+        const check = confirm('Are you sure you want to delete this Study Area?');
         if (check) {
             // delete it
             const index = this.regions.findIndex(item => item.id === deleteID);

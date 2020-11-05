@@ -113,6 +113,12 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         );
     }
 
+    public getUnitName(ID){
+        if (this.unitSystems && this.unitSystems.find(s => s.id === ID)) {
+            return (this.unitSystems.find(s => s.id === ID).unitSystem);
+        }
+    }
+
     private getDismissReason(reason: any): string {
         if (reason === ModalDismissReasons.ESC) {
             return 'by pressing ESC';
@@ -145,11 +151,15 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
     }
 
     private EditRowClicked(i: number) {
-       // from wateruse
-       this.rowBeingEdited = i;
-       this.tempData = Object.assign({}, this.unitTypes[i]); // make a copy in case they cancel
-       this.unitTypes[i].isEditing = true;
-       this.isEditing = true; // set to true so create new is disabled
+        // make a copy in case they cancel
+        this.unitTypes[i].isEditing = true;
+        //if there is a row already being edited, cancel that edit
+        if (this.isEditing == true) {
+            this.CancelEditRowClicked(this.rowBeingEdited);
+        }
+        this.tempData = Object.assign({}, this.unitTypes[i]); 
+        this.rowBeingEdited = i;
+        this.isEditing = true; // set to true so create new is disabled
     }
 
     public CancelEditRowClicked(i: number) {

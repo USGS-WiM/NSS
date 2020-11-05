@@ -1136,12 +1136,12 @@
 								<tr *ngFor="let r of rr.regressions; let rIndex = index;">
 									<td class="table-icon-buttons">
 										<button *ngIf="!r.isEditing" title="Edit Scenario"
-											(click)="editScenarioRowClicked(s.statisticGroupID, r, rr)" class="icon-button"
+											(click)="editScenarioRowClicked(s.statisticGroupID, r, rr, 'edit')" class="icon-button"
 											aria-hidden="true">
 											<i class="far fa-pencil"></i>
 										</button>
 										<button *ngIf="!r.isEditing" title="Clone Scenario"
-											(click)="cloneRowClicked(s.statisticGroupID, r, rr)" class="icon-button"
+											(click)="editScenarioRowClicked(s.statisticGroupID, r, rr, 'clone')" class="icon-button"
 											aria-hidden="true">
 											<i class="far fa-clone"></i>
 										</button>

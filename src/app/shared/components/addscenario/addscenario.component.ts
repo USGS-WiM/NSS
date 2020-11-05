@@ -60,9 +60,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public filteredRegressionTypes;
     public filtered = true;
     public scen;
-    public orgStatGrp;
-    public orgRegRegion;
-    public orgRegVariable;
+    public originalScenario = [];
     public editMode: boolean;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
@@ -189,24 +187,20 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
         );
         if (this.cloneParameters.info){
+            this.clearScenario();
+            this.filtered = false;
             //cloned scenario
             if (this.cloneParameters.info == "clone"){
-                this.clearScenario();
                 this.clone = true;
                 this.edit = false;
-                this.filtered = false;
                 this.cloneScenario();
             }
             //edit scenario
             else if (this.cloneParameters.info == "edit"){
-                this.clearScenario();
                 this.clone = false;
                 this.edit = true;
-                this.filtered = false;
                 this.editMode = true;
-                this.orgStatGrp = this.cloneParameters.statisticGroupID;
-                this.orgRegRegion = this.cloneParameters.rr.id;
-                this.orgRegVariable = this.cloneParameters.r.id;
+                this.originalScenario = [this.cloneParameters.statisticGroupID,this.cloneParameters.rr.id,this.cloneParameters.r.id];
                 this.fillModal();
             }
         //new scenario
@@ -320,23 +314,23 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.fillModal();
     }
 
-    public cloneOrEdit(parameter){
+    public cloneOrEdit(){
         //make sure in edit mode
         if (this.editMode == true){
             this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
             //change back to edit if user reselects original core dropdowns
-            if ((parameter == "statGroup" && this.orgStatGrp == this.scen.statisticGroupID) ||
-            (parameter == "regRegion" && this.orgRegRegion == this.scen.regressionRegions.ID) || 
-            (parameter == "regVariable" && this.orgRegVariable == this.scen.regressionRegions.regressions.ID)){
+            if ((this.originalScenario[0] == this.scen.statisticGroupID) &&
+            (this.originalScenario[1] == this.scen.regressionRegions.ID) && 
+            (this.originalScenario[2] == this.scen.regressionRegions.regressions.ID)){
                 this.clone = false;
                 this.edit = true;
                 this._toasterService.clear();
-                this._toasterService.pop('info', 'Info', 'Scenario will be Edited Instead of Cloned');
+                this._toasterService.pop('info', 'Info', 'Scenario Will Be Edited Instead Of Cloned');
             }else{ //change to clone
                 this.clone = true;
                 this.edit = false;
                 this._toasterService.clear();
-                this._toasterService.pop('info', 'Info', 'Scenario will be Cloned Instead of Edited');
+                this._toasterService.pop('info', 'Info', 'Scenario Will Be Cloned Instead Of Edited');
             }
         }
     }
@@ -427,35 +421,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
     }
 
-    public async submitScenario() {
-        // put scenario
-        this.setUpScenario();
-        await this._settingsService.putEntity('', this.scen, this.configSettings.scenariosURL)
-            .subscribe((response) => {
-                if (this.originalRegion == this.selectedRegion) {
-                    this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
-                    this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
-                    this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
-                } else {
-                    this._nssService.setSelectedRegion(this.selectedRegion);
-                    this._nssService.selectedStatGroups = [];
-                    this._nssService.setSelectedRegRegions([]);
-                    this._nssService.selectedRegressionTypes = [];
-                }
-                // clear form
-                if (!response.headers) {
-                    this._toasterService.pop('info', 'Info', 'Scenario was Updated');
-                } else {
-                    this._settingsService.outputWimMessages(response); 
-                }
-                this.cancelCreateScenario();
-            }, error => {
-                if (this._settingsService.outputWimMessages(error)) { return; }
-                this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
-            }
-            );
-    }
-
     //get scen object ready for put and post
     public setUpScenario(){
         this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
@@ -494,28 +459,52 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         if (!this.addPredInt || (!regs.predictionInterval.biasCorrectionFactor && !regs.predictionInterval.student_T_Statistic &&
             !regs.predictionInterval.variance && !regs.predictionInterval.xiRowVector && !regs.predictionInterval.covarianceMatrix)) {
                 regs.predictionInterval = null; regs.expected.intervalBounds = null;
-            }
+        }
 
         // change regression region/regression to arrays
         this.scen['regressionRegions'].regressions = [regs];
         this.scen['regressionRegions'] = [regRegs];
     }
 
-    createNewScenario() {
+    public setSidebar(){
+        if (this.originalRegion == this.selectedRegion) {
+            this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+            this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
+            this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
+        } else {
+            this._nssService.setSelectedRegion(this.selectedRegion);
+            this._nssService.selectedStatGroups = [];
+            this._nssService.setSelectedRegRegions([]);
+            this._nssService.selectedRegressionTypes = [];
+        }
+    }
+
+    public async submitScenario() {
+        // put scenario
+        this.setUpScenario();
+        await this._settingsService.putEntity('', this.scen, this.configSettings.scenariosURL)
+            .subscribe((response) => {
+                this.setSidebar();
+                // clear form
+                if (!response.headers) {
+                    this._toasterService.pop('info', 'Info', 'Scenario was Updated');
+                } else {
+                    this._settingsService.outputWimMessages(response); 
+                }
+                this.cancelCreateScenario();
+            }, error => {
+                if (this._settingsService.outputWimMessages(error)) { return; }
+                this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
+            }
+        );
+    }
+
+    public createNewScenario() {
         // post scenario
         this.setUpScenario();
         this._settingsService.postEntity(this.scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID)
             .subscribe((response: any) => {
-                if (this.originalRegion == this.selectedRegion) {
-                    this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
-                    this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
-                    this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
-                } else {
-                    this._nssService.setSelectedRegion(this.selectedRegion);
-                    this._nssService.selectedStatGroups = [];
-                    this._nssService.setSelectedRegRegions([]);
-                    this._nssService.selectedRegressionTypes = [];
-                }
+                this.setSidebar();
                 // clear form
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was added');

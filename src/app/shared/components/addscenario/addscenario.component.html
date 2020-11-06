@@ -247,10 +247,13 @@
 						</button>
 					</div>
 
-					
 					<!-- parameter values -->
-					<div formArrayName="parameters">
 					<label>Equation Test:</label>
+					<div style="float: right">
+						<label for="equationCheck">Skip Equation Check?</label>
+						<input formControlName="equationCheck" type="checkbox" (ngModelChange)="equationCheck($event)">
+					</div>
+					<div formArrayName="parameters" >
 						<div *ngFor="let vari of newScenForm.get('regressionRegions.parameters').controls; let varIndex = index">
 							<div [formGroupName]="varIndex">
 								<!-- Parameter Value* (gets moved to expected before posting) -->

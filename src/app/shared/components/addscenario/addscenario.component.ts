@@ -73,6 +73,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             'region': new FormControl(null, Validators.required),
             'statisticGroupID': new FormControl(null, Validators.required),
             'regressionRegions': this._fb.group({
+                'equationCheck': new FormControl({value: false}),
                 'ID': new FormControl(null, Validators.required),
                 'parameters': this._fb.array([]),
                 'regressions': this._fb.group({
@@ -162,6 +163,23 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.errors = res;
         });
+    }
+
+    public equationCheck(check){
+        if (check == true) {
+            this.newScenForm.get('regressionRegions.regressions.expected.value').disable();
+            const parmControl = <FormArray>this.newScenForm.get('regressionRegions.parameters');
+            for (let i = parmControl.length-1; i >= 0; i--) {
+                this.newScenForm.get('regressionRegions.parameters.'+i+'.value').disable();
+            }
+            
+        }else {
+            this.newScenForm.get('regressionRegions.regressions.expected.value').enable();
+            const parmControl = <FormArray>this.newScenForm.get('regressionRegions.parameters');
+            for (let i = parmControl.length-1; i >= 0; i--) {
+                this.newScenForm.get('regressionRegions.parameters.'+i+'.value').enable();
+            }
+        }
     }
 
     public showModal(): void {
@@ -303,6 +321,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             //comments: new FormControl(null),
             value: new FormControl(null, Validators.required)
         }));
+        this.equationCheck(this.newScenForm.get('regressionRegions.equationCheck').value);
     }
 
     addError() {

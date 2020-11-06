@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { Component, OnInit, ViewChild, } from '@angular/core';
+//import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { NSSService } from 'app/shared/services/app.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'app/settings/settings.service';
@@ -30,16 +30,17 @@ export class BatchUploadModal implements OnInit {
   public tableEdit: boolean = false;
   public data: [][];
   public stationChars = {"Agency": "agencyID", "Code": "code", "IsRegulated": "isRegulated", "Latitude": "latitude", "Longitude": "longitude", "Name": "name", "Region": "regionID", "Station Type": "stationTypeID"};
-  public statChars = ["statisticGroupTypeID", "regressionTypeID", "stationID", "value", "unitTypeID", "comments", "isPreferred", "yearsofRecord"];
+  public statChars = {"Stat Group Type":"statisticGroupTypeID", "Regression Type":"regressionTypeID", "Station ID":"stationID", "Value":"value", "Units":"unitTypeID", "Comments":"comments", "Preferred?":"isPreferred", "Years of Record":"yearsofRecord", "Start Date":"startDate", "End Date":"endDate", "Remarks": 'remarks'};
   public charChars = ["stationID", "variableTypeID", "unitTypeID", "value", "comments"];
   public headers;
   public selectedChars = [];
+  public placeholder = '';
   public tableData;
   public agencies: Array<Agency>;
   public regions: Array<Region>;
   public stationTypes: Array<StationType>;
 
-  constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
+  constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
     private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService) {
 
     this.configSettings = this._configService.getConfiguration();
@@ -61,12 +62,12 @@ export class BatchUploadModal implements OnInit {
     this._settingsService.getEntitiesGageStats(this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
+    this.selectedChars;
 }
-
+//******* End OnInit  
 
   public showModal(): void {
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl' });
-    
   }
 
   public selectFile(event: any) {
@@ -76,7 +77,7 @@ export class BatchUploadModal implements OnInit {
     reader.onload = (e:any) => {
         const bstr: string = e.target.result;                         
         const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary'}); // Read WorkBook
-        const wsname: string = wb.SheetNames[0];                     // Select first worksheet
+        const wsname: string = wb.SheetNames[1];                     // Select first worksheet, CHANGE NUMBER TO CHANGE SHEET
         const ws: XLSX.WorkSheet = wb.Sheets[wsname];                // Get worksheet with that name
         //console.log(ws);
         this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));    // Convert data to json
@@ -89,7 +90,6 @@ export class BatchUploadModal implements OnInit {
   }
 
   public submitStations() {
-    this.selectedChars;
     var stations;
     this.tableData.forEach(row => { // Loop through the rows of the table
       if (row == this.tableData[0]) {
@@ -112,6 +112,7 @@ export class BatchUploadModal implements OnInit {
           const location = {type: 'Point', coordinates: [ parseFloat(stationObj.longitude), parseFloat(stationObj.latitude) ]};  // Add location item
           delete stationObj.latitude;  // Delete old location items
           delete stationObj.longitude;
+          delete stationObj.isRegulated;
           stationObj = {...stationObj, 'location': location};
           if (stationObj.agencyID) {
             var aID = this.getAgencyID(stationObj.agencyID);
@@ -140,16 +141,89 @@ export class BatchUploadModal implements OnInit {
           this._toasterService.pop('info', 'Info', 'Items Added');
         } else {
           this._settingsService.outputWimMessages(response);
-        }});
-    
+        }
+      });
   }
 
-  public createTable = function(data){
+  public submitStats() {
+    this.selectedChars;
+    var stats;
+    this.tableData.forEach(row => { // Loop through the rows of the table
+      if (row == this.tableData[0]) {
+          return;
+      } 
+      else {    
+          var i = 0;
+          var stat;
+          row.forEach(x => {  // Loop thru the cells of each row
+            if (x = null || ' ') {
+              return;
+            }  
+            else {const item = '"' + this.tableData[0][i] + '": "' + x + '"'; // Assign the headers as the keys, the values as values
+                if(this.tableData[0][i] = null) {
+                  return
+                }
+                else { if (i == 0){
+                      stat = item;
+                      i ++;
+                  } else {
+                      stat = stat + ', ' + item;
+                      i ++;
+                  }
+                }  
+            }   
+          })
+          var statObj = JSON.parse('{' + stat + '}');  // Parse strings into JSON objects
+          // const location = {type: 'Point', coordinates: [ parseFloat(stationObj.longitude), parseFloat(stationObj.latitude) ]};  // Add location item
+          // delete stationObj.latitude;  // Delete old location items
+          // delete stationObj.longitude;
+          // delete stationObj.isRegulated;
+          // stationObj = {...stationObj, 'location': location};
+          // if (stationObj.agencyID) {
+          //   var aID = this.getAgencyID(stationObj.agencyID);
+          //   stationObj.agencyID = aID;
+          // }
+          // if (stationObj.stationTypeID) {
+          //   var sID = this.getStationTypeID(stationObj.stationTypeID);
+          //   stationObj.stationTypeID = sID;
+          // }
+          // if (stationObj.regionID) {
+          //   var rID  = this.getRegionID(stationObj.regionID);
+          //   stationObj.regionID = rID;
+          // }
+          if (stats == null) {  // Group station objects into an array
+              stats = [statObj];
+          } 
+          else {
+              stats = [...stats, statObj ];
+          }  
+      }  
+    });    
+    console.log(stats)
+    // this._settingsService.postEntityGageStats(stations, "stations/Batch")
+    //   .subscribe((response:any) =>{
+    //     if(!response.headers){
+    //       this._toasterService.pop('info', 'Info', 'Items Added');
+    //     } else {
+    //       this._settingsService.outputWimMessages(response);
+    //     }
+    //   });
+  }
+
+  public createTable(data){
     this.headers = JSON.parse(JSON.stringify(data[0]));  // copy the first row of the excel sheet as a list of headers
     this.tableData = JSON.parse(JSON.stringify(data));   // copy the data from the excel sheet to display and change
     // FIX THIS!!!!!!!!
-    this.tableData[0] = ['','','','','','','',''];
+    //var x = y;
+    //var emptyCells = this.tableData[0].length * x;
+    //this.tableData[0] = ['','','','','','','','','','','','','','','',];
     //console.log(this.tableData);
+  }
+
+  public clearTable() {
+    delete(this.data);
+    delete(this.tableData);
+    delete(this.headers);
   }
 
   public getKeys(obj) {

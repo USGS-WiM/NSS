@@ -29,15 +29,15 @@ export class MethodsComponent implements OnInit, OnDestroy  {
   public tempData;
 
   constructor(public _settingsService: SettingsService, private _configService: ConfigService, private _fb: FormBuilder, 
-      private router: Router, private _modalService: NgbModal, public _settingsservice: SettingsService, private _toasterService: ToasterService) { 
-      this.newMethodForm = _fb.group({
-        'name': new FormControl(null, Validators.required),
-        'code': new FormControl(null, Validators.required)
+    private router: Router, private _modalService: NgbModal, public _settingsservice: SettingsService, private _toasterService: ToasterService) { 
+    this.newMethodForm = _fb.group({
+      'name': new FormControl(null, Validators.required),
+      'code': new FormControl(null, Validators.required)
     });
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
-        if (e instanceof NavigationEnd) {
-          this.getLoggedInRole();
-        }
+      if (e instanceof NavigationEnd) {
+        this.getLoggedInRole();
+      }
     });
     this.configSettings = this._configService.getConfiguration();
   }
@@ -55,15 +55,15 @@ export class MethodsComponent implements OnInit, OnDestroy  {
     this.showMethodForm = true;
     this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
     this.modalRef.result.then((result) => {
-        // this is the solution for the first modal losing scrollability
-        if (document.querySelector('body > .modal')) {
-            document.body.classList.add('modal-open');
-        }
-        this.CloseResult = `Closed with: ${result}`;
-        if (this.CloseResult) {this.cancelCreateMethod(); }
+      // this is the solution for the first modal losing scrollability
+      if (document.querySelector('body > .modal')) {
+        document.body.classList.add('modal-open');
+      }
+      this.CloseResult = `Closed with: ${result}`;
+      if (this.CloseResult) {this.cancelCreateMethod(); }
     }, (reason) => {
-        this.CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
-        if (this.CloseResult) {this.cancelCreateMethod(); }
+      this.CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
+      if (this.CloseResult) {this.cancelCreateMethod(); }
     });
   }
 
@@ -83,16 +83,16 @@ export class MethodsComponent implements OnInit, OnDestroy  {
   private createNewMethod() {
     const newItem = this.newMethodForm.value;
     this._settingsservice.postEntity(newItem, this.configSettings.methodURL)
-        .subscribe((response: Method) => {
-          response.isEditing = false;
-          this.methods.push(response);
-          this._settingsservice.setMethods(this.methods);
-          this._toasterService.pop('info', 'Info', 'Method was created');
-          this.cancelCreateMethod();
-        }, error => {
-          if (this._settingsservice.outputWimMessages(error)) {return; }
-          this._toasterService.pop('error', 'Error creating Method', error._body.message || error.statusText);
-    }
+      .subscribe((response: Method) => {
+        response.isEditing = false;
+        this.methods.push(response);
+        this._settingsservice.setMethods(this.methods);
+        this._toasterService.pop('info', 'Info', 'Method was created');
+        this.cancelCreateMethod();
+      }, error => {
+        if (this._settingsservice.outputWimMessages(error)) {return; }
+        this._toasterService.pop('error', 'Error creating Method', error._body.message || error.statusText);
+      }
     );
   }
 

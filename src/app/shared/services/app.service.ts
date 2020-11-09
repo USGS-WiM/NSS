@@ -93,9 +93,9 @@ export class NSSService {
         this._showHideAddScenarioModal.next(val);
     }
     // -+-+-+-+-+-+-+-+-+ clone scenario modal -+-+-+-+-+-+-+-+
-    private _showHideCloneScenarioModal: Subject<boolean> = new Subject<boolean>();
+    private _showHideEditScenarioModal: Subject<boolean> = new Subject<boolean>();
     public setCloneScenarioModal(val: any) { 
-        this._showHideCloneScenarioModal.next(val);
+        this._showHideEditScenarioModal.next(val);
     }
 
      // -+-+-+-+-+-+-+-+-+ Add Station modal (gagestats) -+-+-+-+-+-+-+-+
@@ -125,8 +125,8 @@ export class NSSService {
         return this._showHideAddScenarioModal.asObservable();
     }
     // show the add scenario modal in the mainview
-    public get showCloneScenarioModal(): any {
-        return this._showHideCloneScenarioModal.asObservable();
+    public get showEditScenarioModal(): any {
+        return this._showHideEditScenarioModal.asObservable();
     }
 
     public get showAddStationModal(): any {

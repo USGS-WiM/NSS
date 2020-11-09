@@ -112,7 +112,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error creating Region', error._body.message || error.statusText);
-        }
+            }
         );
     }
 
@@ -157,7 +157,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating Region', error._body.message || error.statusText);
-            }
+                }
             );
         }
     }
@@ -176,7 +176,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Region', error._body.message || error.statusText);
-            }
+                }
             );
         }
     }

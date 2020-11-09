@@ -1222,6 +1222,12 @@ export class MainviewComponent implements OnInit {
     }
 
     /////////////////////// Edit Scenarios Section ///////////////////////////
+    public editScenarioRowClicked(statisticGroupID, r, rr, info) {
+        this.cloneScen = { r, rr, statisticGroupID, info };
+        this._nssService.changeItem(this.cloneScen);
+        this._nssService.setAddScenarioModal(true);
+    }
+
     public editRegScenario() {
         this._nssService.showCompute(false);
         this.editRegionScenario = true;
@@ -1306,21 +1312,6 @@ export class MainviewComponent implements OnInit {
                 } else { this._nssService.handleError(error); }
             });
         }
-    }
-
-    /////////////////////// Clone Scenarios Section ///////////////////////////
-    newCloneScenario(cloneScen) {
-        this._nssService.changeItem(cloneScen);
-    }
-
-    public cloneRowClicked(statisticGroupID, r, rr) {
-        this.cloneScen = { r, rr, statisticGroupID };
-        this.newCloneScenario(this.cloneScen);
-        this.showCloneScenarioModal();
-    }
-
-    public showCloneScenarioModal() {
-        this._nssService.setAddScenarioModal(true);
     }
 
     /////////////////////// Citations Section ///////////////////////////

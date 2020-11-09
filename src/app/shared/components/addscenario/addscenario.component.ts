@@ -58,6 +58,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
     public filteredRegressionTypes;
     public filtered = true;
+    public skipCheck = false;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -167,6 +168,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     public equationCheck(check){
         if (check == true) {
+            this.skipCheck = true;
             this.newScenForm.get('regressionRegions.regressions.expected.value').disable();
             const parmControl = <FormArray>this.newScenForm.get('regressionRegions.parameters');
             for (let i = parmControl.length-1; i >= 0; i--) {
@@ -174,6 +176,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
             
         }else {
+            this.skipCheck = false;
             this.newScenForm.get('regressionRegions.regressions.expected.value').enable();
             const parmControl = <FormArray>this.newScenForm.get('regressionRegions.parameters');
             for (let i = parmControl.length-1; i >= 0; i--) {
@@ -440,7 +443,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         scen['regressionRegions'] = [regRegs];
 
         // post scenario
-        this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
+        console.log(scen)
+        console.log(this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID+ '&skipCheck=' + this.skipCheck)
+        this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID+ '&skipCheck=' + this.skipCheck)
             .subscribe((response: any) => {
                 if(this.originalRegion==this.selectedRegion){
                     this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;

@@ -75,8 +75,8 @@ export class BatchUploadModal implements OnInit {
     this._nssService.regressionTypes.subscribe((regtypes: Array<Regressiontype>) => {
       this.regressionType = regtypes;
     });
-    this._nssService.getUnitTypes((units: Array<Unittype>) => {
-      this.unitType = units;
+    this._nssService.getUnitTypes().subscribe(res => {
+      this.unitType = res;
     })
 }
 //******* End OnInit  

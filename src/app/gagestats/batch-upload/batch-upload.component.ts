@@ -10,6 +10,9 @@ import * as XLSX from 'xlsx';
 import { Agency } from 'app/shared/interfaces/agencies';
 import { StationType } from 'app/shared/interfaces/stationtypes';
 import { Region } from 'app/shared/interfaces/region';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
+import { Unittype } from 'app/shared/interfaces/unitType';
 
 @Component({
   selector: 'batchUploadModal',
@@ -39,6 +42,10 @@ export class BatchUploadModal implements OnInit {
   public agencies: Array<Agency>;
   public regions: Array<Region>;
   public stationTypes: Array<StationType>;
+  public statisticGroupType: Array<Statisticgroup>;
+  public regressionType: Array<Regressiontype>;
+  public unitType: Array<Unittype>;
+
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
     private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -62,7 +69,15 @@ export class BatchUploadModal implements OnInit {
     this._settingsService.getEntitiesGageStats(this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
-    this.selectedChars;
+    this._nssService.statisticGroups.subscribe((statgroups: Array<Statisticgroup>) => {
+      this.statisticGroupType = statgroups;
+    });
+    this._nssService.regressionTypes.subscribe((regtypes: Array<Regressiontype>) => {
+      this.regressionType = regtypes;
+    });
+    this._nssService.getUnitTypes((units: Array<Unittype>) => {
+      this.unitType = units;
+    })
 }
 //******* End OnInit  
 
@@ -156,11 +171,11 @@ export class BatchUploadModal implements OnInit {
           var i = 0;
           var stat;
           row.forEach(x => {  // Loop thru the cells of each row
-            if (x = null || ' ') {
+            if (x == null || undefined) {
               return;
             }  
             else {const item = '"' + this.tableData[0][i] + '": "' + x + '"'; // Assign the headers as the keys, the values as values
-                if(this.tableData[0][i] = null) {
+                if(this.tableData[0][i] == null) {
                   return
                 }
                 else { if (i == 0){
@@ -173,30 +188,49 @@ export class BatchUploadModal implements OnInit {
                 }  
             }   
           })
-          var statObj = JSON.parse('{' + stat + '}');  // Parse strings into JSON objects
-          // const location = {type: 'Point', coordinates: [ parseFloat(stationObj.longitude), parseFloat(stationObj.latitude) ]};  // Add location item
-          // delete stationObj.latitude;  // Delete old location items
-          // delete stationObj.longitude;
-          // delete stationObj.isRegulated;
-          // stationObj = {...stationObj, 'location': location};
-          // if (stationObj.agencyID) {
-          //   var aID = this.getAgencyID(stationObj.agencyID);
-          //   stationObj.agencyID = aID;
-          // }
-          // if (stationObj.stationTypeID) {
-          //   var sID = this.getStationTypeID(stationObj.stationTypeID);
-          //   stationObj.stationTypeID = sID;
-          // }
-          // if (stationObj.regionID) {
-          //   var rID  = this.getRegionID(stationObj.regionID);
-          //   stationObj.regionID = rID;
-          // }
-          if (stats == null) {  // Group station objects into an array
-              stats = [statObj];
+          console.log(stat);
+          if (stat == undefined) {
+            return
           } 
-          else {
-              stats = [...stats, statObj ];
-          }  
+          else { 
+            var statObj = JSON.parse('{' + stat + '}');  // Parse strings into JSON objects
+            statObj.comments = 'Statistic Date Range ' + statObj.startDate + ' - ' + statObj.endDate + '. ' + statObj.remarks;
+            delete(statObj.remarks);
+            delete(statObj.startDate);
+            delete(statObj.endDate);
+            if(statObj.statisticGroupTypeID) {
+              var sID = this.getStatGroupType(statObj.statisticGroupTypeID);
+              statObj.statisticGroupTypeID = sID;
+            };
+            if(statObj.regressionTypeID) {
+              var rID = this.getRegressionType(statObj.regressionTypeID);
+              statObj.regressionTypeID = rID;
+            };
+            if(statObj.unitTypeID) {
+              var uID = this.getUnitType(statObj.unitTypeID);
+              statObj.unitTypeID = uID;
+            }
+
+            // stationObj = {...stationObj, 'location': location};
+            // if (stationObj.agencyID) {
+            //   var aID = this.getAgencyID(stationObj.agencyID);
+            //   stationObj.agencyID = aID;
+            // }
+            // if (stationObj.stationTypeID) {
+            //   var sID = this.getStationTypeID(stationObj.stationTypeID);
+            //   stationObj.stationTypeID = sID;
+            // }
+            // if (stationObj.regionID) {
+            //   var rID  = this.getRegionID(stationObj.regionID);
+            //   stationObj.regionID = rID;
+            // }
+            if (stats == null) {  // Group station objects into an array
+                stats = [statObj];
+            } 
+            else {
+                stats = [...stats, statObj ];
+            } 
+          }
       }  
     });    
     console.log(stats)
@@ -245,6 +279,24 @@ export class BatchUploadModal implements OnInit {
   public getRegionID(name) {
     if (this.regions) {
       return (this.regions.find(r => r.name === name).id);
+    }
+  }
+
+  public getStatGroupType(code) {
+    if(this.statisticGroupType) {
+      return (this.statisticGroupType.find(s => s.code === code).id);
+    }
+  }
+
+  public getRegressionType(code) {
+    if(this.regressionType) {
+      return (this.regressionType.find(r => r.code === code).id);
+    }
+  }
+
+  public getUnitType(abbreviation) {
+    if(this.unitType) {
+      return (this.unitType.find( u => u.abbreviation === abbreviation).id)
     }
   }
 

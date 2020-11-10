@@ -271,10 +271,10 @@
 					<div formArrayName="regressions">
 						<!-- Expected* -->
 						<div formGroupName="expected">
-							<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty}">
+							<div class="form-group required" [ngClass]="{'form-invalid': !skipCheck && !newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty}">
 								<label class="req" for="expression">Expected value (based on given explanatory variable values and equation):</label>
 								<input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="value" required>
-								<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty">Expected value
+								<div class="input-invalid-warning" *ngIf="!skipCheck && !newScenForm.get('regressionRegions.regressions.expected.value').valid && newScenForm.get('regressionRegions.regressions.expected.value').dirty">Expected value
 									is required</div>
 							</div>
 						</div>

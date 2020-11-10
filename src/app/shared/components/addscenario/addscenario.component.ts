@@ -173,10 +173,12 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public equationCheck(check){
         if (check == true) {
             this.skipCheck = true;
-            this.newScenForm.get('regressionRegions.regressions.expected.value').disable();
+            this.newScenForm.get('regressionRegions.regressions.expected.value').disable();            
+            this.newScenForm.patchValue({ regressionRegions: { regressions: { expected: { value: null}}}});
             const parmControl = <FormArray>this.newScenForm.get('regressionRegions.parameters');
             for (let i = parmControl.length-1; i >= 0; i--) {
                 this.newScenForm.get('regressionRegions.parameters.'+i+'.value').disable();
+                parmControl.controls[i].get('value').setValue(null);
             }
             
         }else {

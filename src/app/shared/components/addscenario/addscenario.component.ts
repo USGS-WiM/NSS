@@ -228,6 +228,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
         //new scenario
         }else{
+            this.editMode = false;
             this.filtered = true;
             this.clearScenario();
             this.clone = false;

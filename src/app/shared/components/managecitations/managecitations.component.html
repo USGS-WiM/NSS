@@ -47,7 +47,7 @@
 			</form>
 
 			
-			<table class="custom-table table-striped table-scroll mtop-sm no-scrollbars" [class.table-hover-rows]="inGagePage">
+			<table class="custom-table table-striped table-scroll mtop-sm no-scrollbars" [class.table-hover-rows]="inGagePage && !inGageStats">
 				<thead>
 					<tr>
 						<th *ngIf="inGagePage" class="width-5">ID</th>

@@ -38,7 +38,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     private configSettings: Config;
     public modalRef;
     public loggedInRole;
-    public citations = [];
+    public citations;
     public tempCitations;
     public scenarios: Scenario[];
     public filteredData;
@@ -99,7 +99,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
                 this.showAddCitations = result.addCitation;
                 this.inGagePage = result.inGagePage;
                 this.inGageStats = result.inGageStats
-                this.citations;
+                this.getCitations();
                 this.selectedRow = result.selectCitation;
                 this.showModal(); 
                 this.filterText = "";
@@ -145,12 +145,15 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         } 
         //Citations from GSS
         if (this.inGagePage) {
-            this.filteredData = this.citations.filter(c => 
-                c != null &&
-                (c.author.toLowerCase().includes(input.toLowerCase()) ||
-                c.title.toLowerCase().includes(input.toLowerCase()) ));
-            } 
-            
+            if (this.citations == null) {
+                return
+            } else { 
+                this.filteredData = this.citations.filter(c => 
+                    c != null &&
+                    (c.author.toLowerCase().includes(input.toLowerCase()) ||
+                    c.title.toLowerCase().includes(input.toLowerCase()) ));
+                } 
+            }
     }
 
     public getRegRegions() {

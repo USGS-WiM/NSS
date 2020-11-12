@@ -180,7 +180,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.newScenForm.get('regressionRegions.parameters.'+i+'.value').disable();
                 parmControl.controls[i].get('value').setValue(null);
             }
-            
         }else {
             this.skipCheck = false;
             this.newScenForm.get('regressionRegions.regressions.expected.value').enable();
@@ -194,6 +193,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public showModal(): void {
         this.getEntities();
         this.onStatGroupSelect('');
+        this.equationCheck(false);
         this.selectedRegion = this.originalRegion;
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
@@ -341,6 +341,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public cloneOrEdit(){
         //make sure in edit mode
         if (this.editMode == true){
+            console.log('test2')
             this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
             //change back to edit if user reselects original core dropdowns
             if ((this.originalScenario[0] == this.scen.statisticGroupID) &&
@@ -351,6 +352,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this._toasterService.clear();
                 this._toasterService.pop('info', 'Info', 'Scenario Will Be Edited Instead Of Cloned');
             }else{ //change to clone
+                console.log('test')
                 this.clone = true;
                 this.edit = false;
                 this._toasterService.clear();
@@ -451,6 +453,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
         this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
         this.tempSelectedRegType = this.selectedRegType;
+
         // adding all necessary properties, since ngValue won't work with all the nested properties
         this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = this.scen['regressionRegions']; const regs = regRegs.regressions;
@@ -458,6 +461,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
         this.scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
         this.scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
+
         // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);
         regRegs['name'] = this.regressionRegions[regRegIndex].name;
@@ -469,8 +473,13 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         regs.description = this.regressionTypes[regIndex].description;
         // add parameter name, description, add values/check if between limits
         regs.expected.parameters = {};
+        console.log(regs.expected.parameters)
         for (const parameter of regRegs.parameters) {
+            if (this.skipCheck == true){
+                regs.expected.parameters[parameter.code] = 0;
+            }else{
             regs.expected.parameters[parameter.code] = parameter.value;
+            }
             const paramIndex = this.variables.findIndex(item => item.code === parameter.code);
             parameter['name'] = this.variables[paramIndex].name;
             parameter['description'] = this.variables[paramIndex].description;
@@ -489,6 +498,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         // change regression region/regression to arrays
         this.scen['regressionRegions'].regressions = [regs];
         this.scen['regressionRegions'] = [regRegs];
+        console.log(regs.expected.parameters)
+
     }
 
     public setSidebar(){
@@ -506,8 +517,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     public async submitScenario() {
         // put scenario
-        this.setUpScenario();
-        await this._settingsService.putEntity('', this.scen, this.configSettings.scenariosURL)
+        this.setUpScenario();        
+        await this._settingsService.putEntity('', this.scen, this.configSettings.scenariosURL + '?skipCheck=' + this.skipCheck)
             .subscribe((response) => {
                 this.setSidebar();
                 // clear form

@@ -12,6 +12,7 @@ import { SettingsService } from 'app/settings/settings.service';
 import { ConfigService } from 'app/config.service';
 import { Config } from 'protractor';
 import { ToasterConfig } from 'angular2-toaster';
+import { ManageCitation } from 'app/shared/interfaces/managecitations';
 
 
 @Component({
@@ -132,6 +133,16 @@ export class GagestatsComponent implements OnInit {
       gageCode: s
   }
     this._nssService.setGagePageModal(gagePageForm);
+  }
+
+  public showManageCitationsModal() {
+    const addManageCitationForm: ManageCitation = {
+        show: true,
+        addCitation: true,
+        inGagePage: true,
+        inGageStats: true,
+    } 
+    this._nssService.setManageCitationsModal(addManageCitationForm);
   }
 
   //TODO: Bulk Upload Button

@@ -1327,7 +1327,8 @@ export class MainviewComponent implements OnInit {
     public showManageCitationsModal() {
         const addManageCitationForm: ManageCitation = {
             show: true,
-            addCitation: true
+            addCitation: true,
+            inGagePage: false
         }
         this._nssService.setManageCitationsModal(addManageCitationForm);
     }

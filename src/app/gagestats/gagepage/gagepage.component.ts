@@ -439,11 +439,12 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
 ///////////////////////Citation Modal Section/////////////////////
 
-  public showManageCitationsModal() {
+  public showManageCitationsModal(c) {
     const addManageCitationForm: ManageCitation = {
         show: true,
         addCitation: true,
-        inGagePage: true
+        inGagePage: true,
+        selectCitation: c.citationID
     } 
     this._nssService.setManageCitationsModal(addManageCitationForm);
   }

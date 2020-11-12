@@ -38,7 +38,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     private configSettings: Config;
     public modalRef;
     public loggedInRole;
-    public citations;
+    public citations = [];
     public tempCitations;
     public scenarios: Scenario[];
     public filteredData;
@@ -53,6 +53,9 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public regions: Array<Region>;
     public managerRegressionRegions: any[] = [];
     public inGagePage: boolean;
+    public inGageStats: boolean = false;
+    //public selectCitation: {id: 1};
+    public selectedRow: number;
 
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
@@ -84,19 +87,24 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
                 this.loggedInRole = role;
             }
         });
-        this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((show: boolean) => {
-            if (show) { 
-                this.showModal(); 
-                this.filterText = "";
-                this.filter(this.filterText);
-            }
-        });
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
             if (region && region.id) {this.getRegRegions(); }
         });
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
+        });
+        this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((result: ManageCitation) => {
+            if (result.show) { 
+                this.showAddCitations = result.addCitation;
+                this.inGagePage = result.inGagePage;
+                this.inGageStats = result.inGageStats
+                this.citations;
+                this.selectedRow = result.selectCitation;
+                this.showModal(); 
+                this.filterText = "";
+                this.filter(this.filterText);
+            }
         });
         // subscribe to scenarios
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
@@ -108,17 +116,11 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
                 this.getManagerRegressionRegions();
             }
         });
-        this.modalSubscript = this._nssService.showManageCitationsModal.subscribe((result: ManageCitation) => {
-            if (result.show) { 
-                this.showAddCitations = result.addCitation;
-                this.inGagePage = result.inGagePage;
-              }
-          });
         this.modalElement = this.manageCitationsModal;
 
         // Subscribe to server with '?bycitation=true'
         // Copy settingservice getEntities on regions.component.ts file
-    }
+    }  // End OnInit
 
     public saveFilters(){
         this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
@@ -133,11 +135,22 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
     public filter(input:string) {
         this.filterText = input;
+        // Citations from NSS (w/ regression regions)
+        if (!this.inGagePage) {
         this.filteredData = this.citations.filter(c => 
             c != null &&
             (c.author.toLowerCase().includes(input.toLowerCase()) ||
             c.title.toLowerCase().includes(input.toLowerCase()) ||
             (c.regressionRegions.filter(rr => rr.name.toLowerCase().includes(input.toLowerCase())).length > 0)));
+        } 
+        //Citations from GSS
+        if (this.inGagePage) {
+            this.filteredData = this.citations.filter(c => 
+                c != null &&
+                (c.author.toLowerCase().includes(input.toLowerCase()) ||
+                c.title.toLowerCase().includes(input.toLowerCase()) ));
+            } 
+            
     }
 
     public getRegRegions() {
@@ -223,6 +236,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public setSelectedCitation(c) {
         if(this.inGagePage) {
             this._nssService.setSelectedCitation(c);
+            this.selectedRow = c.id;
         }
     }
 
@@ -248,8 +262,12 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         const header: HttpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
         });
-
-        this._http.get(this.configSettings.nssBaseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
+        if (this.inGagePage == true) {
+            var url = this.configSettings.gageStatsBaseURL+this.configSettings.citationURL;
+        } else {
+            url = this.configSettings.nssBaseURL+this.configSettings.citationURL;
+        }
+        this._http.get(url, { headers: header, observe: "response"})
             .subscribe(res => {
                 this.citations = res.body;
                 this.filteredData = this.citations.filter(function (filter) {

@@ -208,7 +208,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public showManageCitationsModal() {
     const addManageCitationForm: ManageCitation = {
       show: true,
-      addCitation: false
+      addCitation: false,
+      inGagePage: false
     }
     this._nssService.setManageCitationsModal(addManageCitationForm);
   }

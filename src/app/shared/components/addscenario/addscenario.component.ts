@@ -338,23 +338,25 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.fillModal();
     }
 
-    public cloneOrEdit(){
+    public cloneOrEdit(e){
         //make sure in edit mode
-        if (this.editMode == true){
-            this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
-            //change back to edit if user reselects original core dropdowns
-            if ((this.originalScenario[0] == this.scen.statisticGroupID) &&
-            (this.originalScenario[1] == this.scen.regressionRegions.ID) && 
-            (this.originalScenario[2] == this.scen.regressionRegions.regressions.ID)){
-                this.clone = false;
-                this.edit = true;
-                this._toasterService.clear();
-                this._toasterService.pop('info', 'Info', 'Scenario Will Be Edited Instead Of Cloned');
-            }else{ //change to clone
-                this.clone = true;
-                this.edit = false;
-                this._toasterService.clear();
-                this._toasterService.pop('info', 'Info', 'Scenario Will Be Cloned Instead Of Edited');
+        if(e){
+            if (this.editMode == true){
+                this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
+                //change back to edit if user reselects original core dropdowns
+                if ((this.originalScenario[0] == this.scen.statisticGroupID) &&
+                (this.originalScenario[1] == this.scen.regressionRegions.ID) && 
+                (this.originalScenario[2] == this.scen.regressionRegions.regressions.ID)) {
+                    this.clone = false;
+                    this.edit = true;
+                    this._toasterService.clear();
+                    this._toasterService.pop('info', 'Info', 'Scenario Will Be Edited Instead Of Cloned');
+                } else { //change to clone
+                    this.clone = true;
+                    this.edit = false;
+                    this._toasterService.clear();
+                    this._toasterService.pop('info', 'Info', 'Scenario Will Be Cloned Instead Of Edited');
+                }
             }
         }
     }

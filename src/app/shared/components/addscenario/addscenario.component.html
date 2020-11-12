@@ -20,7 +20,7 @@
 				<!-- Statistic Group* -->
 				<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty}">
 					<label class="req" for="statisticGroupID">Statistic Group:</label>
-						<ng-select formControlName="statisticGroupID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (ngModelChange)="onStatGroupSelect(); cloneOrEdit($event)">
+						<ng-select formControlName="statisticGroupID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (ngModelChange)="onStatGroupSelect($event); cloneOrEdit($event)">
 							<ng-option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}}</ng-option>
 						</ng-select>
 					<div class="input-invalid-warning" *ngIf="!newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty">Statistic Group

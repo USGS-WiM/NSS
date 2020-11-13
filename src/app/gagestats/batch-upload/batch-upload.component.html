@@ -15,7 +15,7 @@
                 <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true'>Edit Table</button>
                 <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
             </div>
-            <div *ngIf='uploadStations'>
+            <div>
                 <table style="border:solid 1px gray" class="custom-table">
                     <thead>
                         <tr>
@@ -27,8 +27,20 @@
                             <ng-container *ngIf="row == tableData[0]">
                                 <td *ngFor='let val of row, let valIndex = index'>
                                     <ng-select  [(ngModel)]='tableData[rowIndex][valIndex]'>
-                                        <ng-container *ngFor='let char of getKeys(stationChars)'>
-                                            <ng-option  [value]="stationChars[char]">{{char}}</ng-option>
+                                        <ng-container *ngIf='uploadStations'>    
+                                            <ng-container *ngFor='let char of getKeys(stationChars)'>
+                                                <ng-option  [value]="stationChars[char]">{{char}}</ng-option>
+                                            </ng-container>
+                                        </ng-container>
+                                        <ng-container *ngIf='uploadStats'>    
+                                            <ng-container *ngFor='let char of getKeys(statChars)'>
+                                                <ng-option  [value]="statChars[char]">{{char}}</ng-option>
+                                            </ng-container>
+                                        </ng-container>
+                                        <ng-container *ngIf='uploadChars'>    
+                                            <ng-container *ngFor='let char of getKeys(charChars)'>
+                                                <ng-option  [value]="charChars[char]">{{char}}</ng-option>
+                                            </ng-container>
                                         </ng-container>
                                     </ng-select>
                                 </td>
@@ -43,47 +55,11 @@
                     </tbody>
                 </table>
             </div>
-            <div *ngIf='uploadStats'>
-                <table style="border:solid 1px gray" class="custom-table">
-                    <thead>
-                        <tr>
-                            <th *ngFor='let header of headers'>{{header}}</th>
-                         </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let row of tableData, let rowIndex = index">
-                            <ng-container *ngIf="row == tableData[0]">
-                                <td *ngFor='let val of row, let valIndex = index'>
-                                    <ng-select  [(ngModel)]='tableData[rowIndex][valIndex]' appendtTo='selectedChars'>
-                                        <ng-container *ngFor='let char of getKeys(statChars)'>
-                                            <ng-option *ngIf='char != selectedChars' [value]="statChars[char]" placeholder='placeholder' >{{char}}</ng-option>
-                                        </ng-container>
-                                    </ng-select>
-                                </td>
-                            </ng-container>
-                            <ng-container *ngIf="row != tableData[0]">
-                                <td *ngFor='let val of row, let valIndex = index'>
-                                    <span *ngIf='!tableEdit'>{{val}}</span>
-                                    <span *ngIf='tableEdit'><input [(ngModel)]='tableData[rowIndex][valIndex]'></span>
-                                </td>
-                            </ng-container>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div *ngIf='uploadChars'>
-                <table>
-                    <thead></thead>
-                    <tbody>
-                        <tr *ngFor="let row of tableData">
-                            <td *ngFor='let val of row'>{{val}}</td>
-                        </tr>
-                    </tbody> 
-                </table>
-            </div>
+            
             <div>
                 <button *ngIf='tableDisplay && !tableEdit && uploadStations' type="button" class="button small blue mright-xs" (click)='submitStations()'>Submit</button>
                 <button *ngIf='tableDisplay && !tableEdit && uploadStats' type="button" class="button small green mright-xs" (click)='submitStats()'>Submit</button>
+                <button *ngIf='tableDisplay && !tableEdit && uploadChars' type="button" class="button small green mright-xs" (click)='submitChars()'>Submit</button>
             </div>
         </div>
     </div>

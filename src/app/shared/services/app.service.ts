@@ -37,6 +37,7 @@ export class NSSService {
     private _regTypeIdParams: string;
     private _statGrpIdParams: string;
     private configSettings: Config;
+    private citationIDList = [];
     private jsonHeader: HttpHeaders = new HttpHeaders({
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -637,6 +638,11 @@ export class NSSService {
         this._scenarioSubject.next(s);
         this.chartBind.next('');
     }
+
+    private _scenarioCitationSubject: Subject<Array<any>> = new Subject<Array<any>>();
+    public get scenarioCitations(): Observable<Array<any>> {
+        return this._scenarioCitationSubject.asObservable();
+    }
     // -+-+-+-+-+-+ end Scenarios section -+-+-+-+-+-+-+-+-+-+
 
     // region has been selected, populate all other multiselects and get scenarios
@@ -741,11 +747,11 @@ export class NSSService {
                 s => {
                     s.forEach(scen => {
                         // get citations
-                        const i = scen.links[0].href.indexOf('?');
-                        const param =  '?' + scen.links[0].href.substring(i + 1);
-                        this.getCitations(param).subscribe(c => {
-                            if (!(c.length === 1 && c[0] === null)) { scen.citations = c; }
-                        });
+                        scen.regressionRegions.forEach(rr => {
+                            if (this.citationIDList.findIndex(i => i == rr.id) === -1) {
+                                this.citationIDList.push(rr.id);
+                            }
+                        })
                         // clear Parameter.'Value'
                         scen.regressionRegions.forEach(rr => {
                             rr.parameters.forEach(p => {
@@ -761,6 +767,13 @@ export class NSSService {
                                 });
                             }
                         });
+                    });
+                    this.citationIDList = this.citationIDList.map(String);
+                    const citationParam =  '?regressionregions=' + this.citationIDList;
+                    this.getCitations(citationParam).subscribe(c => {
+                        if (!(c.length === 1 && c[0] === null)) { 
+                            this._scenarioCitationSubject.next(c);
+                        }
                     });
                     this._scenarioSubject.next(s);
                 },

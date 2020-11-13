@@ -92,7 +92,6 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         });
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
-            if (region && region.id) {this.getRegRegions(); }
         });
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
@@ -240,7 +239,6 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         const header: HttpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
         });
-
         this._http.get(this.configSettings.nssBaseURL+this.configSettings.citationURL, { headers: header, observe: "response"})
             .subscribe(res => {
                 this.citations = res.body;

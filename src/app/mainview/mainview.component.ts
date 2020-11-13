@@ -59,6 +59,7 @@ export class MainviewComponent implements OnInit {
     public tempSelectedRegressionRegion: Array<Regressionregion>;
 
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
+    public scenarioCitations: any[];
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -314,6 +315,18 @@ export class MainviewComponent implements OnInit {
                     MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathjax']); // for the appendix of equations
                 }
             });
+        });
+        this._nssService.scenarioCitations.subscribe((c: Array<any>) => {
+            this.scenarioCitations = c;
+            this.scenarios.forEach((s => {
+                s.citations = [];
+                s.regressionRegions.forEach(rr => {
+                    if (rr.citationID) {
+                        s.citations.push(this.scenarioCitations.find(c => c.id === rr.citationID));
+                    }
+                });
+                s.citations =  s.citations.filter((v,i) => s.citations.findIndex(item => item.id == v.id) === i);
+            }));
         });
         // subscribe to getToast
         this._nssService.getToast().subscribe((t: Toast) => {
@@ -1448,6 +1461,7 @@ export class MainviewComponent implements OnInit {
         }
     }
 
+
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
         this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
@@ -1461,7 +1475,9 @@ export class MainviewComponent implements OnInit {
                     this.scenarios.forEach((s => {
                         s.regressionRegions.forEach(rr => {
                             const rrIdx = this.regressionRegions.findIndex(r => r.id === rr.id);
-                            if (rrIdx > -1) rr.citationID = this.regressionRegions[rrIdx].citationID;
+                            if (rrIdx > -1){
+                                rr.citationID = this.regressionRegions[rrIdx].citationID;
+                            }
                         });
                     }));
                 }

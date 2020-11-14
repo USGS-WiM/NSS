@@ -56,6 +56,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public inGageStats: boolean = false;
     //public selectCitation: {id: 1};
     public selectedRow: number;
+    public url;
 
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
@@ -121,6 +122,17 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         // Subscribe to server with '?bycitation=true'
         // Copy settingservice getEntities on regions.component.ts file
     }  // End OnInit
+
+    public setURL() {
+        if (this.inGagePage) {
+            this.url = this.configSettings.gageStatsBaseURL + this.configSettings.citationURL
+        }
+        else {
+            this.url = this.configSettings.nssBaseURL + this.configSettings.citationURL
+        }    
+        console.log(this.url)
+
+    }
 
     public saveFilters(){
         this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
@@ -201,7 +213,8 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
     public saveCitation(c) {
         // put edited scenario
-        this._settingsService.putEntity(c.id, c, this.configSettings.gageStatsBaseURL + this.configSettings.citationURL)
+        this.setURL();
+        this._settingsService.putEntity(c.id, c, this.url)
             .subscribe((response) => {
                 c.isEditing = false;
                 this._nssService.setSelectedRegion(this.selectedRegion); // update everything
@@ -220,7 +233,8 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public createNewCitation(){
         this.saveFilters();
           // add new citation
-        this._settingsService.postEntity(this.newCitForm.value, this.configSettings.gageStatsBaseURL + this.configSettings.citationURL)
+        this.setURL();
+        this._settingsService.postEntity(this.newCitForm.value, this.url)
         .subscribe((response: any) => {
             this.newCitForm.reset();
             this.showNewCitation = false;
@@ -265,12 +279,8 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         const header: HttpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
         });
-        if (this.inGagePage == true) {
-            var url = this.configSettings.gageStatsBaseURL+this.configSettings.citationURL;
-        } else {
-            url = this.configSettings.nssBaseURL+this.configSettings.citationURL;
-        }
-        this._http.get(url, { headers: header, observe: "response"})
+        this.setURL();
+        this._http.get(this.url, { headers: header, observe: "response"})
             .subscribe(res => {
                 this.citations = res.body;
                 this.filteredData = this.citations.filter(function (filter) {
@@ -323,8 +333,9 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
     public deleteCitation(id) {
         const check = confirm('Are you sure you want to delete this citation?');
+        this.setURL();
         if (check) {
-            this._settingsService.deleteEntity(id, this.configSettings.nssBaseURL + this.configSettings.citationURL).subscribe(result => {
+            this._settingsService.deleteEntity(id, this.url).subscribe(result => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {

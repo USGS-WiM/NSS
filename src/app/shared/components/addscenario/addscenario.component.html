@@ -1,8 +1,9 @@
 <ng-template #addScenario let-c="close" let-d="dismiss">
 	<div>
 		<div class="modal-header">
-			<div class="title" *ngIf="clone==true">Clone Scenario</div>  
-			<div class="title" *ngIf="clone==false">New Scenario</div>  
+			<div class="title" *ngIf="clone==true && edit==false">Clone Scenario</div> 
+			<div class="title" *ngIf="edit==true && clone==false">Edit Scenario</div>   
+			<div class="title" *ngIf="clone==false && edit==false">New Scenario</div>  
 			<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 		</div>
 		<div class="modal-body">
@@ -11,15 +12,15 @@
 				<!-- Clone - choose region -->
 				<div class="form-group" *ngIf="clone==true">
 					<label class="req" for="region">Study Area:</label>
-					<select class="form-control" formControlName="region">
-						<option *ngFor="let r of regions" [ngValue]="r">{{r.name}}</option>
-					</select>
+					<ng-select formControlName="region" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+						<ng-option *ngFor="let r of regions" [value]="r">{{r.name}}</ng-option>
+					</ng-select>
 				</div> 
 
 				<!-- Statistic Group* -->
 				<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty}">
 					<label class="req" for="statisticGroupID">Statistic Group:</label>
-						<ng-select formControlName="statisticGroupID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (ngModelChange)="onStatGroupSelect($event)">
+						<ng-select formControlName="statisticGroupID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (ngModelChange)="onStatGroupSelect($event); cloneOrEdit()">
 							<ng-option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}}</ng-option>
 						</ng-select>
 					<div class="input-invalid-warning" *ngIf="!newScenForm.get('statisticGroupID').valid && newScenForm.get('statisticGroupID').dirty">Statistic Group
@@ -36,7 +37,7 @@
 								<i class="far fa-plus-circle"></i>
 							</button>
 						</div>
-						<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+						<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (ngModelChange)="cloneOrEdit()">
 							<ng-option *ngFor="let rr of regressionRegions" [value]="rr.id">{{rr.name}}</ng-option>
 						</ng-select>
 					</div>
@@ -50,7 +51,7 @@
 								<i class="fas fa-question-circle"></i>
 								<div class="hint-text">Filters the regression variables by the selected statistic group. Removing the filter shows all available regression variables.</div>
 							</span>
-								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" #selectDropdownOn>
+								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" #selectDropdownOn (ngModelChange)="cloneOrEdit()" >
 									<ng-option *ngFor="let rt of filteredRegressionTypes" [value]="rt.id">{{rt.name}}</ng-option>
 								</ng-select>
 							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty">Regression Type
@@ -60,7 +61,7 @@
 						<div *ngIf= "!filtered"  class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty}">
 							<label class="req" for="ID">Regression Variable:</label>
 							<button (click)="filtered=true; selectDropDownOff.handleClearClick()"><i class="fa fa-toggle-off"></i> AutoFilter</button>
-								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" #selectDropDownOff>
+								<ng-select formControlName="ID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" #selectDropDownOff (ngModelChange)="cloneOrEdit()">
 									<ng-option *ngFor="let rt of regressionTypes" [value]="rt.id">{{rt.name}}</ng-option>
 								</ng-select>
 							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.ID').valid && newScenForm.get('regressionRegions.regressions.ID').dirty">Regression Type
@@ -299,7 +300,9 @@
 			<button type="button" (click)="clearScenario()" class="button red mright-xs">Clear All</button>
 			<button type="button" (click)="c('closed')" class="button black">Cancel</button>
 			<div class="flex-spacer"></div>
-			<button type="button" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="button blue">Create</button>
+			<button type="button" *ngIf="edit==false" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="button blue">Create</button>
+			<button type="button" *ngIf="edit==true" (click)="submitScenario()" [disabled]="!newScenForm.valid" class="button blue">Save</button>
+
 		</div>
 	</div>
 </ng-template>

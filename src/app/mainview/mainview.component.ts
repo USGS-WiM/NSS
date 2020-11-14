@@ -59,6 +59,7 @@ export class MainviewComponent implements OnInit {
     public tempSelectedRegressionRegion: Array<Regressionregion>;
 
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
+    public scenarioCitations: any[];
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -314,6 +315,18 @@ export class MainviewComponent implements OnInit {
                     MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'mathjax']); // for the appendix of equations
                 }
             });
+        });
+        this._nssService.scenarioCitations.subscribe((c: Array<any>) => {
+            this.scenarioCitations = c;
+            this.scenarios.forEach((s => {
+                s.citations = [];
+                s.regressionRegions.forEach(rr => {
+                    if (rr.citationID) {
+                        s.citations.push(this.scenarioCitations.find(c => c.id === rr.citationID));
+                    }
+                });
+                s.citations =  s.citations.filter((v,i) => s.citations.findIndex(item => item.id == v.id) === i);
+            }));
         });
         // subscribe to getToast
         this._nssService.getToast().subscribe((t: Toast) => {
@@ -1222,6 +1235,12 @@ export class MainviewComponent implements OnInit {
     }
 
     /////////////////////// Edit Scenarios Section ///////////////////////////
+    public editScenarioRowClicked(statisticGroupID, r, rr, info) {
+        this.cloneScen = { r, rr, statisticGroupID, info };
+        this._nssService.changeItem(this.cloneScen);
+        this._nssService.setAddScenarioModal(true);
+    }
+
     public editRegScenario() {
         this._nssService.showCompute(false);
         this.editRegionScenario = true;
@@ -1306,21 +1325,6 @@ export class MainviewComponent implements OnInit {
                 } else { this._nssService.handleError(error); }
             });
         }
-    }
-
-    /////////////////////// Clone Scenarios Section ///////////////////////////
-    newCloneScenario(cloneScen) {
-        this._nssService.changeItem(cloneScen);
-    }
-
-    public cloneRowClicked(statisticGroupID, r, rr) {
-        this.cloneScen = { r, rr, statisticGroupID };
-        this.newCloneScenario(this.cloneScen);
-        this.showCloneScenarioModal();
-    }
-
-    public showCloneScenarioModal() {
-        this._nssService.setAddScenarioModal(true);
     }
 
     /////////////////////// Citations Section ///////////////////////////
@@ -1458,6 +1462,7 @@ export class MainviewComponent implements OnInit {
         }
     }
 
+
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
         this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
@@ -1471,7 +1476,9 @@ export class MainviewComponent implements OnInit {
                     this.scenarios.forEach((s => {
                         s.regressionRegions.forEach(rr => {
                             const rrIdx = this.regressionRegions.findIndex(r => r.id === rr.id);
-                            if (rrIdx > -1) rr.citationID = this.regressionRegions[rrIdx].citationID;
+                            if (rrIdx > -1){
+                                rr.citationID = this.regressionRegions[rrIdx].citationID;
+                            }
                         });
                     }));
                 }

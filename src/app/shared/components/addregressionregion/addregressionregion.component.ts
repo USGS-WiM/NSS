@@ -125,21 +125,25 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
       this.selectedRegressionRegion = regRegions;
     });
-    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.statusURL).subscribe(res => {
-      this.status = res;
-    });
-    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.methodURL).subscribe(res => {
-      this.methods = res;
-    });
     this._nssService.currentCitation.subscribe(item => {
       this.currentCitation = item;
       if (this.currentCitation != " ") {
         this.addExistingCitation();
       }
     });
+    this.getEntities();
     this.modalElement = this.addRegressionRegionModal;
     this.uploadPolygon = true;
     this.loadingPolygon = false;
+  }
+
+  public getEntities(){
+    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.statusURL).subscribe(res => {
+      this.status = res;
+    });
+    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.methodURL).subscribe(res => {
+      this.methods = res;
+    });
   }
 
   public saveFilters(){
@@ -188,7 +192,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     L.control.layers(baseMaps).addTo(this.map);
   }
 
-  public showModal(): void {
+  public showModal(): void {   
+    this.getEntities();
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
     this.modalRef.result.then(
       result => {
@@ -247,6 +252,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   // show add regression region modal
   public showNewRegressionRegionForm(rr?) {
+    this.getEntities();
     // shows form for creating new regression or editing regression 
     if (rr) { // edit existing regression region
       this._loaderService.showFullPageLoad();

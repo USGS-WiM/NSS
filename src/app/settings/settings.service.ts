@@ -32,6 +32,7 @@ import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from 'app/shared/interfaces/station';
 import { GageCharacteristic } from 'app/shared/interfaces/gagecharacteristic';
 import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
+import { Method } from 'app/shared/interfaces/method';
 
 @Injectable()
 export class SettingsService {
@@ -42,6 +43,7 @@ export class SettingsService {
     private configSettings: Config;
     // SUBJECTS //////////////////////////////////////
     private _regionSubject: BehaviorSubject<Array<Region>> = <BehaviorSubject<Region[]>>new BehaviorSubject([]);
+    private _methodSubject: BehaviorSubject<Array<Method>> = <BehaviorSubject<Method[]>>new BehaviorSubject([]);
     private _statisticGroupSubject: BehaviorSubject<Array<Statisticgroup>> = <BehaviorSubject<Statisticgroup[]>>new BehaviorSubject([]);
     private _regRegionSubject: BehaviorSubject<Array<Regressionregion>> = <BehaviorSubject<Regressionregion[]>>new BehaviorSubject([]);
     private _regTypeSubject: BehaviorSubject<Array<Regressiontype>> = <BehaviorSubject<Regressiontype[]>>new BehaviorSubject([]);
@@ -177,6 +179,9 @@ export class SettingsService {
     // SETTERS ///////////////////////////////////////////
     public setRegions(r: Array<Region>) {
         this._regionSubject.next(r);
+    }
+    public setMethods(m: Array<Method>) {
+        this._methodSubject.next(m);
     }
     public setStatGroups(s: Array<Statisticgroup>) {
         this._statisticGroupSubject.next(s);

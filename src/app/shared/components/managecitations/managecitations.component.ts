@@ -90,7 +90,6 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         });
         this._nssService.selectedRegion.subscribe(region => {
             this.selectedRegion = region;
-            if (region && region.id) {this.getRegRegions(); }
         });
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;

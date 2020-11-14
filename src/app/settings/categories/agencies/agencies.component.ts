@@ -26,9 +26,9 @@ import { ConfigService } from 'app/config.service';
 })
 
 export class AgenciesComponent implements OnInit, OnDestroy {
-    @ViewChild('add', {static: true})
+    @ViewChild('add', { static: true })
     public addRef: TemplateRef<any>;
-    @ViewChild('AgencyForm', {static: true}) 
+    @ViewChild('AgencyForm', { static: true })
     agencyForm;
     public selectedRegion;
     public regions;
@@ -47,27 +47,27 @@ export class AgenciesComponent implements OnInit, OnDestroy {
     public tempData;
     public modalRef;
     constructor(
-        public _nssService: NSSService, 
-        public _settingsservice: SettingsService, 
+        public _nssService: NSSService,
+        public _settingsservice: SettingsService,
         public _route: ActivatedRoute,
-        private _fb: FormBuilder, 
-        private _modalService: NgbModal, 
-        private router: Router, 
+        private _fb: FormBuilder,
+        private _modalService: NgbModal,
+        private router: Router,
         private _configService: ConfigService,
         private _toasterService: ToasterService
-        ) {
-            this.newAgencyForm = _fb.group({
-                name: new FormControl(null, Validators.required),
-                description: new FormControl(null),
-                code: new FormControl(null, Validators.required)
-            });
-            this.navigationSubscription = this.router.events.subscribe((e: any) => {
-                if (e instanceof NavigationEnd) {
-                    this.getLoggedInRole();
-                }
-            });
-            this.configSettings = this._configService.getConfiguration();
-        }
+    ) {
+        this.newAgencyForm = _fb.group({
+            name: new FormControl(null, Validators.required),
+            description: new FormControl(null),
+            code: new FormControl(null, Validators.required)
+        });
+        this.navigationSubscription = this.router.events.subscribe((e: any) => {
+            if (e instanceof NavigationEnd) {
+                this.getLoggedInRole();
+            }
+        });
+        this.configSettings = this._configService.getConfiguration();
+    }
 
     ngOnInit() {
         this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL).subscribe(res => {
@@ -88,17 +88,19 @@ export class AgenciesComponent implements OnInit, OnDestroy {
         this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
             result => {
-            // this is the solution for the first modal losing scrollability
+                // this is the solution for the first modal losing scrollability
                 if (document.querySelector('body > .modal')) {
                     document.body.classList.add('modal-open');
                 }
                 this.CloseResult = `Closed with: ${result}`;
-                if (this.CloseResult) {this.cancelCreateAgency(); 
+                if (this.CloseResult) {
+                    this.cancelCreateAgency();
                 }
-            }, 
+            },
             reason => {
                 this.CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
-                if (this.CloseResult) {this.cancelCreateAgency(); 
+                if (this.CloseResult) {
+                    this.cancelCreateAgency();
                 }
             }
         );
@@ -127,17 +129,22 @@ export class AgenciesComponent implements OnInit, OnDestroy {
                 this._toasterService.pop('info', 'Info', 'Agency was created');
                 this.cancelCreateAgency();
             }, error => {
-                if (this._settingsservice.outputWimMessages(error)) {return; }
+                if (this._settingsservice.outputWimMessages(error)) { return; }
                 this._toasterService.pop('error', 'Error creating Agency', error._body.message || error.statusText);
             }
-        );
+            );
     }
 
     private EditRowClicked(i: number) {
-       this.rowBeingEdited = i;
-       this.tempData = Object.assign({}, this.agencies[i]); // make a copy in case they cancel
-       this.agencies[i].isEditing = true;
-       this.isEditing = true; // set to true so create new is disabled
+        // make a copy in case they cancel
+        this.agencies[i].isEditing = true;
+        //if there is a row already being edited, cancel that edit
+        if (this.isEditing == true) {
+            this.CancelEditRowClicked(this.rowBeingEdited);
+        }
+        this.tempData = Object.assign({}, this.agencies[i]); 
+        this.rowBeingEdited = i;
+        this.isEditing = true; // set to true so create new is disabled
     }
 
     public CancelEditRowClicked(i: number) {
@@ -167,7 +174,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
                     if (this.agencyForm.form.dirty) { this.agencyForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
                 }, error => {
-                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    if (this._settingsservice.outputWimMessages(error)) { return; }
                     this._toasterService.pop('error', 'Error updating Agency', error._body.message || error.statusText);
                 }
             );
@@ -186,10 +193,10 @@ export class AgenciesComponent implements OnInit, OnDestroy {
                     this._settingsservice.setAgencies(this.agencies); // update service
                     this._settingsservice.outputWimMessages(result);
                 }, error => {
-                    if (this._settingsservice.outputWimMessages(error)) {return; }
+                    if (this._settingsservice.outputWimMessages(error)) { return; }
                     this._toasterService.pop('error', 'Error deleting Agency', error._body.message || error.statusText);
                 }
-            );
+                );
         }
     }
 

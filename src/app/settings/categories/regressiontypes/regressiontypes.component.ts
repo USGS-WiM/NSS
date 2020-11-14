@@ -187,9 +187,14 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     }
 
     private EditRowClicked(i: number) {
-        this.rowBeingEdited = i;
-        this.tempData = Object.assign({}, this.regressionTypes[i]); // make a copy in case they cancel
+        // make a copy in case they cancel
         this.regressionTypes[i].isEditing = true;
+        //if there is a row already being edited, cancel that edit
+        if (this.isEditing == true) {
+            this.CancelEditRowClicked(this.rowBeingEdited);
+        }
+        this.tempData = Object.assign({}, this.regressionTypes[i]); 
+        this.rowBeingEdited = i;
         this.isEditing = true; // set to true so create new is disabled
     }
 

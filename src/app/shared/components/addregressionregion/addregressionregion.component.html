@@ -24,9 +24,9 @@
           <!-- Status* -->
           <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty }">
               <label class="req" for="statusID">Status:</label>
-              <select class="form-control" formControlName="statusID">
-                  <option *ngFor="let s of status" [value]="s.id">{{ s.name }} ({{s.description}})</option>
-              </select>
+              <ng-select formControlName="statusID">
+                  <ng-option *ngFor="let s of status" [value]="s.id">{{ s.name }} ({{s.description}})</ng-option>
+              </ng-select>
               <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty">
                   Status is required
               </div>
@@ -35,9 +35,9 @@
           <!-- Method* -->
           <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('methodID').valid && newRegRegForm.get('methodID').dirty }">
             <label class="req" for="methodID">Method:</label>
-            <select class="form-control" formControlName="methodID">
-                <option *ngFor="let m of methods" [value]="m.id">{{ m.name }}</option>
-            </select>
+            <ng-select formControlName="methodID">
+                <ng-option *ngFor="let m of methods" [value]="m.id">{{ m.name }}</ng-option>
+            </ng-select>
             <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('methodID').valid && newRegRegForm.get('methodID').dirty">
                 Method is required
             </div>
@@ -56,9 +56,9 @@
           <!-- Region* -->
           <div *ngIf="addRegReg" class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty }">
               <label class="req" for="region">Study Area:</label>
-              <select class="form-control" formControlName="region">
-                  <option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</option>
-              </select>
+              <ng-select formControlName="region">
+                  <ng-option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</ng-option>
+              </ng-select>
               <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty">
                 Study Area is required
               </div>

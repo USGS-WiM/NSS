@@ -115,11 +115,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.variables = res;
     });
     // get all regression types
-    this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
       this.regressionTypes = res;
     });
     // get all stat groups 
-    this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
       this.statisticGroups = res;
     });
     // get all agencys
@@ -212,7 +212,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public deleteGageStats(id){
     const check = confirm('Are you sure you want to delete this Gage?');
     if (check) {
-      this._settingsservice.deleteEntityGageStats(id, this.configSettings.stationsURL).subscribe(result => {
+      this._settingsservice.deleteEntity(id, this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL).subscribe(result => {
           if (result.headers) { 
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
@@ -229,7 +229,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public saveGageInfo(gage){
     const newItem = JSON.parse(JSON.stringify(gage)); 
     ['agency', 'stationType'].forEach(e => delete newItem[e]);  
-      this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.stationsURL).subscribe(
+      this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL).subscribe(
         (res) => {
           this.editGageInfo = false;
           this.code = res.body['code']; // update code in case user changed it
@@ -287,11 +287,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     delete(this.itemBeingEdited);
   }
 
-  public submitGage() {
-    const url = '';
-    this._settingsservice.putEntityGageStats('', this.configSettings.stationsURL, url).subscribe();
-  }
-
 ///////////////////////Characteristic Section////////////////
   
   public addPhysicalCharacteristic() {
@@ -315,7 +310,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       if (check) {
         const index = this.gage.characteristics.findIndex(item => item.id === deleteID);
         if (deleteID) {    // If characteristic has an ID number (if it comes from the service)
-          this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.characteristicsURL).subscribe(
+          this._settingsservice.deleteEntity(deleteID, this.configSettings.gageStatsBaseURL + this.configSettings.characteristicsURL).subscribe(
             (res) => {
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
@@ -328,7 +323,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     if (item.id) {  // If item has an id, then it is already in NSS DB
       const newItem = JSON.parse(JSON.stringify(item));  // Copy the edited char
       delete newItem.unitType, delete newItem.variableType, delete newItem.citation;  // Delete uneeded objects from the copy
-      this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.characteristicsURL).subscribe(
+      this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.characteristicsURL).subscribe(
         (res) => { 
           item.isEditing = false;
           delete(this.itemBeingEdited);
@@ -338,7 +333,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       )
     }; if (!item.id) {  // If an item doesn't have an ID, then it needs to be added to NSS
       delete item.isEditing;
-      this._settingsservice.postEntityGageStats(item, this.configSettings.characteristicsURL).subscribe(
+      this._settingsservice.postEntity(item,this.configSettings.gageStatsBaseURL + this.configSettings.characteristicsURL).subscribe(
         (res: CharacteristicResponse) => { 
           item.isEditing = false; 
           delete(this.newChar);
@@ -380,7 +375,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       }
       ['regressionType', 'citation',
       'unitType', 'isEditing', 'statisticGroupType'].forEach(e => delete newItem[e]);  // Delete unneeded items
-      this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
+      this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.statisticsURL).subscribe(
         (res) => {
           item.isEditing = false;
           delete(this.itemBeingEdited);
@@ -392,7 +387,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       if ( !item.predictionInterval.variance && !item.predictionInterval.lowerConfidenceInterval && !item.predictionInterval.upperConfidenceInterval ) {
         delete(item.predictionInterval)
       }
-      this._settingsservice.postEntityGageStats(item, this.configSettings.statisticsURL).subscribe(
+      this._settingsservice.postEntity(item,this.configSettings.gageStatsBaseURL + this.configSettings.statisticsURL).subscribe(
         (res: StatisticResponse) => {
           item.isEditing = false;
           delete(this.newStat);  // Delete newStat from table
@@ -409,7 +404,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       if (check) {
         const index = this.gage.statistics.findIndex(item => item.id === deleteID);
         if (deleteID) {    // If statistic has an ID number (if it comes from the service)
-          this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.statisticsURL).subscribe(
+          this._settingsservice.deleteEntity(deleteID, this.configSettings.gageStatsBaseURL + this.configSettings.statisticsURL).subscribe(
             (res) => {
               delete(this.itemBeingEdited);
               this.refreshgagepage();

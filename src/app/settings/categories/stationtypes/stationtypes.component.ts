@@ -70,7 +70,7 @@ export class StationTypesComponent implements OnInit, OnDestroy {
         }
 
     ngOnInit() {
-        this._settingsservice.getEntitiesGageStats(this.configSettings.stationTypeURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL).subscribe(res => {
             this.stationTypes = <Array<any>>res;
         });
 
@@ -119,7 +119,7 @@ export class StationTypesComponent implements OnInit, OnDestroy {
 
     private createNewStationType() {
         const newItem = this.newStationTypeForm.value;
-        this._settingsservice.postEntityGageStats(newItem, this.configSettings.stationTypeURL)
+        this._settingsservice.postEntity(newItem, this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL)
             .subscribe((response: StationType) => {
                 response.isEditing = false;
                 this.stationTypes.push(response);
@@ -157,7 +157,7 @@ export class StationTypesComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Station Type', 'Name and Code are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntityGageStats(u.id, u, this.configSettings.stationTypeURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.stationTypes[i] = u;
@@ -180,7 +180,7 @@ export class StationTypesComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.stationTypes.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.stationTypeURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL)
                 .subscribe(result => {
                     this.stationTypes.splice(index, 1);
                     this._settingsservice.setStationTypes(this.stationTypes); // update service

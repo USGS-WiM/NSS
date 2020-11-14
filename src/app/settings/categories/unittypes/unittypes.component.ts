@@ -74,10 +74,10 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.isEditing = false;
-        this._settingsservice.getEntities(this.configSettings.unitsURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
             this.unitTypes = res;
         });
-        this._settingsservice.getEntities(this.configSettings.unitSystemsURL).subscribe(usys => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitSystemsURL).subscribe(usys => {
             this.unitSystems = usys;
         });
 
@@ -130,7 +130,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
 
     private createNewUnit() {
         const newUnit = this.newUnitForm.value;
-        this._settingsservice.postEntity(newUnit, this.configSettings.unitsURL)
+        this._settingsservice.postEntity(newUnit, this.configSettings.nssBaseURL + this.configSettings.unitsURL)
             .subscribe((response: Unittype) => {
                 response.isEditing = false;
                 this.unitTypes.push(response);
@@ -169,7 +169,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Unit', 'Name, abbreviation and unit system ID are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.unitsURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.unitTypes[i] = u;
@@ -192,7 +192,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.unitTypes.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.unitsURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.unitsURL)
                 .subscribe(result => {
                     this.unitTypes.splice(index, 1);
                     this._settingsservice.setUnits(this.unitTypes); // update service

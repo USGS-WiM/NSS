@@ -66,7 +66,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(regions => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL).subscribe(regions => {
             this.regions = regions;
         });
         this.selectedRegion = 'none';
@@ -77,7 +77,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         });
     }
     public getAllStatGroups() {
-        this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
             this.allStatGroups = res;
             if (this.selectedRegion === 'none') {this.statisticGroups = res; }
         });
@@ -91,7 +91,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     }
 
     private getStatGroups(r) {
-        this._settingsservice.getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.statisticGrpURL)
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + r.id + '/' + this.configSettings.statisticGrpURL)
             .subscribe(res => {
                 this.statisticGroups = res;
         });
@@ -130,7 +130,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
 
     private createNewStatGroup() {
         const newStatGroup = this.newStatGroupForm.value;
-        this._settingsservice.postEntity(newStatGroup, this.configSettings.statisticGrpURL)
+        this._settingsservice.postEntity(newStatGroup, this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL)
             .subscribe((response: Statisticgroup) => {
                 response.isEditing = false;
                 this.cancelCreateStatGroup();
@@ -168,7 +168,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Statistic Group', 'Name and Code are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.statisticGrpURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.statisticGroups[i] = u;
@@ -191,7 +191,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.statisticGroups.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.statisticGrpURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL)
                 .subscribe(result => {
                     this.statisticGroups.splice(index, 1);
                     this._settingsservice.setStatGroups(this.statisticGroups); // update service

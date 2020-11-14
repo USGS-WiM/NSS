@@ -711,7 +711,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Array<Regressionregion>>res);
     }
 
@@ -722,7 +722,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Regressiontype[]>res);
     }
 
@@ -733,7 +733,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Statisticgroup[]>res);
     }
 
@@ -744,7 +744,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Scenario[]>res)
             .subscribe(
                 s => {
@@ -781,7 +781,7 @@ export class NSSService {
     postScenarios(id: number, s: Scenario[], searchArgs?: string) {
         const options = { headers: this.jsonHeader, observe: 'response' as 'response' };      
         return this._http
-            .post(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/scenarios/estimate/' + searchArgs, s, options)
+            .post(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/scenarios/estimate/' + searchArgs, s, options)
             // .map(sResult => sResult.json())
             .subscribe(
                 res => {

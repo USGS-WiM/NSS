@@ -64,14 +64,14 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
         }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.variablesURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(res => {
             this.variableTypes = res;
         });
 
         this._settingsservice.variables().subscribe(res => {
             this.variableTypes = res;
         });
-        this._settingsservice.getEntities(this.configSettings.unitsURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             for (const unit of res) {
                 unit['unit'] = unit['name'];
@@ -116,7 +116,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
 
     private createNewVariableType() {
         const newItem = this.newVarForm.value;
-        this._settingsservice.postEntity(newItem, this.configSettings.variablesURL)
+        this._settingsservice.postEntity(newItem, this.configSettings.nssBaseURL + this.configSettings.variablesURL)
             .subscribe((response: Variabletype) => {
                 response.isEditing = false;
                 this.variableTypes.push(response);
@@ -162,7 +162,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Variable', 'Name, description and Code are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.variablesURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.variableTypes[i] = u;
@@ -185,7 +185,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.variableTypes.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.variablesURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.variablesURL)
                 .subscribe(result => {
                     this.variableTypes.splice(index, 1);
                     this._settingsservice.setVariables(this.variableTypes); // update service

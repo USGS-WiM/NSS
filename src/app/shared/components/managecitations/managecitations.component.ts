@@ -157,8 +157,8 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
 
     public getRegRegions() {
-        // moving to own function for when new regression region is added
-        this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
+        // moving to own function for when new regression region is added, get RegRegions from NSS
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
             .subscribe(res => {
             if (res.length > 1) { res.sort((a, b) => a.name.localeCompare(b.name)); }
             this.regressionRegions = res;
@@ -201,7 +201,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
 
     public saveCitation(c) {
         // put edited scenario
-        this._settingsService.putEntity(c.id, c, this.configSettings.citationURL)
+        this._settingsService.putEntity(c.id, c, this.configSettings.gageStatsBaseURL + this.configSettings.citationURL)
             .subscribe((response) => {
                 c.isEditing = false;
                 this._nssService.setSelectedRegion(this.selectedRegion); // update everything
@@ -220,7 +220,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public createNewCitation(){
         this.saveFilters();
           // add new citation
-        this._settingsService.postEntity(this.newCitForm.value, this.configSettings.citationURL)
+        this._settingsService.postEntity(this.newCitForm.value, this.configSettings.gageStatsBaseURL + this.configSettings.citationURL)
         .subscribe((response: any) => {
             this.newCitForm.reset();
             this.showNewCitation = false;
@@ -305,7 +305,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
 
     public getManagerCitations() {
-        this._settingsService.getEntities(this.configSettings.citationURL)
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.citationURL)
         .subscribe(res => {
            this.managerCitations = res.filter(item => item !== null);
         });
@@ -314,7 +314,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public getManagerRegressionRegions(){
         this.managerRegressionRegions = [];
         this.regions.forEach(r => {
-            this._settingsService.getEntities(this.configSettings.regionURL + r.id + '/' + this.configSettings.regRegionURL)
+            this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + r.id + '/' + this.configSettings.regRegionURL)
             .subscribe(res => {
                 this.managerRegressionRegions.push(res);
             });
@@ -324,7 +324,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     public deleteCitation(id) {
         const check = confirm('Are you sure you want to delete this citation?');
         if (check) {
-            this._settingsService.deleteEntity(id, this.configSettings.citationURL).subscribe(result => {
+            this._settingsService.deleteEntity(id, this.configSettings.nssBaseURL + this.configSettings.citationURL).subscribe(result => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {

@@ -42,6 +42,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public loggedInRole;
   public selectedRegRegion;
   public addCitation: boolean;
+  public addLimitation: boolean;
   public uploadPolygon: boolean;
   public addRegReg: boolean;
   public showNewRegRegForm: boolean;

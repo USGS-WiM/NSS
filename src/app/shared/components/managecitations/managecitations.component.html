@@ -42,10 +42,8 @@
 						is required</div>
 				</div>
 				<button type="button" (click)="showNewCitation = false; clearCitation()" class="button">Cancel</button>
-				<button type="button" (click)="createNewCitation()" [disabled]="!newCitForm.valid"
-					class="button blue">Create</button>
+				<button type="button" (click)="createNewCitation()" [disabled]="!newCitForm.valid" class="button blue">Create</button>
 			</form>
-
 			
 			<table class="custom-table table-striped table-scroll mtop-sm no-scrollbars">
 				<thead>
@@ -55,8 +53,9 @@
 						<th class=regRegionHeader>Associated Regression Regions</th>
 						<th class="empty-cell regRegionEditHeader">
 							<!-- Filler button - not used for anything -->
-							<div class="cell-buttons"><button class="icon-button" aria-hidden="true"><i
-										class="far fa-circle"></i></button></div>
+							<div class="cell-buttons">
+								<button class="icon-button" aria-hidden="true"><i class="far fa-circle"></i></button>
+							</div>
 						</th>
 					</tr>
 				</thead>
@@ -66,20 +65,23 @@
 						<td class=col1>
 							<div class="half-space">
 								<span *ngIf="!c.isEditing">{{ c.author }}</span>
-								<span *ngIf="c.isEditing"><textarea class='break' name="author" [(ngModel)]="c.author"
-										required></textarea></span>
+								<span *ngIf="c.isEditing">
+									<textarea class='break' name="author" [(ngModel)]="c.author" required></textarea>
+								</span>
 							</div>
 							<div>
 								<span *ngIf="!c.isEditing">{{ c.title }}</span>
-								<span *ngIf="c.isEditing"><textarea class='break' name="title" [(ngModel)]="c.title"
-										required></textarea></span>
+								<span *ngIf="c.isEditing">
+									<textarea class='break' name="title" [(ngModel)]="c.title" required></textarea>
+								</span>
 							</div>
 							<div>
 								<a *ngIf="!c.isEditing" [href]="c.citationURL" [target]="_blank">
 									<span *ngIf="!c.isEditing">{{ c.citationURL }}</span>
 								</a>
-								<span *ngIf="c.isEditing"><textarea class='break' name="citationURL"
-										[(ngModel)]="c.citationURL" required></textarea></span>
+								<span *ngIf="c.isEditing">
+									<textarea class='break' name="citationURL"[(ngModel)]="c.citationURL" required></textarea>
+								</span>
 							</div>
 						</td>
 						<!-- Col 2 - Citation Buttons -->
@@ -114,7 +116,7 @@
 						</td>
 						<!-- Col 3, Associated Regression Region -->
 						<td>
-						<div *ngFor="let e of c.regressionRegions; last as isLast" class=regRegionFields>
+							<div *ngFor="let e of c.regressionRegions; last as isLast" class=regRegionFields>
 								<!-- Col 3, Associated Regression Region (all but the last one) -->
 								<td [class.regRegionLast]=isLast [class.regRegion]=!isLast>{{e.name}}
 								</td>
@@ -123,8 +125,9 @@
 									<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button"
 										[disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
 										<i class="far fa-pencil"></i>
-									</button></td>
-						</div>
+									</button>
+								</td>
+							</div>
 						</td>
 					</tr>
 				</tbody>

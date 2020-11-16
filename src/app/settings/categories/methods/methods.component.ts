@@ -44,7 +44,7 @@ export class MethodsComponent implements OnInit, OnDestroy  {
 
   ngOnInit() {
     // get all method types
-    this._settingsService.getEntities(this.configSettings.methodURL).subscribe(res => {
+    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.methodURL).subscribe(res => {
       this.methods = res;
     });
   }
@@ -82,7 +82,7 @@ export class MethodsComponent implements OnInit, OnDestroy  {
 
   private createNewMethod() {
     const newItem = this.newMethodForm.value;
-    this._settingsservice.postEntity(newItem, this.configSettings.methodURL)
+    this._settingsservice.postEntity(newItem, this.configSettings.nssBaseURL + '/' + this.configSettings.methodURL)
       .subscribe((response: Method) => {
         response.isEditing = false;
         this.methods.push(response);
@@ -125,7 +125,7 @@ export class MethodsComponent implements OnInit, OnDestroy  {
       this._toasterService.pop('error', 'Error updating Method', 'Name and Code are required.');
     } else {
       delete m.isEditing;
-      this._settingsservice.putEntity(m.id, m, this.configSettings.methodURL).subscribe(
+      this._settingsservice.putEntity(m.id, m, this.configSettings.nssBaseURL + '/' + this.configSettings.methodURL).subscribe(
         (resp) => {
           m.isEditing = false;
           this.methods[i] = m;
@@ -148,7 +148,7 @@ export class MethodsComponent implements OnInit, OnDestroy  {
     if (check) {
       // delete it
       const index = this.methods.findIndex(item => item.id === deleteID);
-      this._settingsservice.deleteEntity(deleteID, this.configSettings.methodURL)
+      this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + '/' + this.configSettings.methodURL)
         .subscribe(result => {
           this.methods.splice(index, 1);
           this._settingsservice.setMethods(this.methods); // update service

@@ -622,22 +622,22 @@ export class MainviewComponent implements OnInit {
             }
         });
         // get all errors (use for options in edit/add scenario selects)
-        this._settingsService.getEntities(this.configSettings.errorsURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.errorsURL).subscribe(res => {
             this.errors = res;
         });
         // get all regression types (use for options in edit/add scenario selects)
-        this._settingsService.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
             this.regTypes = res;
         });
         this._nssService.regions.subscribe((regions: Array<Region>) => {
             this.regions = regions;
         });
         // get all status types (use for options in edit/add scenario selects)
-        this._settingsService.getEntities(this.configSettings.statusURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.statusURL).subscribe(res => {
             this.status = res;
         });
         // get all method types
-        this._settingsService.getEntities(this.configSettings.methodURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.methodURL).subscribe(res => {
             this.methods = res;
         });
     } // end ngOnInit()
@@ -1301,7 +1301,7 @@ export class MainviewComponent implements OnInit {
         if (check) {
             this.saveFilters();
             const sParams = '?statisticgroupID=' + sgID + '&regressionregionID=' + rrID + '&regressiontypeID=' + rID;
-            this._settingsService.deleteEntity('', this.configSettings.scenariosURL, sParams).subscribe(result => {
+            this._settingsService.deleteEntity('', this.configSettings.nssBaseURL + this.configSettings.scenariosURL, sParams).subscribe(result => {
                 this.requeryFilters();
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
@@ -1316,7 +1316,7 @@ export class MainviewComponent implements OnInit {
         const check = confirm('Are you sure you want to delete this Regression Region?');
         if (check) {
             this.saveFilters();
-            this._settingsService.deleteEntity(rrID, this.configSettings.regRegionURL).subscribe(result => {
+            this._settingsService.deleteEntity(rrID, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(result => {
                 this.requeryFilters();
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
@@ -1331,7 +1331,8 @@ export class MainviewComponent implements OnInit {
     public showManageCitationsModal() {
         const addManageCitationForm: ManageCitation = {
             show: true,
-            addCitation: true
+            addCitation: true,
+            inGagePage: false
         }
         this._nssService.setManageCitationsModal(addManageCitationForm);
     }
@@ -1344,7 +1345,7 @@ export class MainviewComponent implements OnInit {
             const idx = this.regressionRegions.findIndex(r => r.id === rr.id);
             const regReg = this.regressionRegions[idx];
             regReg.citationID = null;
-            this._settingsService.putEntity(rr.id, regReg, this.configSettings.regRegionURL)
+            this._settingsService.putEntity(rr.id, regReg, this.configSettings.nssBaseURL + this.configSettings.regRegionURL)
                 .subscribe((response) => {
                     this.requeryFilters();
                     this._nssService.outputWimMessages(response);
@@ -1464,7 +1465,7 @@ export class MainviewComponent implements OnInit {
 
     public getRegRegions() {
         // get list of region's regression regions, remove if we take out the citations IDs
-        this._settingsService.getEntities(this.configSettings.regionURL + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + this.selectedRegion.id + '/' + this.configSettings.regRegionURL)
             .subscribe((res) => {
                 if (res.length > 1) {
                     res.sort((a, b) => a.name.localeCompare(b.name));
@@ -1485,7 +1486,7 @@ export class MainviewComponent implements OnInit {
     }
 
     public getCitations() {
-        this._settingsService.getEntities(this.configSettings.citationURL)
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.citationURL)
             .subscribe(res => {
                 this.citations = res;
             });
@@ -1523,7 +1524,7 @@ export class MainviewComponent implements OnInit {
     submitScenario() {
         // put edited scenario
         this.saveFilters();
-        this._settingsService.putEntity('', this.editScen, this.configSettings.scenariosURL)
+        this._settingsService.putEntity('', this.editScen, this.configSettings.nssBaseURL +  this.configSettings.scenariosURL)
             .subscribe((response) => {
                 this.requeryFilters();
                 this._nssService.outputWimMessages(response);
@@ -1614,7 +1615,7 @@ export class MainviewComponent implements OnInit {
     putLowFlow() {
         console.log(this.editScen);
         console.log(JSON.stringify(this.editScen));
-        this._settingsService.putEntity('', this.editScen, this.configSettings.scenariosURL + '?existingstatisticgroup=2')
+        this._settingsService.putEntity('', this.editScen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?existingstatisticgroup=2')
         .subscribe(scen => {
             console.log(scen);
             alert('success');
@@ -1632,7 +1633,7 @@ export class MainviewComponent implements OnInit {
         Object.keys(currentRR).forEach(key => {
             if (!this.editScenarioForm.value[key]) { this.editScenarioForm.value[key] = currentRR[key]; }
         });
-        this._settingsService.putEntity(rr.id, this.editScenarioForm.value, this.configSettings.regRegionURL).subscribe(res => {
+        this._settingsService.putEntity(rr.id, this.editScenarioForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(res => {
             this.CancelEditRowClicked();
             this.requeryFilters();
             if (!res.headers) {
@@ -1655,7 +1656,7 @@ export class MainviewComponent implements OnInit {
     public createNewCitation(rr) {
         // add new citation
         this.saveFilters();
-        this._settingsService.postEntity(this.newCitForm.value, this.configSettings.regRegionURL + '/' + rr.id + '/' +
+        this._settingsService.postEntity(this.newCitForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL + '/' + rr.id + '/' +
             this.configSettings.citationURL)
             .subscribe((res: any) => {
                 this.newCitForm.reset();

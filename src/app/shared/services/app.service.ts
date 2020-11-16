@@ -138,7 +138,7 @@ export class NSSService {
     public setManageCitationsModal(val: ManageCitation) { 
         this._showHideManageCitationsModal.next(val);
     }
-    // show the manage citations modal in the mainview
+    // show the manage citations modal 
     public get showManageCitationsModal(): any {
         return this._showHideManageCitationsModal.asObservable();
     }
@@ -148,6 +148,15 @@ export class NSSService {
     addExistingCitation(item: any){
         this.citationSource.next(item);
     }
+    // set selected citation
+    private _selectedCitation: Subject<Citation> = new Subject<Citation>();
+    public setSelectedCitation(val: Citation) {
+        this._selectedCitation.next(val);
+    }
+    public get selectedCitation(): Observable<Citation> {
+        return this._selectedCitation.asObservable();
+    }
+
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
     private _showHideAddRegressioRegionModal: Subject<AddRegressionRegion> = new Subject<AddRegressionRegion>();
     public setAddRegressionRegionModal(val: AddRegressionRegion) {
@@ -708,7 +717,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Array<Regressionregion>>res);
     }
 
@@ -719,7 +728,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Regressiontype[]>res);
     }
 
@@ -730,7 +739,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Statisticgroup[]>res);
     }
 
@@ -741,7 +750,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Scenario[]>res)
             .subscribe(
                 s => {
@@ -785,7 +794,7 @@ export class NSSService {
     postScenarios(id: number, s: Scenario[], searchArgs?: string) {
         const options = { headers: this.jsonHeader, observe: 'response' as 'response' };      
         return this._http
-            .post(this.configSettings.nssBaseURL + this.configSettings.regionURL + id + '/scenarios/estimate/' + searchArgs, s, options)
+            .post(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/scenarios/estimate/' + searchArgs, s, options)
             // .map(sResult => sResult.json())
             .subscribe(
                 res => {

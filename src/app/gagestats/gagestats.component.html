@@ -8,10 +8,11 @@
 
     <h4>{{timestamp | date:"MMMM d, y hh:mma"}}</h4>
 
-    <div class="hidden-print">
-        <button *ngIf="loggedInRole" type="button" class="button small blue mright-xs"  (click)="showAddStationModal()">Add Station</button>
-        <button *ngIf="loggedInRole" type="button" class="button small mright-xs" (click)="bulkUpload()">Bulk Upload</button>
-        <button *ngIf="loggedInRole" type="button" class="button small mright-xs" (click)="export()">Export</button>
+    <div *ngIf="loggedInRole" class="hidden-print">
+        <button  type="button" class="button small blue mright-xs"  (click)="showAddStationModal()">Add Station</button>
+        <button  type="button" class="button small mright-xs" (click)="bulkUpload()">Bulk Upload</button>
+        <button  type="button" class="button small mright-xs" (click)="export()">Export</button>
+        <button  type="button" class="button small" (click)="showManageCitationsModal()"><i class="far fa-asterisk"></i>Manage Citations</button>
     </div>
    
    <div class="hidden-print" >

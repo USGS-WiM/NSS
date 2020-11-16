@@ -12,6 +12,7 @@ import { CharacteristicResponse } from 'app/shared/interfaces/characteristicresp
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
 import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
+import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
@@ -23,6 +24,7 @@ import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
 })
 export class GagepageComponent implements OnInit, OnDestroy {
   @ViewChild('gagePage', {static: true}) public gagePageModal; // : ModalDirective;  //modal for validator
+  @ViewChild('CitationForm', { static: true }) citationForm;
   private modalSubscript;
   private configSettings: Config;
   private modalElement: any;
@@ -36,6 +38,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public editGageInfo: boolean = false;
   public units;
   public tempItem;
+  public tempGage;
   public itemBeingEdited;
   public editId;
   public newChar: GageCharacteristic;
@@ -43,6 +46,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public variables;
   public regressionTypes;
   public statisticGroups;
+  public addCitation: boolean;
+  public selectedCitation;
   public statIds = [];
   public filteredStatGroups;
   public statGroupIds = [];
@@ -73,6 +78,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
               return a.statisticGroupTypeID - b.statisticGroupTypeID;
             });
             this.gage = res;
+            this._nssService.setSelectedRegion(this.gage.region);
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);
             this.filterStatIds();
@@ -84,6 +90,22 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
     this.modalElement = this.gagePageModal;
 
+    this._nssService.selectedCitation.subscribe(c => {
+      this.selectedCitation = c;
+      if (this.newChar){  //If a new characteristic is created
+        this.newChar.citationID = this.selectedCitation.id; //Set the citationID to the id of the selected citation from the citation modal
+      } if (this.newStat) { //If a new stat is created
+          this.newStat.citationID = this.selectedCitation.id
+      } if(this.itemBeingEdited) { // If a row is being edited
+          if (!this.itemBeingEdited.yearsofRecord) {  //If it is a characteristic is being edited
+            this.itemBeingEdited.citationID = this.selectedCitation.id;
+          }
+          if (this.itemBeingEdited.yearsofRecord) { //If itemBeingEdited is a stat
+            this.itemBeingEdited.citationID = this.selectedCitation.id
+          }
+      }
+    }); 
+
     // get all unit types 
     this._nssService.getUnitTypes().subscribe(res => {
       this.units = res;
@@ -93,11 +115,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.variables = res;
     });
     // get all regression types
-    this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
       this.regressionTypes = res;
     });
     // get all stat groups 
-    this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
       this.statisticGroups = res;
     });
     // get all agencys
@@ -190,11 +212,12 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public deleteGageStats(id){
     const check = confirm('Are you sure you want to delete this Gage?');
     if (check) {
-      this._settingsservice.deleteEntityGageStats(id, this.configSettings.stationsURL).subscribe(result => {
+      this._settingsservice.deleteEntity(id, this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL).subscribe(result => {
           if (result.headers) { 
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
             this._nssService.searchStations(this.selectedParams);
+            
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -206,7 +229,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public saveGageInfo(gage){
     const newItem = JSON.parse(JSON.stringify(gage)); 
     ['agency', 'stationType'].forEach(e => delete newItem[e]);  
-      this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.stationsURL).subscribe(
+      this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL).subscribe(
         (res) => {
           this.editGageInfo = false;
           this.code = res.body['code']; // update code in case user changed it
@@ -218,38 +241,39 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   public editGageInformation(item) {
+    this.limitRowEdits();
     this.editGageInfo = true;
-    this.tempItem = JSON.parse(JSON.stringify(item));
+    this.tempGage = JSON.parse(JSON.stringify(item));
   }
 
   public cancelEditGageInfo() {
-    this.gage = this.tempItem;
-    this.editGageInfo = false;
+    if (this.editGageInfo) {
+      this.gage = this.tempGage;
+      this.editGageInfo = false;
+    }
   }
 
   public endEditGageStats() {
     this.editGage = false;
     this.editGageInfo = false;
-    if (this.itemBeingEdited) {
-      this.itemBeingEdited.isEditing = false;
-    }
-    if (this.newChar) {
-      this.deletePhysicalCharacteristic(this.newChar.id);
-    }
-    if (this.newStat) {
-      this.deleteStatistic(this.newStat.id);
-    }
+    this.limitRowEdits();
     this.refreshgagepage();
+    delete(this.tempGage);
+    delete(this.tempItem);
+    delete(this.itemBeingEdited);
   } 
 
   public editRowClicked(item, index) {
+    this.cancelEditGageInfo();
+    this.limitRowEdits();
+    if (!item.predictionInterval) { //If the stat doesn't have prediction intervals, create empty ones for display
+      item.predictionInterval = {variance: null, lowerConfidenceInterval: null, upperConfidenceInterval: null};
+    }
     this.tempItem = JSON.parse(JSON.stringify(item));
     this.itemBeingEdited = item;
     this.editId = index;
-    if (!item.predictionInterval) {
-      item.predictionInterval = {variance: 0, lowerPredictionInterval: 0, upperPredictionInterval: 0};
-    }
     item.isEditing = true;
+    delete(this.selectedCitation);
   }
 
   public cancelEditRowClicked(item) {
@@ -260,16 +284,14 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.gage.statistics[this.editId] = this.tempItem;
     }
     item.isEditing = false;
-  }
-
-  public submitGage() {
-    const url = '';
-    this._settingsservice.putEntityGageStats('', this.configSettings.stationsURL, url).subscribe()
+    delete(this.itemBeingEdited);
   }
 
 ///////////////////////Characteristic Section////////////////
   
   public addPhysicalCharacteristic() {
+    this.cancelEditGageInfo();
+    this.limitRowEdits();
     // Create new characteristic
     this.newChar = {
       stationID: this.gage.id,
@@ -279,8 +301,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
       unitTypeID: null,
       citationID: null,
     }
-    
-  this.newChar.isEditing = true;
+    this.newChar.isEditing = true;
+    delete(this.selectedCitation);
   } 
     
   public deletePhysicalCharacteristic(deleteID: number) {
@@ -288,7 +310,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       if (check) {
         const index = this.gage.characteristics.findIndex(item => item.id === deleteID);
         if (deleteID) {    // If characteristic has an ID number (if it comes from the service)
-          this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.characteristicsURL).subscribe(
+          this._settingsservice.deleteEntity(deleteID, this.configSettings.gageStatsBaseURL + this.configSettings.characteristicsURL).subscribe(
             (res) => {
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
@@ -301,15 +323,17 @@ export class GagepageComponent implements OnInit, OnDestroy {
     if (item.id) {  // If item has an id, then it is already in NSS DB
       const newItem = JSON.parse(JSON.stringify(item));  // Copy the edited char
       delete newItem.unitType, delete newItem.variableType, delete newItem.citation;  // Delete uneeded objects from the copy
-      this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.characteristicsURL).subscribe(
+      this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.characteristicsURL).subscribe(
         (res) => { 
           item.isEditing = false;
+          delete(this.itemBeingEdited);
           this.refreshgagepage();
           this._settingsservice.outputWimMessages(res);
         }
       )
     }; if (!item.id) {  // If an item doesn't have an ID, then it needs to be added to NSS
-      this._settingsservice.postEntityGageStats(item, this.configSettings.characteristicsURL).subscribe(
+      delete item.isEditing;
+      this._settingsservice.postEntity(item,this.configSettings.gageStatsBaseURL + this.configSettings.characteristicsURL).subscribe(
         (res: CharacteristicResponse) => { 
           item.isEditing = false; 
           delete(this.newChar);
@@ -325,6 +349,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
 ///////////////////////Statistic Section/////////////////////
   
   public addStreamflowStatistic() {
+    this.cancelEditGageInfo();
+    this.limitRowEdits();
     this.newStat = {
       stationID: this.gage.id,
       value: null,
@@ -338,25 +364,34 @@ export class GagepageComponent implements OnInit, OnDestroy {
       predictionInterval: {}
     } 
     this.newStat.isEditing = true;
+    delete(this.selectedCitation);
   } 
 
   public saveStat(item) {
     if (item.id) {  //If statistic has an id, it is already in the SS DB, make PUT request to edit
-      const newItem = JSON.parse(JSON.stringify(item));  // Copy item
+      const newItem = JSON.parse(JSON.stringify(item));  // Copy stat
+      if ( !newItem.predictionInterval.variance && !newItem.predictionInterval.lowerConfidenceInterval && !newItem.predictionInterval.upperConfidenceInterval ) {
+        delete(newItem.predictionInterval), delete(newItem.predictionIntervalID)  //Delete if empty
+      }
       ['regressionType', 'citation',
       'unitType', 'isEditing', 'statisticGroupType'].forEach(e => delete newItem[e]);  // Delete unneeded items
-      this._settingsservice.putEntityGageStats(newItem.id, newItem, this.configSettings.statisticsURL).subscribe(
+      this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.statisticsURL).subscribe(
         (res) => {
           item.isEditing = false;
+          delete(this.itemBeingEdited);
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
         }
       )
     } else {  //If statistic doesn't have an id, it needs to be added to the DB, make POST request
-      this._settingsservice.postEntityGageStats(item, this.configSettings.statisticsURL).subscribe(
+      if ( !item.predictionInterval.variance && !item.predictionInterval.lowerConfidenceInterval && !item.predictionInterval.upperConfidenceInterval ) {
+        delete(item.predictionInterval)
+      }
+      this._settingsservice.postEntity(item,this.configSettings.gageStatsBaseURL + this.configSettings.statisticsURL).subscribe(
         (res: StatisticResponse) => {
           item.isEditing = false;
           delete(this.newStat);  // Delete newStat from table
+          delete(this.itemBeingEdited);
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Statistic was created');
         } 
@@ -369,8 +404,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
       if (check) {
         const index = this.gage.statistics.findIndex(item => item.id === deleteID);
         if (deleteID) {    // If statistic has an ID number (if it comes from the service)
-          this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.statisticsURL).subscribe(
+          this._settingsservice.deleteEntity(deleteID, this.configSettings.gageStatsBaseURL + this.configSettings.statisticsURL).subscribe(
             (res) => {
+              delete(this.itemBeingEdited);
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
             }
@@ -388,7 +424,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.getCitations();
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();
-      //this.selectedStatGroup = [];
       this.getPredictionIntervals();
     });
   }
@@ -397,8 +432,35 @@ export class GagepageComponent implements OnInit, OnDestroy {
       return this.statisticGroups.find(sg => sg.id == id).name;
   }
 
+///////////////////////Citation Modal Section/////////////////////
+
+  public showManageCitationsModal(c) {
+    const addManageCitationForm: ManageCitation = {
+        show: true,
+        addCitation: true,
+        inGagePage: true,
+        selectCitation: c.citationID
+    } 
+    this._nssService.setManageCitationsModal(addManageCitationForm);
+  }
+
+
+///////////////////////////////////////////////////////////////////////
+
   public filterStatIds() {
     this.filteredStatGroups = this.statisticGroups.filter((sg) => this.statGroupIds.includes(sg.id));
+  }
+
+  public limitRowEdits() {
+    if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
+      this.cancelEditRowClicked(this.itemBeingEdited);
+    }
+    if (this.newChar) {
+      delete(this.newChar);
+    }
+    if (this.newStat) {
+      delete(this.newStat);
+    }
   }
 
   compareObjects(Obj1, Obj2) {

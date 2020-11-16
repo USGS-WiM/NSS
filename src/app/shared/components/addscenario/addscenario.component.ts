@@ -59,6 +59,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
     public filteredRegressionTypes;
     public filtered = true;
+    public skipCheck = false;
     public scen;
     public originalScenario = [];
     public editMode: boolean;
@@ -77,6 +78,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             'region': new FormControl(null, Validators.required),
             'statisticGroupID': new FormControl(null, Validators.required),
             'regressionRegions': this._fb.group({
+                'equationCheck': new FormControl({value: false}),
                 'ID': new FormControl(null, Validators.required),
                 'parameters': this._fb.array([]),
                 'regressions': this._fb.group({
@@ -168,9 +170,33 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
     }
 
+    public equationCheck(check){
+        this.skipCheck = check;
+        if (check) {
+            this.newScenForm.get('regressionRegions.regressions.expected.value').disable();    
+            this.newScenForm.get('regressionRegions.regressions.expected.intervalBounds.upper').disable();            
+            this.newScenForm.get('regressionRegions.regressions.expected.intervalBounds.lower').disable();            
+            this.newScenForm.patchValue({ regressionRegions: { regressions: { expected: { value: null}}}});
+            const parmControl = <FormArray>this.newScenForm.get('regressionRegions.parameters');
+            for (let i = parmControl.length-1; i >= 0; i--) {
+                this.newScenForm.get('regressionRegions.parameters.'+i+'.value').disable();
+                parmControl.controls[i].get('value').setValue(null);
+            }
+        } else {
+            this.newScenForm.get('regressionRegions.regressions.expected.value').enable();
+            this.newScenForm.get('regressionRegions.regressions.expected.intervalBounds.upper').enable();            
+            this.newScenForm.get('regressionRegions.regressions.expected.intervalBounds.lower').enable();      
+            const parmControl = <FormArray>this.newScenForm.get('regressionRegions.parameters');
+            for (let i = parmControl.length-1; i >= 0; i--) {
+                this.newScenForm.get('regressionRegions.parameters.'+i+'.value').enable();
+            }
+        }
+    }
+
     public showModal(): void {
         this.getEntities();
         this.onStatGroupSelect('');
+        this.equationCheck(false);
         this.selectedRegion = this.originalRegion;
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
@@ -186,17 +212,17 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
-        if (this.cloneParameters.info){
+        if (this.cloneParameters.info) {
             this.clearScenario();
             this.filtered = false;
             //cloned scenario
-            if (this.cloneParameters.info == "clone"){
+            if (this.cloneParameters.info == "clone") {
                 this.clone = true;
                 this.edit = false;
                 this.cloneScenario();
             }
             //edit scenario
-            else if (this.cloneParameters.info == "edit"){
+            else if (this.cloneParameters.info == "edit") {
                 this.clone = false;
                 this.edit = true;
                 this.editMode = true;
@@ -204,7 +230,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.fillModal();
             }
         //new scenario
-        }else{
+        } else {
+            this.editMode = false;
             this.filtered = true;
             this.clearScenario();
             this.clone = false;
@@ -314,23 +341,25 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.fillModal();
     }
 
-    public cloneOrEdit(){
+    public cloneOrEdit(e){
         //make sure in edit mode
-        if (this.editMode == true){
-            this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
-            //change back to edit if user reselects original core dropdowns
-            if ((this.originalScenario[0] == this.scen.statisticGroupID) &&
-            (this.originalScenario[1] == this.scen.regressionRegions.ID) && 
-            (this.originalScenario[2] == this.scen.regressionRegions.regressions.ID)){
-                this.clone = false;
-                this.edit = true;
-                this._toasterService.clear();
-                this._toasterService.pop('info', 'Info', 'Scenario Will Be Edited Instead Of Cloned');
-            }else{ //change to clone
-                this.clone = true;
-                this.edit = false;
-                this._toasterService.clear();
-                this._toasterService.pop('info', 'Info', 'Scenario Will Be Cloned Instead Of Edited');
+        if(e){
+            if (this.editMode == true){
+                this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
+                //change back to edit if user reselects original core dropdowns
+                if ((this.originalScenario[0] == this.scen.statisticGroupID) &&
+                (this.originalScenario[1] == this.scen.regressionRegions.ID) && 
+                (this.originalScenario[2] == this.scen.regressionRegions.regressions.ID)) {
+                    this.clone = false;
+                    this.edit = true;
+                    this._toasterService.clear();
+                    this._toasterService.pop('info', 'Info', 'Scenario Will Be Edited Instead Of Cloned');
+                } else { //change to clone
+                    this.clone = true;
+                    this.edit = false;
+                    this._toasterService.clear();
+                    this._toasterService.pop('info', 'Info', 'Scenario Will Be Cloned Instead Of Edited');
+                }
             }
         }
     }
@@ -347,6 +376,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             //comments: new FormControl(null),
             value: new FormControl(null, Validators.required)
         }));
+        this.equationCheck(this.newScenForm.get('regressionRegions.equationCheck').value);
     }
 
     addError() {
@@ -415,7 +445,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public onStatGroupSelect(e){
-        this._settingsService.getEntities(this.configSettings.regTypeURL+"?statisticgroups="+ e).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + '/' + this.configSettings.regTypeURL+"?statisticgroups="+ e).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.filteredRegressionTypes = res;
         });
@@ -430,9 +460,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = this.scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id === this.scen['statisticGroupID']);
-
         this.scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
         this.scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
+
         // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);
         regRegs['name'] = this.regressionRegions[regRegIndex].name;
@@ -445,7 +475,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         // add parameter name, description, add values/check if between limits
         regs.expected.parameters = {};
         for (const parameter of regRegs.parameters) {
+            if (this.skipCheck == true) {
+                regs.expected.parameters[parameter.code] = 0;
+            } else {
             regs.expected.parameters[parameter.code] = parameter.value;
+            }
             const paramIndex = this.variables.findIndex(item => item.code === parameter.code);
             parameter['name'] = this.variables[paramIndex].name;
             parameter['description'] = this.variables[paramIndex].description;
@@ -481,8 +515,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     public async submitScenario() {
         // put scenario
-        this.setUpScenario();
-        await this._settingsService.putEntity('', this.scen, this.configSettings.scenariosURL)
+        this.setUpScenario(); 
+        await this._settingsService.putEntity('', this.scen, this.configSettings.nssBaseURL + '/' + this.configSettings.scenariosURL + '?skipCheck=' + this.skipCheck)
             .subscribe((response) => {
                 this.setSidebar();
                 // clear form
@@ -502,7 +536,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public createNewScenario() {
         // post scenario
         this.setUpScenario();
-        this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID)
+        this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID + '&skipCheck=' + this.skipCheck)
             .subscribe((response: any) => {
                 this.setSidebar();
                 // clear form

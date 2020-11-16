@@ -1,6 +1,7 @@
 import { Citation } from './citation';
 import { GageCharacteristic } from './gagecharacteristic';
 import { GageStatistic } from './gagestatistic';
+import { Region } from './region';
 
 export interface Station {
     agencyID: string;
@@ -13,4 +14,5 @@ export interface Station {
     characteristics: Array<GageCharacteristic>;
     statistics: Array<GageStatistic>;
     citations: Array<Citation>;
+    region?: any;
 }

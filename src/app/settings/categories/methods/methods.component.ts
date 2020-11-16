@@ -44,7 +44,7 @@ export class MethodsComponent implements OnInit, OnDestroy  {
 
   ngOnInit() {
     // get all method types
-    this._settingsService.getEntities(this.configSettings.methodURL).subscribe(res => {
+    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.methodURL).subscribe(res => {
       this.methods = res;
     });
   }

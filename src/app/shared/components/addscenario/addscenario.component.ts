@@ -138,23 +138,23 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
     
     public getEntities(){   // Moved to own function in order to reload properties in case new property was added in settings
-        this._settingsService.getEntities(this.configSettings.regionURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.regions = res;
         });
-        this._settingsService.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.statisticGroups = res;
         });
-        this._settingsService.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.regressionTypes = res;
         });
-        this._settingsService.getEntities(this.configSettings.variablesURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.variables = res;
         });
-        this._settingsService.getEntities(this.configSettings.unitsURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             for (const unit of res) {
                 unit['unit'] = unit['name'];
@@ -162,7 +162,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
             this.unitTypes = res;
         });
-        this._settingsService.getEntities(this.configSettings.errorsURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.errorsURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.errors = res;
         });
@@ -502,7 +502,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public createNewScenario() {
         // post scenario
         this.setUpScenario();
-        this._settingsService.postEntity(this.scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID)
+        this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID)
             .subscribe((response: any) => {
                 this.setSidebar();
                 // clear form

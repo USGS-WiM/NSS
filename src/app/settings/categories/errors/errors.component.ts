@@ -56,7 +56,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
         }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.errorsURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.errorsURL).subscribe(res => {
             this.errors = res;
         });
 
@@ -98,7 +98,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
 
     private createNewError() {
         const newItem = this.newErrForm.value;
-        this._settingsservice.postEntity(newItem, this.configSettings.errorsURL)
+        this._settingsservice.postEntity(newItem, this.configSettings.nssBaseURL + this.configSettings.errorsURL)
             .subscribe((response: Error) => {
                 response.isEditing = false;
                 this.errors.push(response);
@@ -141,7 +141,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Error', 'Name and Code are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.errorsURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.nssBaseURL + this.configSettings.errorsURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.errors[i] = u;
@@ -164,7 +164,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.errors.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.errorsURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.errorsURL)
                 .subscribe(result => {
                     this.errors.splice(index, 1);
                     this._settingsservice.setErrors(this.errors); // update service

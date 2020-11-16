@@ -64,7 +64,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this._toasterService.pop(this.toast);
         });
         this.getLoggedInID();
-        this._settingsService.getEntities(this.configSettings.rolesURL).subscribe(roles => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.rolesURL).subscribe(roles => {
             this.roles = roles;
             this.getUserInfo();
         });
@@ -77,7 +77,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     private getUserInfo() {
-        this._settingsService.getEntities(this.configSettings.managersURL + '/' + this.loggedInID).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.managersURL + '/' + this.loggedInID).subscribe(res => {
             this.userInfo = res;
         });
     }
@@ -102,7 +102,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         } else {
             delete this.userInfo.isEditing;
             delete this.userInfo.role;
-            this._settingsService.putEntity(this.userInfo.id, this.userInfo, this.configSettings.managersURL).subscribe(
+            this._settingsService.putEntity(this.userInfo.id, this.userInfo, this.configSettings.nssBaseURL + this.configSettings.managersURL).subscribe(
                 (resp) => {
                     this.userInfo.isEditing = false;
                     this.getUserInfo();

@@ -2,7 +2,7 @@
 	<div>
 		<div class="modal-header">
 			<div class="title">GagePage</div>  
-			<button class="icon-button" (click)="d('closed'); editGage=false; cancelEditGageInfo()"><i class="far fa-times"></i></button>                    
+			<!-- <button class="icon-button" (click)="d('closed'); editGage=false; cancelEditGageInfo()"><i class="far fa-times"></i></button>  -->
 		</div>
 	</div>
 
@@ -104,13 +104,13 @@
 			</div>
 		</div>
 		<!--Physical Characteristics-->
-		<div>
+		<div *ngIf="gage.characteristics.length > 0 || editGage">
 			<div class="table-title">Physical Characteristics
 				<div class="stat-filters">
 					<div><button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs"  (click)="addPhysicalCharacteristic(cIndex)">Add Physical Characteristic</button></div>
 				</div>
 			</div>
-			<div *ngIf="gage.characteristics.length > 0 || editGage">
+			<div >
 				<table style="border:solid 1px gray" class="custom-table"> 
 					<thead>
 						<tr>
@@ -160,7 +160,9 @@
 							</td>
 							<td>
 								<span *ngIf="!newChar.isEditing">{{newChar.citationID}}</span>
-								<span *ngIf="newChar.isEditing"><input type="number" [(ngModel)]="newChar.citationID" size="2"></span>
+								<span *ngIf="selectedCitation">{{selectedCitation.id}}</span>
+								<button *ngIf="newChar.isEditing && !selectedCitation" type="button" class="button blue mright-xs" (click)="showManageCitationsModal(newChar)"><i class="far fa-plus"></i></button>
+								<button *ngIf="newChar.isEditing && selectedCitation" type="button" title="Change Citation" (click)="showManageCitationsModal(newChar)"><i class="far fa-pencil"></i></button>
                             </td>
                             <td>
 								<span *ngIf="!newChar.isEditing">{{newChar.comments}}</span>
@@ -207,7 +209,8 @@
 							</td>
 							<td>
 								<span *ngIf="!c.isEditing">{{c.citationID}}</span>
-								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.citationID" size="2" class="input-100"></span>
+								<span *ngIf="c.isEditing">{{c.citationID}}</span>
+								<button *ngIf="c.isEditing" type="button" title="Change Citation" (click)="showManageCitationsModal(c)"><i class="far fa-pencil"></i></button>
                             </td>
                             <td>
 								<span *ngIf="!c.isEditing">{{c.comments}}</span>
@@ -219,7 +222,7 @@
 			</div>
 		</div>
 		<!--Streamflow Statistics Table-->
-		<div>
+		<div *ngIf="gage.statistics.length > 0  || editGage">
 			<div class="table-title">Streamflow Statistics
 				<div class="stat-filters">
 					<div><label>Filter by Statistic Group: </label></div>
@@ -289,8 +292,10 @@
 										</span>
                                     </td> 
                                     <td>
-									    <span *ngIf="!newStat.isEditing">{{newStat.citationID}}</span>
-                                        <span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.citationID" size="2"></span>
+										<span *ngIf="!newStat.isEditing">{{newStat.citationID}}</span>
+										<span *ngIf="selectedCitation">{{selectedCitation.id}}</span>
+										<button *ngIf="newStat.isEditing && !selectedCitation" type="button" class="button blue mright-xs" (click)="showManageCitationsModal(newStat)"><i class="far fa-plus"></i></button>
+										<button *ngIf="newStat.isEditing && selectedCitation" type="button" title="Change Citation" (click)="showManageCitationsModal(newStat)"><i class="far fa-pencil"></i></button>                            
 									</td>
 									<td>
 									    <span *ngIf="!newStat.isEditing">{{getStatGroup(newStat.statisticGroupTypeID)}}</span>
@@ -369,7 +374,8 @@
 											</td>
 											<td>
 												<span *ngIf="!s.isEditing">{{s.citationID}}</span>
-												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.citationID" size="2" class="input-100"></span>
+												<span *ngIf="s.isEditing">{{s.citationID}}</span>
+												<button *ngIf="s.isEditing" type="button" title="Change Citation" (click)="showManageCitationsModal(s)"><i class="far fa-pencil"></i></button>
 											</td>
 											<td *ngIf="editGage">
 												<span *ngIf="!s.isEditing">{{getStatGroup(s.statisticGroupTypeID)}}</span>
@@ -437,6 +443,6 @@
 
 	<!-- Footer / Buttons -->
 	<div class="modal-body-footer">
-		<button type="button" (click)="d('closed'); editGage=false; cancelEditGageInfo()" [disabled]="editGage" class="button black">Close</button>
+		<button type="button" (click)="d('closed'); editGage=false" [disabled]="editGage" class="button black">Close</button>
 	</div>
 </ng-template>

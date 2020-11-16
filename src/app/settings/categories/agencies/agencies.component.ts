@@ -70,7 +70,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this._settingsservice.getEntitiesGageStats(this.configSettings.agenciesURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL).subscribe(res => {
             this.agencies = <Array<any>>res;
         });
 
@@ -121,7 +121,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
 
     private createNewAgency() {
         const newItem = this.newAgencyForm.value;
-        this._settingsservice.postEntityGageStats(newItem, this.configSettings.agenciesURL)
+        this._settingsservice.postEntity(newItem, this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL)
             .subscribe((response: Agency) => {
                 response.isEditing = false;
                 this.agencies.push(response);
@@ -164,7 +164,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Agency', 'Name and Code are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntityGageStats(u.id, u, this.configSettings.agenciesURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.agencies[i] = u;
@@ -187,7 +187,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.agencies.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntityGageStats(deleteID, this.configSettings.agenciesURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL)
                 .subscribe(result => {
                     this.agencies.splice(index, 1);
                     this._settingsservice.setAgencies(this.agencies); // update service

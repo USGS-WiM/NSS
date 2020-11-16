@@ -60,7 +60,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
         }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL).subscribe(res => {
             this.regions = res;
         });
 
@@ -102,7 +102,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
 
     private createNewRegion() {
         const newItem = this.newRegForm.value;
-        this._settingsservice.postEntity(newItem, this.configSettings.regionURL)
+        this._settingsservice.postEntity(newItem, this.configSettings.nssBaseURL + this.configSettings.regionURL)
             .subscribe((response: Region) => {
                 response.isEditing = false;
                 this.regions.push(response);
@@ -145,7 +145,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Region', 'Name and Code are required.');
         } else {
             delete r.isEditing;
-            this._settingsservice.putEntity(r.id, r, this.configSettings.regionURL).subscribe(
+            this._settingsservice.putEntity(r.id, r, this.configSettings.nssBaseURL + this.configSettings.regionURL).subscribe(
                 (resp) => {
                     r.isEditing = false;
                     this.regions[i] = r;
@@ -168,7 +168,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.regions.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.regionURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.regionURL)
                 .subscribe(result => {
                     this.regions.splice(index, 1);
                     this._settingsservice.setRegions(this.regions); // update service

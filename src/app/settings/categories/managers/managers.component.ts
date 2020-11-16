@@ -69,13 +69,13 @@ export class ManagersComponent implements OnInit {
     }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(regions => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL).subscribe(regions => {
             this.regions = regions;
         });
-        this._settingsservice.getEntities(this.configSettings.managersURL).subscribe(managers => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.managersURL).subscribe(managers => {
             this.managers = managers;
         });
-        this._settingsservice.getEntities(this.configSettings.rolesURL).subscribe(roles => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.rolesURL).subscribe(roles => {
             this.roles = roles;
         });
     }
@@ -159,7 +159,7 @@ export class ManagersComponent implements OnInit {
             this.newUserForm.value.regionManagers.forEach(x => this.removeRegion(x));
         }
         const newUser = this.newUserForm.value;
-        this._settingsservice.postEntity(newUser, this.configSettings.managersURL).subscribe(
+        this._settingsservice.postEntity(newUser, this.configSettings.nssBaseURL + this.configSettings.managersURL).subscribe(
             (response: Manager) => {
                 response.isEditing = false;
                 this.managers.push(response);
@@ -197,7 +197,7 @@ export class ManagersComponent implements OnInit {
             this._toasterService.pop('error', 'Error updating Manager', 'First name, last name, username, email and role are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.managersURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.nssBaseURL + this.configSettings.managersURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.managers[i] = u;
@@ -220,7 +220,7 @@ export class ManagersComponent implements OnInit {
         if (check) {
             // delete it
             const index = this.managers.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.managersURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.managersURL)
                 .subscribe(result => {
                     this.managers.splice(index, 1);
                     this._settingsservice.setManagers(this.managers); // update service

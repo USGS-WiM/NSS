@@ -51,16 +51,16 @@ export class GsSidebarComponent implements OnInit {
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
     });
-    this._settingsservice.getEntitiesGageStats(this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
+    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
-    this._settingsservice.getEntitiesGageStats(this.configSettings.statisticGrpURL).subscribe((sg: Array<Statisticgroup>) => {
+    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL).subscribe((sg: Array<Statisticgroup>) => {
       this.statisticGroups = sg;
     });
-    this._settingsservice.getEntitiesGageStats(this.configSettings.variablesURL).subscribe((vt: Array<Variabletype>) => {
+    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL).subscribe((vt: Array<Variabletype>) => {
       this.variableTypes = vt;
     });
-    this._settingsservice.getEntitiesGageStats(this.configSettings.regTypeURL).subscribe((rt: Array<Regressiontype>) => {
+    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL).subscribe((rt: Array<Regressiontype>) => {
       this.regressionTypes = rt;
     });
 

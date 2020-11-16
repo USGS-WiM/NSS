@@ -45,13 +45,15 @@
 				<button type="button" (click)="createNewCitation()" [disabled]="!newCitForm.valid" class="button blue">Create</button>
 			</form>
 			
-			<table class="custom-table table-striped table-scroll mtop-sm no-scrollbars">
+			<table class="custom-table table-striped table-scroll mtop-sm no-scrollbars" [class.table-hover-rows]="inGagePage && !inGageStats">
 				<thead>
 					<tr>
-						<th class=citationHeader>Citation</th>
-						<th class=citationEditHeader></th>
-						<th class=regRegionHeader>Associated Regression Regions</th>
-						<th class="empty-cell regRegionEditHeader">
+						<th *ngIf="inGagePage" class="width-5">ID</th>
+						<th [class.citationHeader]="!inGagePage" [class.width-85]="inGagePage">Citation</th>
+						<th [class.citationEditHeader]="!inGagePage" [class.width-10]="inGagePage"></th>
+						<!-- <th *ngIf="inGagePage" class="width-10"></th> -->
+						<th class=regRegionHeader *ngIf="!inGagePage">Associated Regression Regions</th>
+						<th class="empty-cell regRegionEditHeader" *ngIf="!inGagePage">
 							<!-- Filler button - not used for anything -->
 							<div class="cell-buttons">
 								<button class="icon-button" aria-hidden="true"><i class="far fa-circle"></i></button>
@@ -60,9 +62,13 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr *ngFor="let c of filteredData; let cIndex = index">
-						<!-- Col 1, Citation -->
-						<td class=col1>
+					<tr *ngFor="let c of filteredData; let cIndex = index" [ngClass]="{'selectedRow': selectedRow === c.id}">
+						<!-- Col 1 -->
+						<td *ngIf="inGagePage" class="width-5">
+							<div>{{c.id}}</div>
+						</td>
+						<!-- Col 2, Citation -->
+						<td [class.col1]="!inGagePage" [class.width-85]='inGagePage' (click)= "!inGageStats && inGagePage && setSelectedCitation(c)">
 							<div class="half-space">
 								<span *ngIf="!c.isEditing">{{ c.author }}</span>
 								<span *ngIf="c.isEditing">
@@ -84,8 +90,8 @@
 								</span>
 							</div>
 						</td>
-						<!-- Col 2 - Citation Buttons -->
-						<td class=editCol>
+						<!-- Col 3 - Citation Buttons -->
+						<td [class.editCol]='!inGagePage' [class.width-10]="inGagePage">
 							<!-- Editing -->
 							<div [class.hidden]="!showAddCitations" class="cell-buttons">
 								<button *ngIf="!c.isEditing" title="Edit Citation" (click)="editRowClicked(c, cIndex)"
@@ -114,12 +120,11 @@
 								</button>
 							</div>
 						</td>
-						<!-- Col 3, Associated Regression Region -->
-						<td>
-							<div *ngFor="let e of c.regressionRegions; last as isLast" class=regRegionFields>
+						<!-- Col 4, Associated Regression Region -->
+						<td *ngIf="!inGagePage">
+							<div *ngFor="let e of c.regressionRegions; last as isLast">
 								<!-- Col 3, Associated Regression Region (all but the last one) -->
-								<td [class.regRegionLast]=isLast [class.regRegion]=!isLast>{{e.name}}
-								</td>
+								<td [class.regRegionLast]=isLast [class.regRegion]=!isLast>{{e.name}}</td>
 								<!-- Col 4 - Regression Buttons -->
 								<td [class.editRegRegionLast]=isLast [class.editRegRegion]=!isLast [class.hidden]="!showAddCitations">
 									<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button"
@@ -131,9 +136,8 @@
 						</td>
 					</tr>
 				</tbody>
-			</table>
-		
-	</div>
+			</table>		
+		</div>
 	</div>
 
 	<!-- Footer / Buttons -->

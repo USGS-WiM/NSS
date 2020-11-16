@@ -24,13 +24,13 @@ button {
 }
 
 .editRegRegion {
-    width:45px; 
+    width: 45px; 
     border-top-style:none; 
     border-right-style: none;
 }
 
 .editRegRegionLast {
-    width:45px; 
+    width: 45px; 
     border-top-style:none; 
     border-right-style: none; 
     border-bottom-style:none;
@@ -64,4 +64,8 @@ button {
 
 .editCol {
     width: 41px;
+}
+
+.selectedRow {
+    background-color: rgb(218, 110, 110) !important;
 }

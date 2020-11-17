@@ -9,7 +9,7 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NSSService } from 'app/shared/services/app.service';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 import { SettingsService } from 'app/settings/settings.service';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -48,6 +48,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public showNewRegRegForm: boolean;
   public newRegRegForm: FormGroup;
   public newCitForm: FormGroup;
+  public newLimForm: FormGroup;
   public regions;
   public map;
   public loadingPolygon: boolean;
@@ -62,6 +63,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public rr;
   public status;
   public methods;
+  public variables;
+  public unitTypes;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
@@ -95,6 +98,12 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       'title': new FormControl(null, Validators.required),
       'author': new FormControl(null, Validators.required),
       'citationURL': new FormControl(null, Validators.required)
+    });
+    this.newLimForm = _fb.group({
+      'criteria': new FormControl(null, Validators.required),
+      'description': new FormControl(null, Validators.required),
+      'code': new FormControl(null, Validators.required),
+      'unitType': new FormControl(null, Validators.required)
     });
   }
 
@@ -144,6 +153,18 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
     this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.methodURL).subscribe(res => {
       this.methods = res;
+    });
+    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(res => {
+      res.sort((a, b) => a.name.localeCompare(b.name));
+      this.variables = res;
+    });
+    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
+      res.sort((a, b) => a.name.localeCompare(b.name));
+      for (const unit of res) {
+          unit['unit'] = unit['name'];
+          unit['abbr'] = unit['abbreviation'];
+      }
+      this.unitTypes = res;
     });
   }
 
@@ -406,6 +427,11 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.addCitation = false; 
     this.newCitForm.reset(); 
     this.newCitation = false;
+  }
+
+  public removeLimitation(){
+    this.addLimitation = false; 
+    this.newLimForm.reset(); 
   }
 
   public createNewCitation(rr) {

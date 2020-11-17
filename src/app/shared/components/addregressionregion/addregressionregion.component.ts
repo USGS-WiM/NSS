@@ -47,7 +47,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public showNewRegRegForm: boolean;
   public newRegRegForm: FormGroup;
   public newCitForm: FormGroup;
-  public newLimForm: FormGroup;
   public regions;
   public map;
   public loadingPolygon: boolean;
@@ -283,6 +282,27 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this.newRegRegForm.controls['location'].setValue(this.selectedRegRegion.location);
           this.newRegRegForm.controls['statusID'].setValue(this.selectedRegRegion.statusID);
           this.newRegRegForm.controls['methodID'].setValue(this.selectedRegRegion.methodID);
+          if (this.selectedRegRegion.limitations) { // if there are limitations set values in modal
+            this.selectedRegRegion.limitations.forEach((element,index) => {
+              this.addLimitation();
+              const controlArray = <FormArray> this.newRegRegForm.get('limitations');
+              controlArray.controls[index].get('criteria').setValue(element.criteria);
+              controlArray.controls[index].get('description').setValue(element.description);
+
+              element.variables.forEach((v) => {
+                this.unitTypes.forEach((unit,x) => {  
+                  if (unit.id.toString() == v.unitTypeID.toString()){
+                    controlArray.controls[index].get('unitType').setValue(this.unitTypes[x]);
+                  }
+                });
+                this.variables.forEach((variable,x) => {  
+                  if (variable.id.toString() == v.variableTypeID.toString()){
+                    controlArray.controls[index].get('code').setValue(this.variables[x]);
+                  }
+                });
+              });
+            });
+          }
           if (this.selectedRegRegion.citationID) { // if there is a citation set values in modal
             this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
             this.addCitation = true;

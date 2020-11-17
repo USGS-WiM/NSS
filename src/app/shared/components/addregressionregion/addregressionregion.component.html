@@ -63,7 +63,7 @@
                     Study Area is required
                 </div>
             </div>
-
+            <hr>
             <label>Limitations:</label>
             <div>
                 <button type="button" class="button mright-xs" (click)="addLimitation()">Add New Limitation</button>
@@ -93,8 +93,8 @@
                         <!-- Variable -->
                         <div class="form-group required">
                             <label class="req" for="code">Explanatory Variable:</label>
-                            <ng-select formControlName="code" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
-                                <ng-option *ngFor="let v of variables" [value]="v.code">{{v.code}} ({{v.description}})</ng-option>
+                            <ng-select formControlName="code" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                <ng-option *ngFor="let v of variables" [value]="v">{{v.code}} ({{v.description}})</ng-option>
                             </ng-select>
                         </div>
                         <!-- Unit Type -->
@@ -110,6 +110,7 @@
         </form>
 
         <div>
+            <hr>
             <label>Citation:</label>
             <div>
                 <button *ngIf="!addCitation" type="button" class="button mright-xs" (click)="addCitation=true; newCitation=true">Add New Citation</button>
@@ -142,6 +143,7 @@
         </div>
 
         <div>
+            <hr>
             <label for="location">Polygon (Shapefile .zip):</label>
             <div>
                 <button *ngIf="!uploadPolygon" type="button" class="button mright-xs" (click)="showMap()">Upload Polygon</button>        

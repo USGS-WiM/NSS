@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 //import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { NSSService } from 'app/shared/services/app.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -47,6 +47,9 @@ export class BatchUploadModal implements OnInit {
   public regressionType: Array<Regressiontype>;
   public unitType: Array<Unittype>;
   public variableType: Array<Variabletype>;
+  public wb: XLSX.WorkBook
+  public sheetNamesButtons: boolean;
+  public wsname;
 
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
@@ -61,23 +64,23 @@ export class BatchUploadModal implements OnInit {
     });
     this.modalElement = this.batchUploadModal;
     // subscribe to all agencies
-    this._settingsService.getEntitiesGageStats(this.configSettings.agenciesURL).subscribe((agencies: Array<Agency>) => {
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL).subscribe((agencies: Array<Agency>) => {
       this.agencies = agencies;
     });
     // subscribe to all station types
-    this._settingsService.getEntitiesGageStats(this.configSettings.stationTypeURL).subscribe((stationtypes: Array<StationType>) => {
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL).subscribe((stationtypes: Array<StationType>) => {
       this.stationTypes = stationtypes;
     });
-    this._settingsService.getEntitiesGageStats(this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
-    this._settingsService.getEntitiesGageStats(this.configSettings.statisticGrpURL).subscribe((statgroups: Array<Statisticgroup>) => {
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL).subscribe((statgroups: Array<Statisticgroup>) => {
       this.statisticGroupType = statgroups;
     });
-    this._settingsService.getEntitiesGageStats(this.configSettings.regTypeURL).subscribe((regtypes: Array<Regressiontype>) => {
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL).subscribe((regtypes: Array<Regressiontype>) => {
       this.regressionType = regtypes;
     });
-    this._settingsService.getEntitiesGageStats(this.configSettings.variablesURL).subscribe((vartypes: Array<Variabletype>) => {
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL).subscribe((vartypes: Array<Variabletype>) => {
       this.variableType = vartypes;
     });
     this._nssService.getUnitTypes().subscribe(res => {
@@ -96,17 +99,28 @@ export class BatchUploadModal implements OnInit {
     const reader: FileReader = new FileReader();
     reader.onload = (e:any) => {
         const bstr: string = e.target.result;                         
-        const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary'}); // Read WorkBook
-        const wsname: string = wb.SheetNames[2];                     // Select first worksheet, CHANGE NUMBER TO CHANGE SHEET
-        const ws: XLSX.WorkSheet = wb.Sheets[wsname];                // Get worksheet with that name
+        //const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary'}); // Read WorkBook
+        this.wb = XLSX.read(bstr, { type: 'binary'});
+        //console.log(wb), console.log(wb.Sheets), console.log(wb.SheetNames, typeof(wb.SheetNames));
+        this.sheetNamesButtons = true;
+        //const wsname: string = wb.SheetNames[2];                     // Select first worksheet, CHANGE NUMBER TO CHANGE SHEET
+        //const ws: XLSX.WorkSheet = wb.Sheets[wsname];                // Get worksheet with that name
         //console.log(ws);
-        this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));    // Convert data to json
+        //this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));    // Convert data to json
         //console.log(this.data);
         
-        this.createTable(this.data);
+        //this.createTable(this.data);
     };
     reader.readAsBinaryString(target.files[0]); 
+    //this.tableDisplay = true;
+  }
+
+  public selectSheet(sheetName) {
+    const ws: XLSX.WorkSheet = this.wb.Sheets[sheetName];
+    this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));
+    this.createTable(this.data);
     this.tableDisplay = true;
+    this.sheetNamesButtons = false;
   }
 
   public submitStations() {

@@ -1,7 +1,7 @@
 <ng-template #batchUpload let-c="close" let-d="dismiss" >
     <div>
         <div class="modal-header">
-            <h4 class="title" > Batch Upload </h4>
+            <h3 class="title" > Batch Upload </h3>
             <button class="icon-button" (click)="c('closed')"><i class="far fa-times"></i></button>
         </div>
         <div class="modal-body">
@@ -14,6 +14,12 @@
                 <input *ngIf='selectUpload' (change)="selectFile($event)" type='file' multiple='false'/>
                 <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true'>Edit Table</button>
                 <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
+            </div>
+            <div *ngIf="sheetNamesButtons">
+                <h6 class="title" > Select a Worksheet:</h6>
+                <ng-container *ngFor="let sheetName of wb.SheetNames">
+                        <button class="button small grey mright-xs" (click)='selectSheet(sheetName)'>{{sheetName}}</button>
+                </ng-container>
             </div>
             <div>
                 <table style="border:solid 1px gray" class="custom-table">

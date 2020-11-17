@@ -7,7 +7,7 @@
     "errorsURL": "Errors",
     "loginURL": "authenticate",
     "managersURL": "Managers",
-    "regionURL": "Regions/",
+    "regionURL": "Regions",
     "regRegionURL": "RegressionRegions",
     "regTypeURL": "RegressionTypes",
     "rolesURL": "Roles",

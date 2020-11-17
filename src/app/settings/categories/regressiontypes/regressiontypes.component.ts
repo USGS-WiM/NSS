@@ -74,16 +74,16 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.regionURL).subscribe(reg => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL).subscribe(reg => {
             this.regions = reg;
         });
-        this._settingsservice.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.selectedStatisticGroups = res;
         });
         this.selectedStatistic = 'none';
         this.selectedRegion = 'none';
-        this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
             this.regressionTypes = res;
         });
     }
@@ -98,7 +98,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
             this.selectedStatisticID = "";
         }
         this._settingsservice
-            .getEntities(this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
+            .getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
             .subscribe(regs => {
                 this.regressionTypes = regs;
             });
@@ -114,14 +114,14 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         if(this.selectedRegion === 'none'){
             this.selectedRegionID = "";
         }
-        this._settingsservice.getEntities(this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.regressionTypes = res;
         });
     }
 
     public getAllRegTypes() {
-        this._settingsservice.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
             this.regressionTypes = res;
         });
     }
@@ -169,7 +169,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
 
     private createNewRegression() {
         const newReg = this.newRegForm.value;
-        this._settingsservice.postEntity(newReg, this.configSettings.regTypeURL).subscribe(
+        this._settingsservice.postEntity(newReg, this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(
             (response: Regressiontype) => {
                 response.isEditing = false;
                 this._toasterService.pop('info', 'Info', 'Regression type was created');
@@ -187,9 +187,14 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     }
 
     private EditRowClicked(i: number) {
-        this.rowBeingEdited = i;
-        this.tempData = Object.assign({}, this.regressionTypes[i]); // make a copy in case they cancel
+        // make a copy in case they cancel
         this.regressionTypes[i].isEditing = true;
+        //if there is a row already being edited, cancel that edit
+        if (this.isEditing == true) {
+            this.CancelEditRowClicked(this.rowBeingEdited);
+        }
+        this.tempData = Object.assign({}, this.regressionTypes[i]); 
+        this.rowBeingEdited = i;
         this.isEditing = true; // set to true so create new is disabled
     }
 
@@ -210,7 +215,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Regression Type', 'Name, description and Code are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.regTypeURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.regressionTypes[i] = u;
@@ -233,7 +238,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.regressionTypes.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.regTypeURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.regTypeURL)
                 .subscribe(result => {
                     this.regressionTypes.splice(index, 1);
                     this._settingsservice.setRegTypes(this.regressionTypes); // update service

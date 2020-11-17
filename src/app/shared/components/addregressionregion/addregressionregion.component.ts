@@ -125,21 +125,25 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
       this.selectedRegressionRegion = regRegions;
     });
-    this._settingsService.getEntities(this.configSettings.statusURL).subscribe(res => {
-      this.status = res;
-    });
-    this._settingsService.getEntities(this.configSettings.methodURL).subscribe(res => {
-      this.methods = res;
-    });
     this._nssService.currentCitation.subscribe(item => {
       this.currentCitation = item;
       if (this.currentCitation != " ") {
         this.addExistingCitation();
       }
     });
+    this.getEntities();
     this.modalElement = this.addRegressionRegionModal;
     this.uploadPolygon = true;
     this.loadingPolygon = false;
+  }
+
+  public getEntities(){
+    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.statusURL).subscribe(res => {
+      this.status = res;
+    });
+    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.methodURL).subscribe(res => {
+      this.methods = res;
+    });
   }
 
   public saveFilters(){
@@ -188,7 +192,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     L.control.layers(baseMaps).addTo(this.map);
   }
 
-  public showModal(): void {
+  public showModal(): void {   
+    this.getEntities();
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
     this.modalRef.result.then(
       result => {
@@ -208,7 +213,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public showManageCitationsModal() {
     const addManageCitationForm: ManageCitation = {
       show: true,
-      addCitation: false
+      addCitation: false,
+      inGagePage: false
     }
     this._nssService.setManageCitationsModal(addManageCitationForm);
   }
@@ -246,11 +252,12 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   // show add regression region modal
   public showNewRegressionRegionForm(rr?) {
+    this.getEntities();
     // shows form for creating new regression or editing regression 
     if (rr) { // edit existing regression region
       this._loaderService.showFullPageLoad();
       this.addRegReg = false;
-      this._settingsService.getEntities(this.configSettings.regRegionURL + '/' + rr + '?includeGeometry=true')
+      this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regRegionURL + '/' + rr + '?includeGeometry=true')
         .subscribe((res) => {
           this.selectedRegRegion = res;
           // set values in add regression region modal
@@ -263,7 +270,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           if (this.selectedRegRegion.citationID) { // if there is a citation set values in modal
             this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
             this.addCitation = true;
-            this._settingsService.getEntities(this.configSettings.citationURL + '/' + this.selectedRegRegion.citationID)
+            this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.citationURL + '/' + this.selectedRegRegion.citationID)
               .subscribe(res => {
                   this.selectedCitation = res;
                   this.newCitForm.controls['title'].setValue(this.selectedCitation.title);
@@ -327,7 +334,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         this.newRegRegForm.get('location').setValue(null);
     }
     this._settingsService
-      .postEntity(this.newRegRegForm.value, this.configSettings.regionURL + regionID + '/' + this.configSettings.regRegionURL)
+      .postEntity(this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + regionID + '/' + this.configSettings.regRegionURL)
       .subscribe((response:any) => {
         response.isEditing = false;
         if (!response.headers) {
@@ -353,7 +360,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     if (!this.uploadPolygon) { // No polygon
       this.newRegRegForm.get('location').setValue(null);
     }
-    this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.regRegionURL).subscribe(res => {
+    this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(res => {
       if (!res.headers) {
         this._toasterService.pop('info', 'Info', 'Regression Region was updated');
         this.modalRef.close();
@@ -361,7 +368,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         this._settingsService.outputWimMessages(res); 
       }
       if (this.addCitation && this.selectedRegRegion.citationID) { // Editing existing citation (moving into manage citaion modal)
-        this._settingsService.putEntity(this.selectedRegRegion.citationID, this.newCitForm.value, this.configSettings.citationURL)
+        this._settingsService.putEntity(this.selectedRegRegion.citationID, this.newCitForm.value, this.configSettings.nssBaseURL + this.configSettings.citationURL)
           .subscribe((response: any) => {
             if (!response.headers) { // Citation successfully updated
               this._toasterService.pop('info', 'Info', 'Citation was updated');
@@ -402,7 +409,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   public createNewCitation(rr) {
     // add new citation
-    this._settingsService.postEntity(this.newCitForm.value, this.configSettings.regRegionURL + '/' + rr.id + '/' +
+    this._settingsService.postEntity(this.newCitForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL + '/' + rr.id + '/' +
       this.configSettings.citationURL)
       .subscribe((response: any) => {
         this.newCitForm.reset();

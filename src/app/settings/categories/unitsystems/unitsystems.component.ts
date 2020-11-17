@@ -66,7 +66,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.isEditing = false;
-        this._settingsservice.getEntities(this.configSettings.unitSystemsURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitSystemsURL).subscribe(res => {
             this.unitSystems = res;
         });
 
@@ -117,7 +117,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
 
     private createNewUnit() {
         const newUnit = this.newUnitSystemForm.value;
-        this._settingsservice.postEntity(newUnit, this.configSettings.unitSystemsURL).subscribe(
+        this._settingsservice.postEntity(newUnit, this.configSettings.nssBaseURL + this.configSettings.unitSystemsURL).subscribe(
             (response: UnitSystem) => {
                 response.isEditing = false;
                 this.unitSystems.push(response);
@@ -132,10 +132,14 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
     }
 
     private EditRowClicked(i: number) {
-        // from wateruse
-        this.rowBeingEdited = i;
-        this.tempData = Object.assign({}, this.unitSystems[i]); // make a copy in case they cancel
+        // make a copy in case they cancel
         this.unitSystems[i].isEditing = true;
+        //if there is a row already being edited, cancel that edit
+        if (this.isEditing == true) {
+            this.CancelEditRowClicked(this.rowBeingEdited);
+        }
+        this.tempData = Object.assign({}, this.unitSystems[i]); 
+        this.rowBeingEdited = i;
         this.isEditing = true; // set to true so create new is disabled
     }
 
@@ -156,7 +160,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Unit System', 'Unit System Name is required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.unitSystemsURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.nssBaseURL + this.configSettings.unitSystemsURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.unitSystems[i] = u;
@@ -179,7 +183,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.unitSystems.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.unitSystemsURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.unitSystemsURL)
                 .subscribe(result => {
                     this.unitSystems.splice(index, 1);
                     this._settingsservice.setUnitSystems(this.unitSystems); // update service

@@ -32,6 +32,7 @@ import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from 'app/shared/interfaces/station';
 import { GageCharacteristic } from 'app/shared/interfaces/gagecharacteristic';
 import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
+import { Method } from 'app/shared/interfaces/method';
 
 @Injectable()
 export class SettingsService {
@@ -42,6 +43,7 @@ export class SettingsService {
     private configSettings: Config;
     // SUBJECTS //////////////////////////////////////
     private _regionSubject: BehaviorSubject<Array<Region>> = <BehaviorSubject<Region[]>>new BehaviorSubject([]);
+    private _methodSubject: BehaviorSubject<Array<Method>> = <BehaviorSubject<Method[]>>new BehaviorSubject([]);
     private _statisticGroupSubject: BehaviorSubject<Array<Statisticgroup>> = <BehaviorSubject<Statisticgroup[]>>new BehaviorSubject([]);
     private _regRegionSubject: BehaviorSubject<Array<Regressionregion>> = <BehaviorSubject<Regressionregion[]>>new BehaviorSubject([]);
     private _regTypeSubject: BehaviorSubject<Array<Regressiontype>> = <BehaviorSubject<Regressiontype[]>>new BehaviorSubject([]);
@@ -116,22 +118,15 @@ export class SettingsService {
     // ------------ GETS ---------------------------
     public getEntities(url: string) {
         return this._http
-            .get(this.configSettings.nssBaseURL + url, { headers: this.authHeader })
+            .get(url, { headers: this.authHeader })
             .map(res => { if (res) {return <Array<any>>res }})
-            .catch(this.errorHandler);
-    }
-
-    public getEntitiesGageStats(url: string) {
-        return this._http
-            .get(this.configSettings.gageStatsBaseURL + url, { headers: this.authHeader })
-            .map(res => res)//{ if (res) {return <Array<any>>res }}) Out response as object instead of array.
             .catch(this.errorHandler);
     }
 
     // ------------ POSTS ------------------------------
     public postEntity(entity: object, url: string) {
         return this._http
-            .post(this.configSettings.nssBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
+            .post(url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => {
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
                 } else {this.outputWimMessages(res); }
@@ -140,31 +135,11 @@ export class SettingsService {
             .catch(this.errorHandler);
     }
 
-    public postEntityGageStats(entity: object, url: string) {
-        return this._http
-            .post(this.configSettings.gageStatsBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
-            .map(res => {
-                if (!res.headers) {this._toasterService.pop('info', 'Info', 'New item was added');
-                } else {
-                    this.outputWimMessages(res); }
-                return res.body;
-            })
-            .catch(this.errorHandler); 
-    }
-
     // ------------ PUTS --------------------------------
     public putEntity(id, entity, url: string) {
         if (id !== '') {url += '/' + id; }
         return this._http
-            .put(this.configSettings.nssBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
-            .map(res => res)
-            .catch(this.errorHandler);
-    }
-
-    public putEntityGageStats(id, entity, url: string) {
-        if (id !== '') {url += '/' + id; }
-        return this._http
-            .put(this.configSettings.gageStatsBaseURL + url, entity, { headers: this.authHeader, observe: 'response' })
+            .put(url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => res)
             .catch(this.errorHandler);
     }
@@ -173,14 +148,7 @@ export class SettingsService {
     public deleteEntity(id, url: string, params?: string) {
         if (id !== '') {url += '/' + id; }
         if (params) {url += params; }
-        return this._http.delete(this.configSettings.nssBaseURL + url, { headers: this.authHeader, observe: 'response'})
-            .catch(this.errorHandler);
-    }
-
-    public deleteEntityGageStats(id, url: string, params?: string) {
-        if (id !== '') {url += '/' + id; }
-        if (params) {url += params; }
-        return this._http.delete(this.configSettings.gageStatsBaseURL + url, { headers: this.authHeader, observe: 'response'})
+        return this._http.delete( url, { headers: this.authHeader, observe: 'response'})
             .catch(this.errorHandler);
     }
 
@@ -211,6 +179,9 @@ export class SettingsService {
     // SETTERS ///////////////////////////////////////////
     public setRegions(r: Array<Region>) {
         this._regionSubject.next(r);
+    }
+    public setMethods(m: Array<Method>) {
+        this._methodSubject.next(m);
     }
     public setStatGroups(s: Array<Statisticgroup>) {
         this._statisticGroupSubject.next(s);

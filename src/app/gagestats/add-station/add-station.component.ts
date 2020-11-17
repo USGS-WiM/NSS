@@ -95,7 +95,7 @@ export class AddStationModal implements OnInit {
     delete station.longitude;
     station = {...station, 'location': location};
 
-    this._settingsService.postEntityGageStats(station, this.configSettings.stationsURL)
+    this._settingsService.postEntity(station,this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL)
       .subscribe((response:any) =>{
         if(!response.headers){
           this._toasterService.pop('info', 'Info', 'Station Added');

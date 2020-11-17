@@ -12,6 +12,7 @@ import { SettingsService } from 'app/settings/settings.service';
 import { ConfigService } from 'app/config.service';
 import { Config } from 'protractor';
 import { ToasterConfig } from 'angular2-toaster';
+import { ManageCitation } from 'app/shared/interfaces/managecitations';
 
 
 @Component({
@@ -35,7 +36,7 @@ export class GagestatsComponent implements OnInit {
   public itemPerPage = [15,25,50,100]; 
   public perPage = 50;
   private configSettings: Config;
-  public config: ToasterConfig = new ToasterConfig({ timeout: 0 });
+  public config: ToasterConfig = new ToasterConfig({ timeout: 5000 });
 
 
   constructor(
@@ -70,7 +71,8 @@ export class GagestatsComponent implements OnInit {
     this._nssService.stationTypes.subscribe((stationtypes: Array<StationType>) => {
       this.stationTypes = stationtypes;
     });
-    this._settingsservice.getEntitiesGageStats(this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
+    // get all regions
+    this._nssService.regions.subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
     //subscribe to page number related information
@@ -132,6 +134,16 @@ export class GagestatsComponent implements OnInit {
       gageCode: s
   }
     this._nssService.setGagePageModal(gagePageForm);
+  }
+
+  public showManageCitationsModal() {
+    const addManageCitationForm: ManageCitation = {
+        show: true,
+        addCitation: true,
+        inGagePage: true,
+        inGageStats: true,
+    } 
+    this._nssService.setManageCitationsModal(addManageCitationForm);
   }
 
   //TODO: Bulk Upload Button

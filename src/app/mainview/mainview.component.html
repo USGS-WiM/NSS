@@ -245,7 +245,7 @@
 								<tr>
 									<th class="width-40">{{rr.name}} Region</th>
 									<th class="width-10">Value</th>
-									<th class="width-20" *ngIf="rr.results[0].intervalBounds" colspan="2">Prediction
+									<th class="width-20" *ngIf="rr.results[0].intervalBounds" colspan="2">90% Prediction
 										Interval</th>
 									<th class="width-10" *ngIf="rr.results[0].errors && rr.results[0].errors.length > 0"
 										[attr.colspan]="rr.results[0].errors.length">Errors (%)</th>
@@ -1135,13 +1135,13 @@
 							<tbody>
 								<tr *ngFor="let r of rr.regressions; let rIndex = index;">
 									<td class="table-icon-buttons">
-										<button *ngIf="!r.isEditing" title="Edit Regression"
-											(click)="editRowClicked(r, rrIndex, sgIndex, rIndex)" class="icon-button"
+										<button *ngIf="!r.isEditing" title="Edit Scenario"
+											(click)="editScenarioRowClicked(s.statisticGroupID, r, rr, 'edit')" class="icon-button"
 											aria-hidden="true">
 											<i class="far fa-pencil"></i>
 										</button>
 										<button *ngIf="!r.isEditing" title="Clone Scenario"
-											(click)="cloneRowClicked(s.statisticGroupID, r, rr)" class="icon-button"
+											(click)="editScenarioRowClicked(s.statisticGroupID, r, rr, 'clone')" class="icon-button"
 											aria-hidden="true">
 											<i class="far fa-clone"></i>
 										</button>

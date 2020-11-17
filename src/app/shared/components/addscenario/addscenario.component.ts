@@ -47,6 +47,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public regRegion: any;
     public statisticGroup: any;
     public clone = false;
+    public edit = false;
     public selectedRegion;
     public originalRegion;
     private configSettings: Config;
@@ -58,6 +59,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public tempSelectedStatisticGrp: Array<Statisticgroup>;
     public filteredRegressionTypes;
     public filtered = true;
+    public skipCheck = false;
+    public scen;
+    public originalScenario = [];
+    public editMode: boolean;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -73,6 +78,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             'region': new FormControl(null, Validators.required),
             'statisticGroupID': new FormControl(null, Validators.required),
             'regressionRegions': this._fb.group({
+                'equationCheck': new FormControl({value: false}),
                 'ID': new FormControl(null, Validators.required),
                 'parameters': this._fb.array([]),
                 'regressions': this._fb.group({
@@ -134,23 +140,23 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
     
     public getEntities(){   // Moved to own function in order to reload properties in case new property was added in settings
-        this._settingsService.getEntities(this.configSettings.regionURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.regions = res;
         });
-        this._settingsService.getEntities(this.configSettings.statisticGrpURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.statisticGroups = res;
         });
-        this._settingsService.getEntities(this.configSettings.regTypeURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.regressionTypes = res;
         });
-        this._settingsService.getEntities(this.configSettings.variablesURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.variables = res;
         });
-        this._settingsService.getEntities(this.configSettings.unitsURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             for (const unit of res) {
                 unit['unit'] = unit['name'];
@@ -158,15 +164,39 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
             this.unitTypes = res;
         });
-        this._settingsService.getEntities(this.configSettings.errorsURL).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.errorsURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.errors = res;
         });
     }
 
+    public equationCheck(check){
+        this.skipCheck = check;
+        if (check) {
+            this.newScenForm.get('regressionRegions.regressions.expected.value').disable();    
+            this.newScenForm.get('regressionRegions.regressions.expected.intervalBounds.upper').disable();            
+            this.newScenForm.get('regressionRegions.regressions.expected.intervalBounds.lower').disable();            
+            this.newScenForm.patchValue({ regressionRegions: { regressions: { expected: { value: null}}}});
+            const parmControl = <FormArray>this.newScenForm.get('regressionRegions.parameters');
+            for (let i = parmControl.length-1; i >= 0; i--) {
+                this.newScenForm.get('regressionRegions.parameters.'+i+'.value').disable();
+                parmControl.controls[i].get('value').setValue(null);
+            }
+        } else {
+            this.newScenForm.get('regressionRegions.regressions.expected.value').enable();
+            this.newScenForm.get('regressionRegions.regressions.expected.intervalBounds.upper').enable();            
+            this.newScenForm.get('regressionRegions.regressions.expected.intervalBounds.lower').enable();      
+            const parmControl = <FormArray>this.newScenForm.get('regressionRegions.parameters');
+            for (let i = parmControl.length-1; i >= 0; i--) {
+                this.newScenForm.get('regressionRegions.parameters.'+i+'.value').enable();
+            }
+        }
+    }
+
     public showModal(): void {
         this.getEntities();
         this.onStatGroupSelect('');
+        this.equationCheck(false);
         this.selectedRegion = this.originalRegion;
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
@@ -182,16 +212,30 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.cancelCreateScenario();
             }
         );
-        if (this.cloneParameters != " "){
+        if (this.cloneParameters.info) {
             this.clearScenario();
-            this.clone = true;
             this.filtered = false;
-            this.cloneScenario();
-            this.newScenForm.addControl('region', this._fb.control('', Validators.required));
-        }else{
+            //cloned scenario
+            if (this.cloneParameters.info == "clone") {
+                this.clone = true;
+                this.edit = false;
+                this.cloneScenario();
+            }
+            //edit scenario
+            else if (this.cloneParameters.info == "edit") {
+                this.clone = false;
+                this.edit = true;
+                this.editMode = true;
+                this.originalScenario = [this.cloneParameters.statisticGroupID,this.cloneParameters.rr.id,this.cloneParameters.r.id];
+                this.fillModal();
+            }
+        //new scenario
+        } else {
+            this.editMode = false;
             this.filtered = true;
             this.clearScenario();
             this.clone = false;
+            this.edit = false;
         }
     }
 
@@ -208,12 +252,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
     }
 
-    cloneScenario(){  
-        this.regions.forEach( (element,index) => {  
-            if (element.id.toString() == this.selectedRegion.id.toString()){
-                this.newScenForm.patchValue({ region: this.regions[index]});
-            }
-        });
+    //fill the modal when cloning and editing 
+    public fillModal(){
         this.newScenForm.get('region').valueChanges.subscribe(item => {
             if(item != null){
                 this._nssService.setSelectedRegion(item)
@@ -287,8 +327,41 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             const controlArray = <FormArray> this.newScenForm.get('regressionRegions.regressions.errors');       
             controlArray.controls[index].get('id').setValue(element.id);
             controlArray.controls[index].get('value').setValue(element.value.toString());
-        });  
+        }); 
         this.cloneParameters = " "; 
+    }
+
+    public cloneScenario(){  
+       this.newScenForm.addControl('region', this._fb.control('', Validators.required));
+        this.regions.forEach( (element,index) => {  
+            if (element.id.toString() == this.selectedRegion.id.toString()){
+                this.newScenForm.patchValue({ region: this.regions[index]});
+            }
+        });
+        this.fillModal();
+    }
+
+    public cloneOrEdit(e){
+        //make sure in edit mode
+        if(e){
+            if (this.editMode == true){
+                this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
+                //change back to edit if user reselects original core dropdowns
+                if ((this.originalScenario[0] == this.scen.statisticGroupID) &&
+                (this.originalScenario[1] == this.scen.regressionRegions.ID) && 
+                (this.originalScenario[2] == this.scen.regressionRegions.regressions.ID)) {
+                    this.clone = false;
+                    this.edit = true;
+                    this._toasterService.clear();
+                    this._toasterService.pop('info', 'Info', 'Scenario Will Be Edited Instead Of Cloned');
+                } else { //change to clone
+                    this.clone = true;
+                    this.edit = false;
+                    this._toasterService.clear();
+                    this._toasterService.pop('info', 'Info', 'Scenario Will Be Cloned Instead Of Edited');
+                }
+            }
+        }
     }
 
     addVariable() {
@@ -303,6 +376,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             //comments: new FormControl(null),
             value: new FormControl(null, Validators.required)
         }));
+        this.equationCheck(this.newScenForm.get('regressionRegions.equationCheck').value);
     }
 
     addError() {
@@ -371,23 +445,24 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public onStatGroupSelect(e){
-        this._settingsService.getEntities(this.configSettings.regTypeURL+"?statisticgroups="+ e).subscribe(res => {
+        this._settingsService.getEntities(this.configSettings.nssBaseURL + '/' + this.configSettings.regTypeURL+"?statisticgroups="+ e).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.filteredRegressionTypes = res;
         });
     }
 
-    createNewScenario() {
+    //get scen object ready for put and post
+    public setUpScenario(){
         this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
         this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
         this.tempSelectedRegType = this.selectedRegType;
         // adding all necessary properties, since ngValue won't work with all the nested properties
-        const scen = JSON.parse(JSON.stringify(this.newScenForm.value));
-        const regRegs = scen['regressionRegions']; const regs = regRegs.regressions;
-        const statGroupIndex = this.statisticGroups.findIndex(item => item.id === scen['statisticGroupID']);
+        this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
+        const regRegs = this.scen['regressionRegions']; const regs = regRegs.regressions;
+        const statGroupIndex = this.statisticGroups.findIndex(item => item.id === this.scen['statisticGroupID']);
+        this.scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
+        this.scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
 
-        scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
-        scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
         // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);
         regRegs['name'] = this.regressionRegions[regRegIndex].name;
@@ -400,7 +475,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         // add parameter name, description, add values/check if between limits
         regs.expected.parameters = {};
         for (const parameter of regRegs.parameters) {
+            if (this.skipCheck == true) {
+                regs.expected.parameters[parameter.code] = 0;
+            } else {
             regs.expected.parameters[parameter.code] = parameter.value;
+            }
             const paramIndex = this.variables.findIndex(item => item.code === parameter.code);
             parameter['name'] = this.variables[paramIndex].name;
             parameter['description'] = this.variables[paramIndex].description;
@@ -414,25 +493,52 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         if (!this.addPredInt || (!regs.predictionInterval.biasCorrectionFactor && !regs.predictionInterval.student_T_Statistic &&
             !regs.predictionInterval.variance && !regs.predictionInterval.xiRowVector && !regs.predictionInterval.covarianceMatrix)) {
                 regs.predictionInterval = null; regs.expected.intervalBounds = null;
-            }
+        }
 
         // change regression region/regression to arrays
-        scen['regressionRegions'].regressions = [regs];
-        scen['regressionRegions'] = [regRegs];
+        this.scen['regressionRegions'].regressions = [regs];
+        this.scen['regressionRegions'] = [regRegs];
+    }
 
-        // post scenario
-        this._settingsService.postEntity(scen, this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID)
-            .subscribe((response: any) => {
-                if(this.originalRegion==this.selectedRegion){
-                    this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
-                    this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
-                    this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
-                }else{
-                    this._nssService.setSelectedRegion(this.selectedRegion);
-                    this._nssService.selectedStatGroups = [];
-                    this._nssService.setSelectedRegRegions([]);
-                    this._nssService.selectedRegressionTypes = [];
+    public setSidebar(){
+        if (this.originalRegion == this.selectedRegion) {
+            this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+            this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
+            this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
+        } else {
+            this._nssService.setSelectedRegion(this.selectedRegion);
+            this._nssService.selectedStatGroups = [];
+            this._nssService.setSelectedRegRegions([]);
+            this._nssService.selectedRegressionTypes = [];
+        }
+    }
+
+    public async submitScenario() {
+        // put scenario
+        this.setUpScenario(); 
+        await this._settingsService.putEntity('', this.scen, this.configSettings.nssBaseURL + '/' + this.configSettings.scenariosURL + '?skipCheck=' + this.skipCheck)
+            .subscribe((response) => {
+                this.setSidebar();
+                // clear form
+                if (!response.headers) {
+                    this._toasterService.pop('info', 'Info', 'Scenario was Updated');
+                } else {
+                    this._settingsService.outputWimMessages(response); 
                 }
+                this.cancelCreateScenario();
+            }, error => {
+                if (this._settingsService.outputWimMessages(error)) { return; }
+                this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
+            }
+        );
+    }
+
+    public createNewScenario() {
+        // post scenario
+        this.setUpScenario();
+        this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID + '&skipCheck=' + this.skipCheck)
+            .subscribe((response: any) => {
+                this.setSidebar();
                 // clear form
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was added');

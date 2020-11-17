@@ -63,6 +63,50 @@
                     Study Area is required
                 </div>
             </div>
+
+            <label>Limitations:</label>
+            <div>
+                <button type="button" class="button mright-xs" (click)="addLimitation()">Add New Limitation</button>
+            </div>
+
+            <div formArrayName="limitations">
+                <div *ngFor="let var of newRegRegForm.get('limitations').controls; let limIndex = index">
+                    <div class="scenario-dropdown" (click)="checkDiv('limitation' + (limIndex + 1)) ? hideDiv('limitation' + (limIndex + 1)) : showDiv('limitation' + (limIndex + 1))">
+                        <div class="scenario-dropdown-title">
+                            <span>Limitation {{limIndex + 1}}</span>
+                            <i class="fas" [ngClass]="{'fa-chevron-down': checkDiv('limitation' + (limIndex + 1)),'fa-chevron-right': !checkDiv('limitation' + (limIndex + 1))}"></i>
+                        </div>
+                        <button class="icon-button" (click)="removeLimitation(limIndex)"><i class="far fa-times"></i></button>
+                    </div>
+                    
+                    <div [formGroupName]="limIndex" [id]="'limitation' + (limIndex + 1)" class="scenFormGroup">
+                        <!-- Criteria -->
+                        <div class="form-group required">
+                            <label for="criteria">Criteria:</label>
+                            <textarea class="form-control" rows="3" placeholder="" formControlName="criteria"></textarea>
+                        </div>
+                        <!-- Description -->
+                        <div class="form-group required">
+                            <label for="description">Description:</label>
+                            <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
+                        </div>
+                        <!-- Variable -->
+                        <div class="form-group required">
+                            <label class="req" for="code">Explanatory Variable:</label>
+                            <ng-select formControlName="code" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                <ng-option *ngFor="let v of variables" [value]="v.code">{{v.code}} ({{v.description}})</ng-option>
+                            </ng-select>
+                        </div>
+                        <!-- Unit Type -->
+                        <div class="form-group required">
+                            <label class="req" for="unitType">Explanatory Variable Unit:</label>
+                                <ng-select formControlName="unitType"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                    <ng-option *ngFor="let u of unitTypes" [value]="u">{{u.name}} ({{u.abbr}})</ng-option>
+                                </ng-select>
+                        </div>
+                    </div>  
+                </div>
+            </div> 
         </form>
 
         <div>
@@ -94,44 +138,6 @@
                         is required</div>
                 </div>
                 <button *ngIf="addCitation" type="button" class="button small blue" (click)="removeCitation()">Remove Citation</button>
-            </form>
-        </div>
-
-        <div>
-            <label>Limitations:</label>
-            <div>
-                <button *ngIf="!addLimitation" type="button" class="button mright-xs" (click)="addLimitation=true;">Add New Limitation</button>
-            </div>
-            <form *ngIf="addLimitation" [formGroup]="newLimForm" class="newLimForm">
-                <!-- Criteria -->
-                <div class="form-group required">
-                    <label for="criteria">Criteria:</label>
-                    <textarea class="form-control" rows="3" placeholder="" formControlName="criteria"></textarea>
-                    <div class="input-invalid-warning" *ngIf="!newLimForm.get('criteria').valid && newLimForm.get('criteria').dirty">Criteria
-                        is required</div>
-                </div>
-                <!-- Description* -->
-                <div class="form-group required">
-                    <label for="description">Description:</label>
-                    <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
-                    <div class="input-invalid-warning" *ngIf="!newLimForm.get('description').valid && newLimForm.get('description').dirty">Description
-                        is required</div>
-                </div>
-                <!-- Variable -->
-                <div class="form-group required">
-                    <label class="req" for="code">Explanatory Variable:</label>
-                    <ng-select formControlName="code" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
-                        <ng-option *ngFor="let v of variables" [value]="v.code">{{v.code}} ({{v.description}})</ng-option>
-                    </ng-select>
-                </div>
-                <!-- Variable Unit Type-->
-                <div class="form-group required">
-                    <label class="req" for="unitType">Explanatory Variable Unit:</label>
-                        <ng-select formControlName="unitType"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
-                            <ng-option *ngFor="let u of unitTypes" [value]="u">{{u.name}} ({{u.abbr}})</ng-option>
-                        </ng-select>
-                </div>
-                <button *ngIf="addLimitation" type="button" class="button small blue" (click)="removeLimitation()">Remove Limitation</button>
             </form>
         </div>
 

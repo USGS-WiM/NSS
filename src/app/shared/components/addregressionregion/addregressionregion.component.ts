@@ -42,7 +42,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public loggedInRole;
   public selectedRegRegion;
   public addCitation: boolean;
-  public addLimitation: boolean;
   public uploadPolygon: boolean;
   public addRegReg: boolean;
   public showNewRegRegForm: boolean;
@@ -92,18 +91,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       code: new FormControl(null, Validators.required),
       region: new FormControl(null, Validators.required),
       location: new FormControl(null),
-      citationID: new FormControl(null)
+      citationID: new FormControl(null),
+      limitations: this._fb.array([])
     });
     this.newCitForm = _fb.group({
       'title': new FormControl(null, Validators.required),
       'author': new FormControl(null, Validators.required),
       'citationURL': new FormControl(null, Validators.required)
-    });
-    this.newLimForm = _fb.group({
-      'criteria': new FormControl(null, Validators.required),
-      'description': new FormControl(null, Validators.required),
-      'code': new FormControl(null, Validators.required),
-      'unitType': new FormControl(null, Validators.required)
     });
   }
 
@@ -168,13 +162,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
   }
 
-  public saveFilters(){
+  public saveFilters() {
     this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
     this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
     this.tempSelectedRegType = this.selectedRegType;
   }
 
-  public requeryFilters(){
+  public requeryFilters() {
     this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
     this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
     this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
@@ -429,11 +423,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.newCitation = false;
   }
 
-  public removeLimitation(){
-    this.addLimitation = false; 
-    this.newLimForm.reset(); 
-  }
-
   public createNewCitation(rr) {
     // add new citation
     this._settingsService.postEntity(this.newCitForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL + '/' + rr.id + '/' +
@@ -456,6 +445,39 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.newCitation = false;
   }
 
+  public addLimitation() {
+    const control = <FormArray>this.newRegRegForm.get('limitations');
+    control.push(this._fb.group({
+      criteria: new FormControl(null, Validators.required),
+      description: new FormControl(null, Validators.required),
+      code: new FormControl(null, Validators.required),
+      unitType: new FormControl(null, Validators.required)
+    }));
+  }
+
+  public hideDiv(divId) {
+    // collapse param/error div
+    const div = document.getElementById(divId);
+    div.classList.add('hidden');
+  }
+
+  public showDiv(divId) {
+    // uncollapse param/error div
+    const div = document.getElementById(divId);
+    div.classList.remove('hidden');
+  }
+
+  public checkDiv(divId) {
+    // check if div is collapsed or not
+    const div = document.getElementById(divId);
+    if (div && div.classList.contains('hidden')) {return false;
+    } else {return true; }
+  }
+
+  public removeLimitation(i) {
+    const control = <FormArray>this.newRegRegForm.get('limitations');
+    control.removeAt(i);
+  }
 
   public addGeojsonToMap(polygon: any) {
     this.polygonLayer = L.geoJSON(polygon, {

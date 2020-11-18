@@ -504,7 +504,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public removeVariable(limIndex, varIndex) {
-    console.log(limIndex, varIndex)
     const control = <FormArray>this.newRegRegForm.get('limitations.' + limIndex + '.variables');
     control.removeAt(varIndex);
   }

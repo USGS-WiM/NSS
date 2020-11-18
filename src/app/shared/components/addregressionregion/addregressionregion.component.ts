@@ -369,6 +369,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     if (!this.uploadPolygon) {
         this.newRegRegForm.get('location').setValue(null);
     }
+    console.log(this.newRegRegForm.value)
+    console.log(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + regionID + '/' + this.configSettings.regRegionURL)
     this._settingsService
       .postEntity(this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + regionID + '/' + this.configSettings.regRegionURL)
       .subscribe((response:any) => {
@@ -470,8 +472,15 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     control.push(this._fb.group({
       criteria: new FormControl(null, Validators.required),
       description: new FormControl(null, Validators.required),
-      code: new FormControl(null, Validators.required),
-      unitType: new FormControl(null, Validators.required)
+      variables: this._fb.array([]),
+    }));
+  }
+
+  public addVariable(limIndex){
+    const control = <FormArray>this.newRegRegForm.get('limitations.'+limIndex+'.variables');
+    control.push(this._fb.group({
+      variableTypeID: new FormControl(null, Validators.required),
+      unitTypeID: new FormControl(null, Validators.required),
     }));
   }
 
@@ -492,6 +501,12 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     const div = document.getElementById(divId);
     if (div && div.classList.contains('hidden')) {return false;
     } else {return true; }
+  }
+
+  public removeVariable(limIndex, varIndex) {
+    console.log(limIndex, varIndex)
+    const control = <FormArray>this.newRegRegForm.get('limitations.' + limIndex + '.variables');
+    control.removeAt(varIndex);
   }
 
   public removeLimitation(i) {

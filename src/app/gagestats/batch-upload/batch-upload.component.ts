@@ -173,7 +173,7 @@ export class BatchUploadModal implements OnInit {
       }  
     });    
     console.log(stations)
-    this._settingsService.postEntityGageStats(stations, "stations/Batch")
+    this._settingsService.postEntity(stations, this.configSettings.gageStatsBaseURL +  "stations/Batch")
       .subscribe((response:any) =>{
         if(!response.headers){
           this._toasterService.pop('info', 'Info', 'Items Added');
@@ -247,7 +247,7 @@ export class BatchUploadModal implements OnInit {
       }  
     });    
     console.log(stats)
-    this._settingsService.postEntityGageStats(stats, "statistics/batch")
+    this._settingsService.postEntity(stats, this.configSettings.gageStatsBaseURL + "statistics/batch")
       .subscribe((response:any) =>{
         if(!response.headers){
           this._toasterService.pop('info', 'Info', 'Items Added');

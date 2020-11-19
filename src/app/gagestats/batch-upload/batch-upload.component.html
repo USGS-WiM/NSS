@@ -33,23 +33,17 @@
                         <tr *ngFor="let row of tableData, let rowIndex = index">
                             <ng-container *ngIf="rowIndex == 0">
                                 <td *ngIf='tableEdit'></td>
-                                <td *ngFor='let val of row, let valIndex = index'>
-                                    <ng-select  [(ngModel)]='tableData[rowIndex][valIndex]'>
-                                        <ng-container *ngIf='uploadStations'>    
-                                            <ng-container *ngFor='let char of getKeys(stationChars)'>
-                                                <ng-option  [value]="stationChars[char]">{{char}}</ng-option>
-                                            </ng-container>
-                                        </ng-container>
-                                        <ng-container *ngIf='uploadStats'>    
-                                            <ng-container *ngFor='let char of getKeys(statChars)'>
-                                                <ng-option  [value]="statChars[char]">{{char}}</ng-option>
-                                            </ng-container>
-                                        </ng-container>
-                                        <ng-container *ngIf='uploadChars'>    
-                                            <ng-container *ngFor='let char of getKeys(charChars)'>
-                                                <ng-option  [value]="charChars[char]">{{char}}</ng-option>
-                                            </ng-container>
-                                        </ng-container>
+                                <td *ngFor='let val of tableData[0], let valIndex = index'>
+                                    <ng-select  [items]="dropdownOptions"
+                                                bindLabel= "name"
+                                                bindValue="id"
+                                                placeholder="Select value"
+                                                [closeOnSelect] = 'false' 
+                                                [markFirst] = 'false'
+                                                [openOnEnter] = 'false'
+                                                [(ngModel)]="tableData[rowIndex][valIndex]"
+                                                (change)="changeDropdownOptions($event)"
+                                                (clear)="tableData[rowIndex][valIndex] = null"  >
                                     </ng-select>
                                 </td>
                             </ng-container>

@@ -33,12 +33,34 @@ export class BatchUploadModal implements OnInit {
   public tableDisplay: boolean = false;
   public tableEdit: boolean = false;
   public data: [][];
-  public stationChars = {"Agency": "agencyID", "Station ID": "code", "Regulated?": "isRegulated", "Latitude": "latitude", "Longitude": "longitude", "Name": "name", "Region": "regionID", "Station Type": "stationTypeID"};
-  public statChars = {"Stat Group Type":"statisticGroupTypeID", "Regression Type":"regressionTypeID", "Station ID":"stationID", "Value":"value", "Units":"unitTypeID", "Comments":"comments", "Preferred?":"isPreferred", "Years of Record":"yearsofRecord", "Start Date":"startDate", "End Date":"endDate", "Remarks": 'remarks'};
-  public charChars = {"Station ID":"stationID", "Variable Type":"variableTypeID", "Units":"unitTypeID", "Value":"value", "Comments":"comments"};
+  public stationChars = [ {'id': 'agencyID', 'name': 'Agency', 'disabled': false}, 
+                          {'id': 'code', 'name': 'Station ID', 'disabled': false}, 
+                          {'id': 'name', 'name': 'Name', 'disabled': false}, 
+                          {'id': 'isRegulated', 'name': 'Regulated?', 'disabled': false}, 
+                          {'id': 'latitude', 'name': 'Latitude', 'disabled': false}, 
+                          {'id': 'longitude', 'name': 'Longitude', 'disabled': false}, 
+                          {'id': 'regionID', 'name': 'Region', 'disabled': false}, 
+                          {'id': 'stationTypeID', 'name': 'Station Type', 'disabled': false}];
+
+  public statChars = [  {'id': 'statisticGroupTypeID', 'name': 'Stat Group Type', 'disabled': false},
+                        {'id': 'regressionTypeID', 'name': 'Regression Type', 'disabled': false},
+                        {'id': 'stationID', 'name': 'Station ID', 'disabled': false},
+                        {'id': 'value', 'name': 'Value', 'disabled': false},
+                        {'id': 'unitTypeID', 'name': 'Units', 'disabled': false},
+                        {'id': 'comments', 'name': 'Comments', 'disabled': false},
+                        {'id': 'isPreferred', 'name': 'Preferred?', 'disabled': false},
+                        {'id': 'yearsofRecord', 'name': 'Years of Record', 'disabled': false},
+                        {'id': 'startDate', 'name': 'Start Date', 'disabled': false},
+                        {'id': 'endDate', 'name': 'End Date', 'disabled': false},
+                        {'id': 'remarks', 'name': 'Remarks', 'disabled': false} ];
+
+  public charChars = [  {'id': "stationID", 'name': "Station ID", 'disabled': false },
+                        {'id': "variableTypeID", 'name': "Variable Type", 'disabled': false },
+                        {'id': "unitTypeID", 'name': "Units", 'disabled': false },
+                        {'id': "value", 'name': "Value", 'disabled': false },
+                        {'id': "comments", 'name': "Comments", 'disabled': false } ];
+  
   public headers;
-  public selectedChars = [];
-  public placeholder = '';
   public tableData;
   public agencies: Array<Agency>;
   public regions: Array<Region>;
@@ -50,6 +72,7 @@ export class BatchUploadModal implements OnInit {
   public wb: XLSX.WorkBook
   public sheetNamesButtons: boolean;
   public wsname;
+  public dropdownOptions;
 
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
@@ -121,6 +144,20 @@ export class BatchUploadModal implements OnInit {
     this.createTable(this.data);
     this.tableDisplay = true;
     this.sheetNamesButtons = false;
+    this.setDropdownOptions();
+  }
+
+  public setDropdownOptions() {
+    // Set dropdown menu options
+    if(this.uploadStations) {
+      this.dropdownOptions = JSON.parse(JSON.stringify(this.stationChars));
+    };
+    if(this.uploadChars) {
+      this.dropdownOptions = JSON.parse(JSON.stringify(this.charChars));
+    };
+    if(this.uploadStats) {
+      this.dropdownOptions = JSON.parse(JSON.stringify(this.statChars));
+    };
   }
 
   public submitStations() {
@@ -323,6 +360,11 @@ export class BatchUploadModal implements OnInit {
   public createTable(data){
     this.headers = JSON.parse(JSON.stringify(data[0]));  // copy the first row of the excel sheet as a list of headers
     this.tableData = JSON.parse(JSON.stringify(data));   // copy the data from the excel sheet to display and change
+    for (var i = 0; i < this.tableData[0].length; i++) {
+      this.tableData[0][i] = null                        // Delete header values from first row
+    }
+    this.dropdownOptions = JSON.parse(JSON.stringify(this.stationChars));
+    console.log(this.tableData)
   }
 
   public clearTable() {
@@ -335,6 +377,18 @@ export class BatchUploadModal implements OnInit {
     this.uploadStations = false;
     this.uploadStats = false;
   }
+
+  public changeDropdownOptions($event) {
+    console.log(this.tableData[0])
+    this.setDropdownOptions();
+    this.dropdownOptions.forEach((element, index) => {
+      if ( this.tableData[0].includes(element.id) ) {
+        this.dropdownOptions[index].disabled = true;
+        console.log(element.id)
+      }
+    });
+    console.log(this.dropdownOptions)
+}
 
   public deleteRow(index) {
     this.tableData.splice(index, 1);

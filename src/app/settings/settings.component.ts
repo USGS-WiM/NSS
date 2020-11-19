@@ -31,7 +31,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     public loggedInRole: string;
     private navigationSubscription;
     public toast: Toast;
-    public config: ToasterConfig = new ToasterConfig({timeout: 0});
+    public config: ToasterConfig = new ToasterConfig({timeout: 5000});
     constructor(
         public _nssService: NSSService,
         private _configService: ConfigService,

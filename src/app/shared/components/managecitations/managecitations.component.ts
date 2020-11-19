@@ -134,14 +134,18 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
     }
 
     public saveFilters(){
-        this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
-        this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
-        this.tempSelectedRegType = this.selectedRegType;
+        if(!this.inGagePage) {  
+            this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
+            this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
+            this.tempSelectedRegType = this.selectedRegType;
+        }    
     }
     
     public requeryFilters(){
-        this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
-        this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
+        if(!this.inGagePage) {
+            this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+            this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
+        }
     }
 
     public filter(input:string) {
@@ -218,6 +222,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
                 c.isEditing = false;
                 this._nssService.setSelectedRegion(this.selectedRegion); // update everything
                 this._nssService.outputWimMessages(response);
+                this.getCitations();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error editing Citation', error._body.message || error.statusText);
@@ -242,6 +247,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             } else { 
                 this._settingsService.outputWimMessages(response); 
             }
+            this.getCitations();
             this.requeryFilters();
         }, error => {
             if (this._settingsService.outputWimMessages(error)) { return; }
@@ -336,11 +342,12 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         if (check) {
             this._settingsService.deleteEntity(id, this.url).subscribe(result => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
-                if (result.headers) { this._nssService.outputWimMessages(result); }
+                if (result.headers) { this._nssService.outputWimMessages(result); };
+                this.getCitations();
             }, error => {
                 if (error.headers) {this._nssService.outputWimMessages(error);
                 } else { this._nssService.handleError(error); }
             });
-        }
+        };
     }
 }

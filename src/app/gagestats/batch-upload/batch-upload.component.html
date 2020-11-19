@@ -9,7 +9,7 @@
                 <button *ngIf='!selectUpload' type="button" class="button small blue mright-xs" (click)='selectUpload = true; uploadStations = true'>Upload Stations</button>
                 <button *ngIf='!selectUpload' type="button" class="button small blue mright-xs" (click)='selectUpload = true; uploadStats = true'>Upload Statistics</button>
                 <button *ngIf='!selectUpload' type="button" class="button small blue mright-xs" (click)='selectUpload = true; uploadChars = true'>Upload Characteristics</button>
-                <button *ngIf='selectUpload' type="button" class="button small green mright-xs" (click)='selectUpload = false; clearTable(); tableDisplay = false'>Back</button>
+                <button *ngIf='selectUpload' type="button" class="button small green mright-xs" (click)='selectUpload = false; clearTable()'>Back</button>
                 <!-- <button *ngIf='selectUpload' type="button" class="button small blue mright-xs" (click)='selectFile()'>Select File</button> -->
                 <input *ngIf='selectUpload' (change)="selectFile($event)" type='file' multiple='false'/>
                 <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true'>Edit Table</button>
@@ -25,12 +25,14 @@
                 <table style="border:solid 1px gray" class="custom-table">
                     <thead>
                         <tr>
+                           <th *ngIf='tableEdit'></th> 
                            <th *ngFor='let header of headers'>{{header}}</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let row of tableData, let rowIndex = index">
-                            <ng-container *ngIf="row == tableData[0]">
+                            <ng-container *ngIf="rowIndex == 0">
+                                <td *ngIf='tableEdit'></td>
                                 <td *ngFor='let val of row, let valIndex = index'>
                                     <ng-select  [(ngModel)]='tableData[rowIndex][valIndex]'>
                                         <ng-container *ngIf='uploadStations'>    
@@ -51,9 +53,10 @@
                                     </ng-select>
                                 </td>
                             </ng-container>
-                            <ng-container *ngIf="row != tableData[0]">
-                                <td *ngFor='let val of row, let valIndex = index'>
-                                    <span *ngIf='!tableEdit'>{{val}}</span>
+                            <ng-container *ngIf="rowIndex != 0">
+                                <td *ngIf='tableEdit'><button title="Delete" (click)='deleteRow(rowIndex)'><i class="far fa-times"></i></button></td>
+                                <td *ngFor='let val of tableData[0], let valIndex = index'>
+                                    <span *ngIf='!tableEdit'>{{tableData[rowIndex][valIndex]}}</span>
                                     <span *ngIf='tableEdit'><input [(ngModel)]='tableData[rowIndex][valIndex]'></span>
                                 </td>
                             </ng-container>

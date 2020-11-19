@@ -173,14 +173,14 @@ export class BatchUploadModal implements OnInit {
       }  
     });    
     console.log(stations)
-    this._settingsService.postEntity(stations, this.configSettings.gageStatsBaseURL +  "stations/Batch")
-      .subscribe((response:any) =>{
-        if(!response.headers){
-          this._toasterService.pop('info', 'Info', 'Items Added');
-        } else {
-          this._settingsService.outputWimMessages(response);
-        }
-      });
+    // this._settingsService.postEntity(stations, this.configSettings.gageStatsBaseURL +  "stations/Batch")
+    //   .subscribe((response:any) =>{
+    //     if(!response.headers){
+    //       this._toasterService.pop('info', 'Info', 'Items Added');
+    //     } else {
+    //       this._settingsService.outputWimMessages(response);
+    //     }
+    //   });
   }
 
   public submitStats() {
@@ -247,14 +247,14 @@ export class BatchUploadModal implements OnInit {
       }  
     });    
     console.log(stats)
-    this._settingsService.postEntity(stats, this.configSettings.gageStatsBaseURL + "statistics/batch")
-      .subscribe((response:any) =>{
-        if(!response.headers){
-          this._toasterService.pop('info', 'Info', 'Items Added');
-        } else {
-          this._settingsService.outputWimMessages(response);
-        }
-      });
+    // this._settingsService.postEntity(stats, this.configSettings.gageStatsBaseURL + "statistics/batch")
+    //   .subscribe((response:any) =>{
+    //     if(!response.headers){
+    //       this._toasterService.pop('info', 'Info', 'Items Added');
+    //     } else {
+    //       this._settingsService.outputWimMessages(response);
+    //     }
+    //   });
   }
 
   public submitChars() {
@@ -310,7 +310,7 @@ export class BatchUploadModal implements OnInit {
       }  
     });    
     console.log(chars)
-    // this._settingsService.postEntityGageStats(stats, "statistics/batch")
+    // this._settingsService.postEntity(chars, this.configSettings.gageStatsBaseURL + "characteristics/batch")
     //   .subscribe((response:any) =>{
     //     if(!response.headers){
     //       this._toasterService.pop('info', 'Info', 'Items Added');
@@ -323,17 +323,21 @@ export class BatchUploadModal implements OnInit {
   public createTable(data){
     this.headers = JSON.parse(JSON.stringify(data[0]));  // copy the first row of the excel sheet as a list of headers
     this.tableData = JSON.parse(JSON.stringify(data));   // copy the data from the excel sheet to display and change
-    // FIX THIS!!!!!!!!
-    //var x = y;
-    //var emptyCells = this.tableData[0].length * x;
-    //this.tableData[0] = ['','','','','','','','','','','','','','','',];
-    //console.log(this.tableData);
   }
 
   public clearTable() {
     delete(this.data);
     delete(this.tableData);
     delete(this.headers);
+    this.tableDisplay = false; 
+    this.sheetNamesButtons = false
+    this.uploadChars = false;
+    this.uploadStations = false;
+    this.uploadStats = false;
+  }
+
+  public deleteRow(index) {
+    this.tableData.splice(index, 1);
   }
 
   public getKeys(obj) {

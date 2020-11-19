@@ -20,6 +20,7 @@
     "unitSystemsURL": "UnitSystems",
     "variablesURL": "Variables",
     "statusURL": "Status",
+    "methodURL": "Methods",
     "loginShow": true,
     "showGageStats": true
 }

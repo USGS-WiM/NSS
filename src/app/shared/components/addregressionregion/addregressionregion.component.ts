@@ -66,6 +66,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public unitTypes;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
+  limitations: any;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
       return this._nssService.selectedStatGroups;
   }
@@ -284,31 +285,33 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this.newRegRegForm.controls['location'].setValue(this.selectedRegRegion.location);
           this.newRegRegForm.controls['statusID'].setValue(this.selectedRegRegion.statusID);
           this.newRegRegForm.controls['methodID'].setValue(this.selectedRegRegion.methodID);
-
-          if (this.selectedRegRegion.limitations) { // if there are limitations set values in modal
-            this.selectedRegRegion.limitations.forEach((element,index) => {
-              console.log(this.selectedRegRegion.limitations)
-              this.addLimitation();
-              const controlArray = <FormArray> this.newRegRegForm.get('limitations');
-              controlArray.controls[index].get('limitationID').setValue(element.id);
-              controlArray.controls[index].get('criteria').setValue(element.criteria);
-              controlArray.controls[index].get('description').setValue(element.description);
-               element.variables.forEach((v, varIndex) => {
-                  this.addVariable(index);
-                  const control = <FormArray>this.newRegRegForm.get('limitations.'+index+'.variables');
-                  this.unitTypes.forEach((unit,x) => {  
-                  if (unit.id.toString() == v.unitTypeID.toString()){
-                    control.controls[varIndex].get('unitTypeID').setValue(this.unitTypes[x].id);
-                  }
-                });
-                this.variables.forEach((variable,x) => {  
-                  if (variable.id.toString() == v.variableTypeID.toString()){
-                    control.controls[varIndex].get('variableTypeID').setValue(this.variables[x].id);
-                  }
-                });
-               });
-            });
-          }
+          this.limitations = this.selectedRegRegion.limitations;
+          console.log(this.limitations)
+          // if (this.selectedRegRegion.limitations) { // if there are limitations set values in modal
+          //   this.selectedRegRegion.limitations.forEach((element,index) => {
+          //     console.log(this.selectedRegRegion.limitations)
+          //     this.addLimitation();
+          //     const controlArray = <FormArray> this.newRegRegForm.get('limitations');
+          //     controlArray.controls[index].get('limitationID').setValue(element.id);
+          //     controlArray.controls[index].get('isEditing').setValue(false);
+          //     controlArray.controls[index].get('criteria').setValue(element.criteria);
+          //     controlArray.controls[index].get('description').setValue(element.description);
+          //      element.variables.forEach((v, varIndex) => {
+          //         this.addVariable(index);
+          //         const control = <FormArray>this.newRegRegForm.get('limitations.'+index+'.variables');
+          //         this.unitTypes.forEach((unit,x) => {  
+          //         if (unit.id.toString() == v.unitTypeID.toString()){
+          //           control.controls[varIndex].get('unitTypeID').setValue(this.unitTypes[x].id);
+          //         }
+          //       });
+          //       this.variables.forEach((variable,x) => {  
+          //         if (variable.id.toString() == v.variableTypeID.toString()){
+          //           control.controls[varIndex].get('variableTypeID').setValue(this.variables[x].id);
+          //         }
+          //       });
+          //      });
+          //   });
+          // }
 
           if (this.selectedRegRegion.citationID) { // if there is a citation set values in modal
             this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
@@ -361,6 +364,17 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         } 
       }
     );
+  }
+
+  public getUnitName(ID){
+    if (this.unitTypes && this.unitTypes.find(s => s.id === ID)) {
+        return (this.unitTypes.find(s => s.id === ID).name);
+    }
+  }
+  public getVariableName(ID){
+    if (this.variables && this.variables.find(s => s.id === ID)) {
+        return (this.variables.find(s => s.id === ID).name);
+    }
   }
 
   private cancelCreateRegression() {
@@ -484,6 +498,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     const control = <FormArray>this.newRegRegForm.get('limitations');
     control.push(this._fb.group({
       limitationID: new FormControl(null),
+      isEditing: new FormControl(null),
       criteria: new FormControl(null, Validators.required),
       description: new FormControl(null, Validators.required),
       variables: this._fb.array([]),
@@ -493,6 +508,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public addVariable(limIndex){
     const control = <FormArray>this.newRegRegForm.get('limitations.'+limIndex+'.variables');
     control.push(this._fb.group({
+      isEditing: new FormControl(null),
       variableTypeID: new FormControl(null, Validators.required),
       unitTypeID: new FormControl(null, Validators.required),
     }));
@@ -522,14 +538,20 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     control.removeAt(varIndex);
   }
 
-  public deleteLimitation(i) {
-    const check = confirm('Are you sure you want to delete this Gage?');
+  public editLimitation(lim, limIndex) {
+    const control = <FormArray>this.newRegRegForm.get('limitations');
+    control.controls[limIndex].get('isEditing').setValue(true);
+
+  }
+
+  public deleteLimitation(lim, limIndex) {
+    const check = confirm('Are you sure you want to delete this Limitation?');
     if (check) {
-      this._settingsService.deleteEntity(i.value.limitationID,this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
+      this._settingsService.deleteEntity(lim.value.limitationID,this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
           if (result.headers) { 
             this._nssService.outputWimMessages(result); 
             const control = <FormArray>this.newRegRegForm.get('limitations');
-            control.removeAt(i);
+            control.removeAt(limIndex);
           }
       }, error => {
           if (error.headers) {

@@ -65,29 +65,60 @@
             </div>
             <hr>
 
+            <label >Limitations:</label>
+            <table class="custom-table table-striped table-scroll mtop-sm no-scrollbars" >
+                <thead>
+					<tr>
+						<th class="width-20">Criteria</th>
+						<th class="width-20">Description</th>
+                        <th class="width-20" >Variables</th>
+                        <th class="width-20" >Unit Type</th>
+					</tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let lim of limitations; let limIndex = index">
+						<!-- Col 1 -->
+						<td class="width-5">
+							<div>{{lim.criteria}}</div>
+                        </td>
+                        <!-- Col 2 -->
+						<td class="width-5">
+							<div>{{lim.description}}</div>
+                        </td>
+                        <!-- Col 4, Associated Regression Region -->
+                        <td class="width-5" >
+							<div *ngFor="let v of lim.variables;">
+                                <td>{{getVariableName(v.variableTypeID)}}</td>
+								<td>{{getUnitName(v.unitTypeID)}}</td>
+							</div>
+						</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            
+
+
+            <!-- Display Limitations
             <label>Limitations:</label>
             <div formArrayName="limitations">
                 <div *ngFor="let lim of newRegRegForm.get('limitations').controls; let limIndex = index">
-                    <div class="scenario-dropdown" (click)="checkDiv('limitation' + (limIndex + 1)) ? hideDiv('limitation' + (limIndex + 1)) : showDiv('limitation' + (limIndex + 1))">
-                        <div class="scenario-dropdown-title">
-                            <span>Limitation {{limIndex + 1}}</span>
-                            <i class="fas" [ngClass]="{'fa-chevron-down': checkDiv('limitation' + (limIndex + 1)),'fa-chevron-right': !checkDiv('limitation' + (limIndex + 1))}"></i>
-                        </div>
-                        <button class="icon-button" (click)="deleteLimitation(lim)"><i class="far fa-times"></i></button>
+                    <div class="scenario-dropdown-title">
+                        <span>Limitation {{limIndex + 1}}</span>
+                    </div>
+                    <button class="icon-button" (click)="deleteLimitation(lim,limIndex)"><i class="far fa-times"></i></button>
+                    <button *ngIf="!lim.isEditing" class="icon-button" (click)="editLimitation(lim,limIndex)"><i class="far fa-pencil"></i></button>
                     </div>
                     
                     <div [formGroupName]="limIndex" [id]="'limitation' + (limIndex + 1)" class="scenFormGroup">
-                        <!-- Criteria -->
                         <div class="form-group required">
                             <label for="criteria">Criteria:</label>
                             <textarea [readonly]="!newLimitation" class="form-control" rows="3" placeholder="" formControlName="criteria"></textarea>
                         </div>
-                        <!-- Description -->
                         <div class="form-group required">
                             <label for="description">Description:</label>
                             <textarea [readonly]="!newLimitation" class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
                         </div>
-                        <!-- Variable -->
                         <div formArrayName="variables">
                             <div *ngFor="let var of newRegRegForm.get('limitations.'+limIndex+'.variables').controls; let varIndex = index">
                                 <div class="scenario-dropdown">
@@ -119,7 +150,10 @@
                         <hr>
                     </div>  
                 </div>
-            </div> 
+            </div>  -->
+
+
+
             <div>
                 <button type="button" class="button mright-xs" (click)="addLimitation()">Add New Limitation</button>
             </div>

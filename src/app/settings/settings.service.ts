@@ -148,6 +148,7 @@ export class SettingsService {
     public deleteEntity(id, url: string, params?: string) {
         if (id !== '') {url += '/' + id; }
         if (params) {url += params; }
+        console.log(url)
         return this._http.delete( url, { headers: this.authHeader, observe: 'response'})
             .catch(this.errorHandler);
     }

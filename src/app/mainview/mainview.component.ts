@@ -129,6 +129,7 @@ export class MainviewComponent implements OnInit {
     public modalRef;
     public regRegionsScenarios = [];
     public unusedRegRegions;
+    public limitations=[];
     // public changeStatGroup = false;
     public citations: Array<Citation>;
 
@@ -1315,6 +1316,24 @@ export class MainviewComponent implements OnInit {
     deleteRegRegion(rrID) {
         const check = confirm('Are you sure you want to delete this Regression Region?');
         if (check) {
+
+            // this._settingsService.getEntities(this.configSettings.nssBaseURL+this.configSettings.regRegionURL+'/'+rrID+'/'+this.configSettings.limitationsURL).subscribe((limitations) => {
+            //     this.limitations = limitations;
+            // });
+
+            // if (this.limitations.length > 0){
+            //     this.limitations.forEach (l => {
+            //         this._settingsService.deleteEntity(l.id,this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
+            //             this.requeryFilters();
+            //             if (result.headers) { this._nssService.outputWimMessages(result); }
+            //         }, error => {
+            //             if (error.headers) {
+            //                 this._nssService.outputWimMessages(error);
+            //             } else { this._nssService.handleError(error); }
+            //         });
+            //     })
+            // }
+
             this.saveFilters();
             this._settingsService.deleteEntity(rrID, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(result => {
                 this.requeryFilters();

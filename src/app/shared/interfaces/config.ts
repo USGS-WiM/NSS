@@ -13,6 +13,7 @@ export interface Config {
     citationURL: string;
     errorsURL: string;
     gageStatsBaseURL: string;
+    limitationsURL: string;
     loginURL: string;
     managersURL: string;
     regionURL: string;

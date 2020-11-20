@@ -58,6 +58,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public selectedRegressionRegion: Array<Regressionregion>;
   public tempSelectedRegressionRegion: Array<Regressionregion>;
   public newCitation: boolean = false;
+  public newLimitation;
   public rr;
   public status;
   public methods;
@@ -272,6 +273,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     if (rr) { // edit existing regression region
       this._loaderService.showFullPageLoad();
       this.addRegReg = false;
+      this.newLimitation = false;
       this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regRegionURL + '/' + rr + '?includeGeometry=true')
         .subscribe((res) => {
           this.selectedRegRegion = res;
@@ -284,23 +286,25 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this.newRegRegForm.controls['methodID'].setValue(this.selectedRegRegion.methodID);
           if (this.selectedRegRegion.limitations) { // if there are limitations set values in modal
             this.selectedRegRegion.limitations.forEach((element,index) => {
+              console.log(this.selectedRegRegion.limitations)
               this.addLimitation();
               const controlArray = <FormArray> this.newRegRegForm.get('limitations');
               controlArray.controls[index].get('criteria').setValue(element.criteria);
               controlArray.controls[index].get('description').setValue(element.description);
-
-              element.variables.forEach((v) => {
-                this.unitTypes.forEach((unit,x) => {  
+               element.variables.forEach((v, varIndex) => {
+                  this.addVariable(index);
+                  const control = <FormArray>this.newRegRegForm.get('limitations.'+index+'.variables');
+                  this.unitTypes.forEach((unit,x) => {  
                   if (unit.id.toString() == v.unitTypeID.toString()){
-                    controlArray.controls[index].get('unitType').setValue(this.unitTypes[x]);
+                    control.controls[varIndex].get('unitTypeID').setValue(this.unitTypes[x].id);
                   }
                 });
                 this.variables.forEach((variable,x) => {  
                   if (variable.id.toString() == v.variableTypeID.toString()){
-                    controlArray.controls[index].get('code').setValue(this.variables[x]);
+                    control.controls[varIndex].get('variableTypeID').setValue(this.variables[x].id);
                   }
                 });
-              });
+               });
             });
           }
           if (this.selectedRegRegion.citationID) { // if there is a citation set values in modal
@@ -328,6 +332,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       );
     } else { // rr doesn't exist, create new regression
       this.addRegReg = true;
+      this.newLimitation = true;
       this.addCitation = false;
       this.uploadPolygon = false;
       this.newRegRegForm.controls['statusID'].setValue(2);
@@ -359,6 +364,10 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.showNewRegRegForm = false;
     this.newRegRegForm.reset();
     this.newCitForm.reset();
+    const limControl = <FormArray>this.newRegRegForm.get('limitations');
+    for(let i = limControl.length-1; i >= 0; i--) {
+      limControl.removeAt(i);
+    }
     this.modalRef.close();
   }
 
@@ -370,7 +379,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         this.newRegRegForm.get('location').setValue(null);
     }
     console.log(this.newRegRegForm.value)
-    console.log(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + regionID + '/' + this.configSettings.regRegionURL)
+
     this._settingsService
       .postEntity(this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + regionID + '/' + this.configSettings.regRegionURL)
       .subscribe((response:any) => {
@@ -398,6 +407,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     if (!this.uploadPolygon) { // No polygon
       this.newRegRegForm.get('location').setValue(null);
     }
+    console.log(this.newRegRegForm.value)
     this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(res => {
       if (!res.headers) {
         this._toasterService.pop('info', 'Info', 'Regression Region was updated');
@@ -468,6 +478,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public addLimitation() {
+    console.log('add limiation')
     const control = <FormArray>this.newRegRegForm.get('limitations');
     control.push(this._fb.group({
       criteria: new FormControl(null, Validators.required),
@@ -509,8 +520,18 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public removeLimitation(i) {
-    const control = <FormArray>this.newRegRegForm.get('limitations');
-    control.removeAt(i);
+    // const control = <FormArray>this.newRegRegForm.get('limitations');
+    // control.removeAt(i);
+    console.log(i)
+    // this._settingsService.deleteEntity(l.id,this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
+    //     this.requeryFilters();
+    //     if (result.headers) { this._nssService.outputWimMessages(result); }
+    // }, error => {
+    //     if (error.headers) {
+    //         this._nssService.outputWimMessages(error);
+    //     } else { this._nssService.handleError(error); }
+    // });
+  
   }
 
   public addGeojsonToMap(polygon: any) {

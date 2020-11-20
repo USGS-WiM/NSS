@@ -284,11 +284,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this.newRegRegForm.controls['location'].setValue(this.selectedRegRegion.location);
           this.newRegRegForm.controls['statusID'].setValue(this.selectedRegRegion.statusID);
           this.newRegRegForm.controls['methodID'].setValue(this.selectedRegRegion.methodID);
+
           if (this.selectedRegRegion.limitations) { // if there are limitations set values in modal
             this.selectedRegRegion.limitations.forEach((element,index) => {
               console.log(this.selectedRegRegion.limitations)
               this.addLimitation();
               const controlArray = <FormArray> this.newRegRegForm.get('limitations');
+              controlArray.controls[index].get('limitationID').setValue(element.id);
               controlArray.controls[index].get('criteria').setValue(element.criteria);
               controlArray.controls[index].get('description').setValue(element.description);
                element.variables.forEach((v, varIndex) => {
@@ -307,6 +309,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
                });
             });
           }
+
           if (this.selectedRegRegion.citationID) { // if there is a citation set values in modal
             this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
             this.addCitation = true;
@@ -478,9 +481,9 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public addLimitation() {
-    console.log('add limiation')
     const control = <FormArray>this.newRegRegForm.get('limitations');
     control.push(this._fb.group({
+      limitationID: new FormControl(null),
       criteria: new FormControl(null, Validators.required),
       description: new FormControl(null, Validators.required),
       variables: this._fb.array([]),
@@ -519,19 +522,21 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     control.removeAt(varIndex);
   }
 
-  public removeLimitation(i) {
-    // const control = <FormArray>this.newRegRegForm.get('limitations');
-    // control.removeAt(i);
-    console.log(i)
-    // this._settingsService.deleteEntity(l.id,this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
-    //     this.requeryFilters();
-    //     if (result.headers) { this._nssService.outputWimMessages(result); }
-    // }, error => {
-    //     if (error.headers) {
-    //         this._nssService.outputWimMessages(error);
-    //     } else { this._nssService.handleError(error); }
-    // });
-  
+  public deleteLimitation(i) {
+    const check = confirm('Are you sure you want to delete this Gage?');
+    if (check) {
+      this._settingsService.deleteEntity(i.value.limitationID,this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
+          if (result.headers) { 
+            this._nssService.outputWimMessages(result); 
+            const control = <FormArray>this.newRegRegForm.get('limitations');
+            control.removeAt(i);
+          }
+      }, error => {
+          if (error.headers) {
+              this._nssService.outputWimMessages(error);
+          } else { this._nssService.handleError(error); }
+      });
+    }
   }
 
   public addGeojsonToMap(polygon: any) {

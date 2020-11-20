@@ -73,7 +73,7 @@
                             <span>Limitation {{limIndex + 1}}</span>
                             <i class="fas" [ngClass]="{'fa-chevron-down': checkDiv('limitation' + (limIndex + 1)),'fa-chevron-right': !checkDiv('limitation' + (limIndex + 1))}"></i>
                         </div>
-                        <button class="icon-button" (click)="removeLimitation(lim)"><i class="far fa-times"></i></button>
+                        <button class="icon-button" (click)="deleteLimitation(lim)"><i class="far fa-times"></i></button>
                     </div>
                     
                     <div [formGroupName]="limIndex" [id]="'limitation' + (limIndex + 1)" class="scenFormGroup">

@@ -29,6 +29,7 @@ import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from '../interfaces/station';
 import { GagePage } from '../interfaces/gagepage';
 import { GageStatsSearchFilter } from '../interfaces/gagestatsfilter';
+import { Limitation } from '../interfaces/limitation';
 
 @Injectable()
 export class NSSService {
@@ -156,6 +157,16 @@ export class NSSService {
     public get selectedCitation(): Observable<Citation> {
         return this._selectedCitation.asObservable();
     }
+
+     // -+-+-+-+-+-+-+-+-+ add limitation modal -+-+-+-+-+-+-+-+
+     private _showHideAddLimitationModal: Subject<Limitation> = new Subject<Limitation>();
+     public setAddLimitationModal(val: Limitation) {
+         this._showHideAddLimitationModal.next(val);
+     }
+     // show the add regression region modal in the mainview
+     public get showAddLimitationModal(): any {
+         return this._showHideAddLimitationModal.asObservable();
+     }
 
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
     private _showHideAddRegressioRegionModal: Subject<AddRegressionRegion> = new Subject<AddRegressionRegion>();

@@ -24,6 +24,7 @@ import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
+import { Limitation } from 'app/shared/interfaces/limitation';
 
 @Component({
   selector: 'addRegressionRegionModal',
@@ -93,7 +94,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       region: new FormControl(null, Validators.required),
       location: new FormControl(null),
       citationID: new FormControl(null),
-      limitations: this._fb.array([])
+      //limitations: this._fb.array([])
     });
     this.newCitForm = _fb.group({
       'title': new FormControl(null, Validators.required),
@@ -236,6 +237,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._nssService.setManageCitationsModal(addManageCitationForm);
   }
 
+  public showLimitationsModal() {
+    const addLimitationsForm: Limitation = {
+      show: true
+    }
+    this._nssService.setAddLimitationModal(addLimitationsForm);
+  }
+
   public addExistingCitation(){
     this.newRegRegForm.controls['citationID'].setValue(this.currentCitation.id);
     this.newCitForm.controls['title'].setValue(this.currentCitation.title);
@@ -286,7 +294,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this.newRegRegForm.controls['statusID'].setValue(this.selectedRegRegion.statusID);
           this.newRegRegForm.controls['methodID'].setValue(this.selectedRegRegion.methodID);
           this.limitations = this.selectedRegRegion.limitations;
-          console.log(this.limitations)
           // if (this.selectedRegRegion.limitations) { // if there are limitations set values in modal
           //   this.selectedRegRegion.limitations.forEach((element,index) => {
           //     console.log(this.selectedRegRegion.limitations)
@@ -371,6 +378,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         return (this.unitTypes.find(s => s.id === ID).name);
     }
   }
+
   public getVariableName(ID){
     if (this.variables && this.variables.find(s => s.id === ID)) {
         return (this.variables.find(s => s.id === ID).name);
@@ -381,10 +389,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.showNewRegRegForm = false;
     this.newRegRegForm.reset();
     this.newCitForm.reset();
-    const limControl = <FormArray>this.newRegRegForm.get('limitations');
-    for(let i = limControl.length-1; i >= 0; i--) {
-      limControl.removeAt(i);
-    }
     this.modalRef.close();
   }
 
@@ -395,7 +399,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     if (!this.uploadPolygon) {
         this.newRegRegForm.get('location').setValue(null);
     }
-    console.log(this.newRegRegForm.value)
 
     this._settingsService
       .postEntity(this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + regionID + '/' + this.configSettings.regRegionURL)
@@ -424,7 +427,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     if (!this.uploadPolygon) { // No polygon
       this.newRegRegForm.get('location').setValue(null);
     }
-    console.log(this.newRegRegForm.value)
     this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(res => {
       if (!res.headers) {
         this._toasterService.pop('info', 'Info', 'Regression Region was updated');
@@ -494,26 +496,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.newCitation = false;
   }
 
-  public addLimitation() {
-    const control = <FormArray>this.newRegRegForm.get('limitations');
-    control.push(this._fb.group({
-      limitationID: new FormControl(null),
-      isEditing: new FormControl(null),
-      criteria: new FormControl(null, Validators.required),
-      description: new FormControl(null, Validators.required),
-      variables: this._fb.array([]),
-    }));
-  }
-
-  public addVariable(limIndex){
-    const control = <FormArray>this.newRegRegForm.get('limitations.'+limIndex+'.variables');
-    control.push(this._fb.group({
-      isEditing: new FormControl(null),
-      variableTypeID: new FormControl(null, Validators.required),
-      unitTypeID: new FormControl(null, Validators.required),
-    }));
-  }
-
+  
   public hideDiv(divId) {
     // collapse param/error div
     const div = document.getElementById(divId);
@@ -533,10 +516,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     } else {return true; }
   }
 
-  public removeVariable(limIndex, varIndex) {
-    const control = <FormArray>this.newRegRegForm.get('limitations.' + limIndex + '.variables');
-    control.removeAt(varIndex);
-  }
 
   public editLimitation(lim, limIndex) {
     const control = <FormArray>this.newRegRegForm.get('limitations');

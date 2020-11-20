@@ -1,0 +1,69 @@
+<!--Add Limitation modal-->
+<ng-template #addLimitations let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="title">New Limitation</div>  
+        <button class="icon-button" (click)="d('closed');"><i class="far fa-times"></i></button>                
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="newLimForm" style="margin-bottom: 10px;">
+            <div formArrayName="limitations">
+                <div *ngFor="let lim of newLimForm.get('limitations').controls; let limIndex = index">
+                    <div class="scenario-dropdown-title">
+                        <span>Limitation {{limIndex + 1}}</span>
+                    </div>
+                    <button class="icon-button" (click)="removeLimitation(limIndex)"><i class="far fa-times"></i></button>
+                    <div [formGroupName]="limIndex" [id]="'limitation' + (limIndex + 1)" class="scenFormGroup">
+                        <div class="form-group required">
+                            <label for="criteria">Criteria:</label>
+                            <textarea class="form-control" rows="3" placeholder="" formControlName="criteria"></textarea>
+                        </div>
+                        <div class="form-group required">
+                            <label for="description">Description:</label>
+                            <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
+                        </div>
+                        <div formArrayName="variables">
+                            <div *ngFor="let var of newLimForm.get('limitations.'+limIndex+'.variables').controls; let varIndex = index">
+                                <div class="scenario-dropdown">
+                                    <div class="scenario-dropdown-title">
+                                        <span>Variable {{varIndex + 1}}</span>
+                                    </div>
+                                    <button class="icon-button" (click)="removeVariable(limIndex,varIndex)"><i class="far fa-times"></i></button>
+                                </div>
+
+                                <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
+                                    <div class="form-group required">
+                                        <label class="req" for="variableTypeID">Explanatory Variable:</label>
+                                        <ng-select [readonly]="!newLimitation" formControlName="variableTypeID" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                            <ng-option *ngFor="let v of variables" [value]="v.id">{{v.code}} ({{v.description}})</ng-option>
+                                        </ng-select>
+                                    </div>
+                                    <div class="form-group required">
+                                        <label class="req" for="unitTypeID">Explanatory Variable Unit:</label>
+                                            <ng-select [readonly]="!newLimitation" formControlName="unitTypeID"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                                <ng-option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}} ({{u.abbr}})</ng-option>
+                                            </ng-select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="button mright-xs" (click)="addVariable(limIndex)">Add New Variable</button>
+                        </div>
+                        <hr>
+                    </div>  
+                </div>
+                <div>
+                    <button type="button" class="button mright-xs" (click)="addLimitation()">Add New Limitation</button>
+                </div>
+            </div>  
+
+
+
+        </form>
+    </div>
+    <div class="modal-body-footer">
+        <button type="button" (click)="d('closed')" class="button">Cancel</button>
+        <button type="button" (click)="createNewLimitation()" [disabled]="!newLimForm.valid" class="button blue">Create</button>
+    </div>
+</ng-template>
+

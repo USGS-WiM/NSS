@@ -3,7 +3,7 @@
 <div class="modal-header">
 	<div class="title" *ngIf="addRegReg">New Regression Region</div>  
 	<div class="title" *ngIf="!addRegReg">Edit Regression Region</div>  
-    <button class="icon-button" (click)="d('closed'); cancelCreateRegression()"><i class="far fa-times"></i></button>                
+    <button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
 </div>
     <div class="modal-body">
         <form [formGroup]="newRegRegForm" style="margin-bottom: 10px;">
@@ -64,98 +64,40 @@
                 </div>
             </div>
             <hr>
-
             <label >Limitations:</label>
-            <table class="custom-table table-striped table-scroll mtop-sm no-scrollbars" >
-                <thead>
-					<tr>
-						<th class="width-20">Criteria</th>
-						<th class="width-20">Description</th>
-                        <th class="width-20" >Variables</th>
-                        <th class="width-20" >Unit Type</th>
-					</tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let lim of limitations; let limIndex = index">
-						<!-- Col 1 -->
-						<td class="width-5">
-							<div>{{lim.criteria}}</div>
-                        </td>
-                        <!-- Col 2 -->
-						<td class="width-5">
-							<div>{{lim.description}}</div>
-                        </td>
-                        <!-- Col 4, Associated Regression Region -->
-                        <td class="width-5" >
-							<div *ngFor="let v of lim.variables;">
-                                <td>{{getVariableName(v.variableTypeID)}}</td>
-								<td>{{getUnitName(v.unitTypeID)}}</td>
-							</div>
-						</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            
-
-
-            <!-- Display Limitations
-            <label>Limitations:</label>
-            <div formArrayName="limitations">
-                <div *ngFor="let lim of newRegRegForm.get('limitations').controls; let limIndex = index">
-                    <div class="scenario-dropdown-title">
-                        <span>Limitation {{limIndex + 1}}</span>
-                    </div>
-                    <button class="icon-button" (click)="deleteLimitation(lim,limIndex)"><i class="far fa-times"></i></button>
-                    <button *ngIf="!lim.isEditing" class="icon-button" (click)="editLimitation(lim,limIndex)"><i class="far fa-pencil"></i></button>
-                    </div>
-                    
-                    <div [formGroupName]="limIndex" [id]="'limitation' + (limIndex + 1)" class="scenFormGroup">
-                        <div class="form-group required">
-                            <label for="criteria">Criteria:</label>
-                            <textarea [readonly]="!newLimitation" class="form-control" rows="3" placeholder="" formControlName="criteria"></textarea>
-                        </div>
-                        <div class="form-group required">
-                            <label for="description">Description:</label>
-                            <textarea [readonly]="!newLimitation" class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
-                        </div>
-                        <div formArrayName="variables">
-                            <div *ngFor="let var of newRegRegForm.get('limitations.'+limIndex+'.variables').controls; let varIndex = index">
-                                <div class="scenario-dropdown">
-                                    <div class="scenario-dropdown-title">
-                                        <span>Variable {{varIndex + 1}}</span>
-                                    </div>
-                                    <button class="icon-button" (click)="removeVariable(limIndex,varIndex)"><i class="far fa-times"></i></button>
+            <div *ngIf="limitations">
+                <table class="custom-table table-striped table-scroll mtop-sm no-scrollbars" >
+                    <thead>
+                        <tr>
+                            <th class="width-20">Criteria</th>
+                            <th class="width-20">Description</th>
+                            <th class="width-20" >Variables</th>
+                            <th class="width-20" >Unit Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let lim of limitations; let limIndex = index">
+                            <!-- Col 1 -->
+                            <td class="width-5">
+                                <div>{{lim.criteria}}</div>
+                            </td>
+                            <!-- Col 2 -->
+                            <td class="width-5">
+                                <div>{{lim.description}}</div>
+                            </td>
+                            <!-- Col 4, Associated Regression Region -->
+                            <td class="width-5" >
+                                <div *ngFor="let v of lim.variables;">
+                                    <td>{{getVariableName(v.variableTypeID)}}</td>
+                                    <td>{{getUnitName(v.unitTypeID)}}</td>
                                 </div>
-
-                                <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
-                                    <div class="form-group required">
-                                        <label class="req" for="variableTypeID">Explanatory Variable:</label>
-                                        <ng-select [readonly]="!newLimitation" formControlName="variableTypeID" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
-                                            <ng-option *ngFor="let v of variables" [value]="v.id">{{v.code}} ({{v.description}})</ng-option>
-                                        </ng-select>
-                                    </div>
-                                    <div class="form-group required">
-                                        <label class="req" for="unitTypeID">Explanatory Variable Unit:</label>
-                                            <ng-select [readonly]="!newLimitation" formControlName="unitTypeID"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
-                                                <ng-option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}} ({{u.abbr}})</ng-option>
-                                            </ng-select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <button type="button" class="button mright-xs" (click)="addVariable(limIndex)">Add New Variable</button>
-                        </div>
-                        <hr>
-                    </div>  
-                </div>
-            </div>  -->
-
-
-
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div>
-                <button type="button" class="button mright-xs" (click)="addLimitation()">Add New Limitation</button>
+                <button type="button" class="button mright-xs" (click)="showLimitationsModal()">Add New Limitations</button>
             </div>
         </form>
 
@@ -217,7 +159,7 @@
 
     <!-- Footer / Buttons -->
     <div class="modal-body-footer">
-        <button type="button" (click)="d('closed'); cancelCreateRegression()" class="button">Cancel</button>
+        <button type="button" (click)="d('closed')" class="button">Cancel</button>
         <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="button blue">Create</button>
         <button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid" class="button blue">Save</button>
     </div>

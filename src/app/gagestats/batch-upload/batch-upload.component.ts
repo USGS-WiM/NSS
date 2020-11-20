@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-//import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { NSSService } from 'app/shared/services/app.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'app/settings/settings.service';
@@ -59,7 +58,6 @@ export class BatchUploadModal implements OnInit {
                         {'id': "unitTypeID", 'name': "Units", 'disabled': false },
                         {'id': "value", 'name': "Value", 'disabled': false },
                         {'id': "comments", 'name': "Comments", 'disabled': false } ];
-  
   public headers;
   public tableData;
   public agencies: Array<Agency>;
@@ -86,11 +84,10 @@ export class BatchUploadModal implements OnInit {
       if (show) { this.showModal(); }
     });
     this.modalElement = this.batchUploadModal;
-    // subscribe to all agencies
+    // subscribe to all agencies, station types, regions, stat groups, regression types, variable types, units...
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL).subscribe((agencies: Array<Agency>) => {
       this.agencies = agencies;
     });
-    // subscribe to all station types
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL).subscribe((stationtypes: Array<StationType>) => {
       this.stationTypes = stationtypes;
     });
@@ -109,8 +106,7 @@ export class BatchUploadModal implements OnInit {
     this._nssService.getUnitTypes().subscribe(res => {
       this.unitType = res;
     })
-}
-//******* End OnInit  
+}                 //******* End OnInit  
 
   public showModal(): void {
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl' });
@@ -121,34 +117,25 @@ export class BatchUploadModal implements OnInit {
     if (target.files.length !== 1) throw new Error('Cannot select multiple files.');
     const reader: FileReader = new FileReader();
     reader.onload = (e:any) => {
-        const bstr: string = e.target.result;                         
-        //const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary'}); // Read WorkBook
-        this.wb = XLSX.read(bstr, { type: 'binary'});
-        //console.log(wb), console.log(wb.Sheets), console.log(wb.SheetNames, typeof(wb.SheetNames));
-        this.sheetNamesButtons = true;
+        const bstr: string = e.target.result;                          
+        this.wb = XLSX.read(bstr, { type: 'binary'});          // Read WorkBook
+        this.sheetNamesButtons = true;                         // Show buttons to select worksheet from workbook
         //const wsname: string = wb.SheetNames[2];                     // Select first worksheet, CHANGE NUMBER TO CHANGE SHEET
         //const ws: XLSX.WorkSheet = wb.Sheets[wsname];                // Get worksheet with that name
-        //console.log(ws);
-        //this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));    // Convert data to json
-        //console.log(this.data);
-        
-        //this.createTable(this.data);
     };
     reader.readAsBinaryString(target.files[0]); 
-    //this.tableDisplay = true;
   }
 
   public selectSheet(sheetName) {
     const ws: XLSX.WorkSheet = this.wb.Sheets[sheetName];
-    this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));
+    this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));        // Convert data to json
     this.createTable(this.data);
     this.tableDisplay = true;
     this.sheetNamesButtons = false;
     this.setDropdownOptions();
   }
 
-  public setDropdownOptions() {
-    // Set dropdown menu options
+  public setDropdownOptions() {         // Set dropdown menu options
     if(this.uploadStations) {
       this.dropdownOptions = JSON.parse(JSON.stringify(this.stationChars));
     };
@@ -160,194 +147,94 @@ export class BatchUploadModal implements OnInit {
     };
   }
 
-  public submitStations() {
-    var stations;
+  public submitRecords() {
+    var records;
+    var url;
     this.tableData.forEach(row => { // Loop through the rows of the table
       if (row == this.tableData[0]) {
           return;
       } 
       else {    
           var i = 0;
-          var station;
-          row.forEach(x => {  // Loop thru the cells of each row
-              const item = '"' + this.tableData[0][i] + '": "' + x + '"'; // Assign the headers as the keys, the values as values
+          var record;
+          row.forEach(cell => {  // Loop thru the cells of each row
+              var item = '"' + this.tableData[0][i] + '": "' + cell + '"'; // Assign the headers as the keys, the values as values
               if (i == 0){
-                  station = item;
+                  record = item;
                   i ++;
               } else {
-                  station = station + ', ' + item;
+                  record = record + ', ' + item;
                   i ++;
               }
           })
-          var stationObj = JSON.parse('{' + station + '}');  // Parse strings into JSON objects
-          const location = {type: 'Point', coordinates: [ parseFloat(stationObj.longitude), parseFloat(stationObj.latitude) ]};  // Add location item
-          delete stationObj.latitude;  // Delete old location items
-          delete stationObj.longitude;
-          //delete stationObj.isRegulated;
-          stationObj = {...stationObj, 'location': location};
-          if (stationObj.agencyID) {
-            var aID = this.getAgencyID(stationObj.agencyID);
-            stationObj.agencyID = aID;
+          var recordObj = JSON.parse('{' + record + '}');  // Parse strings into JSON objects
+          if(this.uploadStations) {                      // If stations are being uploaded...  
+            url = "stations/Batch";
+            const location = {type: 'Point', coordinates: [ parseFloat(recordObj.longitude), parseFloat(recordObj.latitude) ]};  // Add location item
+            delete recordObj.latitude;  // Delete old location items
+            delete recordObj.longitude;
+            recordObj = {...recordObj, 'location': location};
+            if (recordObj.agencyID) {
+              var aID = this.getAgencyID(recordObj.agencyID);
+              recordObj.agencyID = aID;
+            }
+            if (recordObj.stationTypeID) {
+              var sID = this.getStationTypeID(recordObj.stationTypeID);
+              recordObj.stationTypeID = sID;
+            }
+            if (recordObj.regionID) {
+              var rID  = this.getRegionID(recordObj.regionID);
+              recordObj.regionID = rID;
+            }
+            if(recordObj.isRegulated) {
+              var x = this.getRegulated(recordObj.isRegulated);
+              recordObj.isRegulated = x;
+            }
           }
-          if (stationObj.stationTypeID) {
-            var sID = this.getStationTypeID(stationObj.stationTypeID);
-            stationObj.stationTypeID = sID;
+          if (this.uploadStats) {                             // If stats are being uploaded...
+            url = "statistics/batch";
+            recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '. ' + recordObj.remarks;
+            delete(recordObj.remarks);
+            delete(recordObj.startDate);
+            delete(recordObj.endDate);
+            if(recordObj.statisticGroupTypeID) {
+              var sID = this.getStatGroupType(recordObj.statisticGroupTypeID);
+              recordObj.statisticGroupTypeID = sID;
+            };
+            if(recordObj.regressionTypeID) {
+              var rID = this.getRegressionType(recordObj.regressionTypeID);
+              recordObj.regressionTypeID = rID;
+            };
+            if(recordObj.unitTypeID) {
+              var uID = this.getUnitType(recordObj.unitTypeID);
+              recordObj.unitTypeID = uID;
+            }
+            if(recordObj.isPreferred) {
+              var x = this.getPreferred(recordObj.isPreferred);
+              recordObj.isPreferred = x;
+            }
           }
-          if (stationObj.regionID) {
-            var rID  = this.getRegionID(stationObj.regionID);
-            stationObj.regionID = rID;
+          if (this.uploadChars) {                             // If chars are being uploaded... 
+            url = "characteristics/batch";
+            if(recordObj.unitTypeID) {
+              var uID = this.getUnitType(recordObj.unitTypeID);
+              recordObj.unitTypeID = uID;
+            }
+            if(recordObj.variableTypeID) {
+              var vID = this.getVariableType(recordObj.variableTypeID);
+              recordObj.variableTypeID = vID;
+            }
           }
-          if(stationObj.isRegulated) {
-            var x = this.getRegulated(stationObj.isRegulated);
-            stationObj.isRegulated = x;
-          }
-          if (stations == null) {  // Group station objects into an array
-              stations = [stationObj];
+          if (records == null) {                              // Group record objects into an array of records
+            records = [recordObj];
           } 
           else {
-              stations = [...stations, stationObj ];
+              records = [...records, recordObj ];
           }  
       }  
     });    
-    console.log(stations)
-    // this._settingsService.postEntity(stations, this.configSettings.gageStatsBaseURL +  "stations/Batch")
-    //   .subscribe((response:any) =>{
-    //     if(!response.headers){
-    //       this._toasterService.pop('info', 'Info', 'Items Added');
-    //     } else {
-    //       this._settingsService.outputWimMessages(response);
-    //     }
-    //   });
-  }
-
-  public submitStats() {
-    var stats;
-    this.tableData.forEach(row => { // Loop through the rows of the table
-      if (row == this.tableData[0]) {
-          return;
-      } 
-      else {    
-          var i = 0;
-          var stat;
-          row.forEach(x => {  // Loop thru the cells of each row
-            if (x == null || undefined) {
-              return;
-            }  
-            else {const item = '"' + this.tableData[0][i] + '": "' + x + '"'; // Assign the headers as the keys, the values as values
-                if(this.tableData[0][i] == null) {
-                  return
-                }
-                else { if (i == 0){
-                      stat = item;
-                      i ++;
-                  } else {
-                      stat = stat + ', ' + item;
-                      i ++;
-                  }
-                }  
-            }   
-          })
-          console.log(stat);
-          if (stat == undefined) {
-            return
-          } 
-          else { 
-            var statObj = JSON.parse('{' + stat + '}');  // Parse strings into JSON objects
-            statObj.comments = 'Statistic Date Range ' + statObj.startDate + ' - ' + statObj.endDate + '. ' + statObj.remarks;
-            delete(statObj.remarks);
-            delete(statObj.startDate);
-            delete(statObj.endDate);
-            if(statObj.statisticGroupTypeID) {
-              var sID = this.getStatGroupType(statObj.statisticGroupTypeID);
-              statObj.statisticGroupTypeID = sID;
-            };
-            if(statObj.regressionTypeID) {
-              var rID = this.getRegressionType(statObj.regressionTypeID);
-              statObj.regressionTypeID = rID;
-            };
-            if(statObj.unitTypeID) {
-              var uID = this.getUnitType(statObj.unitTypeID);
-              statObj.unitTypeID = uID;
-            }
-            if(statObj.isPreferred) {
-              var x = this.getPreferred(statObj.isPreferred);
-              statObj.isPreferred = x;
-            }
-             // Group stat objects into an array
-            if (stats == null) { 
-                stats = [statObj];
-            } 
-            else {
-                stats = [...stats, statObj ];
-            } 
-          }
-      }  
-    });    
-    console.log(stats)
-    // this._settingsService.postEntity(stats, this.configSettings.gageStatsBaseURL + "statistics/batch")
-    //   .subscribe((response:any) =>{
-    //     if(!response.headers){
-    //       this._toasterService.pop('info', 'Info', 'Items Added');
-    //     } else {
-    //       this._settingsService.outputWimMessages(response);
-    //     }
-    //   });
-  }
-
-  public submitChars() {
-    var chars;
-    this.tableData.forEach(row => { // Loop through the rows of the table
-      if (row == this.tableData[0]) {
-          return;
-      } 
-      else {    
-          var i = 0;
-          var char;
-          row.forEach(x => {  // Loop thru the cells of each row
-            if (x == null || undefined) {
-              return;
-            }  
-            else {const item = '"' + this.tableData[0][i] + '": "' + x + '"'; // Assign the headers as the keys, the values as values
-                if(this.tableData[0][i] == null) {
-                  return
-                }
-                else { if (i == 0){
-                      char  = item;
-                      i ++;
-                  } else {
-                      char = char + ', ' + item;
-                      i ++;
-                  }
-                }  
-            }   
-          })
-          console.log(char);
-          if (char == undefined) {
-            return
-          } 
-          else { 
-            var charObj = JSON.parse('{' + char + '}');  // Parse strings into JSON objects
-             if(charObj.unitTypeID) {
-               var uID = this.getUnitType(charObj.unitTypeID);
-               charObj.unitTypeID = uID;
-             }
-             if(charObj.variableTypeID) {
-               var vID = this.getVariableType(charObj.variableTypeID);
-               charObj.variableTypeID = vID;
-             }
-
-             // Group char objects into an array
-            if (chars == null) { 
-                chars = [charObj];
-            } 
-            else {
-                chars = [...chars, charObj ];
-            } 
-          }
-      }  
-    });    
-    console.log(chars)
-    // this._settingsService.postEntity(chars, this.configSettings.gageStatsBaseURL + "characteristics/batch")
+    console.log('Output records: ', records)
+    // this._settingsService.postEntity(stations, this.configSettings.gageStatsBaseURL +  url)
     //   .subscribe((response:any) =>{
     //     if(!response.headers){
     //       this._toasterService.pop('info', 'Info', 'Items Added');
@@ -376,6 +263,7 @@ export class BatchUploadModal implements OnInit {
     this.uploadChars = false;
     this.uploadStations = false;
     this.uploadStats = false;
+    this.tableEdit = false;
   }
 
   public changeDropdownOptions($event) {
@@ -394,9 +282,16 @@ export class BatchUploadModal implements OnInit {
     this.tableData.splice(index, 1);
   }
 
-  public getKeys(obj) {
-    return Object.keys(obj);
+  public deleteColumn(index) {
+    this.headers.splice(index, 1)
+    for(var i = 0; i < this.tableData.length; i++ ) {
+      this.tableData[i].splice(index, 1)
+    }
   }
+
+  // public getKeys(obj) {
+  //   return Object.keys(obj);
+  // }
 
   public getStationTypeID(code) {
     if (this.stationTypes) {

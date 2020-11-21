@@ -2,7 +2,7 @@
     <div>
         <div class="modal-header">
             <h3 class="title"> Batch Upload </h3>
-            <button class="icon-button" (click)="c('closed')"><i class="far fa-times"></i></button>
+            <button class="icon-button" (click)="c('closed'); clearTable()"><i class="far fa-times"></i></button>
         </div>
         <div class="modal-body">
             <div>    
@@ -13,6 +13,7 @@
                 <input *ngIf='selectUpload' (change)="selectFile($event)" type='file' multiple='false'/>
                 <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true'>Edit Table</button>
                 <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
+                <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='showManageCitationsModal()'>Add Citation</button>
             </div>
             <div *ngIf="sheetNamesButtons">
                 <h6 class="title" > Select a Worksheet:</h6>
@@ -42,11 +43,13 @@
                                                 bindValue="id"
                                                 placeholder="Select value"
                                                 [closeOnSelect] = 'false' 
+                                                [selectOnTab] = 'false'
                                                 [markFirst] = 'false'
                                                 [openOnEnter] = 'false'
                                                 [(ngModel)]="tableData[rowIndex][valIndex]"
-                                                (change)="changeDropdownOptions($event)"
-                                                (clear)="tableData[rowIndex][valIndex] = null"  >
+                                                (change)="changeDropdownOptions()"
+                                                (clear)="tableData[rowIndex][valIndex] = null"  
+                                                (open)="tableData[rowIndex][valIndex] = null">
                                     </ng-select>
                                 </td>
                             </ng-container>
@@ -60,6 +63,26 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <!--Citations-->
+            <div *ngIf="selectedCitation">
+                <div class="table-title">Citation</div>
+                <div>
+                    <table style="border:solid 1px gray" class="custom-table">
+                        <thead>
+                            <tr>
+                                <th class="width-5">ID</th>
+                                <th>Citation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{selectedCitation.id}}</td>
+                                <td><a href="{{selectedCitation.citationURL}}" target="_blank">{{selectedCitation.author}}&nbsp;{{selectedCitation.title}}</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div>
                 <button *ngIf='tableDisplay && !tableEdit' type="button" class="button small green mright-xs" (click)='submitRecords()'>Submit</button>

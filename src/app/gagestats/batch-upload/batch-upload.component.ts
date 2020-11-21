@@ -13,6 +13,8 @@ import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Unittype } from 'app/shared/interfaces/unitType';
 import { Variabletype } from 'app/shared/interfaces/variableType'
+import { ManageCitation } from 'app/shared/interfaces/managecitations';
+import { Station } from 'app/shared/interfaces/station';
 
 @Component({
   selector: 'batchUploadModal',
@@ -33,7 +35,7 @@ export class BatchUploadModal implements OnInit {
   public tableEdit: boolean = false;
   public data: [][];
   public stationChars = [ {'id': 'agencyID', 'name': 'Agency', 'disabled': false}, 
-                          {'id': 'code', 'name': 'Station ID', 'disabled': false}, 
+                          {'id': 'code', 'name': 'Station Code', 'disabled': false}, 
                           {'id': 'name', 'name': 'Name', 'disabled': false}, 
                           {'id': 'isRegulated', 'name': 'Regulated?', 'disabled': false}, 
                           {'id': 'latitude', 'name': 'Latitude', 'disabled': false}, 
@@ -43,7 +45,7 @@ export class BatchUploadModal implements OnInit {
 
   public statChars = [  {'id': 'statisticGroupTypeID', 'name': 'Stat Group Type', 'disabled': false},
                         {'id': 'regressionTypeID', 'name': 'Regression Type', 'disabled': false},
-                        {'id': 'stationID', 'name': 'Station ID', 'disabled': false},
+                        {'id': 'code', 'name': 'Station Code', 'disabled': false},
                         {'id': 'value', 'name': 'Value', 'disabled': false},
                         {'id': 'unitTypeID', 'name': 'Units', 'disabled': false},
                         {'id': 'comments', 'name': 'Comments', 'disabled': false},
@@ -53,7 +55,7 @@ export class BatchUploadModal implements OnInit {
                         {'id': 'endDate', 'name': 'End Date', 'disabled': false},
                         {'id': 'remarks', 'name': 'Remarks', 'disabled': false} ];
 
-  public charChars = [  {'id': "stationID", 'name': "Station ID", 'disabled': false },
+  public charChars = [  {'id': "code", 'name': "Station Code", 'disabled': false },
                         {'id': "variableTypeID", 'name': "Variable Type", 'disabled': false },
                         {'id': "unitTypeID", 'name': "Units", 'disabled': false },
                         {'id': "value", 'name': "Value", 'disabled': false },
@@ -71,6 +73,8 @@ export class BatchUploadModal implements OnInit {
   public sheetNamesButtons: boolean;
   public wsname;
   public dropdownOptions;
+  public selectedCitation;
+  public stations;
 
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
@@ -84,7 +88,7 @@ export class BatchUploadModal implements OnInit {
       if (show) { this.showModal(); }
     });
     this.modalElement = this.batchUploadModal;
-    // subscribe to all agencies, station types, regions, stat groups, regression types, variable types, units...
+    // subscribe to all agencies, station types, regions, stat groups, regression types, variable types, units, selected citation, stations...
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL).subscribe((agencies: Array<Agency>) => {
       this.agencies = agencies;
     });
@@ -105,12 +109,21 @@ export class BatchUploadModal implements OnInit {
     });
     this._nssService.getUnitTypes().subscribe(res => {
       this.unitType = res;
-    })
+    });
+    this._nssService.selectedCitation.subscribe(c => {
+      this.selectedCitation = c;
+    });
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL).subscribe((s: Array<Station>) => {
+      this.stations = s;
+      console.log(this.stations)
+    });
 }                 //******* End OnInit  
 
   public showModal(): void {
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl' });
   }
+
+/////////////// Import Excel Data section /////////////////
 
   public selectFile(event: any) {
     const target: DataTransfer = <DataTransfer>(event.target);
@@ -135,6 +148,8 @@ export class BatchUploadModal implements OnInit {
     this.setDropdownOptions();
   }
 
+  //////////////// Create/Edit Table Section ///////////////////
+
   public setDropdownOptions() {         // Set dropdown menu options
     if(this.uploadStations) {
       this.dropdownOptions = JSON.parse(JSON.stringify(this.stationChars));
@@ -147,7 +162,52 @@ export class BatchUploadModal implements OnInit {
     };
   }
 
+  public createTable(data){
+    this.headers = JSON.parse(JSON.stringify(data[0]));  // copy the first row of the excel sheet as a list of headers
+    this.tableData = JSON.parse(JSON.stringify(data));   // copy the data from the excel sheet to display and change
+    for (var i = 0; i < this.tableData[0].length; i++) {
+      this.tableData[0][i] = null                        // Delete header values from first row
+    }
+    this.dropdownOptions = JSON.parse(JSON.stringify(this.stationChars));
+  }
+
+  public clearTable() {
+    delete(this.data);
+    delete(this.tableData);
+    delete(this.headers);
+    this.tableDisplay = false; 
+    this.sheetNamesButtons = false
+    this.uploadChars = false;
+    this.uploadStations = false;
+    this.uploadStats = false;
+    this.tableEdit = false;
+    delete(this.selectedCitation);
+  }
+
+  public changeDropdownOptions() {
+    this.setDropdownOptions();
+    this.dropdownOptions.forEach((element, index) => {
+      if ( this.tableData[0].includes(element.id) ) {
+        this.dropdownOptions[index].disabled = true;
+      }
+    });
+}
+
+  public deleteRow(index) {
+    this.tableData.splice(index, 1);
+  }
+
+  public deleteColumn(index) {
+    this.headers.splice(index, 1)
+    for(var i = 0; i < this.tableData.length; i++ ) {
+      this.tableData[i].splice(index, 1)
+    }
+  }
+
+////////////////// Create and Submit HTTP POST Request ////////////////////////
+
   public submitRecords() {
+    console.log('Input data: ', this.tableData)
     var records;
     var url;
     this.tableData.forEach(row => { // Loop through the rows of the table
@@ -168,7 +228,12 @@ export class BatchUploadModal implements OnInit {
               }
           })
           var recordObj = JSON.parse('{' + record + '}');  // Parse strings into JSON objects
-          if(this.uploadStations) {                      // If stations are being uploaded...  
+          delete recordObj.null;                           // Delete any columns which were not assigned a header
+          if (this.selectedCitation) {                     // Add the citation ID, if there is a citation
+            //var cit: 'citationID: ';
+            recordObj.citationID = this.selectedCitation.id;
+          }
+          if(this.uploadStations) {                        // If stations are being uploaded...  
             url = "stations/Batch";
             const location = {type: 'Point', coordinates: [ parseFloat(recordObj.longitude), parseFloat(recordObj.latitude) ]};  // Add location item
             delete recordObj.latitude;  // Delete old location items
@@ -213,6 +278,10 @@ export class BatchUploadModal implements OnInit {
               var x = this.getPreferred(recordObj.isPreferred);
               recordObj.isPreferred = x;
             }
+            if(recordObj.code) {
+              var sID: number = this.getStationID(recordObj.code);
+              recordObj.stationID = sID;
+            }
           }
           if (this.uploadChars) {                             // If chars are being uploaded... 
             url = "characteristics/batch";
@@ -224,6 +293,10 @@ export class BatchUploadModal implements OnInit {
               var vID = this.getVariableType(recordObj.variableTypeID);
               recordObj.variableTypeID = vID;
             }
+            if(recordObj.code) {
+              var sID: number = this.getStationID(recordObj.code);
+              recordObj.stationID = sID;
+            }
           }
           if (records == null) {                              // Group record objects into an array of records
             records = [recordObj];
@@ -233,7 +306,8 @@ export class BatchUploadModal implements OnInit {
           }  
       }  
     });    
-    console.log('Output records: ', records)
+    console.log('Output records: ', records);
+    delete(this.selectedCitation);
     // this._settingsService.postEntity(stations, this.configSettings.gageStatsBaseURL +  url)
     //   .subscribe((response:any) =>{
     //     if(!response.headers){
@@ -244,54 +318,12 @@ export class BatchUploadModal implements OnInit {
     //   });
   }
 
-  public createTable(data){
-    this.headers = JSON.parse(JSON.stringify(data[0]));  // copy the first row of the excel sheet as a list of headers
-    this.tableData = JSON.parse(JSON.stringify(data));   // copy the data from the excel sheet to display and change
-    for (var i = 0; i < this.tableData[0].length; i++) {
-      this.tableData[0][i] = null                        // Delete header values from first row
-    }
-    this.dropdownOptions = JSON.parse(JSON.stringify(this.stationChars));
-    console.log(this.tableData)
-  }
-
-  public clearTable() {
-    delete(this.data);
-    delete(this.tableData);
-    delete(this.headers);
-    this.tableDisplay = false; 
-    this.sheetNamesButtons = false
-    this.uploadChars = false;
-    this.uploadStations = false;
-    this.uploadStats = false;
-    this.tableEdit = false;
-  }
-
-  public changeDropdownOptions($event) {
-    console.log(this.tableData[0])
-    this.setDropdownOptions();
-    this.dropdownOptions.forEach((element, index) => {
-      if ( this.tableData[0].includes(element.id) ) {
-        this.dropdownOptions[index].disabled = true;
-        console.log(element.id)
-      }
-    });
-    console.log(this.dropdownOptions)
-}
-
-  public deleteRow(index) {
-    this.tableData.splice(index, 1);
-  }
-
-  public deleteColumn(index) {
-    this.headers.splice(index, 1)
-    for(var i = 0; i < this.tableData.length; i++ ) {
-      this.tableData[i].splice(index, 1)
-    }
-  }
 
   // public getKeys(obj) {
   //   return Object.keys(obj);
   // }
+
+//////////////// Get NSS Characteristic IDs //////////////////////
 
   public getStationTypeID(code) {
     if (this.stationTypes) {
@@ -335,6 +367,12 @@ export class BatchUploadModal implements OnInit {
     }
   }
 
+  public getStationID(code) {
+    if(this.stations) {
+      return (this.stations.find(s => s.code === code).id)
+    }
+  }
+
   public getPreferred(x) {
     if(x = 'Y' || 'Yes' || 'y' || 'yes') {
       return true;
@@ -351,6 +389,21 @@ export class BatchUploadModal implements OnInit {
     if(x = 'N' || 'No' || 'n' || 'no') {
       return false;
     }
+  }
+
+  ///////////////////////Citation Modal Section/////////////////////
+
+  public showManageCitationsModal() {
+    if(this.selectedCitation) {
+      var id = this.selectedCitation.id
+    }
+    const addManageCitationForm: ManageCitation = {
+        show: true,
+        addCitation: true,
+        inGagePage: true,
+        selectCitation: id
+      } 
+    this._nssService.setManageCitationsModal(addManageCitationForm);
   }
 
 }

@@ -128,9 +128,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         }
         else {
             this.url = this.configSettings.nssBaseURL + this.configSettings.citationURL
-        }    
-        console.log(this.url)
-
+        }   
     }
 
     public saveFilters(){

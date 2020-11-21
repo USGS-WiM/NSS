@@ -432,6 +432,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
       return this.statisticGroups.find(sg => sg.id == id).name;
   }
 
+  public onCloseModal() {
+    delete(this.selectedCitation);
+    this.editGage = false;
+  }
+
 ///////////////////////Citation Modal Section/////////////////////
 
   public showManageCitationsModal(c) {
@@ -443,7 +448,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     } 
     this._nssService.setManageCitationsModal(addManageCitationForm);
   }
-
 
 ///////////////////////////////////////////////////////////////////////
 

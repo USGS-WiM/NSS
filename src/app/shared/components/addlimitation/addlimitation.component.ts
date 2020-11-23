@@ -24,6 +24,7 @@ export class AddlimitationComponent implements OnInit {
   public variables;
   public regressionRegionID;
   public unitTypes;
+  public limitations = []; 
 
   constructor(private _nssService: NSSService, 
     private _modalService: NgbModal, 
@@ -85,9 +86,11 @@ export class AddlimitationComponent implements OnInit {
   }
   
   public createNewLimitation(){
-    console.log(this.newLimForm.value)
+    if (this.regressionRegionID!=0) {
+    this.limitations = []; 
+    this.limitations.push(this.newLimForm.value)
     this._settingsService
-      .postEntity(this.newLimForm.value, this.configSettings.nssBaseURL + this.configSettings.limitationsURL + '?rr=' + this.regressionRegionID )
+      .postEntity(this.limitations, this.configSettings.nssBaseURL + this.configSettings.limitationsURL + '?rr=' + this.regressionRegionID )
       .subscribe((response:any) => {
         if (!response.headers) {
           this._toasterService.pop('info', 'Info', 'Limitations were Added');
@@ -98,5 +101,9 @@ export class AddlimitationComponent implements OnInit {
         this._toasterService.pop('error', 'Error creating Limitations', error.message || error._body.message || error.statusText);
       }
     );  
+    //TODO
+    } else {
+      this._toasterService.pop('error', 'Error creating Limitations', 'Must Create Regression Region First');
+    }
    }
 }

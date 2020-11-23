@@ -168,6 +168,20 @@ export class NSSService {
          return this._showHideAddLimitationModal.asObservable();
      }
 
+    // send limitation back to regression modal
+    private limitationsSource = new BehaviorSubject<any>(' ');
+    currentLimitations = this.limitationsSource.asObservable();
+    addLimitation(item: any){
+        this.limitationsSource.next(item);
+    }
+    // set selected citation
+    private _enteredLimitations: Subject<Limitation> = new Subject<Limitation>();
+    public setLimitations(val: Limitation) {
+        this._enteredLimitations.next(val);
+    }
+    public get selectedLimitations(): Observable<Limitation> {
+        return this._enteredLimitations.asObservable();
+    }
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
     private _showHideAddRegressioRegionModal: Subject<AddRegressionRegion> = new Subject<AddRegressionRegion>();
     public setAddRegressionRegionModal(val: AddRegressionRegion) {

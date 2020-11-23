@@ -33,13 +33,13 @@
                                 <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
                                     <div class="form-group required">
                                         <label class="req" for="variableTypeID">Explanatory Variable:</label>
-                                        <ng-select [readonly]="!newLimitation" formControlName="variableTypeID" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                        <ng-select formControlName="variableTypeID" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                                             <ng-option *ngFor="let v of variables" [value]="v.id">{{v.code}} ({{v.description}})</ng-option>
                                         </ng-select>
                                     </div>
                                     <div class="form-group required">
                                         <label class="req" for="unitTypeID">Explanatory Variable Unit:</label>
-                                            <ng-select [readonly]="!newLimitation" formControlName="unitTypeID"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                            <ng-select formControlName="unitTypeID"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
                                                 <ng-option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}} ({{u.abbr}})</ng-option>
                                             </ng-select>
                                     </div>
@@ -63,7 +63,7 @@
     </div>
     <div class="modal-body-footer">
         <button type="button" (click)="d('closed')" class="button">Cancel</button>
-        <button type="button" (click)="createNewLimitation()" [disabled]="!newLimForm.valid" class="button blue">Create</button>
+        <button type="button" (click)="createNewLimitation(); d('closed')" [disabled]="!newLimForm.valid" class="button blue">Create</button>
     </div>
 </ng-template>
 

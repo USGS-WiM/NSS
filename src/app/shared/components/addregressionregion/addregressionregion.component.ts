@@ -56,6 +56,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   private polygonLayer;
   private selectedCitation;
   public currentCitation;
+  public currentLimitations;
   public selectedRegressionRegion: Array<Regressionregion>;
   public tempSelectedRegressionRegion: Array<Regressionregion>;
   public newCitation: boolean = false;
@@ -135,6 +136,12 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.currentCitation = item;
       if (this.currentCitation != " ") {
         this.addExistingCitation();
+      }
+    });
+    this._nssService.currentLimitations.subscribe(item => {
+      this.currentLimitations = item;
+      if (this.currentLimitations != " ") {
+        this.addLimitation();
       }
     });
     this.getEntities();
@@ -238,10 +245,19 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public showLimitationsModal() {
-    const addLimitationsForm: Limitation = {
-      show: true
+    if (!this.selectedRegRegion){
+      const addLimitationsForm: Limitation = {
+        show: true,
+        regressionRegionID: 0
+      }
+      this._nssService.setAddLimitationModal(addLimitationsForm);
+    } else{
+      const addLimitationsForm: Limitation = {
+        show: true,
+        regressionRegionID: this.selectedRegRegion.id
+      }
+      this._nssService.setAddLimitationModal(addLimitationsForm);
     }
-    this._nssService.setAddLimitationModal(addLimitationsForm);
   }
 
   public addExistingCitation(){
@@ -249,6 +265,10 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.newCitForm.controls['title'].setValue(this.currentCitation.title);
     this.newCitForm.controls['author'].setValue(this.currentCitation.author);
     this.newCitForm.controls['citationURL'].setValue(this.currentCitation.citationURL);  
+  }
+
+  public addLimitation(){
+    this.currentLimitations = this.limitations;
   }
   
   outputWimMessages(msg) {
@@ -524,9 +544,10 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public deleteLimitation(lim, limIndex) {
+    console.log(limIndex)
     const check = confirm('Are you sure you want to delete this Limitation?');
     if (check) {
-      this._settingsService.deleteEntity(lim.value.limitationID,this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
+      this._settingsService.deleteEntity(lim.id, this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
           if (result.headers) { 
             this._nssService.outputWimMessages(result); 
             const control = <FormArray>this.newRegRegForm.get('limitations');

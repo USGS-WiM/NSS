@@ -73,6 +73,7 @@
                             <th class="width-20">Description</th>
                             <th class="width-20" >Variables</th>
                             <th class="width-20" >Unit Type</th>
+                            <th class="width-20" ></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,10 +88,15 @@
                             </td>
                             <!-- Col 4, Associated Regression Region -->
                             <td class="width-5" >
-                                <div *ngFor="let v of lim.variables;">
+                                <div *ngFor="let v of lim.variables; let varIndex = index">
                                     <td>{{getVariableName(v.variableTypeID)}}</td>
                                     <td>{{getUnitName(v.unitTypeID)}}</td>
                                 </div>
+                            </td>
+                            <td class="width-5">
+                                <button title="Delete Citation" (click)="deleteLimitation(lim,limIndex)" class="icon-button" aria-hidden="true">
+									<i class="far fa-times"></i>
+								</button>
                             </td>
                         </tr>
                     </tbody>

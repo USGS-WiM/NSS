@@ -65,8 +65,8 @@ export class AddlimitationComponent implements OnInit {
     this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
       res.sort((a, b) => a.name.localeCompare(b.name));
       for (const unit of res) {
-          unit['unit'] = unit['name'];
-          unit['abbr'] = unit['abbreviation'];
+        unit['unit'] = unit['name'];
+        unit['abbr'] = unit['abbreviation'];
       }
       this.unitTypes = res;
     });

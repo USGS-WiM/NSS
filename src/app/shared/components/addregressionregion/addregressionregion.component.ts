@@ -60,8 +60,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public selectedRegressionRegion: Array<Regressionregion>;
   public tempSelectedRegressionRegion: Array<Regressionregion>;
   public newCitation: boolean = false;
-  public newLimitation;
-  public rr;
   public status;
   public methods;
   public variables;
@@ -70,12 +68,12 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
   limitations: any;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
-      return this._nssService.selectedStatGroups;
+    return this._nssService.selectedStatGroups;
   }
 
   public tempSelectedRegType: Array<Regressiontype>;
   public get selectedRegType(): Array<Regressiontype> {
-      return this._nssService.selectedRegressionTypes;
+    return this._nssService.selectedRegressionTypes;
   }
   constructor(private _nssService: NSSService,
               private _modalService: NgbModal,
@@ -114,10 +112,9 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
     this.modalSubscript = this._nssService.showAddRegRegionModal.subscribe((result: AddRegressionRegion) => {
       if (result.show) { 
-          this.rr = result.regRegionID;
-          this.showNewRegressionRegionForm(result.regRegionID);
-          this.loadMap();
-        }
+        this.showNewRegressionRegionForm(result.regRegionID);
+        this.loadMap();
+      }
     });
     this._nssService.selectedRegion.subscribe(region => {
       this.selectedRegion = region;
@@ -164,8 +161,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
       res.sort((a, b) => a.name.localeCompare(b.name));
       for (const unit of res) {
-          unit['unit'] = unit['name'];
-          unit['abbr'] = unit['abbreviation'];
+        unit['unit'] = unit['name'];
+        unit['abbr'] = unit['abbreviation'];
       }
       this.unitTypes = res;
     });
@@ -275,13 +272,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     // output messages from http request to toast
     const existingMsgs = [];
     for (const key of Object.keys(msg)) {
-        for (const item of msg[key]) {
-            // skip duplicate messages
-            if (existingMsgs.indexOf(item) == -1) {
-                existingMsgs.push(item);
-                this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
-            }
+      for (const item of msg[key]) {
+        // skip duplicate messages
+        if (existingMsgs.indexOf(item) == -1) {
+          existingMsgs.push(item);
+          this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
         }
+      }
     }
   }
 
@@ -302,7 +299,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     if (rr) { // edit existing regression region
       this._loaderService.showFullPageLoad();
       this.addRegReg = false;
-      this.newLimitation = false;
       this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regRegionURL + '/' + rr + '?includeGeometry=true')
         .subscribe((res) => {
           this.selectedRegRegion = res;
@@ -365,7 +361,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       );
     } else { // rr doesn't exist, create new regression
       this.addRegReg = true;
-      this.newLimitation = true;
+      this.limitations = [];
       this.addCitation = false;
       this.uploadPolygon = false;
       this.newRegRegForm.controls['statusID'].setValue(2);
@@ -395,13 +391,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   public getUnitName(ID){
     if (this.unitTypes && this.unitTypes.find(s => s.id === ID)) {
-        return (this.unitTypes.find(s => s.id === ID).name);
+      return (this.unitTypes.find(s => s.id === ID).name);
     }
   }
 
   public getVariableName(ID){
     if (this.variables && this.variables.find(s => s.id === ID)) {
-        return (this.variables.find(s => s.id === ID).name);
+      return (this.variables.find(s => s.id === ID).name);
     }
   }
 
@@ -417,7 +413,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     const regionID = this.newRegRegForm.value.region;
     this.saveFilters();
     if (!this.uploadPolygon) {
-        this.newRegRegForm.get('location').setValue(null);
+      this.newRegRegForm.get('location').setValue(null);
     }
 
     this._settingsService
@@ -545,25 +541,25 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   public getLimitations(){
     this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regRegionURL + '/' + this.selectedRegRegion.id + '?includeGeometry=true')
-        .subscribe((res) => {
-          this.selectedRegRegion = res;
-          this.limitations = this.selectedRegRegion.limitations;
-          console.log(this.limitations)
-        });
+      .subscribe((res) => {
+        this.selectedRegRegion = res;
+        this.limitations = this.selectedRegRegion.limitations;
+        console.log(this.limitations)
+      });
   }
 
   public deleteLimitation(lim, limIndex) {
     const check = confirm('Are you sure you want to delete this Limitation?');
     if (check) {
       this._settingsService.deleteEntity(lim.id, this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
-          if (result.headers) {
-            this._nssService.outputWimMessages(result); 
-          }
-          this.getLimitations();
+        if (result.headers) {
+          this._nssService.outputWimMessages(result); 
+        }
+        this.getLimitations();
       }, error => {
-          if (error.headers) {
-              this._nssService.outputWimMessages(error);
-          } else { this._nssService.handleError(error); }
+        if (error.headers) {
+            this._nssService.outputWimMessages(error);
+        } else { this._nssService.handleError(error); }
       });
     }
 
@@ -631,6 +627,4 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.map.invalidateSize();
     }, 100);
   }
-
-  
 }

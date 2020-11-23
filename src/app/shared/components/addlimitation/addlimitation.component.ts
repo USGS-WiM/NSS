@@ -24,7 +24,9 @@ export class AddlimitationComponent implements OnInit {
   public variables;
   public regressionRegionID;
   public unitTypes;
-  public limitations = []; 
+  public newLimitation = []; 
+  public incommingLim;
+  public editLim;
 
   constructor(private _nssService: NSSService, 
     private _modalService: NgbModal, 
@@ -37,6 +39,7 @@ export class AddlimitationComponent implements OnInit {
     this.newLimForm = _fb.group({
       criteria: new FormControl(null, Validators.required),
       description: new FormControl(null, Validators.required),
+      regressionRegionID: new FormControl(null),
       variables: this._fb.array([]),
     });
   }
@@ -44,17 +47,49 @@ export class AddlimitationComponent implements OnInit {
   ngOnInit() {
     this.modalSubscript = this._nssService.showAddLimitationModal.subscribe((result: Limitation) => {
       if (result.show) { 
-        console.log(result)
+        this.incommingLim = result;
         this.regressionRegionID = result.regressionRegionID
         this.showModal(); 
       }
     });
+    this.getEntities();
     this.modalElement = this.addLimitationsModal;
   }
 
   public showModal(): void {
-    this.getEntities();
+    if (this.incommingLim.isEditing == true) {
+      this.editLim = true;
+      this.newLimForm.controls['criteria'].setValue(this.incommingLim.limitation.criteria);
+      this.newLimForm.controls['description'].setValue(this.incommingLim.limitation.description);
+      this.newLimForm.controls['regressionRegionID'].setValue(this.regressionRegionID);
+      console.log(this.incommingLim)
+      this.incommingLim.limitation.variables.forEach((v, varIndex) => {
+        this.addVariable();
+        const control = <FormArray>this.newLimForm.get('variables');
+        this.unitTypes.forEach((unit,x) => {  
+          if (unit.id.toString() == v.unitTypeID.toString()){
+            control.controls[varIndex].get('unitTypeID').setValue(this.unitTypes[x].id);
+          }
+        });
+        this.variables.forEach((variable,x) => {  
+          if (variable.id.toString() == v.variableTypeID.toString()){
+            control.controls[varIndex].get('variableTypeID').setValue(this.variables[x].id);
+          }
+        });
+      });
+    }else{
+      this.editLim = false;
+    }
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
+  }
+
+  private cancelCreateLimitaiton() {
+    this.newLimForm.reset();
+    this.modalRef.close();
+    const varControl = <FormArray>this.newLimForm.get('variables');
+    for(let i = varControl.length-1; i >= 0; i--) {
+      varControl.removeAt(i);
+    }
   }
 
   public getEntities(){
@@ -85,12 +120,28 @@ export class AddlimitationComponent implements OnInit {
     }));
   }
   
-  public createNewLimitation(){
-    if (this.regressionRegionID!=0) {
-    this.limitations = []; 
-    this.limitations.push(this.newLimForm.value)
+  public editLimitation(){
+    console.log(this.newLimForm.value)
     this._settingsService
-      .postEntity(this.limitations, this.configSettings.nssBaseURL + this.configSettings.limitationsURL + '?rr=' + this.regressionRegionID )
+      .putEntity(this.incommingLim.limitation.id, this.newLimForm.value, this.configSettings.nssBaseURL + this.configSettings.limitationsURL)
+      .subscribe((response:any) => {
+        if (!response.headers) {
+          this._toasterService.pop('info', 'Info', 'Limitations were Added');
+        } else { this._settingsService.outputWimMessages(response); }
+      }, error => {
+        this._loaderService.hideFullPageLoad();
+        if (this._settingsService.outputWimMessages(error)) { return; }
+        this._toasterService.pop('error', 'Error creating Limitations', error.message || error._body.message || error.statusText);
+      }
+    );  
+  }
+
+  public createNewLimitation(){
+    if (this.regressionRegionID != 0) {
+    this.newLimitation = []; 
+    this.newLimitation.push(this.newLimForm.value)
+    this._settingsService
+      .postEntity(this.newLimitation, this.configSettings.nssBaseURL + this.configSettings.limitationsURL + '?rr=' + this.regressionRegionID )
       .subscribe((response:any) => {
         if (!response.headers) {
           this._toasterService.pop('info', 'Info', 'Limitations were Added');

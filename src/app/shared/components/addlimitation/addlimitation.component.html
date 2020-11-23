@@ -1,8 +1,9 @@
 <!--Add Limitation modal-->
 <ng-template #addLimitations let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <div class="title">New Limitation</div>  
-        <button class="icon-button" (click)="d('closed');"><i class="far fa-times"></i></button>                
+        <div class="title" *ngIf="!editLim">New Limitation</div>  
+        <div class="title" *ngIf="editLim">Edit Limitation</div>  
+        <button class="icon-button" (click)="cancelCreateLimitaiton()"><i class="far fa-times"></i></button>                
     </div>
     <div class="modal-body">
         <form [formGroup]="newLimForm" style="margin-bottom: 10px;">
@@ -45,8 +46,9 @@
         </form>
     </div>
     <div class="modal-body-footer">
-        <button type="button" (click)="d('closed')" class="button">Cancel</button>
-        <button type="button" (click)="createNewLimitation(); d('closed')" [disabled]="!newLimForm.valid" class="button blue">Create</button>
+        <button type="button" (click)="cancelCreateLimitaiton()" class="button">Cancel</button>
+        <button type="button" *ngIf="!editLim" (click)="createNewLimitation(); d('closed')" [disabled]="!newLimForm.valid" class="button blue">Create</button>
+        <button type="button" *ngIf="editLim" (click)="editLimitation(); d('closed')" [disabled]="!newLimForm.valid" class="button blue">Save</button>
     </div>
 </ng-template>
 

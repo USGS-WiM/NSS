@@ -1,4 +1,6 @@
 export interface Limitation {
-    show:true,
+    show: true,
     regressionRegionID: number
+    isEditing?: boolean
+    limitation?: any[]
 }

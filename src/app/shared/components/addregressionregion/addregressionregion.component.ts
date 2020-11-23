@@ -245,16 +245,28 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     if (!this.selectedRegRegion){
       const addLimitationsForm: Limitation = {
         show: true,
-        regressionRegionID: 0
+        regressionRegionID: 0,
+        isEditing: false
       }
       this._nssService.setAddLimitationModal(addLimitationsForm);
     } else{
       const addLimitationsForm: Limitation = {
         show: true,
-        regressionRegionID: this.selectedRegRegion.id
+        regressionRegionID: this.selectedRegRegion.id,
+        isEditing: false
       }
       this._nssService.setAddLimitationModal(addLimitationsForm);
     }
+  }
+
+  public editLimitation(lim, limIndex) {
+    const addLimitationsForm: Limitation = {
+      show: true,
+      regressionRegionID: this.selectedRegRegion.id,
+      isEditing: true,
+      limitation: lim
+    }
+    this._nssService.setAddLimitationModal(addLimitationsForm);
   }
 
   public addExistingCitation(){
@@ -530,13 +542,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     const div = document.getElementById(divId);
     if (div && div.classList.contains('hidden')) {return false;
     } else {return true; }
-  }
-
-
-  public editLimitation(lim, limIndex) {
-    const control = <FormArray>this.newRegRegForm.get('limitations');
-    control.controls[limIndex].get('isEditing').setValue(true);
-
   }
 
   public getLimitations(){

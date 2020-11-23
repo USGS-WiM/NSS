@@ -543,22 +543,30 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   }
 
+  public getLimitations(){
+    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regRegionURL + '/' + this.selectedRegRegion.id + '?includeGeometry=true')
+        .subscribe((res) => {
+          this.selectedRegRegion = res;
+          this.limitations = this.selectedRegRegion.limitations;
+          console.log(this.limitations)
+        });
+  }
+
   public deleteLimitation(lim, limIndex) {
-    console.log(limIndex)
     const check = confirm('Are you sure you want to delete this Limitation?');
     if (check) {
       this._settingsService.deleteEntity(lim.id, this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
-          if (result.headers) { 
+          if (result.headers) {
             this._nssService.outputWimMessages(result); 
-            const control = <FormArray>this.newRegRegForm.get('limitations');
-            control.removeAt(limIndex);
           }
+          this.getLimitations();
       }, error => {
           if (error.headers) {
               this._nssService.outputWimMessages(error);
           } else { this._nssService.handleError(error); }
       });
     }
+
   }
 
   public addGeojsonToMap(polygon: any) {

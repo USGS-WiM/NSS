@@ -34,7 +34,9 @@ export class AddlimitationComponent implements OnInit {
     private _loaderService: LoaderService) { 
     this.configSettings = this._configService.getConfiguration();
     this.newLimForm = _fb.group({
-        limitations: this._fb.array([])
+      criteria: new FormControl(null, Validators.required),
+      description: new FormControl(null, Validators.required),
+      variables: this._fb.array([]),
     });
   }
 
@@ -69,33 +71,19 @@ export class AddlimitationComponent implements OnInit {
     });
   }
 
-  public removeVariable(limIndex, varIndex) {
-    const control = <FormArray>this.newLimForm.get('limitations.' + limIndex + '.variables');
+  public removeVariable(varIndex) {
+    const control = <FormArray>this.newLimForm.get('variables');
     control.removeAt(varIndex);
   }
 
-  public removeLimitation(limIndex) {
-    const control = <FormArray>this.newLimForm.get('limitations');
-    control.removeAt(limIndex);
-  }
-
-  public addVariable(limIndex){
-    const control = <FormArray>this.newLimForm.get('limitations.'+limIndex+'.variables');
+  public addVariable(){
+    const control = <FormArray>this.newLimForm.get('variables');
     control.push(this._fb.group({
       variableTypeID: new FormControl(null, Validators.required),
       unitTypeID: new FormControl(null, Validators.required),
     }));
   }
   
-  public addLimitation() {
-    const control = <FormArray>this.newLimForm.get('limitations');
-    control.push(this._fb.group({
-      criteria: new FormControl(null, Validators.required),
-      description: new FormControl(null, Validators.required),
-      variables: this._fb.array([]),
-    }));
-  }
-
   public createNewLimitation(){
     console.log(this.newLimForm.value)
     this._settingsService

@@ -6,59 +6,42 @@
     </div>
     <div class="modal-body">
         <form [formGroup]="newLimForm" style="margin-bottom: 10px;">
-            <div formArrayName="limitations">
-                <div *ngFor="let lim of newLimForm.get('limitations').controls; let limIndex = index">
-                    <div class="scenario-dropdown-title">
-                        <span>Limitation {{limIndex + 1}}</span>
+            <div class="form-group required">
+                <label for="criteria">Criteria:</label>
+                <textarea class="form-control" rows="3" placeholder="" formControlName="criteria"></textarea>
+            </div>
+            <div class="form-group required">
+                <label for="description">Description:</label>
+                <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
+            </div>
+            <div formArrayName="variables">
+                <div *ngFor="let var of newLimForm.get('variables').controls; let varIndex = index">
+                    <div class="scenario-dropdown">
+                        <div class="scenario-dropdown-title">
+                            <span>Variable {{varIndex + 1}}</span>
+                        </div>
+                        <button class="icon-button" (click)="removeVariable(varIndex)"><i class="far fa-times"></i></button>
                     </div>
-                    <button class="icon-button" (click)="removeLimitation(limIndex)"><i class="far fa-times"></i></button>
-                    <div [formGroupName]="limIndex" [id]="'limitation' + (limIndex + 1)" class="scenFormGroup">
+
+                    <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
                         <div class="form-group required">
-                            <label for="criteria">Criteria:</label>
-                            <textarea class="form-control" rows="3" placeholder="" formControlName="criteria"></textarea>
+                            <label class="req" for="variableTypeID">Explanatory Variable:</label>
+                            <ng-select formControlName="variableTypeID" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                <ng-option *ngFor="let v of variables" [value]="v.id">{{v.code}} ({{v.description}})</ng-option>
+                            </ng-select>
                         </div>
                         <div class="form-group required">
-                            <label for="description">Description:</label>
-                            <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
+                            <label class="req" for="unitTypeID">Explanatory Variable Unit:</label>
+                                <ng-select formControlName="unitTypeID"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                    <ng-option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}} ({{u.abbr}})</ng-option>
+                                </ng-select>
                         </div>
-                        <div formArrayName="variables">
-                            <div *ngFor="let var of newLimForm.get('limitations.'+limIndex+'.variables').controls; let varIndex = index">
-                                <div class="scenario-dropdown">
-                                    <div class="scenario-dropdown-title">
-                                        <span>Variable {{varIndex + 1}}</span>
-                                    </div>
-                                    <button class="icon-button" (click)="removeVariable(limIndex,varIndex)"><i class="far fa-times"></i></button>
-                                </div>
-
-                                <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
-                                    <div class="form-group required">
-                                        <label class="req" for="variableTypeID">Explanatory Variable:</label>
-                                        <ng-select formControlName="variableTypeID" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
-                                            <ng-option *ngFor="let v of variables" [value]="v.id">{{v.code}} ({{v.description}})</ng-option>
-                                        </ng-select>
-                                    </div>
-                                    <div class="form-group required">
-                                        <label class="req" for="unitTypeID">Explanatory Variable Unit:</label>
-                                            <ng-select formControlName="unitTypeID"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
-                                                <ng-option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}} ({{u.abbr}})</ng-option>
-                                            </ng-select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <button type="button" class="button mright-xs" (click)="addVariable(limIndex)">Add New Variable</button>
-                        </div>
-                        <hr>
-                    </div>  
+                    </div>
                 </div>
-                <div>
-                    <button type="button" class="button mright-xs" (click)="addLimitation()">Add New Limitation</button>
-                </div>
-            </div>  
-
-
-
+            </div>
+            <div>
+                <button type="button" class="button mright-xs" (click)="addVariable()">Add New Variable</button>
+            </div>
         </form>
     </div>
     <div class="modal-body-footer">

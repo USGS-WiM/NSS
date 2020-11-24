@@ -93,7 +93,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       region: new FormControl(null, Validators.required),
       location: new FormControl(null),
       citationID: new FormControl(null),
-      //limitations: this._fb.array([])
     });
     this.newCitForm = _fb.group({
       'title': new FormControl(null, Validators.required),

@@ -1316,7 +1316,7 @@ export class MainviewComponent implements OnInit {
     deleteRegRegion(rrID) {
         const check = confirm('Are you sure you want to delete this Regression Region?');
         if (check) {
-
+        //Wont delete if there are limitations. should we delete all limiations automatically?
             // this._settingsService.getEntities(this.configSettings.nssBaseURL+this.configSettings.regRegionURL+'/'+rrID+'/'+this.configSettings.limitationsURL).subscribe((limitations) => {
             //     this.limitations = limitations;
             // });
@@ -1333,7 +1333,6 @@ export class MainviewComponent implements OnInit {
             //         });
             //     })
             // }
-
             this.saveFilters();
             this._settingsService.deleteEntity(rrID, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(result => {
                 this.requeryFilters();

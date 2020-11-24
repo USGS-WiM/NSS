@@ -62,7 +62,6 @@ export class AddlimitationComponent implements OnInit {
       this.newLimForm.controls['criteria'].setValue(this.incommingLim.limitation.criteria);
       this.newLimForm.controls['description'].setValue(this.incommingLim.limitation.description);
       this.newLimForm.controls['regressionRegionID'].setValue(this.regressionRegionID);
-      console.log(this.incommingLim)
       this.incommingLim.limitation.variables.forEach((v, varIndex) => {
         this.addVariable();
         const control = <FormArray>this.newLimForm.get('variables');
@@ -121,13 +120,15 @@ export class AddlimitationComponent implements OnInit {
   }
   
   public editLimitation(){
-    console.log(this.newLimForm.value)
     this._settingsService
       .putEntity(this.incommingLim.limitation.id, this.newLimForm.value, this.configSettings.nssBaseURL + this.configSettings.limitationsURL)
       .subscribe((response:any) => {
+        this._nssService.doRefresh(true);
         if (!response.headers) {
-          this._toasterService.pop('info', 'Info', 'Limitations were Added');
-        } else { this._settingsService.outputWimMessages(response); }
+          this._toasterService.pop('info', 'Info', 'Limitations were Edited');
+        } else { 
+          this._settingsService.outputWimMessages(response); 
+        }
       }, error => {
         this._loaderService.hideFullPageLoad();
         if (this._settingsService.outputWimMessages(error)) { return; }
@@ -138,23 +139,26 @@ export class AddlimitationComponent implements OnInit {
 
   public createNewLimitation(){
     if (this.regressionRegionID != 0) {
-    this.newLimitation = []; 
-    this.newLimitation.push(this.newLimForm.value)
-    this._settingsService
-      .postEntity(this.newLimitation, this.configSettings.nssBaseURL + this.configSettings.limitationsURL + '?rr=' + this.regressionRegionID )
-      .subscribe((response:any) => {
-        if (!response.headers) {
-          this._toasterService.pop('info', 'Info', 'Limitations were Added');
-        } else { this._settingsService.outputWimMessages(response); }
-      }, error => {
-        this._loaderService.hideFullPageLoad();
-        if (this._settingsService.outputWimMessages(error)) { return; }
-        this._toasterService.pop('error', 'Error creating Limitations', error.message || error._body.message || error.statusText);
-      }
-    );  
-    //TODO
+      this.newLimitation = []; 
+      this.newLimitation.push(this.newLimForm.value)
+      this._settingsService
+        .postEntity(this.newLimitation, this.configSettings.nssBaseURL + this.configSettings.limitationsURL + '?rr=' + this.regressionRegionID )
+        .subscribe((response:any) => {
+          this._nssService.doRefresh(true);
+          if (!response.headers) {
+            this._toasterService.pop('info', 'Info', 'Limitations were Added');
+          } else { 
+            this._settingsService.outputWimMessages(response); 
+          }
+        }, error => {
+          this._loaderService.hideFullPageLoad();
+          if (this._settingsService.outputWimMessages(error)) { return; }
+          this._toasterService.pop('error', 'Error creating Limitations', error.message || error._body.message || error.statusText);
+        }
+      );  
+    //Can't create limitations w/o regression region
     } else {
       this._toasterService.pop('error', 'Error creating Limitations', 'Must Create Regression Region First');
     }
-   }
+  }
 }

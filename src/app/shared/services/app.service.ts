@@ -100,12 +100,11 @@ export class NSSService {
         this._showHideEditScenarioModal.next(val);
     }
 
-     // -+-+-+-+-+-+-+-+-+ Add Station modal (gagestats) -+-+-+-+-+-+-+-+
-     private _showHideAddStationModal: Subject<boolean> = new Subject<boolean>();
-     public setAddStationModal(val: any) { 
-         this._showHideAddStationModal.next(val);
-     }
-    
+    // -+-+-+-+-+-+-+-+-+ Add Station modal (gagestats) -+-+-+-+-+-+-+-+
+    private _showHideAddStationModal: Subject<boolean> = new Subject<boolean>();
+    public setAddStationModal(val: any) { 
+        this._showHideAddStationModal.next(val);
+    }
 
     private itemSource = new BehaviorSubject<any>(' ');
     currentItem = this.itemSource.asObservable();
@@ -158,15 +157,15 @@ export class NSSService {
         return this._selectedCitation.asObservable();
     }
 
-     // -+-+-+-+-+-+-+-+-+ add limitation modal -+-+-+-+-+-+-+-+
-     private _showHideAddLimitationModal: Subject<Limitation> = new Subject<Limitation>();
-     public setAddLimitationModal(val: Limitation) {
-         this._showHideAddLimitationModal.next(val);
-     }
-     // show the add regression region modal in the mainview
-     public get showAddLimitationModal(): any {
-         return this._showHideAddLimitationModal.asObservable();
-     }
+    // -+-+-+-+-+-+-+-+-+ add limitation modal -+-+-+-+-+-+-+-+
+    private _showHideAddLimitationModal: Subject<Limitation> = new Subject<Limitation>();
+    public setAddLimitationModal(val: Limitation) {
+        this._showHideAddLimitationModal.next(val);
+    }
+    // show the add regression region modal in the mainview
+    public get showAddLimitationModal(): any {
+    return this._showHideAddLimitationModal.asObservable();
+    }
 
     // send limitation back to regression modal
     private limitationsSource = new BehaviorSubject<any>(' ');
@@ -174,13 +173,12 @@ export class NSSService {
     addLimitation(item: any){
         this.limitationsSource.next(item);
     }
-    // set selected citation
-    private _enteredLimitations: Subject<Limitation> = new Subject<Limitation>();
-    public setLimitations(val: Limitation) {
-        this._enteredLimitations.next(val);
-    }
-    public get selectedLimitations(): Observable<Limitation> {
-        return this._enteredLimitations.asObservable();
+
+    //Refresh regregion modal when limitations are added or edited
+    private refresh = new BehaviorSubject<boolean>(false);
+    currentRefresh = this.refresh.asObservable();
+    doRefresh(bool: boolean){
+        this.refresh.next(bool);
     }
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
     private _showHideAddRegressioRegionModal: Subject<AddRegressionRegion> = new Subject<AddRegressionRegion>();

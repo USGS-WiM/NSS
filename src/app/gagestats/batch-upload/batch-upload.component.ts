@@ -53,7 +53,10 @@ export class BatchUploadModal implements OnInit {
                         {'id': 'yearsofRecord', 'name': 'Years of Record', 'disabled': false},
                         {'id': 'startDate', 'name': 'Start Date', 'disabled': false},
                         {'id': 'endDate', 'name': 'End Date', 'disabled': false},
-                        {'id': 'remarks', 'name': 'Remarks', 'disabled': false} ];
+                        {'id': 'remarks', 'name': 'Remarks', 'disabled': false},
+                        {'id': 'variance', 'name': 'Variance', 'disabled': false},
+                        {'id': 'lowerConfidenceInterval', 'name': 'Lower Confidence Interval', 'disabled': false}, 
+                        {'id': 'upperConfidenceInterval', 'name': 'Upper Confidence Interval', 'disabled': false}];
 
   public charChars = [  {'id': "code", 'name': "Station Code", 'disabled': false },
                         {'id': "variableTypeID", 'name': "Variable Type", 'disabled': false },
@@ -88,7 +91,7 @@ export class BatchUploadModal implements OnInit {
       if (show) { this.showModal(); }
     });
     this.modalElement = this.batchUploadModal;
-    // subscribe to all agencies, station types, regions, stat groups, regression types, variable types, units, selected citation, stations...
+    // subscribe to all agencies, station types, regions, stat groups, regression types, variable types, units, selected citation...
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL).subscribe((agencies: Array<Agency>) => {
       this.agencies = agencies;
     });
@@ -112,10 +115,6 @@ export class BatchUploadModal implements OnInit {
     });
     this._nssService.selectedCitation.subscribe(c => {
       this.selectedCitation = c;
-    });
-    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL).subscribe((s: Array<Station>) => {
-      this.stations = s;
-      console.log(this.stations)
     });
 }                 //******* End OnInit  
 
@@ -142,6 +141,8 @@ export class BatchUploadModal implements OnInit {
   public selectSheet(sheetName) {
     const ws: XLSX.WorkSheet = this.wb.Sheets[sheetName];
     this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));        // Convert data to json
+    console.log(this.data, typeof(this.data))
+    
     this.createTable(this.data);
     this.tableDisplay = true;
     this.sheetNamesButtons = false;
@@ -168,6 +169,12 @@ export class BatchUploadModal implements OnInit {
     for (var i = 0; i < this.tableData[0].length; i++) {
       this.tableData[0][i] = null                        // Delete header values from first row
     }
+    //for (var x of this.tableData){
+      for(var i = 0; i < this.tableData[1].length; i++) {
+        this.tableData[1][i] = this.getTrueFalse(this.tableData[1][i]);
+     // }
+
+    }; 
     this.dropdownOptions = JSON.parse(JSON.stringify(this.stationChars));
   }
 
@@ -252,16 +259,26 @@ export class BatchUploadModal implements OnInit {
               recordObj.regionID = rID;
             }
             if(recordObj.isRegulated) {
-              var x = this.getRegulated(recordObj.isRegulated);
+              var x = this.getTrueFalse(recordObj.isRegulated);
               recordObj.isRegulated = x;
             }
           }
           if (this.uploadStats) {                             // If stats are being uploaded...
             url = "statistics/batch";
-            recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '. ' + recordObj.remarks;
+            recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
+            if(recordObj.remarks != 'null') {
+              recordObj.comments = recordObj.comments + ' ' + recordObj.remarks; 
+            }
             delete(recordObj.remarks);
             delete(recordObj.startDate);
             delete(recordObj.endDate);
+            if(recordObj.variance || recordObj.lowerConfidenceInterval || recordObj.upperConfidenceInterval) {
+              recordObj.predictionInterval = {
+                "variance": recordObj.variance,
+		            "lowerConfidenceInterval": recordObj.lowerConfidenceInterval,
+		            "upperConfidenceInterval" : recordObj.upperConfidenceInterval
+              }
+            }
             if(recordObj.statisticGroupTypeID) {
               var sID = this.getStatGroupType(recordObj.statisticGroupTypeID);
               recordObj.statisticGroupTypeID = sID;
@@ -275,12 +292,11 @@ export class BatchUploadModal implements OnInit {
               recordObj.unitTypeID = uID;
             }
             if(recordObj.isPreferred) {
-              var x = this.getPreferred(recordObj.isPreferred);
+              var x = this.getTrueFalse(recordObj.isPreferred);
               recordObj.isPreferred = x;
             }
             if(recordObj.code) {
-              var sID: number = this.getStationID(recordObj.code);
-              recordObj.stationID = sID;
+              this.getStationID(recordObj);
             }
           }
           if (this.uploadChars) {                             // If chars are being uploaded... 
@@ -294,8 +310,7 @@ export class BatchUploadModal implements OnInit {
               recordObj.variableTypeID = vID;
             }
             if(recordObj.code) {
-              var sID: number = this.getStationID(recordObj.code);
-              recordObj.stationID = sID;
+              this.getStationID(recordObj);
             }
           }
           if (records == null) {                              // Group record objects into an array of records
@@ -317,11 +332,6 @@ export class BatchUploadModal implements OnInit {
     //     }
     //   });
   }
-
-
-  // public getKeys(obj) {
-  //   return Object.keys(obj);
-  // }
 
 //////////////// Get NSS Characteristic IDs //////////////////////
 
@@ -367,28 +377,31 @@ export class BatchUploadModal implements OnInit {
     }
   }
 
-  public getStationID(code) {
-    if(this.stations) {
-      return (this.stations.find(s => s.code === code).id)
-    }
+  public getStationID(obj): any {
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).subscribe(s=> {
+      var station = s;
+      return obj.stationID = station.id;
+    });
+
   }
 
-  public getPreferred(x) {
-    if(x = 'Y' || 'Yes' || 'y' || 'yes') {
-      return true;
-    }
-    if(x = 'N' || 'No' || 'n' || 'no') {
-      return false;
-    }
-  }
-
-  public getRegulated(x) {
-    if(x = 'Y' || 'Yes' || 'y' || 'yes') {
-      return true;
-    }
-    if(x = 'N' || 'No' || 'n' || 'no') {
-      return false;
-    }
+  public getTrueFalse(val) { 
+    
+      
+      if(val == 'Y' || 'Yes' || 'y' || 'yes' || 'YES' || 'true' || 'T' || 'TRUE' || 'True' || 't') {
+        console.log('1', val, true)
+        return  true;
+      }
+      if(val == 'N' || 'No' || 'n' || 'no' || 'NO' || 'false' || 'F' || 'FALSE' || 'False' || 'f') {
+        console.log("2", val, false)
+        return  false;
+      }
+      else {
+        console.log('3', val)
+        return  val;
+      }
+    
+    
   }
 
   ///////////////////////Citation Modal Section/////////////////////

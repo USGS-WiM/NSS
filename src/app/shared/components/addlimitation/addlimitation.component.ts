@@ -129,6 +129,7 @@ export class AddlimitationComponent implements OnInit {
         } else { 
           this._settingsService.outputWimMessages(response); 
         }
+        this.cancelCreateLimitaiton();
       }, error => {
         this._loaderService.hideFullPageLoad();
         if (this._settingsService.outputWimMessages(error)) { return; }
@@ -150,6 +151,7 @@ export class AddlimitationComponent implements OnInit {
           } else { 
             this._settingsService.outputWimMessages(response); 
           }
+          this.cancelCreateLimitaiton();
         }, error => {
           this._loaderService.hideFullPageLoad();
           if (this._settingsService.outputWimMessages(error)) { return; }

@@ -34,7 +34,6 @@
     font-size: 11px!important;
 }
 
-
 .download-divider{
 	display: flex;
 	height: 30px;
@@ -75,7 +74,6 @@
 	}
 }
 
-
 // Equations
 .equation-wrapper{
 	display: flex;
@@ -86,7 +84,6 @@
 		margin-right: 25px;
 	}
 }
-
 
 // Charts
 .charts-header{
@@ -113,11 +110,6 @@
 	}
 }
 
-
-
-
-
-
 .reqError {
     background-color: #efe1e1!important;
     border: 1px solid #a94442!important;
@@ -143,19 +135,19 @@
     }
 }
 
-
 .addErrorButton {
     padding: 5px;
     height: 30px;
 }
-
   
-  .chart-wrapper{
+.chart-wrapper{
 	border: 1px solid rgba(0,0,0,0.3);
 	display:inline-block;
 	margin-bottom:65px !important;
 	max-height: 460px !important;
 	padding: 0 !important;
-  }
-  
+}
 
+hr.statGroup {
+	border: 1px solid  #BFC6D2;
+}

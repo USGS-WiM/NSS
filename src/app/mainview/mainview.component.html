@@ -931,9 +931,8 @@
 		<form #editScenarioForm="ngForm">
 			<div>
 				<div *ngFor="let s of scenarios; let sgIndex = index;">
-
-					<label class="big mtop-sm mbottom-sm">{{s.statisticGroupName}}</label>
-
+					<label class="biggest mtop-sm mbottom-sm">{{s.statisticGroupName}}</label>
+					<hr class="statGroup">
 					<!--add option to switch statistic groups as well-->
 					<div *ngFor="let rr of s.regressionRegions; let rrIndex = index;">
 
@@ -949,8 +948,9 @@
 						</button>
 
 						<!-- Regression region label -->
-						<label *ngIf="!rr.isEditing" class="big">{{rr.name}} (RG_Code: {{rr.code}}), Status: {{getStatusDescription(rr.statusID)}}{{getMethodName(rr.methodID)}}</label>
-
+						<label *ngIf="!rr.isEditing" class="big">{{rr.name}} (RG_Code: {{rr.code}})</label>
+						<label *ngIf="!rr.isEditing" style="float: right" class="small">Status: {{getStatusDescription(rr.statusID)}}{{getMethodName(rr.methodID)}}</label>
+						<hr>
 						<table *ngIf="rr.isEditing" class="custom-table">
 							<thead>
 								<tr>
@@ -1287,7 +1287,8 @@
 						class="far fa-pencil" aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
 					<i *ngIf="!u.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(u.id)"
 						class="far fa-times" aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
-					<label *ngIf="!u.isEditing" class="rrLabel">{{u.name}} (RG_Code: {{u.code}}), Status: {{getStatusDescription(u.statusID)}}{{getMethodName(u.methodID)}}</label>
+					<label *ngIf="!u.isEditing" class="big">{{u.name}} (RG_Code: {{u.code}})</label>
+					<label *ngIf="!u.isEditing" style="float: right" class="small">Status: {{getStatusDescription(u.statusID)}}{{getMethodName(u.methodID)}}</label>	
 				</div>
 			</div>
 		</form>

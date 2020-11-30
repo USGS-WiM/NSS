@@ -58,6 +58,17 @@ label{
 		@media (max-width: $screenMD) {
 			font-size: 16px;
 		}
+	}	
+	// Biggest
+	&.biggest{
+		font-size: 24px;
+		padding-bottom: 10px;
+		font-weight: 500;
+		color: var(--text);
+		// Make smaller on mobile
+		@media (max-width: $screenMD) {
+			font-size: 22px;
+		}
 	}
 
 }

@@ -1235,7 +1235,7 @@
 												{{r.predictionInterval.student_T_Statistic}}<br></span>
 											<span
 												*ngIf="r.predictionInterval.variance !=='null' && r.predictionInterval.variance !==''">
-												<b>Variance:</b> {{r.predictionInterval.variance}}<br>
+												<b>Model Error Variance or Mean Square Error:</b> {{r.predictionInterval.variance}}<br>
 											</span>
 											<span
 												*ngIf="r.predictionInterval.xiRowVector !=='null' && r.predictionInterval.xiRowVector !==''">
@@ -1258,7 +1258,7 @@
 											<label>Student's T Statistics for 90% confidence interval:</label>
 											<input type="number" name="student_T_Statistic"
 												[(ngModel)]="r.predictionInterval.student_T_Statistic">
-											<label>Variance:</label>
+											<label>Model Error Variance or Mean Square Error:</label>
 											<input type="number" name="variance"
 												[(ngModel)]="r.predictionInterval.variance">
 											<label>XI Row Vector:</label>

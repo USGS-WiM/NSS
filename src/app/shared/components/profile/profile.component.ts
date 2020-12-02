@@ -36,7 +36,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     public roles;
     public tempData;
     public toast: Toast;
-    public config: ToasterConfig = new ToasterConfig({timeout: 0});
+    public config: ToasterConfig = new ToasterConfig({timeout: 5000});
     public passwordTest = '';
     constructor(
         public _nssService: NSSService,

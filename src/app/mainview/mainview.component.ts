@@ -122,7 +122,7 @@ export class MainviewComponent implements OnInit {
     public addCitation: boolean;
     public uploadPolygon: boolean;
     public editSGIndex; public editRRindex; public editIdx;
-    public config: ToasterConfig = new ToasterConfig({ timeout: 0 });
+    public config: ToasterConfig = new ToasterConfig({ timeout: 5000 });
     public regressionRegions;
     public addRegReg: boolean;
     public selectedRegRegion;

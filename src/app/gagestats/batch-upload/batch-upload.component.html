@@ -56,8 +56,11 @@
                             <ng-container *ngIf="rowIndex != 0">
                                 <td *ngIf='tableEdit'><button title="Delete Row" (click)='deleteRow(rowIndex)'><i class="far fa-times"></i></button></td>
                                 <td *ngFor='let val of tableData[0], let valIndex = index'>
-                                    <span *ngIf='!tableEdit'>{{tableData[rowIndex][valIndex]}}</span>
-                                    <span *ngIf='tableEdit'><input [(ngModel)]='tableData[rowIndex][valIndex]'></span>
+                                    <span *ngIf='!tableEdit &&  getType( tableData[rowIndex][valIndex]) !== "boolean" '>{{tableData[rowIndex][valIndex]}}</span>
+                                    <span *ngIf='!tableEdit &&  getType( tableData[rowIndex][valIndex]) === "boolean"'><input type="checkbox" [checked]="tableData[rowIndex][valIndex]" onclick="return false"></span>
+                                    <span *ngIf='tableEdit  &&  getType( tableData[rowIndex][valIndex]) !== "boolean"'><input [(ngModel)]='tableData[rowIndex][valIndex]'></span>
+                                    <span *ngIf='tableEdit  &&  getType( tableData[rowIndex][valIndex]) === "boolean"'><input type="checkbox" [(ngModel)]="tableData[rowIndex][valIndex]" size="3"></span>
+                                    <!-- tableData[rowIndex][valIndex] !== true || !tableEdit && tableData[rowIndex][valIndex] !== false -->
                                 </td>
                             </ng-container>
                         </tr>

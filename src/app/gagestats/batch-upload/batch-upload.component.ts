@@ -15,6 +15,7 @@ import { Unittype } from 'app/shared/interfaces/unitType';
 import { Variabletype } from 'app/shared/interfaces/variableType'
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
+import { StationTypesComponent } from 'app/settings/categories/stationtypes/stationtypes.component';
 
 @Component({
   selector: 'batchUploadModal',
@@ -169,13 +170,11 @@ export class BatchUploadModal implements OnInit {
     for (var i = 0; i < this.tableData[0].length; i++) {
       this.tableData[0][i] = null                        // Delete header values from first row
     }
-    //for (var x of this.tableData){
-      for(var i = 0; i < this.tableData[1].length; i++) {
-        this.tableData[1][i] = this.getTrueFalse(this.tableData[1][i]);
-     // }
-
+    for (var x = 1; x < this.tableData.length; x++){    // Iterate thru the tableData and replace yes/no strings w/ boolean values
+      for(var i = 0; i < this.tableData[x].length; i++) {
+        this.tableData[x][i] = this.getTrueFalse(this.tableData[x][i]);
+      }
     }; 
-    this.dropdownOptions = JSON.parse(JSON.stringify(this.stationChars));
   }
 
   public clearTable() {
@@ -378,30 +377,25 @@ export class BatchUploadModal implements OnInit {
   }
 
   public getStationID(obj): any {
-    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).subscribe(s=> {
-      var station = s;
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).subscribe((s: Array<Station>) => {
+      var station: Station = s;
       return obj.stationID = station.id;
     });
 
   }
 
   public getTrueFalse(val) { 
-    
-      
-      if(val == 'Y' || 'Yes' || 'y' || 'yes' || 'YES' || 'true' || 'T' || 'TRUE' || 'True' || 't') {
-        console.log('1', val, true)
-        return  true;
+    if (typeof val === 'string') {
+      switch(val.toLocaleLowerCase().trim()){
+        case "y": case "yes": case "true": case "t": return true;
+        case "n": case "no": case "false": case "f": return false;
+        default: return val;
       }
-      if(val == 'N' || 'No' || 'n' || 'no' || 'NO' || 'false' || 'F' || 'FALSE' || 'False' || 'f') {
-        console.log("2", val, false)
-        return  false;
-      }
-      else {
-        console.log('3', val)
-        return  val;
-      }
-    
-    
+    } else return val;
+  }
+
+  public getType(x) {
+    return typeof x;
   }
 
   ///////////////////////Citation Modal Section/////////////////////

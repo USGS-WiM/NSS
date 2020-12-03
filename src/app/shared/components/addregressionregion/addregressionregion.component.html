@@ -98,9 +98,6 @@
                             <td class="width-20">
                                 <div *ngFor="let v of lim.variables; last as isLast; let varIndex = index">
                                     <td [class.varLast]=isLast [class.var]=!isLast>{{getVariableName(v.variableTypeID)}} in {{getUnitName(v.unitTypeID)}}                                        
-                                        <button *ngIf="editLimitations" style="float: right" title="Delete Variable" class="icon-button"  (click)="deleteVariable(varIndex)">
-                                            <i class="far fa-times"></i>
-                                        </button>
                                     </td>
                                 </div>
                             </td>

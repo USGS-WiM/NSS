@@ -76,6 +76,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public addLim = false;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
+  editLim: boolean;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
     return this._nssService.selectedStatGroups;
   }
@@ -107,6 +108,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       criteria: new FormControl(null, Validators.required),
       description: new FormControl(null, Validators.required),
       regressionRegionID: new FormControl(null),
+      limitationID: new FormControl(null),
       variables: this._fb.array([]),
     });
     this.newCitForm = _fb.group({
@@ -253,34 +255,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       inGagePage: false
     }
     this._nssService.setManageCitationsModal(addManageCitationForm);
-  }
-
-  public showLimitationsModal() {
-    if (!this.selectedRegRegion){
-      const addLimitationsForm: Limitation = {
-        show: true,
-        regressionRegionID: 0,
-        isEditing: false
-      }
-      this._nssService.setAddLimitationModal(addLimitationsForm);
-    } else{
-      const addLimitationsForm: Limitation = {
-        show: true,
-        regressionRegionID: this.selectedRegRegion.id,
-        isEditing: false
-      }
-      this._nssService.setAddLimitationModal(addLimitationsForm);
-    }
-  }
-
-  public showEditLimitationModal(lim) {
-    const addLimitationsForm: Limitation = {
-      show: true,
-      regressionRegionID: this.selectedRegRegion.id,
-      isEditing: true,
-      limitation: lim
-    }
-    this._nssService.setAddLimitationModal(addLimitationsForm);
   }
 
   public addExistingCitation(){
@@ -618,53 +592,20 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }, 100);
   }
 
-  public editRowClicked(item, index) {
-    this.tempItem = JSON.parse(JSON.stringify(item));
-    this.limitation = this.tempItem;
-    if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
-      this.cancelEditRowClicked(this.itemBeingEdited);
-    }
-    this.itemBeingEdited = item;
-    this.editId = index;
-    item.isEditing = true;
-  }
-
-  public cancelEditRowClicked(item) {
-    this.limitations[this.editId] = this.tempItem;
-    item.isEditing = false;
-    delete(this.itemBeingEdited);
-  }
-
   public addLimitation() {
-    if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
-      this.cancelEditRowClicked(this.itemBeingEdited);
-    }
-    if (!this.selectedRegRegion){
-      //New Regression Region
-      this.newLimitation = {
-      criteria: null,
-      desription: null,
-      regressionRegionID: 0
-      }
+    if (this.addRegReg == true){
+      this.newLimForm.controls['regressionRegionID'].setValue(null);
     } else{
-      // Existing Regression Region
-      this.newLimitation = {
-        criteria: null,
-        desription: null,
-        regressionRegionID: this.selectedRegRegion.id
-      }
+      this.newLimForm.controls['regressionRegionID'].setValue(this.selectedRegRegion.id);
     }
-    this.newLimitation.isEditing = true;
   } 
 
   public removeVariable(varIndex) {
-    console.log('remove variable')
     const control = <FormArray>this.newLimForm.get('variables');
     control.removeAt(varIndex);
   }
 
   public addVariable(){
-    console.log('add variable')
     const control = <FormArray>this.newLimForm.get('variables');
     control.push(this._fb.group({
       variableTypeID: new FormControl(null, Validators.required),
@@ -674,26 +615,53 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   private cancelCreateLimitaiton() {
     this.newLimForm.reset();
-    this.addLim=false;
+    this.addLim = false;
+    this.editLim = false;
     const varControl = <FormArray>this.newLimForm.get('variables');
     for(let i = varControl.length-1; i >= 0; i--) {
       varControl.removeAt(i);
     }
   }
 
+  deleteVariable(){
+    console.log('delete Variable')
+  }
+
+  editLimitation(lim){
+    this.editLim=true;
+    this.newLimForm.controls['criteria'].setValue(lim.criteria);
+    this.newLimForm.controls['description'].setValue(lim.description);
+    this.newLimForm.controls['regressionRegionID'].setValue(this.selectedRegRegion.id);
+    this.newLimForm.controls['limitationID'].setValue(lim.id);
+    lim.variables.forEach((v, varIndex) => {
+      this.addVariable();
+      const control = <FormArray>this.newLimForm.get('variables');
+      this.unitTypes.forEach((unit,x) => {  
+        if (unit.id.toString() == v.unitTypeID.toString()){
+          control.controls[varIndex].get('unitTypeID').setValue(this.unitTypes[x].id);
+        }
+      });
+      this.variables.forEach((variable,x) => {  
+        if (variable.id.toString() == v.variableTypeID.toString()){
+          control.controls[varIndex].get('variableTypeID').setValue(this.variables[x].id);
+        }
+      });
+    });
+  }
+
   //Save Edited Limitation
-  public saveLimitation(limitation){
-    console.log(limitation)
-    this._settingsService
-      .putEntity(limitation.id, limitation, this.configSettings.nssBaseURL + this.configSettings.limitationsURL)
+  public saveLimitation(){
+    console.log(this.newLimForm.value)
+      this._settingsService
+      .putEntity(this.newLimForm.value.limitationID, this.newLimForm.value, this.configSettings.nssBaseURL + this.configSettings.limitationsURL)
       .subscribe((response:any) => {
-        limitation.isEditing = false;
-        delete(this.itemBeingEdited);
         if (!response.headers) {
           this._toasterService.pop('info', 'Info', 'Limitations were Edited');
         } else { 
           this._settingsService.outputWimMessages(response); 
         }
+        this.cancelCreateLimitaiton();
+        this.getLimitations();
       }, error => {
         if (this._settingsService.outputWimMessages(error)) { return; }
         this._toasterService.pop('error', 'Error creating Limitations', error.message || error._body.message || error.statusText);
@@ -703,7 +671,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   //Save New Limitation
   public createNewLimitation(){
-    if (this.newLimForm.value.regressionRegionID != 0) {
+    console.log(this.newLimForm.value)
+    if (this.newLimForm.value.regressionRegionID) {
       this.newLimitation = []; 
       this.newLimitation.push(this.newLimForm.value)
       this._settingsService
@@ -715,7 +684,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           } else { 
             this._settingsService.outputWimMessages(response); 
           }
-          this.cancelCreateLimitaiton()
+          this.cancelCreateLimitaiton();
+          this.getLimitations();
         }, error => {
           this._loaderService.hideFullPageLoad();
           if (this._settingsService.outputWimMessages(error)) { return; }

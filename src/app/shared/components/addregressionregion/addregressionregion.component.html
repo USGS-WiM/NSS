@@ -89,43 +89,25 @@
                     <tbody>
                         <tr *ngFor="let lim of limitations; let limIndex = index">
                             <td class="width-20">
-                                <span *ngIf="!lim.isEditing">{{lim.criteria}}</span>
-                                <span *ngIf="lim.isEditing"><textarea [(ngModel)]="lim.criteria" size="2"></textarea></span>
+                                <span>{{lim.criteria}}</span>
                             </td>
                             <td class="width-20">
-                                <span *ngIf="!lim.isEditing">{{lim.description}}</span>
-                                <span *ngIf="lim.isEditing"><textarea  [(ngModel)]="lim.description"  size="2"></textarea></span>
+                                <span>{{lim.description}}</span>
                             </td>
                             <td class="width-20">
-                                    <div *ngFor="let v of lim.variables; last as isLast; let varIndex = index">
-                                        <td *ngIf="!lim.isEditing" [class.varLast]=isLast [class.var]=!isLast>{{getVariableName(v.variableTypeID)}} in {{getUnitName(v.unitTypeID)}}</td>                                        
-                                        <td *ngIf="lim.isEditing" [class.varLast]=isLast [class.var]=!isLast>
-                                            <button *ngIf="lim.isEditing" style="float: right" title="Remove Variable" class="icon-button"  (click)="removeVariable(varIndex)">
-                                                <i class="far fa-times"></i>
-                                            </button>
-                                            <ng-select [clearable]="false">
-                                                <ng-option *ngFor="let v of variables" [value]="v.id">{{v.code}} ({{v.description}})</ng-option>
-                                            </ng-select>
-                                            <ng-select [clearable]="false">
-                                                <ng-option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}} ({{u.abbr}})</ng-option>
-                                            </ng-select>
-                                        </td>
+                                <div *ngFor="let v of lim.variables; last as isLast; let varIndex = index">
+                                    <td [class.varLast]=isLast [class.var]=!isLast>{{getVariableName(v.variableTypeID)}} in {{getUnitName(v.unitTypeID)}}                                        
+                                        <button *ngIf="editLimitations" style="float: right" title="Delete Variable" class="icon-button"  (click)="deleteVariable(varIndex)">
+                                            <i class="far fa-times"></i>
+                                        </button>
+                                    </td>
                                 </div>
-                                <button *ngIf="lim.isEditing" style="float: right" title="Add Variable" class="icon-button" (click)="addVariable()">
-                                    <i class="far fa-plus-circle pull-left"></i>
-                                </button>
                             </td>
                             <td class="width-5">
-                                <button title="Edit Limitation"  *ngIf="!lim.isEditing && editLimitations" (click)="editRowClicked(lim,limIndex)" class="icon-button" aria-hidden="true">
+                                <button title="Edit Limitation"  *ngIf="editLimitations" (click)="editLimitation(lim)" class="icon-button" aria-hidden="true">
                                     <i class="far  fa-pencil"></i>
                                 </button>
-                                <button type="button" *ngIf="lim.isEditing && editLimitations" title="Save Limitation" (click)="saveLimitation(lim)"  class="icon-button" aria-hidden="true">
-                                    <i class="far fa-floppy-o"></i>
-                                </button>
-                                <button type="button" *ngIf="lim.isEditing && editLimitations" title="Cancel Edit" (click)="cancelEditRowClicked(lim)"  class="icon-button" aria-hidden="true">
-                                    <i class="far fa-history"></i>
-                                </button>
-                                <button type="button" *ngIf="lim.isEditing && editLimitations" title="Delete Limitation" (click)="deleteLimitation(lim)"  class="icon-button" aria-hidden="true">
+                                <button type="button" *ngIf="editLimitations" title="Delete Limitation" (click)="deleteLimitation(lim)"  class="icon-button" aria-hidden="true">
                                     <i class="far fa-times"></i>
                                 </button>
                             </td> 
@@ -133,11 +115,14 @@
                     </tbody>
                 </table>
             </div>
-            <div><button *ngIf="editLimitations && !addLim" type="button" class="button mright-xs"  (click)="addLimitation(); addLim=true">Add Limitation</button></div>
+            <div>
+                <button *ngIf="editLimitations && !addLim" type="button" class="button mright-xs"  (click)="addLimitation(); addLim=true">Add Limitation</button>
+            </div>
 
             <!-- Add Limitation Form-->
-            <form *ngIf="addLim" [formGroup]="newLimForm" style="margin-bottom: 10px;">
-                <label>New Limitation</label>
+            <form *ngIf="addLim  || editLim" [formGroup]="newLimForm" style="margin-bottom: 10px;">
+                <label  *ngIf="!editLim">New Limitation</label>
+                <label  *ngIf="editLim">Edit Limitation</label>
                 <button style="float: right" type="button" title="Cancel Create Limitation" (click)="cancelCreateLimitaiton()"  class="icon-button" aria-hidden="true">
                     <i class="far fa-times"></i>
                 </button>
@@ -178,7 +163,8 @@
                     <button type="button" class="button mright-xs" (click)="addVariable()">Add New Variable</button>
                 </div>
                 <div>
-                    <button type="button"  class="button blue" (click)="createNewLimitation()">Create Limitation</button>
+                    <button *ngIf="!editLim"type="button" class="button blue" (click)="createNewLimitation()">Create Limitation</button>
+                    <button *ngIf="editLim"type="button" class="button blue" (click)="saveLimitation()">Save Limitation</button>
                 </div>
             </form>
 

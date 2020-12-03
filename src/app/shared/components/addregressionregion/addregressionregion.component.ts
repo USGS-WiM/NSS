@@ -24,7 +24,6 @@ import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
-import { Limitation } from 'app/shared/interfaces/limitation';
 
 @Component({
   selector: 'addRegressionRegionModal',
@@ -56,7 +55,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   private polygonLayer;
   private selectedCitation;
   public currentCitation;
-  public currentLimitations;
   public selectedRegressionRegion: Array<Regressionregion>;
   public tempSelectedRegressionRegion: Array<Regressionregion>;
   public newCitation: boolean = false;
@@ -65,18 +63,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public variables;
   public unitTypes;
   public limitations: any = [];
-
-  public limitation: Limitation;
-  public tempItem;
-  public itemBeingEdited;
-  public editId;
   public newLimForm: FormGroup;
   public editLimitations = false;
   public newLimitation;
   public addLim = false;
+  public editLim = false;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
-  editLim: boolean;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
     return this._nssService.selectedStatGroups;
   }
@@ -102,7 +95,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       code: new FormControl(null, Validators.required),
       region: new FormControl(null, Validators.required),
       location: new FormControl(null),
-      citationID: new FormControl(null),
+      citationID: new FormControl(null)
     });
     this.newLimForm = _fb.group({
       criteria: new FormControl(null, Validators.required),
@@ -149,12 +142,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.currentCitation = item;
       if (this.currentCitation != " ") {
         this.addExistingCitation();
-      }
-    });
-    this._nssService.currentLimitations.subscribe(item => {
-      this.currentLimitations = item;
-      if (this.currentLimitations != " ") {
-        this.currentLimitations = this.limitations;
       }
     });
     this.getEntities();
@@ -305,8 +292,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this.newRegRegForm.controls['location'].setValue(this.selectedRegRegion.location);
           this.newRegRegForm.controls['statusID'].setValue(this.selectedRegRegion.statusID);
           this.newRegRegForm.controls['methodID'].setValue(this.selectedRegRegion.methodID);
-          this.limitations = this.selectedRegRegion.limitations;
-            
+          this.limitations = this.selectedRegRegion.limitations; 
           if (this.selectedRegRegion.citationID) { // if there is a citation set values in modal
             this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
             this.addCitation = true;
@@ -374,8 +360,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
 
   private cancelCreateRegression() {
     this.editLimitations = false;
-    delete(this.itemBeingEdited);
     this.showNewRegRegForm = false;
+    this.cancelCreateLimitaiton();
     this.newRegRegForm.reset();
     this.newCitForm.reset();
     this.modalRef.close();
@@ -483,26 +469,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       }
       );
       this.newCitation = false;
-  }
-
-  
-  public hideDiv(divId) {
-    // collapse param/error div
-    const div = document.getElementById(divId);
-    div.classList.add('hidden');
-  }
-
-  public showDiv(divId) {
-    // uncollapse param/error div
-    const div = document.getElementById(divId);
-    div.classList.remove('hidden');
-  }
-
-  public checkDiv(divId) {
-    // check if div is collapsed or not
-    const div = document.getElementById(divId);
-    if (div && div.classList.contains('hidden')) {return false;
-    } else {return true; }
   }
 
   public getLimitations(){
@@ -678,7 +644,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this._settingsService
         .postEntity(this.newLimitation, this.configSettings.nssBaseURL + this.configSettings.limitationsURL + '?rr=' + this.selectedRegRegion.id )
         .subscribe((response:any) => {
-          this._nssService.doRefresh(true);
           if (!response.headers) {
             this._toasterService.pop('info', 'Info', 'Limitations were Added');
           } else { 

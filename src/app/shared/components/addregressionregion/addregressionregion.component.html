@@ -3,7 +3,7 @@
 <div class="modal-header">
 	<div class="title" *ngIf="addRegReg">New Regression Region</div>  
 	<div class="title" *ngIf="!addRegReg">Edit Regression Region</div>  
-    <button class="icon-button" (click)="d('closed'); cancelCreateRegression"><i class="far fa-times"></i></button>                
+    <button class="icon-button" (click)="d('closed'); cancelCreateRegression()"><i class="far fa-times"></i></button>                
 </div>
     <div class="modal-body">
         <form [formGroup]="newRegRegForm" style="margin-bottom: 10px;">
@@ -65,6 +65,7 @@
             </div>
         </form>
 
+        <!-- Limitation Section -->
         <div>
             <hr>
             <label >Limitations:</label>
@@ -166,20 +167,10 @@
                     <button *ngIf="!editLim"type="button" class="button blue" (click)="createNewLimitation()">Create Limitation</button>
                     <button *ngIf="editLim"type="button" class="button blue" (click)="saveLimitation()">Save Limitation</button>
                 </div>
-            </form>
-
-
-
-
-
-
-
-
-
-
-            
+            </form>    
         </div>
 
+        <!-- Citation Section-->
         <div>
             <hr>
             <label>Citation:</label>
@@ -213,6 +204,7 @@
             </form>
         </div>
 
+        <!-- Polygon Section-->
         <div>
             <hr>
             <label for="location">Polygon (Shapefile .zip):</label>

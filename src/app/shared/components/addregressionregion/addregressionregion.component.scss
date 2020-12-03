@@ -26,3 +26,27 @@ button {
 .newCitForm {
     margin-bottom: 0px;
 }
+.varLast {
+    width: 228px; 
+    border-top-style:none; 
+    border-bottom-style:none; 
+    border-left-style:none; 
+}
+.var {
+    width: 228px; 
+    border-top-style:none; 
+    border-left-style:none; 
+    max-height:100%;
+}
+.editVar {
+    width: 45px; 
+    border-top-style:none; 
+    border-right-style: none;
+}
+
+.editVarLast {
+    width: 45px; 
+    border-top-style:none; 
+    border-right-style: none; 
+    border-bottom-style:none;
+}

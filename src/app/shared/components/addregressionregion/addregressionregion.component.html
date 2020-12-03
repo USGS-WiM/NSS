@@ -3,7 +3,7 @@
 <div class="modal-header">
 	<div class="title" *ngIf="addRegReg">New Regression Region</div>  
 	<div class="title" *ngIf="!addRegReg">Edit Regression Region</div>  
-    <button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+    <button class="icon-button" (click)="d('closed'); cancelCreateRegression"><i class="far fa-times"></i></button>                
 </div>
     <div class="modal-body">
         <form [formGroup]="newRegRegForm" style="margin-bottom: 10px;">
@@ -63,52 +63,136 @@
                     Study Area is required
                 </div>
             </div>
+        </form>
+
+        <div>
             <hr>
             <label >Limitations:</label>
-            <div *ngIf="limitations">
+            <button style="float: right" *ngIf="!editLimitations" type="button" class="button mright-xs" (click)="editLimitations = true">
+				<span>Edit Limitations</span>
+            </button>
+            <button style="float: right" *ngIf="editLimitations" type="button" class="button small green mright-sm" (click)="editLimitations = false; cancelCreateLimitaiton()">
+				<i class="far fa-check"></i>
+				<span>Finish Edits</span>
+            </button>
+            <!-- Displaying Limitations-->
+            <div *ngIf="limitations.length > 0">
                 <table class="custom-table table-striped table-scroll mtop-sm no-scrollbars" >
                     <thead>
                         <tr>
                             <th class="width-20">Criteria</th>
                             <th class="width-20">Description</th>
-                            <th class="width-20" >Variables</th>
-                            <th class="width-20" >Unit Type</th>
-                            <th class="width-20" ></th>
+                            <th class="width-20">Variables</th>
+                            <th class="width-5"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let lim of limitations; let limIndex = index">
-                            <!-- Col 1 -->
-                            <td class="width-5">
-                                <div>{{lim.criteria}}</div>
+                            <td class="width-20">
+                                <span *ngIf="!lim.isEditing">{{lim.criteria}}</span>
+                                <span *ngIf="lim.isEditing"><textarea [(ngModel)]="lim.criteria" size="2"></textarea></span>
                             </td>
-                            <!-- Col 2 -->
-                            <td class="width-5">
-                                <div>{{lim.description}}</div>
+                            <td class="width-20">
+                                <span *ngIf="!lim.isEditing">{{lim.description}}</span>
+                                <span *ngIf="lim.isEditing"><textarea  [(ngModel)]="lim.description"  size="2"></textarea></span>
                             </td>
-                            <!-- Col 4, Associated Regression Region -->
-                            <td class="width-5" >
-                                <div *ngFor="let v of lim.variables; let varIndex = index">
-                                    <td>{{getVariableName(v.variableTypeID)}}</td>
-                                    <td>{{getUnitName(v.unitTypeID)}}</td>
+                            <td class="width-20">
+                                    <div *ngFor="let v of lim.variables; last as isLast; let varIndex = index">
+                                        <td *ngIf="!lim.isEditing" [class.varLast]=isLast [class.var]=!isLast>{{getVariableName(v.variableTypeID)}} in {{getUnitName(v.unitTypeID)}}</td>                                        
+                                        <td *ngIf="lim.isEditing" [class.varLast]=isLast [class.var]=!isLast>
+                                            <button *ngIf="lim.isEditing" style="float: right" title="Remove Variable" class="icon-button"  (click)="removeVariable(varIndex)">
+                                                <i class="far fa-times"></i>
+                                            </button>
+                                            <ng-select [clearable]="false">
+                                                <ng-option *ngFor="let v of variables" [value]="v.id">{{v.code}} ({{v.description}})</ng-option>
+                                            </ng-select>
+                                            <ng-select [clearable]="false">
+                                                <ng-option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}} ({{u.abbr}})</ng-option>
+                                            </ng-select>
+                                        </td>
                                 </div>
+                                <button *ngIf="lim.isEditing" style="float: right" title="Add Variable" class="icon-button" (click)="addVariable()">
+                                    <i class="far fa-plus-circle pull-left"></i>
+                                </button>
                             </td>
                             <td class="width-5">
-                                <button title="Delete Limitation" (click)="deleteLimitation(lim)" class="icon-button" aria-hidden="true">
-									<i class="far fa-times"></i>
+                                <button title="Edit Limitation"  *ngIf="!lim.isEditing && editLimitations" (click)="editRowClicked(lim,limIndex)" class="icon-button" aria-hidden="true">
+                                    <i class="far  fa-pencil"></i>
                                 </button>
-                                <button title="Edit Limitation" (click)="showEditLimitationModal(lim)" class="icon-button" aria-hidden="true">
-									<i class="far  fa-pencil"></i>
-								</button>
-                            </td>
+                                <button type="button" *ngIf="lim.isEditing && editLimitations" title="Save Limitation" (click)="saveLimitation(lim)"  class="icon-button" aria-hidden="true">
+                                    <i class="far fa-floppy-o"></i>
+                                </button>
+                                <button type="button" *ngIf="lim.isEditing && editLimitations" title="Cancel Edit" (click)="cancelEditRowClicked(lim)"  class="icon-button" aria-hidden="true">
+                                    <i class="far fa-history"></i>
+                                </button>
+                                <button type="button" *ngIf="lim.isEditing && editLimitations" title="Delete Limitation" (click)="deleteLimitation(lim)"  class="icon-button" aria-hidden="true">
+                                    <i class="far fa-times"></i>
+                                </button>
+                            </td> 
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div>
-                <button type="button" class="button mright-xs" (click)="showLimitationsModal()">Add New Limitations</button>
-            </div>
-        </form>
+            <div><button *ngIf="editLimitations && !addLim" type="button" class="button mright-xs"  (click)="addLimitation(); addLim=true">Add Limitation</button></div>
+
+            <!-- Add Limitation Form-->
+            <form *ngIf="addLim" [formGroup]="newLimForm" style="margin-bottom: 10px;">
+                <label>New Limitation</label>
+                <button style="float: right" type="button" title="Cancel Create Limitation" (click)="cancelCreateLimitaiton()"  class="icon-button" aria-hidden="true">
+                    <i class="far fa-times"></i>
+                </button>
+                <div class="form-group required">
+                    <label for="criteria">Criteria:</label>
+                    <textarea class="form-control" rows="3" placeholder="" formControlName="criteria"></textarea>
+                </div>
+                <div class="form-group required">
+                    <label for="description">Description:</label>
+                    <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
+                </div>
+                <div formArrayName="variables">
+                    <div *ngFor="let var of newLimForm.get('variables').controls; let varIndex = index">
+                        <div class="scenario-dropdown">
+                            <div class="scenario-dropdown-title">
+                                <span>Variable {{varIndex + 1}}</span>
+                            </div>
+                            <button class="icon-button" (click)="removeVariable(varIndex)"><i class="far fa-times"></i></button>
+                        </div>
+    
+                        <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
+                            <div class="form-group required">
+                                <label class="req" for="variableTypeID">Explanatory Variable:</label>
+                                <ng-select formControlName="variableTypeID" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                    <ng-option *ngFor="let v of variables" [value]="v.id">{{v.code}} ({{v.description}})</ng-option>
+                                </ng-select>
+                            </div>
+                            <div class="form-group required">
+                                <label class="req" for="unitTypeID">Explanatory Variable Unit:</label>
+                                    <ng-select formControlName="unitTypeID"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                        <ng-option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}} ({{u.abbr}})</ng-option>
+                                    </ng-select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="button mright-xs" (click)="addVariable()">Add New Variable</button>
+                </div>
+                <div>
+                    <button type="button"  class="button blue" (click)="createNewLimitation()">Create Limitation</button>
+                </div>
+            </form>
+
+
+
+
+
+
+
+
+
+
+            
+        </div>
 
         <div>
             <hr>
@@ -168,8 +252,8 @@
 
     <!-- Footer / Buttons -->
     <div class="modal-body-footer">
-        <button type="button" (click)="d('closed')" class="button">Cancel</button>
-        <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="button blue">Create</button>
-        <button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid" class="button blue">Save</button>
+        <button type="button" (click)="d('closed'); cancelCreateRegression" class="button">Cancel</button>
+        <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid || editLimitations" class="button blue">Create</button>
+        <button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid || editLimitations" class="button blue">Save</button>
     </div>
 </ng-template>

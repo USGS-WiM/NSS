@@ -64,7 +64,16 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public methods;
   public variables;
   public unitTypes;
-  public limitations: any;
+  public limitations: any = [];
+
+  public limitation: Limitation;
+  public tempItem;
+  public itemBeingEdited;
+  public editId;
+  public newLimForm: FormGroup;
+  public editLimitations = false;
+  public newLimitation;
+  public addLim = false;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
@@ -93,6 +102,12 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       region: new FormControl(null, Validators.required),
       location: new FormControl(null),
       citationID: new FormControl(null),
+    });
+    this.newLimForm = _fb.group({
+      criteria: new FormControl(null, Validators.required),
+      description: new FormControl(null, Validators.required),
+      regressionRegionID: new FormControl(null),
+      variables: this._fb.array([]),
     });
     this.newCitForm = _fb.group({
       'title': new FormControl(null, Validators.required),
@@ -134,15 +149,10 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         this.addExistingCitation();
       }
     });
-    this._nssService.currentRefresh.subscribe(bool => {
-      if (bool == true){
-        this.getLimitations();
-      }
-    });
     this._nssService.currentLimitations.subscribe(item => {
       this.currentLimitations = item;
       if (this.currentLimitations != " ") {
-        this.addLimitation();
+        this.currentLimitations = this.limitations;
       }
     });
     this.getEntities();
@@ -279,10 +289,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.newCitForm.controls['author'].setValue(this.currentCitation.author);
     this.newCitForm.controls['citationURL'].setValue(this.currentCitation.citationURL);  
   }
-
-  public addLimitation(){
-    this.currentLimitations = this.limitations;
-  }
   
   outputWimMessages(msg) {
     // output messages from http request to toast
@@ -326,6 +332,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this.newRegRegForm.controls['statusID'].setValue(this.selectedRegRegion.statusID);
           this.newRegRegForm.controls['methodID'].setValue(this.selectedRegRegion.methodID);
           this.limitations = this.selectedRegRegion.limitations;
+            
           if (this.selectedRegRegion.citationID) { // if there is a citation set values in modal
             this.newRegRegForm.controls['citationID'].setValue(this.selectedRegRegion.citationID);
             this.addCitation = true;
@@ -392,6 +399,8 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   private cancelCreateRegression() {
+    this.editLimitations = false;
+    delete(this.itemBeingEdited);
     this.showNewRegRegForm = false;
     this.newRegRegForm.reset();
     this.newCitForm.reset();
@@ -608,4 +617,115 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.map.invalidateSize();
     }, 100);
   }
+
+  public editRowClicked(item, index) {
+    this.tempItem = JSON.parse(JSON.stringify(item));
+    this.limitation = this.tempItem;
+    if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
+      this.cancelEditRowClicked(this.itemBeingEdited);
+    }
+    this.itemBeingEdited = item;
+    this.editId = index;
+    item.isEditing = true;
+  }
+
+  public cancelEditRowClicked(item) {
+    this.limitations[this.editId] = this.tempItem;
+    item.isEditing = false;
+    delete(this.itemBeingEdited);
+  }
+
+  public addLimitation() {
+    if (this.itemBeingEdited) {  //If another item is being edited, cancel that first
+      this.cancelEditRowClicked(this.itemBeingEdited);
+    }
+    if (!this.selectedRegRegion){
+      //New Regression Region
+      this.newLimitation = {
+      criteria: null,
+      desription: null,
+      regressionRegionID: 0
+      }
+    } else{
+      // Existing Regression Region
+      this.newLimitation = {
+        criteria: null,
+        desription: null,
+        regressionRegionID: this.selectedRegRegion.id
+      }
+    }
+    this.newLimitation.isEditing = true;
+  } 
+
+  public removeVariable(varIndex) {
+    console.log('remove variable')
+    const control = <FormArray>this.newLimForm.get('variables');
+    control.removeAt(varIndex);
+  }
+
+  public addVariable(){
+    console.log('add variable')
+    const control = <FormArray>this.newLimForm.get('variables');
+    control.push(this._fb.group({
+      variableTypeID: new FormControl(null, Validators.required),
+      unitTypeID: new FormControl(null, Validators.required),
+    }));
+  }
+
+  private cancelCreateLimitaiton() {
+    this.newLimForm.reset();
+    this.addLim=false;
+    const varControl = <FormArray>this.newLimForm.get('variables');
+    for(let i = varControl.length-1; i >= 0; i--) {
+      varControl.removeAt(i);
+    }
+  }
+
+  //Save Edited Limitation
+  public saveLimitation(limitation){
+    console.log(limitation)
+    this._settingsService
+      .putEntity(limitation.id, limitation, this.configSettings.nssBaseURL + this.configSettings.limitationsURL)
+      .subscribe((response:any) => {
+        limitation.isEditing = false;
+        delete(this.itemBeingEdited);
+        if (!response.headers) {
+          this._toasterService.pop('info', 'Info', 'Limitations were Edited');
+        } else { 
+          this._settingsService.outputWimMessages(response); 
+        }
+      }, error => {
+        if (this._settingsService.outputWimMessages(error)) { return; }
+        this._toasterService.pop('error', 'Error creating Limitations', error.message || error._body.message || error.statusText);
+      }
+    );  
+  }
+
+  //Save New Limitation
+  public createNewLimitation(){
+    if (this.newLimForm.value.regressionRegionID != 0) {
+      this.newLimitation = []; 
+      this.newLimitation.push(this.newLimForm.value)
+      this._settingsService
+        .postEntity(this.newLimitation, this.configSettings.nssBaseURL + this.configSettings.limitationsURL + '?rr=' + this.selectedRegRegion.id )
+        .subscribe((response:any) => {
+          this._nssService.doRefresh(true);
+          if (!response.headers) {
+            this._toasterService.pop('info', 'Info', 'Limitations were Added');
+          } else { 
+            this._settingsService.outputWimMessages(response); 
+          }
+          this.cancelCreateLimitaiton()
+        }, error => {
+          this._loaderService.hideFullPageLoad();
+          if (this._settingsService.outputWimMessages(error)) { return; }
+          this._toasterService.pop('error', 'Error creating Limitations', error.message || error._body.message || error.statusText);
+        }
+      );  
+    //Can't create limitations w/o regression region
+    } else {
+      this._toasterService.pop('error', 'Error creating Limitations', 'Must Create Regression Region First');
+    }
+  }
+
 }

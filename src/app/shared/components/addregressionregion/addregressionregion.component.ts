@@ -64,10 +64,10 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   public unitTypes;
   public limitations: any = [];
   public newLimForm: FormGroup;
-  public editLimitations = false;
+  public editTableLimitations = false;
   public newLimitation;
   public addLim = false;
-  public editLim = false;
+  public editFormLimitations = false;
 
   public tempSelectedStatisticGrp: Array<Statisticgroup>;
   public get selectedStatisticGrp(): Array<Statisticgroup> {
@@ -270,7 +270,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     } else { // rr doesn't exist, create new regression
       this.addRegReg = true;
       this.limitations = [];
-      this.newLimitation=[];
+      this.newLimitation = [];
       this.addCitation = false;
       this.uploadPolygon = false;
       this.newRegRegForm.controls['statusID'].setValue(2);
@@ -311,7 +311,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   private cancelCreateRegression() {
-    this.editLimitations = false;
+    this.editTableLimitations = false;
     this.showNewRegRegForm = false;
     this.cancelCreateLimitaiton();
     this.newRegRegForm.reset();
@@ -336,13 +336,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         } else { this._settingsService.outputWimMessages(response); }
         if (this.addCitation && this.newCitation == true){ // if user elected to add a citation, send that through
           this.createNewCitation(response);
-          done=false;
+          done = false;
         } if (this.newLimitation) { // if user elected to add limitations, send them through
           this.selectedRegRegion = response;
           this.createNewLimitation(this.newLimitation);
           this.cancelCreateRegression();
           this.requeryFilters();
-          done=false;
+          done = false;
         } if (done) {
           this.cancelCreateRegression();
           this.requeryFilters();
@@ -584,7 +584,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   private cancelCreateLimitaiton() {
     this.newLimForm.reset();
     this.addLim = false;
-    this.editLim = false;
+    this.editFormLimitations = false;
     const varControl = <FormArray>this.newLimForm.get('variables');
     for(let i = varControl.length-1; i >= 0; i--) {
       varControl.removeAt(i);
@@ -592,7 +592,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
   }
 
   public editLimitation(lim,limIndex) {
-    this.editLim = true;
+    this.editFormLimitations = true;
     this.newLimForm.controls['criteria'].setValue(lim.criteria);
     this.newLimForm.controls['description'].setValue(lim.description);
     if (lim.id) { //can't add reggression region id or limitation id if theres no regression region yet

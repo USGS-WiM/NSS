@@ -69,10 +69,10 @@
         <div>
             <hr>
             <label >Limitations:</label>
-            <button style="float: right" *ngIf="!editLimitations" type="button" class="button mright-xs" (click)="editLimitations = true">
+            <button style="float: right" *ngIf="!editTableLimitations" type="button" class="button mright-xs" (click)="editTableLimitations = true">
 				<span>Edit Limitations</span>
             </button>
-            <button style="float: right" *ngIf="editLimitations" type="button" class="button small green mright-sm" (click)="editLimitations = false; cancelCreateLimitaiton()">
+            <button style="float: right" *ngIf="editTableLimitations" type="button" class="button small green mright-sm" (click)="editTableLimitations = false; cancelCreateLimitaiton()">
 				<i class="far fa-check"></i>
 				<span>Finish Edits</span>
             </button>
@@ -102,10 +102,10 @@
                                 </div>
                             </td>
                             <td class="width-5">
-                                <button title="Edit Limitation"  *ngIf="editLimitations" (click)="editLimitation(lim)" class="icon-button" aria-hidden="true">
+                                <button title="Edit Limitation"  *ngIf="editTableLimitations" (click)="editLimitation(lim)" class="icon-button" aria-hidden="true">
                                     <i class="far  fa-pencil"></i>
                                 </button>
-                                <button type="button" *ngIf="editLimitations" title="Delete Limitation" (click)="deleteLimitation(lim,limIndex)"  class="icon-button" aria-hidden="true">
+                                <button type="button" *ngIf="editTableLimitations" title="Delete Limitation" (click)="deleteLimitation(lim,limIndex)"  class="icon-button" aria-hidden="true">
                                     <i class="far fa-times"></i>
                                 </button>
                             </td> 
@@ -114,13 +114,13 @@
                 </table>
             </div>
             <div>
-                <button *ngIf="editLimitations && !addLim" type="button" class="button mright-xs"  (click)="addLimitation(); addLim=true">Add Limitation</button>
+                <button *ngIf="editTableLimitations && !addLim" type="button" class="button mright-xs"  (click)="addLimitation(); addLim=true">Add Limitation</button>
             </div>
 
             <!-- Add Limitation Form-->
-            <form *ngIf="addLim  || editLim" [formGroup]="newLimForm" style="margin-bottom: 10px;">
-                <label  *ngIf="!editLim">New Limitation</label>
-                <label  *ngIf="editLim">Edit Limitation</label>
+            <form *ngIf="addLim  || editFormLimitations" [formGroup]="newLimForm" style="margin-bottom: 10px;">
+                <label  *ngIf="!editFormLimitations">New Limitation</label>
+                <label  *ngIf="editFormLimitations">Edit Limitation</label>
                 <button style="float: right" type="button" title="Cancel Create Limitation" (click)="cancelCreateLimitaiton()"  class="icon-button" aria-hidden="true">
                     <i class="far fa-times"></i>
                 </button>
@@ -161,8 +161,8 @@
                     <button type="button" class="button mright-xs" (click)="addVariable()">Add New Variable</button>
                 </div>
                 <div>
-                    <button *ngIf="!editLim"type="button" class="button blue" (click)="formatLimitation(); addLim=false">Create Limitation</button>
-                    <button *ngIf="editLim"type="button" class="button blue" (click)="saveLimitation()">Save Limitation</button>
+                    <button *ngIf="!editFormLimitations"type="button" class="button blue" (click)="formatLimitation(); addLim=false">Create Limitation</button>
+                    <button *ngIf="editFormLimitations"type="button" class="button blue" (click)="saveLimitation()">Save Limitation</button>
                 </div>
             </form>    
         </div>
@@ -228,7 +228,7 @@
     <!-- Footer / Buttons -->
     <div class="modal-body-footer">
         <button type="button" (click)="d('closed'); cancelCreateRegression" class="button">Cancel</button>
-        <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid || editLimitations" class="button blue">Create</button>
-        <button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid || editLimitations" class="button blue">Save</button>
+        <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid || editTableLimitations" class="button blue">Create</button>
+        <button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid || editTableLimitations" class="button blue">Save</button>
     </div>
 </ng-template>

@@ -96,7 +96,7 @@
                                 <span>{{lim.description}}</span>
                             </td>
                             <td class="width-20">
-                                <div *ngFor="let v of lim.variables; last as isLast; let varIndex = index">
+                                <div *ngFor="let v of lim.variables; last as isLast">
                                     <td [class.varLast]=isLast [class.var]=!isLast>{{getVariableName(v.variableTypeID)}} in {{getUnitName(v.unitTypeID)}}                                        
                                     </td>
                                 </div>
@@ -105,7 +105,7 @@
                                 <button title="Edit Limitation"  *ngIf="editLimitations" (click)="editLimitation(lim)" class="icon-button" aria-hidden="true">
                                     <i class="far  fa-pencil"></i>
                                 </button>
-                                <button type="button" *ngIf="editLimitations" title="Delete Limitation" (click)="deleteLimitation(lim)"  class="icon-button" aria-hidden="true">
+                                <button type="button" *ngIf="editLimitations" title="Delete Limitation" (click)="deleteLimitation(lim,limIndex)"  class="icon-button" aria-hidden="true">
                                     <i class="far fa-times"></i>
                                 </button>
                             </td> 

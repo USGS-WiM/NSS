@@ -101,6 +101,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       criteria: new FormControl(null, Validators.required),
       description: new FormControl(null, Validators.required),
       regressionRegionID: new FormControl(null),
+      limIndex: new FormControl(null),
       id: new FormControl(null),
       variables: this._fb.array([]),
     });
@@ -183,40 +184,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
   }
 
-  public loadMap() {
-    // Initialize basemap layers
-    const tileLayer_topography = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
-    });
-    const tileLayer_streets = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
-    });
-    const tileLayer_grayscale = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
-    });
-    const tileLayer_satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-    });
-
-    // Initialize map 
-    this.map = new L.Map('map', {
-      center: new L.LatLng(39.8283, -98.5795),
-      zoom: 4,
-      layers: [tileLayer_streets]
-    });
-
-    // Create basemap collection
-    const baseMaps = {
-      'Streets': tileLayer_streets,
-      'Topography': tileLayer_topography,
-      'Grayscale': tileLayer_grayscale,
-      'Satellite': tileLayer_satellite
-    };
-
-    // Add basemap control to the map
-    L.control.layers(baseMaps).addTo(this.map);
-  }
-
   public showModal(): void {   
     this.getEntities();
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
@@ -235,22 +202,6 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     );
   }
 
-  public showManageCitationsModal() {
-    const addManageCitationForm: ManageCitation = {
-      show: true,
-      addCitation: false,
-      inGagePage: false
-    }
-    this._nssService.setManageCitationsModal(addManageCitationForm);
-  }
-
-  public addExistingCitation(){
-    this.newRegRegForm.controls['citationID'].setValue(this.currentCitation.id);
-    this.newCitForm.controls['title'].setValue(this.currentCitation.title);
-    this.newCitForm.controls['author'].setValue(this.currentCitation.author);
-    this.newCitForm.controls['citationURL'].setValue(this.currentCitation.citationURL);  
-  }
-  
   outputWimMessages(msg) {
     // output messages from http request to toast
     const existingMsgs = [];
@@ -347,13 +298,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     );
   }
 
-  public getUnitName(ID){
+  public getUnitName(ID) {
     if (this.unitTypes && this.unitTypes.find(s => s.id === ID)) {
       return (this.unitTypes.find(s => s.id === ID).name);
     }
   }
 
-  public getVariableName(ID){
+  public getVariableName(ID) {
     if (this.variables && this.variables.find(s => s.id === ID)) {
       return (this.variables.find(s => s.id === ID).name);
     }
@@ -384,18 +335,15 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this._toasterService.pop('info', 'Info', 'Regression region was added');
         } else { this._settingsService.outputWimMessages(response); }
         if (this.addCitation && this.newCitation == true){ // if user elected to add a citation, send that through
-          console.log('citation')
           this.createNewCitation(response);
           done=false;
-        }if (this.newLimitation) {
-          console.log('limitation')
+        } if (this.newLimitation) { // if user elected to add limitations, send them through
           this.selectedRegRegion = response;
           this.createNewLimitation(this.newLimitation);
           this.cancelCreateRegression();
           this.requeryFilters();
           done=false;
-        }if (done) {
-          console.log('nothing')
+        } if (done) {
           this.cancelCreateRegression();
           this.requeryFilters();
         }
@@ -450,7 +398,26 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     );  
   }
 
-  public removeCitation(){
+  /////////////////////// Citation Section ///////////////////////////  
+
+  public showManageCitationsModal() {
+    const addManageCitationForm: ManageCitation = {
+      show: true,
+      addCitation: false,
+      inGagePage: false
+    }
+    this._nssService.setManageCitationsModal(addManageCitationForm);
+  }
+
+  public addExistingCitation() {
+    this.newRegRegForm.controls['citationID'].setValue(this.currentCitation.id);
+    this.newCitForm.controls['title'].setValue(this.currentCitation.title);
+    this.newCitForm.controls['author'].setValue(this.currentCitation.author);
+    this.newCitForm.controls['citationURL'].setValue(this.currentCitation.citationURL);  
+  }
+  
+
+  public removeCitation() {
     if (this.selectedRegRegion) { // if creating new regression region cannot set citationID to null
       this.selectedRegRegion.citationID = null
     }
@@ -482,28 +449,40 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       this.newCitation = false;
   }
 
-  public getLimitations(){
-    this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regRegionURL + '/' + this.selectedRegRegion.id + '?includeGeometry=true')
-      .subscribe((res) => {
-        this.selectedRegRegion = res;
-        this.limitations = this.selectedRegRegion.limitations;
-      });
-  }
+  /////////////////////// Polygon Section ///////////////////////////  
 
-  public deleteLimitation(lim) {
-    const check = confirm('Are you sure you want to delete this Limitation?');
-    if (check) {
-      this._settingsService.deleteEntity(lim.id, this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
-        if (result.headers) {
-          this._nssService.outputWimMessages(result); 
-        }
-        this.getLimitations();
-      }, error => {
-        if (error.headers) {
-            this._nssService.outputWimMessages(error);
-        } else { this._nssService.handleError(error); }
-      });
-    }
+  public loadMap() {
+    // Initialize basemap layers
+    const tileLayer_topography = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+    });
+    const tileLayer_streets = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+    });
+    const tileLayer_grayscale = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
+    });
+    const tileLayer_satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
+
+    // Initialize map 
+    this.map = new L.Map('map', {
+      center: new L.LatLng(39.8283, -98.5795),
+      zoom: 4,
+      layers: [tileLayer_streets]
+    });
+
+    // Create basemap collection
+    const baseMaps = {
+      'Streets': tileLayer_streets,
+      'Topography': tileLayer_topography,
+      'Grayscale': tileLayer_grayscale,
+      'Satellite': tileLayer_satellite
+    };
+
+    // Add basemap control to the map
+    L.control.layers(baseMaps).addTo(this.map);
   }
 
   public addGeojsonToMap(polygon: any) {
@@ -569,8 +548,18 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }, 100);
   }
 
+  /////////////////////// Limitation Section ///////////////////////////  
+
+  public getLimitations(){
+  this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regRegionURL + '/' + this.selectedRegRegion.id + '?includeGeometry=true')
+    .subscribe((res) => {
+      this.selectedRegRegion = res;
+      this.limitations = this.selectedRegRegion.limitations;
+    });
+  }
+
   public addLimitation() {
-    if (this.addRegReg == true){
+    if (this.addRegReg == true) { //Creating new limitation and new regresion region at the same time
       this.newLimForm.controls['regressionRegionID'].setValue(null);
     } else{
       this.newLimForm.controls['regressionRegionID'].setValue(this.selectedRegRegion.id);
@@ -582,7 +571,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     control.removeAt(varIndex);
   }
 
-  public addVariable(){
+  public addVariable() {
     const control = <FormArray>this.newLimForm.get('variables');
     control.push(this._fb.group({
       id: new FormControl(null),
@@ -602,12 +591,16 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }
   }
 
-  public editLimitation(lim){
+  public editLimitation(lim,limIndex) {
     this.editLim = true;
     this.newLimForm.controls['criteria'].setValue(lim.criteria);
     this.newLimForm.controls['description'].setValue(lim.description);
-    this.newLimForm.controls['regressionRegionID'].setValue(this.selectedRegRegion.id);
-    this.newLimForm.controls['id'].setValue(lim.id);
+    if (lim.id) { //can't add reggression region id or limitation id if theres no regression region yet
+      this.newLimForm.controls['regressionRegionID'].setValue(this.selectedRegRegion.id);
+      this.newLimForm.controls['id'].setValue(lim.id);
+    } else { //adding lim index in order to edit limitation w/o regression region
+      this.newLimForm.controls['limIndex'].setValue(limIndex); 
+    }
     lim.variables.forEach((v, varIndex) => {
       this.addVariable();
       const control = <FormArray>this.newLimForm.get('variables');
@@ -626,8 +619,13 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     });
   }
 
-  //Save Edited Limitation
-  public saveLimitation(){
+  public saveLimitation() { 
+    if (!this.newLimForm.value.id) {  //Can't edit limitations w/o regression region
+      this.newLimitation.splice(this.newLimForm.value.limIndex, 1);
+      this.newLimitation.push(this.newLimForm.value);
+      this.limitations = this.newLimitation;
+      this.cancelCreateLimitaiton();
+    } else {
       this._settingsService
       .putEntity(this.newLimForm.value.id, this.newLimForm.value, this.configSettings.nssBaseURL + this.configSettings.limitationsURL)
       .subscribe((response:any) => {
@@ -641,12 +639,11 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
       }, error => {
         if (this._settingsService.outputWimMessages(error)) { return; }
         this._toasterService.pop('error', 'Error creating Limitations', error.message || error._body.message || error.statusText);
-      }
-    );  
+      });  
+    }
   }
-
-  //Save New Limitation
-  public createNewLimitation(limitationinfo){
+  
+  public createNewLimitation(limitationinfo) {
     this._settingsService
       .postEntity(limitationinfo, this.configSettings.nssBaseURL + this.configSettings.limitationsURL + '?rr=' + this.selectedRegRegion.id)
       .subscribe((response:any) => {
@@ -665,17 +662,36 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     );  
   }
 
-  public formatLimitation(){
-    //Create limitation
+  public formatLimitation() {
     if (this.newLimForm.value.regressionRegionID) {
       this.newLimitation = []; 
-      this.newLimitation.push(this.newLimForm.value)
-      this.createNewLimitation(this.newLimitation)
-    //Can't create limitations w/o regression region
-    } else {
       this.newLimitation.push(this.newLimForm.value);
-      this.limitations = this.newLimitation
+      this.createNewLimitation(this.newLimitation);
+    } else {  //Can't create limitations w/o regression region
+      this.newLimitation.push(this.newLimForm.value);
+      this.limitations = this.newLimitation;
       this.cancelCreateLimitaiton();
+    }
+  }
+
+  public deleteLimitation(lim) {
+    if (!lim.id) {  //Can't delete limitations w/o regression region
+      this.limitations = this.limitations.filter(item => item !== lim);
+      this.newLimitation = this.limitations.filter(item => item !== lim);
+    } else {
+      const check = confirm('Are you sure you want to delete this Limitation?');
+      if (check) {
+        this._settingsService.deleteEntity(lim.id, this.configSettings.nssBaseURL+this.configSettings.limitationsURL).subscribe(result => {
+          if (result.headers) {
+            this._nssService.outputWimMessages(result); 
+          }
+          this.getLimitations();
+        }, error => {
+          if (error.headers) {
+              this._nssService.outputWimMessages(error);
+          } else { this._nssService.handleError(error); }
+        });
+      }
     }
   }
 

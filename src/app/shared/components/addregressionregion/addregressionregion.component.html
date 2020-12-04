@@ -161,7 +161,7 @@
                     <button type="button" class="button mright-xs" (click)="addVariable()">Add New Variable</button>
                 </div>
                 <div>
-                    <button *ngIf="!editLim"type="button" class="button blue" (click)="createNewLimitation()">Create Limitation</button>
+                    <button *ngIf="!editLim"type="button" class="button blue" (click)="formatLimitation(); addLim=false">Create Limitation</button>
                     <button *ngIf="editLim"type="button" class="button blue" (click)="saveLimitation()">Save Limitation</button>
                 </div>
             </form>    

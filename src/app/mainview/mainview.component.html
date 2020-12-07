@@ -928,7 +928,7 @@
 
 	<!-- editRegionScenario -->
 	<div class="hidden-print" *ngIf="editRegionScenario">
-		<form #editScenarioForm="ngForm">
+		<form #editScenarioForm="ngForm" class="editScen">
 			<div>
 				<div *ngFor="let s of scenarios; let sgIndex = index;">
 					<label class="biggest mtop-sm mbottom-sm">{{s.statisticGroupName}}</label>
@@ -950,7 +950,6 @@
 						<!-- Regression region label -->
 						<label *ngIf="!rr.isEditing" class="big">{{rr.name}} (RG_Code: {{rr.code}})</label>
 						<label *ngIf="!rr.isEditing" style="float: right" class="small">Status: {{getStatusDescription(rr.statusID)}}{{getMethodName(rr.methodID)}}</label>
-						<hr>
 						<table *ngIf="rr.isEditing" class="custom-table">
 							<thead>
 								<tr>
@@ -1002,7 +1001,7 @@
 						</table>
 
 						<!--Citation table-->
-						<label class="big block mtop-sm">Citation</label>
+						<label class="block mtop-sm">Citation</label>
 						<table *ngIf="rr.citationID" class="custom-table">
 							<thead>
 								<tr>
@@ -1052,7 +1051,7 @@
 						</div>
 
 						<!--Parameter table-->
-						<label class="big block mtop-sm">Explanatory Variables</label>
+						<label class="block mtop-sm">Explanatory Variables</label>
 						<table class="custom-table">
 							<thead>
 								<tr>
@@ -1118,7 +1117,7 @@
 
 
 						<!--Regression table-->
-						<label class="big block mtop-sm">Regressions</label>
+						<label class="block mtop-sm">Regressions</label>
 						<table class="custom-table">
 							<thead>
 								<tr>

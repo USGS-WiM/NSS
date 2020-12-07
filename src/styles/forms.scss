@@ -50,7 +50,7 @@ label{
 	}
 	// Bigger
 	&.big{
-		font-size: 18px;
+		font-size: 20px;
 		padding-bottom: 8px;
 		font-weight: 500;
 		color: var(--text);
@@ -795,4 +795,10 @@ input[type=range]::-moz-focus-outer {
 
 .input-invalid-warning {
     color: var(--red);
+}
+
+.editScen {
+	.custom-table, .block {
+		margin-left: 5px;
+	}
 }

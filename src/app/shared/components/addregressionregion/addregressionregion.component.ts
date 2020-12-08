@@ -653,6 +653,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           this._settingsService.outputWimMessages(response); 
         }
         this._loaderService.hideFullPageLoad();
+        this.cancelCreateLimitaiton();
         this.getLimitations();
       }, error => {
         this._loaderService.hideFullPageLoad();

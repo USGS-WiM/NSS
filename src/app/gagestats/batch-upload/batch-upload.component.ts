@@ -15,7 +15,6 @@ import { Unittype } from 'app/shared/interfaces/unitType';
 import { Variabletype } from 'app/shared/interfaces/variableType'
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
-import { StationTypesComponent } from 'app/settings/categories/stationtypes/stationtypes.component';
 
 @Component({
   selector: 'batchUploadModal',
@@ -78,7 +77,7 @@ export class BatchUploadModal implements OnInit {
   public wsname;
   public dropdownOptions;
   public selectedCitation;
-  public stations;
+  public station: Array<Station>;
 
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
@@ -265,7 +264,7 @@ export class BatchUploadModal implements OnInit {
           if (this.uploadStats) {                             // If stats are being uploaded...
             url = "statistics/batch";
             recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
-            if(recordObj.remarks != 'null') {
+            if(recordObj.remarks != 'undefined') {
               recordObj.comments = recordObj.comments + ' ' + recordObj.remarks; 
             }
             delete(recordObj.remarks);
@@ -295,7 +294,8 @@ export class BatchUploadModal implements OnInit {
               recordObj.isPreferred = x;
             }
             if(recordObj.code) {
-              this.getStationID(recordObj);
+              var cID = this.getStationID(recordObj);
+              recordObj.stationID = cID;
             }
           }
           if (this.uploadChars) {                             // If chars are being uploaded... 
@@ -322,14 +322,15 @@ export class BatchUploadModal implements OnInit {
     });    
     console.log('Output records: ', records);
     delete(this.selectedCitation);
-    // this._settingsService.postEntity(stations, this.configSettings.gageStatsBaseURL +  url)
-    //   .subscribe((response:any) =>{
-    //     if(!response.headers){
-    //       this._toasterService.pop('info', 'Info', 'Items Added');
-    //     } else {
-    //       this._settingsService.outputWimMessages(response);
-    //     }
-    //   });
+    this._settingsService.postEntity(records, this.configSettings.gageStatsBaseURL +  url)
+      .subscribe((response:any) =>{
+        if(!response.headers){
+          this.clearTable();
+          this._toasterService.pop('info', 'Info', 'Success! Items Added');
+        } else {
+          this._settingsService.outputWimMessages(response);
+        }
+      });
   }
 
 //////////////// Get NSS Characteristic IDs //////////////////////
@@ -378,10 +379,9 @@ export class BatchUploadModal implements OnInit {
 
   public getStationID(obj): any {
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).subscribe((s: Array<Station>) => {
-      var station: Station = s;
-      return obj.stationID = station.id;
+      this.station = s;
+      return obj.stationID = this.station.id;
     });
-
   }
 
   public getTrueFalse(val) { 

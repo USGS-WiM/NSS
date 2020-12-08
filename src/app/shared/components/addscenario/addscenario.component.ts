@@ -146,7 +146,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
         this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
-            this.statisticGroups = res;
+            this.statisticGroups = res.filter(statGrup => statGrup.defType == "FS");
         });
         this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));

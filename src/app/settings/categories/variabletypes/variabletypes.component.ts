@@ -43,16 +43,20 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     private configSettings: Config;
     public isEditing: boolean;
     public rowBeingEdited: number;
-    public unitTypes;
     public tempData;
     public modalRef;
+    public englishUnitTypes;
+    public metricUnitTypes;
+    public statisticGroups;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _toasterService: ToasterService,
         private _configService: ConfigService) {
             this.newVarForm = _fb.group({
                 'name': new FormControl(null, Validators.required),
                 'description': new FormControl(null),
-                'unitTypeID': new FormControl(null),
+                'englishUnitTypeID': new FormControl(null),
+                'metricUnitTypeID': new FormControl(null),
+                'statisticGroupTypeID': new FormControl(null),
                 'code': new FormControl(null, Validators.required)
             });
             this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -64,12 +68,19 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
         }
 
     ngOnInit() {
+        this._settingsservice.variables().subscribe(res => {
+            this.variableTypes = res;
+        });
+        this.getEntites();
+    }
+
+    public getEntites(){
         this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(res => {
             this.variableTypes = res;
         });
-
-        this._settingsservice.variables().subscribe(res => {
-            this.variableTypes = res;
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.statisticGroups = res.filter(statGrup => statGrup.defType == "BC");
         });
         this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
@@ -77,14 +88,17 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
                 unit['unit'] = unit['name'];
                 unit['abbr'] = unit['abbreviation'];
             }
-            this.unitTypes = res;
+            this.englishUnitTypes = res.filter(unitType => unitType.unitSystemTypeID !== 1);
+            this.metricUnitTypes = res.filter(unitType => unitType.unitSystemTypeID !== 2);
         });
     }
 
     showNewVariableForm() {
         this.newVarForm.controls['name'].setValue(null);
         this.newVarForm.controls['description'].setValue(null);
-        this.newVarForm.controls['unitTypeID'].setValue(null);
+        this.newVarForm.controls['englishUnitTypeID'].setValue(null);
+        this.newVarForm.controls['metricUnitTypeID'].setValue(null);
+        this.newVarForm.controls['statisticGroupTypeID'].setValue(null);
         this.newVarForm.controls['code'].setValue(null);
         this.showNewVarForm = true;
         this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
@@ -120,7 +134,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
             .subscribe((response: Variabletype) => {
                 response.isEditing = false;
                 this.variableTypes.push(response);
-                this._settingsservice.setVariables(this.variableTypes);
+                this.getEntites();
                 this._toasterService.pop('info', 'Info', 'Variable was created');
                 this.cancelCreateVariableType();
             }, error => {
@@ -149,14 +163,6 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
         this.isEditing = false; // set to true so create new is disabled
         if (this.varForm.form.dirty) {
             this.varForm.reset();
-        }
-    }
-
-    public getUnitName(unitID){
-        if (this.unitTypes && this.unitTypes.find(s => s.id === unitID)) {
-            return (this.unitTypes.find(s => s.id === unitID).name);
-        }else{
-            return ('None')
         }
     }
 

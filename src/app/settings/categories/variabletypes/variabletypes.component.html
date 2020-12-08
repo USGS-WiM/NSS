@@ -11,15 +11,17 @@
             <thead>
                 <tr>
                     <th class="width-5"></th>
-                    <th class="width-30">Name</th>
-                    <th class="width-40">Description</th>
+                    <th class="width-15">Name</th>
+                    <th class="width-20">Description</th>
                     <th class="col-xs-10">Code</th>
-                    <th class="col-xs-25">Default Unit</th>
+                    <th class="col-xs-15">English Unit</th>
+                    <th class="col-xs-15">Metric Unit</th>
+                    <th class="col-xs-15">Statistic Group</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let v of variableTypes; let i = index">
-                    <td class="table-icon-buttons">
+                    <td class="width-5 table-icon-buttons">
 						<button *ngIf="!v.isEditing" title="Edit Variable Type" (click)="EditRowClicked(i)" class="icon-button">
 							<i class="far fa-pencil"></i>
 						</button>
@@ -33,23 +35,39 @@
 							<i class="far fa-history"></i>
 						</button>
                     </td>
-                    <td>
+                    <td class="width-15">
                         <span *ngIf="!v.isEditing">{{ v.name }}</span>
                         <span *ngIf="v.isEditing"><input type="text" name="name" [(ngModel)]="v.name" required></span>
                     </td>
-                    <td>
+                    <td class="width-20">
                         <span *ngIf="!v.isEditing">{{ v.description }}</span>
                         <span *ngIf="v.isEditing"><textarea rows="3" [(ngModel)]="v.description" name="description"></textarea></span>
                     </td>
-                    <td>
+                    <td class="width-10">
                         <span *ngIf="!v.isEditing">{{ v.code }}</span>
                         <span *ngIf="v.isEditing"><input type="text" name="code" [(ngModel)]="v.code" required></span>
                     </td>
-                    <td>
-                        <span *ngIf="!v.isEditing">{{ getUnitName(v.unitTypeID) }}</span>
+                    <td class="width-15">
+                        <span *ngIf="!v.isEditing && v.englishUnitType">{{ v.englishUnitType.name }}</span>
                         <span *ngIf="v.isEditing">
-                            <ng-select  bindLabel="id" [(ngModel)]="v.unitTypeID" name = "unitID" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
-                                <ng-option *ngFor="let ut of unitTypes" [value]="ut.id">{{ut.name}} ({{ut.abbr}})</ng-option>
+                            <ng-select  bindLabel="id" [(ngModel)]="v.englishUnitType" name="englishUnit" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                                <ng-option *ngFor="let ut of englishUnitTypes" [value]="ut">{{ut.name}} ({{ut.abbr}})</ng-option>
+                            </ng-select>
+                        </span>
+                    </td>
+                    <td class="width-15">
+                        <span *ngIf="!v.isEditing && v.metricUnitType">{{ v.metricUnitType.name }}</span>
+                        <span *ngIf="v.isEditing">
+                            <ng-select  bindLabel="id" [(ngModel)]="v.metricUnitType" name="metricUnit" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                                <ng-option *ngFor="let ut of metricUnitTypes" [value]="ut">{{ut.name}} ({{ut.abbr}})</ng-option>
+                            </ng-select>
+                        </span>
+                    </td>
+                    <td class="width-15">
+                        <span *ngIf="!v.isEditing && v.statisticGroupType">{{ v.statisticGroupType.name }}</span>
+                        <span *ngIf="v.isEditing">
+                            <ng-select  bindLabel="id" [(ngModel)]="v.statisticGroupType" name="statisticGroup" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                                <ng-option *ngFor="let sg of statisticGroups" [value]="sg">{{sg.name}} ({{sg.code}})</ng-option>
                             </ng-select>
                         </span>
                     </td>
@@ -82,11 +100,27 @@
                 <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
             </div>
 
-            <!-- Unit Type -->
+            <!-- Enlgish Unit Type -->
             <div class="form-group">
-                <label for="description">Unit Type:</label>
-                <ng-select formControlName="unitTypeID"  bindLabel="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
-                    <ng-option *ngFor="let ut of unitTypes" [value]="ut.id">{{ut.name}} ({{ut.abbr}})</ng-option>
+                <label for="description">English Unit Type:</label>
+                <ng-select formControlName="englishUnitTypeID"  bindLabel="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                    <ng-option *ngFor="let ut of englishUnitTypes" [value]="ut.id">{{ut.name}} ({{ut.abbr}})</ng-option>
+                </ng-select>
+            </div>
+
+            <!-- Metric Unit Type -->
+            <div class="form-group">
+                <label for="description">Metric Unit Type:</label>
+                <ng-select formControlName="metricUnitTypeID"  bindLabel="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                    <ng-option *ngFor="let ut of metricUnitTypes" [value]="ut.id">{{ut.name}} ({{ut.abbr}})</ng-option>
+                </ng-select>
+            </div>
+
+            <!-- Statistic Group Type -->
+            <div class="form-group">
+                <label for="description">Statistic Group Type:</label>
+                <ng-select formControlName="statisticGroupTypeID"  bindLabel="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                    <ng-option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}} ({{sg.code}})</ng-option>
                 </ng-select>
             </div>
 

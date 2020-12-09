@@ -825,6 +825,8 @@ input[type=range]::-moz-focus-outer {
 	left: -15px;
 	background-color: var(--layer);
 	border: 1px solid var(--border);
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
 
 	table{
 		background-color: var(--white);

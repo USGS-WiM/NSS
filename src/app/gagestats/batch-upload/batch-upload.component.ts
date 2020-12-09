@@ -15,6 +15,7 @@ import { Unittype } from 'app/shared/interfaces/unitType';
 import { Variabletype } from 'app/shared/interfaces/variableType'
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
+//import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'batchUploadModal',
@@ -320,13 +321,14 @@ export class BatchUploadModal implements OnInit {
           }  
       }  
     });    
-    console.log('Output records: ', records);
-    delete(this.selectedCitation);
+    console.log('Output records: ', records, 'number of records: ', records.length);
     this._settingsService.postEntity(records, this.configSettings.gageStatsBaseURL +  url)
       .subscribe((response:any) =>{
         if(!response.headers){
           this.clearTable();
-          this._toasterService.pop('info', 'Info', 'Success! Items Added');
+          this.selectUpload = false;
+          delete(this.selectedCitation);
+          this._toasterService.pop('info', 'Info', 'Success! ' + records.length + ' items were added.');
         } else {
           this._settingsService.outputWimMessages(response);
         }
@@ -376,12 +378,24 @@ export class BatchUploadModal implements OnInit {
       return (this.unitType.find( u => u.abbreviation === abbreviation).id)
     }
   }
+           // This doesn't work yet....
+  // async getStationID(obj) {
+  //   //this._settingsService.getEntitiesSync(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).subscribe((s: Array<Station>) => {
+  //     let station = await this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).toPromise();
+  //     console.log(station)
+  //     //this.station.toPromise().then(x => obj.stationID = x.id )
+      
+  //     //this.station = await lastValueFrom(station$)
+  //     return obj.stationID = station.id;
+  //   //});
+  // }
 
-  public getStationID(obj): any {
-    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).subscribe((s: Array<Station>) => {
-      this.station = s;
-      return obj.stationID = this.station.id;
-    });
+  async getStationID(obj): Promise<Station> {
+    this.station = await this._settingsService
+      .getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code)
+      .toPromise()
+      .then(resp => resp as Station);
+    return obj.stationID = this.station.id;
   }
 
   public getTrueFalse(val) { 

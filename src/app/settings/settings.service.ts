@@ -123,6 +123,14 @@ export class SettingsService {
             .catch(this.errorHandler);
     }
 
+    // public getEntitiesSync(url: string) {
+    //     return this._http
+    //         .get(url, { headers: this.authHeader })
+    //         .map(res => { if (res) {return <Array<any>>res }})
+    //         .catch(this.errorHandler)
+    //         .toPromise();
+    // }
+
     // ------------ POSTS ------------------------------
     public postEntity(entity: object, url: string) {
         return this._http

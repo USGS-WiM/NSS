@@ -51,8 +51,8 @@ label{
 	// Bigger
 	&.big{
 		font-size: 20px;
-		padding-bottom: 8px;
-		font-weight: 500;
+		padding-bottom: 4px;
+		font-weight: 600;
 		color: var(--text);
 		// Make smaller on mobile
 		@media (max-width: $screenMD) {
@@ -798,7 +798,39 @@ input[type=range]::-moz-focus-outer {
 }
 
 .editScen {
+	box-sizing: border-box;
+	padding-left: 30px;
+
+	h3{
+		position: relative;
+		left: -15px;
+		border-bottom: 1px solid var(--border);
+		width: 100%;
+		min-width: 100%;
+		max-width: none;
+		padding-bottom: 14px;
+		margin-top: 45px;
+		margin-bottom: 0;
+	}
+
 	.custom-table, .block {
 		margin-left: 5px;
+	}
+}
+
+.edit-scen-wrapper{
+	box-sizing: border-box;
+	padding: 15px 20px 15px 20px;
+	position: relative;
+	left: -15px;
+	background-color: var(--layer);
+	border: 1px solid var(--border);
+
+	table{
+		background-color: var(--white);
+	}
+
+	h5{
+		margin: 0 0 15px 0;
 	}
 }

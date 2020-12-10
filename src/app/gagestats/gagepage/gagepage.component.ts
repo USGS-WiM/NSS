@@ -49,9 +49,13 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public addCitation: boolean;
   public selectedCitation;
   public statIds = [];
+  public statIdsChar = [];
   public filteredStatGroups;
+  public filteredStatGroupsChar;
   public statGroupIds = [];
+  public statGroupIdsChar = [];
   public selectedStatGroup;
+  public selectedStatGroupChar;
   public filteredGage: Station;
   public preferred: boolean = false;
   public predIntervals: boolean = false;
@@ -84,6 +88,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this.filterStatIds();
             this.showGagePageForm();
             this.selectedStatGroup = [];
+            this.selectedStatGroupChar = [];
             this.getPredictionIntervals();
           });
         }
@@ -181,20 +186,33 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   public getDisplayStatGroupID(g) {
-      var statGroup1;
-      var statGroup2;
-      const ids = [];
-      const groupIds = [];
-      g.statistics.forEach( function(item, index) {
-        statGroup2 = item.statisticGroupTypeID;
-        if ( statGroup1 != statGroup2 ) {
-            statGroup1 = statGroup2
-            ids.push((item.id))
-            groupIds.push(statGroup2)
-         }
-        })
-      this.statIds = ids;
-      this.statGroupIds = groupIds;
+    var statGroup1;
+    var statGroup2;
+    const ids = [];
+    const groupIds = [];
+    g.statistics.forEach( function(item) {
+      statGroup2 = item.statisticGroupTypeID;
+      if ( statGroup1 != statGroup2 ) {
+          statGroup1 = statGroup2
+          ids.push((item.id))
+          groupIds.push(statGroup2)
+        }
+      })
+    this.statIds = ids;
+    this.statGroupIds = groupIds;
+
+    const idsChar = [];
+    const groupIdsChar = [];
+    g.characteristics.forEach( function(item) {
+      statGroup2 = item.variableType.statisticGroupTypeID;
+      if ( statGroup1 != statGroup2 ) {
+          statGroup1 = statGroup2
+          idsChar.push((item.id))
+          groupIdsChar.push(statGroup2)
+        }
+      })
+    this.statIdsChar = idsChar;
+    this.statGroupIdsChar = groupIdsChar;
   }
 
   public getPredictionIntervals() {  //Search gage for stats w/ a prediction interval, return true if present
@@ -449,6 +467,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public filterStatIds() {
     this.filteredStatGroups = this.statisticGroups.filter((sg) => this.statGroupIds.includes(sg.id));
+    this.filteredStatGroupsChar = this.statisticGroups.filter((sg) => this.statGroupIdsChar.includes(sg.id));
   }
 
   public limitRowEdits() {

@@ -63,6 +63,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public scen;
     public originalScenario = [];
     public editMode: boolean;
+    defaultUnitTypes: any;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -239,16 +240,32 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
     }
 
-    public defaultUnit(varCode, varIndex) {
+    public defaultUnits(varIndex) {
+        this.defaultUnitTypes = [];
         const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
-        if (this.variables.find(r => r.code === varCode).unitTypeID){
+        var varCode = (controlArray.controls[varIndex].get('code').value);
+        var tempUnit;
+        var findUnits = false;
+        if (this.variables.find(r => r.code === varCode).englishUnitTypeID) {
             this.unitTypes.forEach((element,index) => {  
-                if (element.id.toString() == this.variables.find(r => r.code === varCode).unitTypeID){
-                    controlArray.controls[varIndex].get('unitType').setValue(this.unitTypes[index]);
+                if (element.id.toString() == this.variables.find(r => r.code === varCode).englishUnitTypeID) {
+                    this.defaultUnitTypes.push(this.unitTypes[index]);
+                    tempUnit = this.unitTypes[index];
+                    findUnits = true;
                 }
             });               
-        } else{
-            controlArray.controls[varIndex].get('unitType').setValue(null);
+        }
+        if (this.variables.find(r => r.code === varCode).metricUnitTypeID) {
+            this.unitTypes.forEach((element,index) => {  
+                if (element.id.toString() == this.variables.find(r => r.code === varCode).metricUnitTypeID) {
+                    if (tempUnit!= this.unitTypes[index]) { // Checking for duplicates
+                        this.defaultUnitTypes.push(this.unitTypes[index]);
+                    }
+                    findUnits = true;
+                }
+            });               
+        } if (!findUnits) {
+            this.defaultUnitTypes = this.unitTypes;
         }
     }
 

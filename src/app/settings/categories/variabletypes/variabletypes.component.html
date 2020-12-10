@@ -50,7 +50,7 @@
                     <td class="width-15">
                         <span *ngIf="!v.isEditing && v.englishUnitType">{{ v.englishUnitType.name }}</span>
                         <span *ngIf="v.isEditing">
-                            <ng-select  bindLabel="id" [(ngModel)]="v.englishUnitType" name="englishUnit" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                            <ng-select  bindLabel="name" [items]="englishUnitTypes" [(ngModel)]="v.englishUnitType" name="englishUnit" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
                                 <ng-option *ngFor="let ut of englishUnitTypes" [value]="ut">{{ut.name}} ({{ut.abbr}})</ng-option>
                             </ng-select>
                         </span>
@@ -58,7 +58,7 @@
                     <td class="width-15">
                         <span *ngIf="!v.isEditing && v.metricUnitType">{{ v.metricUnitType.name }}</span>
                         <span *ngIf="v.isEditing">
-                            <ng-select  bindLabel="id" [(ngModel)]="v.metricUnitType" name="metricUnit" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                            <ng-select  bindLabel="name" [items]="metricUnitTypes" [(ngModel)]="v.metricUnitType" name="metricUnit" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
                                 <ng-option *ngFor="let ut of metricUnitTypes" [value]="ut">{{ut.name}} ({{ut.abbr}})</ng-option>
                             </ng-select>
                         </span>
@@ -66,7 +66,7 @@
                     <td class="width-15">
                         <span *ngIf="!v.isEditing && v.statisticGroupType">{{ v.statisticGroupType.name }}</span>
                         <span *ngIf="v.isEditing">
-                            <ng-select  bindLabel="id" [(ngModel)]="v.statisticGroupType" name="statisticGroup" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                            <ng-select  bindLabel="name" [items]="statisticGroups" [(ngModel)]="v.statisticGroupType" name="statisticGroup" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
                                 <ng-option *ngFor="let sg of statisticGroups" [value]="sg">{{sg.name}} ({{sg.code}})</ng-option>
                             </ng-select>
                         </span>

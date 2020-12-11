@@ -404,7 +404,7 @@
 											</td>
 											<!--TODO -- edit/add/delete errors to existing statistic-->
 											<td *ngIf="errorsHeader">
-												<span *ngFor="let e of s.statisticErrors">{{e.errorType.code}}, {{e.value}}</span>
+												<span *ngFor="let e of s.statisticErrors">{{e.errorType.code}}: {{e.value}}</span>
 											</td>
 											<td>
 												<span *ngIf="!s.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"></span>

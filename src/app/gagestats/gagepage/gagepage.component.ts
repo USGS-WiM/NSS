@@ -79,7 +79,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
               return a.statisticGroupTypeID - b.statisticGroupTypeID;
             });
             this.gage = res;
-            console.log(this.gage)
             //this._nssService.setSelectedRegion(this.gage.region);
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);
@@ -200,9 +199,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   public getTableHeaders() {  //Search gage for stats w/ a prediction interval and errors, return true if present
-    console.log('hi')
     var pred = false;
-    this.gage.statistics.forEach(function(item) {
+    this.gage.statistics.forEach( function(item) {
       if (item.predictionInterval) {
         return pred = true;
       }
@@ -210,7 +208,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this.predIntervalsHeader = pred;
 
     var error = false;
-    this.gage.statistics.forEach(function(item) {
+    this.gage.statistics.forEach( function(item) {
       if (item.statisticErrors.length > 0) {
         return error = true;
       }

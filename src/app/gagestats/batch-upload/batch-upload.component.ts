@@ -15,6 +15,7 @@ import { Unittype } from 'app/shared/interfaces/unitType';
 import { Variabletype } from 'app/shared/interfaces/variableType'
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
+import { findIndex } from 'rxjs-compat/operator/findIndex';
 //import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -69,16 +70,20 @@ export class BatchUploadModal implements OnInit {
   public agencies: Array<Agency>;
   public regions: Array<Region>;
   public stationTypes: Array<StationType>;
-  public statisticGroupType: Array<Statisticgroup>;
-  public regressionType: Array<Regressiontype>;
-  public unitType: Array<Unittype>;
-  public variableType: Array<Variabletype>;
+  public statisticGroupTypes: Array<Statisticgroup>;
+  public regressionTypes: Array<Regressiontype>;
+  public unitTypes: Array<Unittype>;
+  public variableTypes: Array<Variabletype>;
   public wb: XLSX.WorkBook
   public sheetNamesButtons: boolean;
   public wsname;
   public dropdownOptions;
   public selectedCitation;
   public station: Array<Station>;
+  public records;
+  public url;
+  public errorList = [];
+  public disableSumbit: boolean = true;
 
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
@@ -103,16 +108,16 @@ export class BatchUploadModal implements OnInit {
       this.regions = regions;
     });
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL).subscribe((statgroups: Array<Statisticgroup>) => {
-      this.statisticGroupType = statgroups;
+      this.statisticGroupTypes = statgroups;
     });
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL).subscribe((regtypes: Array<Regressiontype>) => {
-      this.regressionType = regtypes;
+      this.regressionTypes = regtypes;
     });
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL).subscribe((vartypes: Array<Variabletype>) => {
-      this.variableType = vartypes;
+      this.variableTypes = vartypes;
     });
     this._nssService.getUnitTypes().subscribe(res => {
-      this.unitType = res;
+      this.unitTypes = res;
     });
     this._nssService.selectedCitation.subscribe(c => {
       this.selectedCitation = c;
@@ -212,25 +217,29 @@ export class BatchUploadModal implements OnInit {
 
 ////////////////// Create and Submit HTTP POST Request ////////////////////////
 
-  public submitRecords() {
+  public checkData() {
     console.log('Input data: ', this.tableData)
-    var records;
-    var url;
+    delete(this.records);
+    this.errorList = [];
+    //var records;
+    var rowID = 0;
     this.tableData.forEach(row => { // Loop through the rows of the table
+    //for (var row of this.tableData) {
       if (row == this.tableData[0]) {
-          return;
+        rowID += 1;
+        return;
       } 
       else {    
-          var i = 0;
+          var cellID = 0;
           var record;
           row.forEach(cell => {  // Loop thru the cells of each row
-              var item = '"' + this.tableData[0][i] + '": "' + cell + '"'; // Assign the headers as the keys, the values as values
-              if (i == 0){
+              var item = '"' + this.tableData[0][cellID] + '": "' + cell + '"'; // Assign the headers as the keys, the values as values
+              if (cellID == 0){
                   record = item;
-                  i ++;
+                  cellID ++;
               } else {
                   record = record + ', ' + item;
-                  i ++;
+                  cellID ++;
               }
           })
           var recordObj = JSON.parse('{' + record + '}');  // Parse strings into JSON objects
@@ -240,30 +249,56 @@ export class BatchUploadModal implements OnInit {
             recordObj.citationID = this.selectedCitation.id;
           }
           if(this.uploadStations) {                        // If stations are being uploaded...  
-            url = "stations/Batch";
-            const location = {type: 'Point', coordinates: [ parseFloat(recordObj.longitude), parseFloat(recordObj.latitude) ]};  // Add location item
-            delete recordObj.latitude;  // Delete old location items
-            delete recordObj.longitude;
-            recordObj = {...recordObj, 'location': location};
+            this.url = "stations/Batch";
             if (recordObj.agencyID) {
-              var aID = this.getAgencyID(recordObj.agencyID);
+              var cellIndex = Object.keys(recordObj).indexOf('agencyID');
+              var aID = this.getAgencyID(recordObj.agencyID, rowID, cellIndex);
               recordObj.agencyID = aID;
             }
             if (recordObj.stationTypeID) {
-              var sID = this.getStationTypeID(recordObj.stationTypeID);
+              var cellIndex = Object.keys(recordObj).indexOf('stationTypeID');
+              var sID = this.getStationTypeID(recordObj.stationTypeID, rowID, cellIndex);
               recordObj.stationTypeID = sID;
             }
             if (recordObj.regionID) {
-              var rID  = this.getRegionID(recordObj.regionID);
+              var cellIndex = Object.keys(recordObj).indexOf('regionID');
+              var rID  = this.getRegionID(recordObj.regionID, rowID, cellIndex);
               recordObj.regionID = rID;
             }
             if(recordObj.isRegulated) {
               var x = this.getTrueFalse(recordObj.isRegulated);
               recordObj.isRegulated = x;
             }
+            const location = {type: 'Point', coordinates: [ parseFloat(recordObj.longitude), parseFloat(recordObj.latitude) ]};  // Add location item
+            delete recordObj.latitude;  // Delete old location items
+            delete recordObj.longitude;
+            recordObj = {...recordObj, 'location': location};
           }
           if (this.uploadStats) {                             // If stats are being uploaded...
-            url = "statistics/batch";
+            this.url = "statistics/batch";
+            if(recordObj.statisticGroupTypeID) {
+              var cellIndex = Object.keys(recordObj).indexOf('statisticGroupTypeID');
+              var sID = this.getStatGroupType(recordObj.statisticGroupTypeID, rowID, cellIndex);
+              recordObj.statisticGroupTypeID = sID;
+            };
+            if(recordObj.regressionTypeID) {
+              var cellIndex = Object.keys(recordObj).indexOf('regressionTypeID');
+              var rID = this.getRegressionType(recordObj.regressionTypeID, rowID, cellIndex);
+              recordObj.regressionTypeID = rID;
+            };
+            if(recordObj.unitTypeID) {
+              var cellIndex = Object.keys(recordObj).indexOf('unitTypeID');
+              var uID = this.getUnitType(recordObj.unitTypeID, rowID, cellIndex);
+              recordObj.unitTypeID = uID;
+            }
+            if(recordObj.isPreferred) {
+              var x = this.getTrueFalse(recordObj.isPreferred);
+              recordObj.isPreferred = x;
+            }
+            if(recordObj.code) {
+              var cID = this.getStationID(recordObj);
+              recordObj.stationID = cID;
+            }
             recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
             if(recordObj.remarks != 'undefined') {
               recordObj.comments = recordObj.comments + ' ' + recordObj.remarks; 
@@ -278,125 +313,157 @@ export class BatchUploadModal implements OnInit {
 		            "upperConfidenceInterval" : recordObj.upperConfidenceInterval
               }
             }
-            if(recordObj.statisticGroupTypeID) {
-              var sID = this.getStatGroupType(recordObj.statisticGroupTypeID);
-              recordObj.statisticGroupTypeID = sID;
-            };
-            if(recordObj.regressionTypeID) {
-              var rID = this.getRegressionType(recordObj.regressionTypeID);
-              recordObj.regressionTypeID = rID;
-            };
-            if(recordObj.unitTypeID) {
-              var uID = this.getUnitType(recordObj.unitTypeID);
-              recordObj.unitTypeID = uID;
-            }
-            if(recordObj.isPreferred) {
-              var x = this.getTrueFalse(recordObj.isPreferred);
-              recordObj.isPreferred = x;
-            }
-            if(recordObj.code) {
-              var cID = this.getStationID(recordObj);
-              recordObj.stationID = cID;
-            }
           }
           if (this.uploadChars) {                             // If chars are being uploaded... 
-            url = "characteristics/batch";
+            this.url = "characteristics/batch";
             if(recordObj.unitTypeID) {
-              var uID = this.getUnitType(recordObj.unitTypeID);
+              var cellIndex = Object.keys(recordObj).indexOf('unitTypeID');
+              var uID = this.getUnitType(recordObj.unitTypeID, rowID, cellIndex);
+              //var uID = this.getVariable(this.unitTypes, recordObj.unitTypeID, 'vt.id', rowID, cellID);
               recordObj.unitTypeID = uID;
             }
             if(recordObj.variableTypeID) {
-              var vID = this.getVariableType(recordObj.variableTypeID);
+              var cellIndex = Object.keys(recordObj).indexOf('variableTypeID');
+              var vID = this.getVariableType(recordObj.variableTypeID, rowID, cellIndex);
               recordObj.variableTypeID = vID;
             }
             if(recordObj.code) {
               this.getStationID(recordObj);
             }
           }
-          if (records == null) {                              // Group record objects into an array of records
-            records = [recordObj];
+          rowID += 1;
+          if (this.records == null) {                              // Group record objects into an array of records
+            this.records = [recordObj];
           } 
           else {
-              records = [...records, recordObj ];
+              this.records = [...this.records, recordObj ];
           }  
       }  
-    });    
-    console.log('Output records: ', records, 'number of records: ', records.length);
-    this._settingsService.postEntity(records, this.configSettings.gageStatsBaseURL +  url)
-      .subscribe((response:any) =>{
-        if(!response.headers){
-          this.clearTable();
-          this.selectUpload = false;
-          delete(this.selectedCitation);
-          this._toasterService.pop('info', 'Info', 'Success! ' + records.length + ' items were added.');
-        } else {
-          this._settingsService.outputWimMessages(response);
-        }
-      });
+  });    
+    console.log('Output records: ', this.records, 'number of records: ', this.records.length);
+    if(this.errorList.length == 0) {
+      this.disableSumbit = false;
+    }
+    if(this.errorList.length > 0) {
+      this.disableSumbit = true;
+    }
   }
+
+public submitRecords() {
+  console.log('SUbmitted records: ', this.records, 'number of records: ', this.records.length);
+  // this._settingsService.postEntity(this.records, this.configSettings.gageStatsBaseURL +  this.url)
+  //     .subscribe((response:any) =>{
+  //       if(!response.headers){
+  //         this.clearTable();
+  //         this.selectUpload = false;
+  //         delete(this.selectedCitation);
+  //         this._toasterService.pop('info', 'Info', 'Success! ' + this.records.length + ' items were added.');
+  //       } else {
+  //         this._settingsService.outputWimMessages(response);
+  //       }
+  //     });
+}
 
 //////////////// Get NSS Characteristic IDs //////////////////////
 
-  public getStationTypeID(code) {
-    if (this.stationTypes) {
-      return (this.stationTypes.find(s => s.code === code).id);
+  public getStationTypeID(code, rowID, cellID) {
+    if (this.stationTypes) {;
+      var st = this.stationTypes.find(s => s.code === code)
+      if (st) {
+        return st.id;
+      } else {
+        this.errorList.push(this.tableData[rowID][cellID]);
+      }
     }
   }
 
-  public getAgencyID(code) {
+  public getAgencyID(code, rowID, cellID) {
     if (this.agencies) {
-      return (this.agencies.find(a => a.code === code).id);
+      var a = this.agencies.find(a => a.code === code);
+      if (a) {
+        return a.id;
+      } else {
+        this.errorList.push(this.tableData[rowID][cellID]);
+      }
     }
   }
 
-  public getRegionID(name) {
+  public getRegionID(name, rowID, cellID) {
     if (this.regions) {
-      return (this.regions.find(r => r.name === name).id);
+      var r = this.regions.find(r => r.name === name);
+      if (r) {
+        return r.id;
+      } else {
+        this.errorList.push(this.tableData[rowID][cellID]);
+      }
     }
   }
 
-  public getStatGroupType(code) {
-    if(this.statisticGroupType) {
-      return (this.statisticGroupType.find(s => s.code === code).id);
+  public getStatGroupType(code, rowID, cellID) {
+    if(this.statisticGroupTypes) {
+      var sgt = this.statisticGroupTypes.find(s => s.code === code);
+      if (sgt) {
+        return sgt.id
+      } else {
+        this.errorList.push(this.tableData[rowID][cellID]);
+      }
     }
   }
 
-  public getRegressionType(code) {
-    if(this.regressionType) {
-      return (this.regressionType.find(r => r.code === code).id);
+  public getRegressionType(code, rowID, cellID) {
+    if(this.regressionTypes) {
+      var rt = this.regressionTypes.find(r => r.code === code);
+      if (rt) {
+        return rt.id;
+      } else {
+        this.errorList.push(this.tableData[rowID][cellID]);
+      }
     }
   }
 
-  public getVariableType(code) {
-    if(this.variableType) {
-      return (this.variableType.find(v => v.code === code).id)
+  public getVariableType(code, rowID, cellID) {
+    if(this.variableTypes) {
+      var vt = this.variableTypes.find(v => v.code === code);
+      if(vt) {  
+      return vt.id;
+      } else {
+        this.errorList.push(this.tableData[rowID][cellID]);
+      }
     }
   }
 
-  public getUnitType(abbreviation) {
-    if(this.unitType) {
-      return (this.unitType.find( u => u.abbreviation === abbreviation).id)
+  public getUnitType(abbreviation, rowID, cellID) {
+    if(this.unitTypes) {
+      var ut = this.unitTypes.find( u => u.abbreviation === abbreviation);
+      if(ut) {
+      return ut.id;
+      } else {
+        this.errorList.push(this.tableData[rowID][cellID]);
+      }
     }
   }
-           // This doesn't work yet....
-  // async getStationID(obj) {
-  //   //this._settingsService.getEntitiesSync(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).subscribe((s: Array<Station>) => {
-  //     let station = await this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).toPromise();
-  //     console.log(station)
-  //     //this.station.toPromise().then(x => obj.stationID = x.id )
-      
-  //     //this.station = await lastValueFrom(station$)
-  //     return obj.stationID = station.id;
-  //   //});
+// A project for another day
+
+  // public getVariable(listName, value, returnValue, rowID, cellID) {
+  //   var i = cellID - 1;
+  //   var code = value.replace(/"/g,"");
+  //   var output = returnValue.replace(/"/g,"");
+  //   if(listName) {
+  //     var vt = listName.find( u => u.code === code)
+  //     if(vt) {
+  //     return output;
+  //     } else {
+  //       this.errorList.push(this.tableData[rowID][i]);
+  //     }
+  //   }
   // }
-
-  async getStationID(obj): Promise<Station> {
-    this.station = await this._settingsService
-      .getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code)
-      .toPromise()
-      .then(resp => resp as Station);
-    return obj.stationID = this.station.id;
+           // This doesn't work yet....
+  async getStationID(obj) {
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).subscribe((s: Array<Station>) => {
+      return obj.stationID = s.id;
+    });
   }
+
 
   public getTrueFalse(val) { 
     if (typeof val === 'string') {
@@ -412,6 +479,11 @@ export class BatchUploadModal implements OnInit {
     return typeof x;
   }
 
+  public setStyle(x) {
+    if(this.errorList.find( e => e == x)) { 
+      return "yellow"
+    }
+  }
   ///////////////////////Citation Modal Section/////////////////////
 
   public showManageCitationsModal() {

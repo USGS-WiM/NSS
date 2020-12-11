@@ -16,6 +16,7 @@ import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'gagePageModal',
@@ -64,7 +65,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
     private _toasterService: ToasterService,
     private _configService: ConfigService, 
     private _modalService: NgbModal, 
-    public _settingsservice: SettingsService) { 
+    public _settingsservice: SettingsService,
+    private _http: HttpClient) { 
     this.configSettings = this._configService.getConfiguration();
   }
 
@@ -79,6 +81,17 @@ export class GagepageComponent implements OnInit, OnDestroy {
             });
             this.gage = res;
             console.log(this.gage)
+            const header: HttpHeaders = new HttpHeaders({
+              'Access-Control-Allow-Origin': '*',
+              "Access-Control-Allow-Headers":"Content-Type",
+              "Access-Control-Allow-Methods": "GET",
+              Accept: 'text/plain'
+            });
+            this._http.get('https://waterservices.usgs.gov/nwis/site?site=' + this.gage.code, { headers: header})
+              .subscribe(res => {
+                console.log(res)
+              });
+
             this._settingsservice.getEntities('https://waterservices.usgs.gov/nwis/site?site=' + this.gage.code).subscribe(res => {
               console.log(res)
             });

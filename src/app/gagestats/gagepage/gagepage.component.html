@@ -248,9 +248,10 @@
                                     <th class="width-10">Units</th> 
                                     <th class="width-7">Citation ID</th>
 									<th *ngIf="editGage" class="width-15">Statistic Group</th>
-									<th class="width-7" *ngIf="predIntervals || editGage">Model Error Variance or Mean Square Error</th>
-									<th class="width-7" *ngIf="predIntervals || editGage">Lower 90% Prediction Interval</th>
-									<th class="width-7" *ngIf="predIntervals || editGage">Upper 90% Prediction Interval</th>
+									<th class="width-7" *ngIf="predIntervalsHeaders || editGage">Model Error Variance or Mean Square Error</th>
+									<th class="width-7" *ngIf="predIntervalsHeaders || editGage">Lower 90% Prediction Interval</th>
+									<th class="width-7" *ngIf="predIntervalsHeaders || editGage">Upper 90% Prediction Interval</th>
+									<th class="width-7" *ngIf="errorsHeader">Errors</th>
 									<th>Preferred</th>
                                     <th class="width-7">Years of Record</th> 
                                     <th>Comments</th>
@@ -305,17 +306,21 @@
 											</select>
 										</span>
 									</td>
-									<td *ngIf="predIntervals || editGage">
+									<td *ngIf="predIntervalsHeaders || editGage">
 										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.variance}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.variance" class="input-100"></span>
 									</td>
-									<td *ngIf="predIntervals || editGage">
+									<td *ngIf="predIntervalsHeaders || editGage">
 										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.lowerConfidenceInterval}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.lowerConfidenceInterval" class="input-100"></span>
 									</td>
-									<td *ngIf="predIntervals || editGage">
+									<td *ngIf="predIntervalsHeaders || editGage">
 										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.upperConfidenceInterval}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.upperConfidenceInterval" class="input-100"></span>
+									</td>
+									<!--TODO -- add Errors to new statistic-->
+									<td *ngIf="errorsHeader">
+										<span></span>
 									</td>
 									<td>
 										<span *ngIf="!newStat.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"/></span>
@@ -385,17 +390,21 @@
 													</select>
 												</span>
 											</td>
-											<td *ngIf="predIntervals || editGage">
+											<td *ngIf="predIntervalsHeaders || editGage">
 												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.variance}}</span>
 												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.variance" class="input-100"></span>
 											</td>
-											<td *ngIf="predIntervals || editGage">
+											<td *ngIf="predIntervalsHeader || editGage">
 												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.lowerConfidenceInterval}}</span>
 												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.lowerConfidenceInterval" class="input-100"></span>
 											</td>
-											<td *ngIf="predIntervals || editGage">
+											<td *ngIf="predIntervalsHeader || editGage">
 												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.upperConfidenceInterval}}</span>
 												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.upperConfidenceInterval" class="input-100"></span>
+											</td>
+											<!--TODO -- edit/add/delete errors to existing statistic-->
+											<td *ngIf="errorsHeader">
+												<span *ngFor="let e of s.statisticErrors">{{e.errorType.code}}, {{e.value}}</span>
 											</td>
 											<td>
 												<span *ngIf="!s.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"></span>

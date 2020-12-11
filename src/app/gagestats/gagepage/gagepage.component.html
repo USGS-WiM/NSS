@@ -68,17 +68,17 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Latitude</td>
+							<td>Latitude and Longitude</td>
 							<td>
-								<span *ngIf="!editGageInfo">{{gage.location.coordinates[1]}}</span>
-								<span *ngIf="editGageInfo"><input type="number"  [(ngModel)]="gage.location.coordinates[1]"></span>
+								<span *ngIf="!editGageInfo">{{gage.location.coordinates[1]}}, {{gage.location.coordinates[0] }}</span>
+								<span *ngIf="editGageInfo"><input type="number" [(ngModel)]="gage.location.coordinates[1]"></span>
+								<span *ngIf="editGageInfo"><input type="number" [(ngModel)]="gage.location.coordinates[0]"></span>
 							</td>
 						</tr>
 						<tr>
-							<td>Longitude</td>
+							<td>NWIS Latitude and Longitude</td>
 							<td>
-								<span *ngIf="!editGageInfo">{{gage.location.coordinates[0]}}</span>
-								<span *ngIf="editGageInfo"><input type="number" [(ngModel)]="gage.location.coordinates[0]"></span>
+								<span>{{gage.location.coordinates[0]}}</span>
 							</td>
 						</tr>
 						<tr>

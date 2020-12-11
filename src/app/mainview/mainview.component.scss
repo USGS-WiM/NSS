@@ -14,15 +14,32 @@
 
 .app-body-section{
 	margin-top: 25px;
+	padding-left: 30px;
+
+	h3{
+		position: relative;
+		left: -30px;
+		font-weight: 600;
+		margin-top: 40px;
+
+		@media print{
+			margin-top: 0;
+		}
+	}
+	h5{
+		position: relative;
+		left: -15px;
+		font-weight: 600;
+	}
 }
 
 // Misc styles
 // Citation link
 .citation{
 	display: block;
-	font-size: 15px;
-	line-height: 17px;
-	margin: 15px 0;
+	font-size: 14px;
+	line-height: 15px;
+	margin: 7px 0;
 	font-weight: 500;
 	box-sizing: border-box;
 	padding-left: 15px;
@@ -33,7 +50,6 @@
     padding: 0!important;
     font-size: 11px!important;
 }
-
 
 .download-divider{
 	display: flex;
@@ -75,7 +91,6 @@
 	}
 }
 
-
 // Equations
 .equation-wrapper{
 	display: flex;
@@ -86,7 +101,6 @@
 		margin-right: 25px;
 	}
 }
-
 
 // Charts
 .charts-header{
@@ -113,11 +127,6 @@
 	}
 }
 
-
-
-
-
-
 .reqError {
     background-color: #efe1e1!important;
     border: 1px solid #a94442!important;
@@ -143,19 +152,60 @@
     }
 }
 
-
 .addErrorButton {
     padding: 5px;
     height: 30px;
 }
-
   
-  .chart-wrapper{
+.chart-wrapper{
 	border: 1px solid rgba(0,0,0,0.3);
 	display:inline-block;
 	margin-bottom:65px !important;
 	max-height: 460px !important;
 	padding: 0 !important;
-  }
-  
+}
 
+hr.statGroup {
+	border: 1px solid  #BFC6D2;
+}
+
+
+// Section header when editing scenario
+.rr-header{
+	display: flex;
+	position: relative;
+    left: -15px;
+    background: var(--grey);
+	border: 1px solid var(--border);
+	border-bottom: none;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+    padding: 12px;
+	box-sizing: border-box;
+	margin: 30px 0 0 0;
+	
+	button{
+		margin-right: 6px;
+	}
+
+	b, small{
+		font-size: 18px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 0;
+		margin: 0;
+	}
+	b{
+		font-size: 18px;
+		flex-grow: 3;
+		line-height: 18px;
+	}
+	small{
+		text-align: right;
+		box-sizing: border-box;
+		padding-left: 10px;
+		font-size: 12px;
+		line-height: 12px;
+	}
+}

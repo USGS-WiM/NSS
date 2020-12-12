@@ -45,16 +45,16 @@ export class BatchUploadModal implements OnInit {
                           {'id': 'regionID', 'name': 'Region', 'disabled': false}, 
                           {'id': 'stationTypeID', 'name': 'Station Type', 'disabled': false}];
 
-  public statChars = [  {'id': 'statisticGroupTypeID', 'name': 'Stat Group Type', 'disabled': false},
+  public statChars = [  {'id': 'code', 'name': 'Station Code', 'disabled': false},
                         {'id': 'regressionTypeID', 'name': 'Regression Type', 'disabled': false},
-                        {'id': 'code', 'name': 'Station Code', 'disabled': false},
                         {'id': 'value', 'name': 'Value', 'disabled': false},
                         {'id': 'unitTypeID', 'name': 'Units', 'disabled': false},
-                        {'id': 'comments', 'name': 'Comments', 'disabled': false},
+                        {'id': 'statisticGroupTypeID', 'name': 'Stat Group Type', 'disabled': false},
                         {'id': 'isPreferred', 'name': 'Preferred?', 'disabled': false},
                         {'id': 'yearsofRecord', 'name': 'Years of Record', 'disabled': false},
                         {'id': 'startDate', 'name': 'Start Date', 'disabled': false},
                         {'id': 'endDate', 'name': 'End Date', 'disabled': false},
+                        {'id': 'comments', 'name': 'Comments', 'disabled': false},
                         {'id': 'remarks', 'name': 'Remarks', 'disabled': false},
                         {'id': 'variance', 'name': 'Variance', 'disabled': false},
                         {'id': 'lowerConfidenceInterval', 'name': 'Lower Confidence Interval', 'disabled': false}, 
@@ -79,7 +79,6 @@ export class BatchUploadModal implements OnInit {
   public wsname;
   public dropdownOptions;
   public selectedCitation;
-  public station: Array<Station>;
   public records;
   public url;
   public errorList = [];
@@ -193,6 +192,8 @@ export class BatchUploadModal implements OnInit {
     this.uploadStats = false;
     this.tableEdit = false;
     delete(this.selectedCitation);
+    this.errorList = [];
+    delete(this.records);
   }
 
   public changeDropdownOptions() {
@@ -296,8 +297,8 @@ export class BatchUploadModal implements OnInit {
               recordObj.isPreferred = x;
             }
             if(recordObj.code) {
-              var cID = this.getStationID(recordObj);
-              recordObj.stationID = cID;
+              var cellIndex = Object.keys(recordObj).indexOf('code');
+              this.getStationID(recordObj, rowID, cellIndex);
             }
             recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
             if(recordObj.remarks != 'undefined') {
@@ -328,7 +329,8 @@ export class BatchUploadModal implements OnInit {
               recordObj.variableTypeID = vID;
             }
             if(recordObj.code) {
-              this.getStationID(recordObj);
+              var cellIndex = Object.keys(recordObj).indexOf('code');
+              this.getStationID(recordObj, rowID, cellIndex);
             }
           }
           rowID += 1;
@@ -458,10 +460,18 @@ public submitRecords() {
   //   }
   // }
            // This doesn't work yet....
-  async getStationID(obj) {
-    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code).subscribe((s: Array<Station>) => {
-      return obj.stationID = s.id;
+  public getStationID(obj, rowID, cellID) {
+    var station;
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code)
+    .subscribe((s: Array<Station>) => {
+      station = s;
+      return obj.stationID = station.id;
+    }, error => {
+      this.errorList.push(this.tableData[rowID][cellID]);
+      if (error.headers) {this._nssService.outputWimMessages(error);
+      } else { this._nssService.handleError(error); }
     });
+    
   }
 
 

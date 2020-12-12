@@ -58,7 +58,7 @@
                                 <td *ngFor='let val of tableData[0], let valIndex = index'>
                                     <span *ngIf='!tableEdit &&  getType( tableData[rowIndex][valIndex]) !== "boolean"' [style.background-color]="setStyle(tableData[rowIndex][valIndex])">{{tableData[rowIndex][valIndex]}}</span>
                                     <span *ngIf='!tableEdit &&  getType( tableData[rowIndex][valIndex]) === "boolean"'><input type="checkbox" [checked]="tableData[rowIndex][valIndex]" onclick="return false"></span>
-                                    <span *ngIf='tableEdit  &&  getType( tableData[rowIndex][valIndex]) !== "boolean"' [style.color]="setStyle(tableData[rowIndex][valIndex])"><input [(ngModel)]='tableData[rowIndex][valIndex]'></span>
+                                    <span *ngIf='tableEdit  &&  getType( tableData[rowIndex][valIndex]) !== "boolean"' ><input [style.background-color]="setStyle(tableData[rowIndex][valIndex])" [(ngModel)]='tableData[rowIndex][valIndex]'></span>
                                     <span *ngIf='tableEdit  &&  getType( tableData[rowIndex][valIndex]) === "boolean"'><input type="checkbox" [(ngModel)]="tableData[rowIndex][valIndex]" size="3"></span>
                                     <!-- tableData[rowIndex][valIndex] !== true || !tableEdit && tableData[rowIndex][valIndex] !== false -->
                                 </td>

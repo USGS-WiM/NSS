@@ -248,9 +248,9 @@
                                     <th class="width-10">Units</th> 
                                     <th class="width-7">Citation ID</th>
 									<th *ngIf="editGage" class="width-15">Statistic Group</th>
-									<th class="width-7" *ngIf="predIntervalsHeaders || editGage">Model Error Variance or Mean Square Error</th>
-									<th class="width-7" *ngIf="predIntervalsHeaders || editGage">Lower 90% Prediction Interval</th>
-									<th class="width-7" *ngIf="predIntervalsHeaders || editGage">Upper 90% Prediction Interval</th>
+									<th class="width-7" *ngIf="predIntervalsHeader || editGage">Model Error Variance or Mean Square Error</th>
+									<th class="width-7" *ngIf="predIntervalsHeader || editGage">Lower 90% Prediction Interval</th>
+									<th class="width-7" *ngIf="predIntervalsHeader || editGage">Upper 90% Prediction Interval</th>
 									<th class="width-7" *ngIf="errorsHeader">Errors</th>
 									<th>Preferred</th>
                                     <th class="width-7">Years of Record</th> 
@@ -306,15 +306,15 @@
 											</select>
 										</span>
 									</td>
-									<td *ngIf="predIntervalsHeaders || editGage">
+									<td *ngIf="predIntervalsHeader || editGage">
 										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.variance}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.variance" class="input-100"></span>
 									</td>
-									<td *ngIf="predIntervalsHeaders || editGage">
+									<td *ngIf="predIntervalsHeader || editGage">
 										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.lowerConfidenceInterval}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.lowerConfidenceInterval" class="input-100"></span>
 									</td>
-									<td *ngIf="predIntervalsHeaders || editGage">
+									<td *ngIf="predIntervalsHeader || editGage">
 										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.upperConfidenceInterval}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.upperConfidenceInterval" class="input-100"></span>
 									</td>
@@ -390,7 +390,7 @@
 													</select>
 												</span>
 											</td>
-											<td *ngIf="predIntervalsHeaders || editGage">
+											<td *ngIf="predIntervalsHeader || editGage">
 												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.variance}}</span>
 												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.variance" class="input-100"></span>
 											</td>

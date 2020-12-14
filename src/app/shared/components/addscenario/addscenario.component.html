@@ -95,7 +95,7 @@
 								<!-- Parameter ID-->
 								<div class="form-group required">
 									<label class="req" for="code">Explanatory Variable:</label>
-									<ng-select formControlName="code" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+									<ng-select formControlName="code" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (change)="clearUnits(varIndex)">
 										<ng-option *ngFor="let v of variables" [value]="v.code">{{v.code}} ({{v.description}})</ng-option>
 									</ng-select>
 								</div>
@@ -119,7 +119,7 @@
 								<div class="form-group required">
 									<label class="req" for="unitType">Explanatory Variable Unit:</label>
 									<ng-select formControlName="unitType"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (click)="defaultUnits(varIndex)">
-										<ng-option *ngFor="let u of defaultUnitTypes" [value]="u">{{u.name}} ({{u.abbr}})</ng-option>
+										<ng-option *ngFor="let u of defaultUnitTypes" [value]="u">{{u.name}} ({{u.abbreviation}})</ng-option>
 									</ng-select>
 								</div>
 				

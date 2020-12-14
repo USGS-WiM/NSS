@@ -240,6 +240,11 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
     }
 
+    public clearUnits(index){
+        const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
+        controlArray.controls[index].get('unitType').setValue(null);
+    }
+
     public defaultUnits(varIndex) {
         this.defaultUnitTypes = [];
         const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
@@ -247,24 +252,15 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         var tempUnit;
         var findUnits = false;
         if (this.variables.find(r => r.code === varCode).englishUnitTypeID) {
-            this.unitTypes.forEach((element,index) => {  
-                if (element.id.toString() == this.variables.find(r => r.code === varCode).englishUnitTypeID) {
-                    this.defaultUnitTypes.push(this.unitTypes[index]);
-                    tempUnit = this.unitTypes[index];
-                    findUnits = true;
-                }
-            });               
-        }
-        if (this.variables.find(r => r.code === varCode).metricUnitTypeID) {
-            this.unitTypes.forEach((element,index) => {  
-                if (element.id.toString() == this.variables.find(r => r.code === varCode).metricUnitTypeID) {
-                    if (tempUnit!= this.unitTypes[index]) { // Checking for duplicates
-                        this.defaultUnitTypes.push(this.unitTypes[index]);
-                    }
-                    findUnits = true;
-                }
-            });               
-        } if (!findUnits) {
+            this.defaultUnitTypes.push(this.variables.find(r => r.code === varCode).englishUnitType);
+            tempUnit = this.variables.find(r => r.code === varCode).englishUnitTypeID;
+            findUnits = true;         
+        }if (this.variables.find(r => r.code === varCode).metricUnitTypeID) {
+            if (tempUnit!= this.variables.find(r => r.code === varCode).metricUnitTypeID) { // Checking for duplicates
+                this.defaultUnitTypes.push(this.variables.find(r => r.code === varCode).metricUnitType);
+            }
+            findUnits = true;         
+        }if (!findUnits) {
             this.defaultUnitTypes = this.unitTypes;
         }
     }

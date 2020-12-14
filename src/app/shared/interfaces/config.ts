@@ -12,6 +12,7 @@ export interface Config {
     characteristicsURL: string;
     citationURL: string;
     errorsURL: string;
+    filterURL: string;
     gageStatsBaseURL: string;
     loginURL: string;
     managersURL: string;
@@ -26,6 +27,7 @@ export interface Config {
     statisticGrpURL: string;
     unitsURL: string;
     unitSystemsURL: string;
+    variableTypeURL: string,
     variablesURL: string;
     statusURL: string;
     methodURL: string;

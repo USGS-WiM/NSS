@@ -56,6 +56,9 @@ export class BatchUploadModal implements OnInit {
                         {'id': 'endDate', 'name': 'End Date', 'disabled': false},
                         {'id': 'comments', 'name': 'Comments', 'disabled': false},
                         {'id': 'remarks', 'name': 'Remarks', 'disabled': false},
+                        {'id': 'PC', 'name': 'Percent Correct', 'disabled': false},
+                        {'id': 'SE', 'name': 'Standard Error', 'disabled': false},
+                        {'id': 'SEp', 'name': 'Standard Error of Prediction', 'disabled': false}, 
                         {'id': 'variance', 'name': 'Variance', 'disabled': false},
                         {'id': 'lowerConfidenceInterval', 'name': 'Lower Confidence Interval', 'disabled': false}, 
                         {'id': 'upperConfidenceInterval', 'name': 'Upper Confidence Interval', 'disabled': false}];
@@ -301,18 +304,26 @@ export class BatchUploadModal implements OnInit {
               this.getStationID(recordObj, rowID, cellIndex);
             }
             recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
-            if(recordObj.remarks != 'undefined') {
-              recordObj.comments = recordObj.comments + ' ' + recordObj.remarks; 
+            if( recordObj.remarks !== 'null' || recordObj.remarks !== undefined ) {
+              recordObj.comments = recordObj.comments + ' ' + recordObj.remarks;
+            } else {
+              recordObj.comments = recordObj.comments; 
             }
-            delete(recordObj.remarks);
-            delete(recordObj.startDate);
-            delete(recordObj.endDate);
+            delete(recordObj.remarks), delete(recordObj.startDate), delete(recordObj.endDate);
             if(recordObj.variance || recordObj.lowerConfidenceInterval || recordObj.upperConfidenceInterval) {
               recordObj.predictionInterval = {
                 "variance": recordObj.variance,
 		            "lowerConfidenceInterval": recordObj.lowerConfidenceInterval,
 		            "upperConfidenceInterval" : recordObj.upperConfidenceInterval
               }
+              delete(recordObj.variance), delete(recordObj.lowerConfidenceInterval), delete(recordObj.upperConfidenceInterval)
+            }
+            if(recordObj.PC || recordObj.SE || recordObj.SEp) {
+              recordObj.statisticErrors = [];
+                if( recordObj.PC != undefined ) { recordObj.statisticErrors.push({"PC": recordObj.PC}) };
+                if( recordObj.SE != undefined ) { recordObj.statisticErrors.push({"SE": recordObj.SE}) };
+                if( recordObj.SEp != undefined ) { recordObj.statisticErrors.push({"SEp": recordObj.SEp}) };
+              delete(recordObj.PC), delete(recordObj.SE), delete(recordObj.SEp);
             }
           }
           if (this.uploadChars) {                             // If chars are being uploaded... 

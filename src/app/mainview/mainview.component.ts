@@ -27,7 +27,6 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { Citation } from 'app/shared/interfaces/citation';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
-import { isBuffer } from 'util';
 
 
 declare var MathJax: {

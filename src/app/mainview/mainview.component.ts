@@ -661,7 +661,7 @@ export class MainviewComponent implements OnInit {
         const code = [];
         rr.results.forEach( function(item) {
           if (item.errors.length > 0) {
-              item.errors.forEach( error =>{
+              item.errors.forEach( error => {
                 code.push((error.code));
               })
             return error = true;
@@ -669,14 +669,14 @@ export class MainviewComponent implements OnInit {
         })
         rr.errorHeaders = error;
         rr.codes = code;
-        rr.codes = rr.codes.filter((el, i, a) => i === a.indexOf(el))   // check for repeats
+        rr.codes = rr.codes.filter((el, i, a) => i === a.indexOf(el));   // check for repeats
         rr.codes.sort(function(a, b) { return a.localeCompare(b); });   // sort alphabetically
 
         rr.results.forEach( function(item) {    // fill in empty errors
             if (item.errors.length > 0) {
                 rr.codes.forEach( code => {
-                    if(!item.errors.find( day2 => day2.code===code )){
-                        item.errors.push({code:code, value:""})
+                    if (!item.errors.find( day2 => day2.code===code )) {
+                        item.errors.push({code:code, value:""});
                     }
                 })
                 item.errors.sort(function(a, b) { return a.code.localeCompare(b.code); });  // sort alphabetically

@@ -27,6 +27,7 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { Citation } from 'app/shared/interfaces/citation';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
+import { isBuffer } from 'util';
 
 
 declare var MathJax: {
@@ -244,6 +245,7 @@ export class MainviewComponent implements OnInit {
                     }
                     regID = '(RG_Code: ' + rr.code + ')'; // need to show the regID for each limit so they know which one they are out of range on
                     if (rr.results && rr.results.length > 0) {
+                        this.getTableHeaders(rr);
                         if (rr.results[0] && rr.results[0].errors) {
                             this.resultsErrorLength = rr.results[0].errors.length;
                         }
@@ -653,6 +655,34 @@ export class MainviewComponent implements OnInit {
         this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
         this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
     }
+
+    public getTableHeaders(rr) {    // Search for regression regions w/ errors, return true if present, fill in empty errors
+        var error = false;
+        const code = [];
+        rr.results.forEach( function(item) {
+          if (item.errors.length > 0) {
+              item.errors.forEach( error =>{
+                code.push((error.code));
+              })
+            return error = true;
+          }
+        })
+        rr.errorHeaders = error;
+        rr.codes = code;
+        rr.codes = rr.codes.filter((el, i, a) => i === a.indexOf(el))   // check for repeats
+        rr.codes.sort(function(a, b) { return a.localeCompare(b); });   // sort alphabetically
+
+        rr.results.forEach( function(item) {    // fill in empty errors
+            if (item.errors.length > 0) {
+                rr.codes.forEach( code => {
+                    if(!item.errors.find( day2 => day2.code===code )){
+                        item.errors.push({code:code, value:""})
+                    }
+                })
+                item.errors.sort(function(a, b) { return a.code.localeCompare(b.code); });  // sort alphabetically
+            }
+        })
+      }
 
     public containsObject(obj, list) {
         for (const item of list) {

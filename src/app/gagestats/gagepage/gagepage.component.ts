@@ -54,7 +54,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public selectedStatGroup;
   public filteredGage: Station;
   public preferred: boolean = false;
-  public predIntervals: boolean = false;
+  public predIntervalsHeader: boolean = false;
+  public errorsHeader: boolean = false;
   public agencies: Agency[];
   public stationTypes: Stationtype[];
   public selectedParams: GageStatsSearchFilter;
@@ -84,7 +85,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this.filterStatIds();
             this.showGagePageForm();
             this.selectedStatGroup = [];
-            this.getPredictionIntervals();
+            this.getTableHeaders();
           });
         }
     });
@@ -197,14 +198,22 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.statGroupIds = groupIds;
   }
 
-  public getPredictionIntervals() {  //Search gage for stats w/ a prediction interval, return true if present
+  public getTableHeaders() {  //Search gage for stats w/ a prediction interval and errors, return true if present
     var pred = false;
-    this.gage.statistics.forEach( function(item, idex) {
+    this.gage.statistics.forEach( function(item) {
       if (item.predictionInterval) {
         return pred = true;
       }
     })
-    this.predIntervals = pred;
+    this.predIntervalsHeader = pred;
+
+    var error = false;
+    this.gage.statistics.forEach( function(item) {
+      if (item.statisticErrors.length > 0) {
+        return error = true;
+      }
+    })
+    this.errorsHeader = error;
   }
 
 ///////////////////Edit Gage Info Section//////////////////////////////
@@ -424,7 +433,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.getCitations();
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();
-      this.getPredictionIntervals();
+      this.getTableHeaders();
     });
   }
 

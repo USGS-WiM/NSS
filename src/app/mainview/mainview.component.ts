@@ -656,6 +656,7 @@ export class MainviewComponent implements OnInit {
     }
 
     public getTableHeaders(rr) {    // Search for regression regions w/ errors, return true if present, fill in empty errors
+        console.log(rr)
         var error = false;
         const code = [];
         rr.results.forEach( function(item) {
@@ -672,14 +673,14 @@ export class MainviewComponent implements OnInit {
         rr.codes.sort(function(a, b) { return a.localeCompare(b); });   // sort alphabetically
 
         rr.results.forEach( function(item) {    // fill in empty errors
-            if (item.errors.length > 0) {
+            //if (item.errors.length > 0) {
                 rr.codes.forEach( code => {
                     if (!item.errors.find( day2 => day2.code===code )) {
                         item.errors.push({code:code, value:""});
                     }
                 })
                 item.errors.sort(function(a, b) { return a.code.localeCompare(b.code); });  // sort alphabetically
-            }
+            //}
         })
       }
 

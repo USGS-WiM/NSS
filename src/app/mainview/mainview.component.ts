@@ -656,7 +656,6 @@ export class MainviewComponent implements OnInit {
     }
 
     public getTableHeaders(rr) {    // Search for regression regions w/ errors, return true if present, fill in empty errors
-        console.log(rr)
         var error = false;
         const code = [];
         rr.results.forEach( function(item) {

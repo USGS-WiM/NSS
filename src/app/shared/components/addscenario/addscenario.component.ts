@@ -246,23 +246,16 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     public defaultUnits(varIndex) {
-        this.defaultUnitTypes = [];
+        var defaultUnitTypes = [];
         const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
-        var varCode = (controlArray.controls[varIndex].get('code').value);
-        var tempUnit;
-        var findUnits = false;
-        if (this.variables.find(r => r.code === varCode).englishUnitTypeID) {
-            this.defaultUnitTypes.push(this.variables.find(r => r.code === varCode).englishUnitType);
-            tempUnit = this.variables.find(r => r.code === varCode).englishUnitTypeID;
-            findUnits = true;         
-        }if (this.variables.find(r => r.code === varCode).metricUnitTypeID) {
-            if (tempUnit!= this.variables.find(r => r.code === varCode).metricUnitTypeID) { // Checking for duplicates
-                this.defaultUnitTypes.push(this.variables.find(r => r.code === varCode).metricUnitType);
-            }
-            findUnits = true;         
-        }if (!findUnits) {
-            this.defaultUnitTypes = this.unitTypes;
-        }
+        const variable = this.variables.find(r => r.code === (controlArray.controls[varIndex].get('code').value));
+
+        if (variable && variable.englishUnitTypeID) defaultUnitTypes.push(variable.englishUnitType);
+        if (variable && variable.metricUnitTypeID && (!variable.englishUnitTypeID || variable.metricUnitTypeID != variable.englishUnitTypeID)) 
+            defaultUnitTypes.push(variable.metricUnitType);
+
+        if (defaultUnitTypes.length == 0) return this.unitTypes;
+        return defaultUnitTypes;
     }
 
     //fill the modal when cloning and editing 

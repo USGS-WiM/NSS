@@ -118,8 +118,8 @@
 								<!-- Parameter Unit Type-->
 								<div class="form-group required">
 									<label class="req" for="unitType">Explanatory Variable Unit:</label>
-									<ng-select formControlName="unitType"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (click)="defaultUnits(varIndex)">
-										<ng-option *ngFor="let u of defaultUnitTypes" [value]="u">{{u.name}} ({{u.abbreviation}})</ng-option>
+									<ng-select formControlName="unitType"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+										<ng-option *ngFor="let u of defaultUnits(varIndex)" [value]="u">{{u.name}} ({{u.abbreviation}})</ng-option>
 									</ng-select>
 								</div>
 				

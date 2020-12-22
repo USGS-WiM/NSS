@@ -63,6 +63,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public scen;
     public originalScenario = [];
     public editMode: boolean;
+    defaultUnitTypes: any;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -146,7 +147,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
         this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
-            this.statisticGroups = res;
+            this.statisticGroups = res.filter(statGrup => statGrup.defType == "FS");
         });
         this._settingsService.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
@@ -239,17 +240,22 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
     }
 
-    public defaultUnit(varCode, varIndex) {
+    public clearUnits(index){
         const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
-        if (this.variables.find(r => r.code === varCode).unitTypeID){
-            this.unitTypes.forEach((element,index) => {  
-                if (element.id.toString() == this.variables.find(r => r.code === varCode).unitTypeID){
-                    controlArray.controls[varIndex].get('unitType').setValue(this.unitTypes[index]);
-                }
-            });               
-        } else{
-            controlArray.controls[varIndex].get('unitType').setValue(null);
-        }
+        controlArray.controls[index].get('unitType').setValue(null);
+    }
+
+    public defaultUnits(varIndex) {
+        var defaultUnitTypes = [];
+        const controlArray = <FormArray> this.newScenForm.get('regressionRegions.parameters');
+        const variable = this.variables.find(r => r.code === (controlArray.controls[varIndex].get('code').value));
+
+        if (variable && variable.englishUnitTypeID) defaultUnitTypes.push(variable.englishUnitType);
+        if (variable && variable.metricUnitTypeID && (!variable.englishUnitTypeID || variable.metricUnitTypeID != variable.englishUnitTypeID)) 
+            defaultUnitTypes.push(variable.metricUnitType);
+
+        if (defaultUnitTypes.length == 0) return this.unitTypes;
+        return defaultUnitTypes;
     }
 
     //fill the modal when cloning and editing 

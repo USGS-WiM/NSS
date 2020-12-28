@@ -2,7 +2,7 @@
 
     <div class="sidebar-item">
         <label>Search by keyword:</label>
-            <input type="text" [(ngModel)]="params.keyword" (ngModelChange)="onTextChange()" placeholder="Search">
+            <input type="text" [(ngModel)]="keyword" (keyup)="onKeySearch($event)" placeholder="Search">
     </div>
 
     <div class="sidebar-item">
@@ -48,7 +48,7 @@
     </div>
 
     <!-- Fix This -->
-    <div class="sidebar-item center" *ngIf="agency.length > 1 || region.length > 1 || stationType.length > 1 || statisticGroup.length > 1 || regressionType.length > 1 || variableType.length > 1" >
+    <div class="sidebar-item center" *ngIf="keyword!='' || agency.length > 0 || region.length > 0 || stationType.length > 0 || statisticGroup.length > 0 || regressionType.length > 0 || variableType.length > 0" >
         <button type="button" class="button blue small" (click)="clearGagestatsFilters()">
 			<i class="far fa-times"></i>
 			<span>Reset Filters</span>

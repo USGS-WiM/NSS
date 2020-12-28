@@ -9,7 +9,6 @@ import { Config } from 'app/shared/interfaces/config';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Region } from  'app/shared/interfaces/region';
 import { StationType } from 'app/shared/interfaces/stationtypes';
-import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
 import { HttpParams } from '@angular/common/http';
 
 @Component({

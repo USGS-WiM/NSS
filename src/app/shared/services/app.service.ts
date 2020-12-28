@@ -28,7 +28,6 @@ import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from '../interfaces/station';
 import { GagePage } from '../interfaces/gagepage';
-import { GageStatsSearchFilter } from '../interfaces/gagestatsfilter';
 
 @Injectable()
 export class NSSService {

@@ -694,14 +694,12 @@ export class NSSService {
         console.log({ fullURL });
         console.log(1)
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '?' ,{ headers: this.jsonHeader, observe: 'response' as 'response', params:filter })
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL +'?' ,{ headers: this.jsonHeader, observe: 'response' as 'response', params:filter })
             .subscribe(res => {
                 console.log(2)
                 this._stationsSubject.next(res.body);
                 this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
-            },
-            error => this.handleError
-            )
+            })
     }
 
     // get gage page info

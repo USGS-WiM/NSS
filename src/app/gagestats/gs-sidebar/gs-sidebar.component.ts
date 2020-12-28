@@ -44,11 +44,17 @@ export class GsSidebarComponent implements OnInit {
 
   ngOnInit() {
     this._nssService.selectedPageNumber.subscribe((page: string) => {
-      this.test = this.test.set('page', page.toString())
+      if (page == " ") {
+        page = '1';
+      }
+      this.test = this.test.set('page', page)
       this._nssService.searchStations(this.test);
     });
-    this._nssService.selectedPerPage.subscribe((perPage: number) => {
-      this.test = this.test.set('pageCount', perPage.toString())
+    this._nssService.selectedPerPage.subscribe((perPage: string) => {
+      if (perPage == " ") {
+        perPage = '50';
+      }
+      this.test = this.test.set('pageCount', perPage)
       this._nssService.searchStations(this.test);
     });
     this._nssService.getStationTypes();
@@ -114,7 +120,7 @@ export class GsSidebarComponent implements OnInit {
   // search stations
   public onSearch() {
     this.test = this.test.set('page', '1');
-    console.log(this.region,this.agency,this.stationType, this.statisticGroup, this.regressionType,this.variableType)
+    //console.log(this.region,this.agency,this.stationType, this.statisticGroup, this.regressionType,this.variableType)
 
     this.test = this.test.set('regions', this.region); 
     this.test = this.test.set('agencies', this.agency); 
@@ -125,43 +131,43 @@ export class GsSidebarComponent implements OnInit {
 
     //regions
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.regionURL}?${this.test.toString()}`;
-    console.log( this.fullURL );
+    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((reg: Array<Region>) => {
-      console.log(reg)
+      //console.log(reg)
       this.regions = reg;
     });
 
     //station type
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL}?${this.test.toString()}`;
-    console.log( this.fullURL );
+    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
     });
 
     //agency type
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL}?${this.test.toString()}`;
-    console.log( this.fullURL );
+    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((at: Array<Agency>) => {
       this.agencies = at;
     });
 
     //statistic group
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL}?${this.test.toString()}`;
-    console.log( this.fullURL );
+    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((sg: Array<Statisticgroup>) => {
       this.statisticGroups = sg;
     });
 
     //regression type
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL}?${this.test.toString()}`;
-    console.log( this.fullURL );
+    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((rt: Array<Regressiontype>) => {
       this.regressionTypes = rt;
     });
 
     //variable type
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL}?${this.test.toString()}`;
-    console.log( this.fullURL );
+    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((vt: Array<Variabletype>) => {
       this.variableTypes = vt;
     });

@@ -692,11 +692,11 @@ export class NSSService {
     public searchStations(filter: HttpParams) {
         const fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL}?${filter.toString()}`;
         console.log({ fullURL });
-        console.log(1)
+        //console.log(1)
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL +'?' ,{ headers: this.jsonHeader, observe: 'response' as 'response', params:filter })
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL ,{ headers: this.jsonHeader, observe: 'response' as 'response', params:filter })
             .subscribe(res => {
-                console.log(2)
+                //console.log(2)
                 this._stationsSubject.next(res.body);
                 this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
             })

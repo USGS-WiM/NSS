@@ -31,12 +31,12 @@ export class GsSidebarComponent implements OnInit {
   public myRTSettings: IMultiSelectSettings;
   public params: GageStatsSearchFilter = new GageStatsFilterClass();
   public test = new HttpParams();
-  public region;
-  public stationType;
-  public agency;
-  public statisticGroup;
-  public regressionType;
-  public variableType;
+  public region = '';
+  public stationType = '';
+  public agency = '';
+  public statisticGroup = '';
+  public regressionType = '';
+  public variableType = '';
   public fullURL: string;
   constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
@@ -104,23 +104,9 @@ export class GsSidebarComponent implements OnInit {
 
   }  // end OnInit()
 
-  public changeVariableTypes(){
-    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL +'?'+ 
-                                      this.configSettings.filterURL + '=' + this.params.keyword +'&'+
-                                      this.configSettings.stationTypeURL + '=' + this.params.stationType +'&'+
-                                      this.configSettings.agenciesURL + '=' + this.params.agency +'&'+
-                                      this.configSettings.statisticGrpURL + '=' + this.params.statisticGroup +'&'+
-                                      this.configSettings.regTypeURL + '=' + this.params.regressionType +'&'+
-                                      this.configSettings.regionURL + '=' + this.params.region
-                                      ).subscribe((vt: Array<Variabletype>) => {
-      this.variableTypes = vt;
-    });
-  }
-
   // search stations
   public onSearch() {
     this.test = this.test.set('page', '1');
-    //console.log(this.region,this.agency,this.stationType, this.statisticGroup, this.regressionType,this.variableType)
 
     this.test = this.test.set('regions', this.region); 
     this.test = this.test.set('agencies', this.agency); 
@@ -131,48 +117,42 @@ export class GsSidebarComponent implements OnInit {
 
     //regions
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.regionURL}?${this.test.toString()}`;
-    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((reg: Array<Region>) => {
-      //console.log(reg)
       this.regions = reg;
     });
 
     //station type
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL}?${this.test.toString()}`;
-    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
     });
 
     //agency type
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL}?${this.test.toString()}`;
-    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((at: Array<Agency>) => {
       this.agencies = at;
     });
 
     //statistic group
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL}?${this.test.toString()}`;
-    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((sg: Array<Statisticgroup>) => {
       this.statisticGroups = sg;
     });
 
     //regression type
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL}?${this.test.toString()}`;
-    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((rt: Array<Regressiontype>) => {
       this.regressionTypes = rt;
     });
 
     //variable type
     this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL}?${this.test.toString()}`;
-    //console.log( this.fullURL );
     this._settingsservice.getEntities(this.fullURL).subscribe((vt: Array<Variabletype>) => {
       this.variableTypes = vt;
     });
-
-    //this._nssService.setSelectedFilterParams(this.params);
+    console.log(this.test)
+    
+    this._nssService.setSelectedFilterParams(this.test);
     this._nssService.searchStations(this.test);
   }
 
@@ -180,8 +160,16 @@ export class GsSidebarComponent implements OnInit {
   public clearGagestatsFilters() {
     //Reset search parameters to bring gage table back to default view
     this.test = new HttpParams();
+    this.region = "";
+    this.agency = "";
+    this.stationType = 
+    this.variableType = "";
+    this.regressionType = "";
+    this.statisticGroup = "";
+
     //Refresh the search without any filters selected
-    this.onSearch();
+    this._nssService.setSelectedFilterParams(this.test);
+    this._nssService.searchStations(this.test);
   }
 
 }

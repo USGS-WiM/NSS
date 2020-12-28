@@ -269,11 +269,11 @@ export class NSSService {
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ gage stats filter section -+-+-+-+-+-+-+
-    private _selectedFilterParams: BehaviorSubject<GageStatsSearchFilter> = new BehaviorSubject<any>(''); // selectedregion for Gagestats
+    private _selectedFilterParams: BehaviorSubject<HttpParams> = new BehaviorSubject<any>(''); // selectedregion for Gagestats
 
      // set and get selectedRegion for Gagestats
      selectedFilterParams = this._selectedFilterParams.asObservable();
-     public setSelectedFilterParams(params: GageStatsSearchFilter) {
+     public setSelectedFilterParams(params: HttpParams) {
          this._selectedFilterParams.next(params);
      }
     // -+-+-+-+-+-+ end gage stats filter section -+-+-+-+-+-+-+
@@ -690,13 +690,9 @@ export class NSSService {
 
     // get stations by text search, station type and other param
     public searchStations(filter: HttpParams) {
-        const fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL}?${filter.toString()}`;
-        console.log({ fullURL });
-        //console.log(1)
         return this._http
             .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL ,{ headers: this.jsonHeader, observe: 'response' as 'response', params:filter })
             .subscribe(res => {
-                //console.log(2)
                 this._stationsSubject.next(res.body);
                 this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
             })

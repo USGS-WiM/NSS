@@ -16,6 +16,7 @@ import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'gagePageModal',
@@ -62,7 +63,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public errorsHeader: boolean = false;
   public agencies: Agency[];
   public stationTypes: Stationtype[];
-  public selectedParams: GageStatsSearchFilter;
+  public selectedParams: HttpParams;
 
   constructor(
     private _nssService: NSSService, 
@@ -161,7 +162,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     };
 
     //subscribe to selected Filters
-    this._nssService.selectedFilterParams.subscribe((selectedParams: GageStatsSearchFilter) => { 
+    this._nssService.selectedFilterParams.subscribe((selectedParams: HttpParams) => { 
       this.selectedParams = selectedParams;
     });
   }  // end OnInit
@@ -243,7 +244,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           if (result.headers) { 
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
-            //this._nssService.searchStations(this.selectedParams);
+            this._nssService.searchStations(this.selectedParams);
             
           }
       }, error => {
@@ -262,7 +263,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.code = res.body['code']; // update code in case user changed it
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
-          //this._nssService.searchStations(this.selectedParams);
+          this._nssService.searchStations(this.selectedParams);
         }
       )
   }

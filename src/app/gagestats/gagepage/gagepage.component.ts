@@ -243,7 +243,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           if (result.headers) { 
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
-            this._nssService.searchStations(this.selectedParams);
+            //this._nssService.searchStations(this.selectedParams);
             
           }
       }, error => {
@@ -262,7 +262,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.code = res.body['code']; // update code in case user changed it
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
-          this._nssService.searchStations(this.selectedParams);
+          //this._nssService.searchStations(this.selectedParams);
         }
       )
   }

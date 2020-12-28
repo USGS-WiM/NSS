@@ -8,45 +8,46 @@
     <div class="sidebar-item">
         <label>Limit by Study Area:</label>
         <ss-multiselect-dropdown [options]="regions" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="params.region" (ngModelChange)="onRegionSelect()" name="regions">
+        [(ngModel)]="region" (ngModelChange)="onSearch()" name="regions">
         </ss-multiselect-dropdown>
     </div>
 
     <div class="sidebar-item">
         <label>Limit by Station Type:</label>
         <ss-multiselect-dropdown [options]="stationTypes" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="params.stationType" (ngModelChange)="onStationSelect()" name="stationType">
+        [(ngModel)]="stationType" (ngModelChange)="onSearch()" name="stationType">
         </ss-multiselect-dropdown>
     </div>
     
     <div class="sidebar-item">
         <label>Limit by Agency:</label>
         <ss-multiselect-dropdown [options]="agencies" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="params.agency" (ngModelChange)="onAgencySelect()" name="agency">
+        [(ngModel)]="agency" (ngModelChange)="onSearch()" name="agency">
         </ss-multiselect-dropdown>
     </div>
 
     <div class="sidebar-item">
         <label>Limit by Statistic Groups:</label>
         <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="params.statisticGroup" (ngModelChange)="onStatGrpSelect()" name="statisticGroups">
+        [(ngModel)]="statisticGroup" (ngModelChange)="onSearch()" name="statisticGroups">
         </ss-multiselect-dropdown>
     </div>
 
     <div class="sidebar-item">
         <label>Limit by Regression Types:</label>
         <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="params.regressionType" (ngModelChange)="onRegTypeSelect()" name="regressionTypes">
+        [(ngModel)]="regressionType" (ngModelChange)="onSearch()" name="regressionTypes">
         </ss-multiselect-dropdown>
     </div>
 
     <div class="sidebar-item">
         <label>Limit by Variable Types:</label>
         <ss-multiselect-dropdown [options]="variableTypes" [texts]="myMSTexts" [settings]="myRTSettings"
-        [(ngModel)]="params.variableType" (ngModelChange)="onVarTypeSelect()" name="variableTypes">
+        [(ngModel)]="variableType" (ngModelChange)="onSearch()" name="variableTypes">
         </ss-multiselect-dropdown>
     </div>
 
+    <!-- Fix This -->
     <div class="sidebar-item center" *ngIf="params.agency.length > 0 || params.keyword || params.region.length > 0 || params.stationType.length > 0 || params.statisticGroup.length >0 || params.regressionType.length > 0 || params.variableType.length > 0" >
         <button type="button" class="button blue small" (click)="clearGagestatsFilters()">
 			<i class="far fa-times"></i>

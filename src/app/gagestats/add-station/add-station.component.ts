@@ -103,7 +103,7 @@ export class AddStationModal implements OnInit {
           this._settingsService.outputWimMessages(response);
         }
         this.cancelSubmitStation();
-        this._nssService.searchStations(this.selectedParams);
+        //this._nssService.searchStations(this.selectedParams);
       }, error => {
         if (!this._settingsService.outputWimMessages(error)) {
           this._toasterService.pop('error', 'Error adding Station', error.message || error.statusText);

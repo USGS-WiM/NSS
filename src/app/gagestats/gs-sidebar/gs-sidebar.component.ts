@@ -11,6 +11,7 @@ import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { GageStatsFilterClass, GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'gs-sidebar',
@@ -29,19 +30,26 @@ export class GsSidebarComponent implements OnInit {
   public myMSTexts: IMultiSelectTexts;
   public myRTSettings: IMultiSelectSettings;
   public params: GageStatsSearchFilter = new GageStatsFilterClass();
-
+  public test = new HttpParams();
+  public region;
+  public stationType;
+  public agency;
+  public statisticGroup;
+  public regressionType;
+  public variableType;
+  public fullURL: string;
   constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
   }
 
   ngOnInit() {
     this._nssService.selectedPageNumber.subscribe((page: string) => {
-      this.params.page = page;
-      this._nssService.searchStations(this.params);
+      this.test = this.test.set('page', page.toString())
+      this._nssService.searchStations(this.test);
     });
     this._nssService.selectedPerPage.subscribe((perPage: number) => {
-      this.params.pageCount = perPage;
-      this._nssService.searchStations(this.params);
+      this.test = this.test.set('pageCount', perPage.toString())
+      this._nssService.searchStations(this.test);
     });
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
@@ -65,7 +73,7 @@ export class GsSidebarComponent implements OnInit {
     });
 
     // trigger initial stations search
-    this._nssService.searchStations(this.params);
+    this._nssService.searchStations(this.test);
 
     this.myRTSettings = {
       pullRight: false,
@@ -90,79 +98,6 @@ export class GsSidebarComponent implements OnInit {
 
   }  // end OnInit()
 
-  public changeRegions(){
-    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regionURL +'?'+ 
-                                      this.configSettings.filterURL + '=' + this.params.keyword +'&'+
-                                      this.configSettings.stationTypeURL + '=' + this.params.stationType +'&'+
-                                      this.configSettings.agenciesURL + '=' + this.params.agency +'&'+
-                                      this.configSettings.statisticGrpURL + '=' + this.params.statisticGroup +'&'+
-                                      this.configSettings.regTypeURL + '=' + this.params.regressionType +'&'+
-                                      this.configSettings.variableTypeURL + '=' + this.params.variableType
-                                      ).subscribe((reg: Array<Region>) => {
-      this.regions = reg;
-    });
-  }
-
-  public changeStationType(){
-    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL +'?'+ 
-                                      this.configSettings.filterURL + '=' + this.params.keyword +'&'+
-                                      this.configSettings.regionURL + '=' + this.params.region +'&'+
-                                      this.configSettings.agenciesURL + '=' + this.params.agency +'&'+
-                                      this.configSettings.statisticGrpURL + '=' + this.params.statisticGroup +'&'+
-                                      this.configSettings.regTypeURL + '=' + this.params.regressionType +'&'+
-                                      this.configSettings.variableTypeURL + '=' + this.params.variableType
-                                      ).subscribe((st: Array<Stationtype>) => {
-      this.stationTypes = st;
-    });
-  }
-
-  public changeAgencyType(){
-    console.log(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL +'?'+ 
-    this.configSettings.filterURL + '=' + this.params.keyword +'&'+
-    this.configSettings.regionURL + '=' + this.params.region +'&'+
-    this.configSettings.stationTypeURL + '=' + this.params.stationType +'&'+
-    this.configSettings.statisticGrpURL + '=' + this.params.statisticGroup +'&'+
-    this.configSettings.regTypeURL + '=' + this.params.regressionType +'&'+
-    this.configSettings.variableTypeURL + '=' + this.params.variableType)
-    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL +'?'+ 
-                                      this.configSettings.filterURL + '=' + this.params.keyword +'&'+
-                                      this.configSettings.regionURL + '=' + this.params.region +'&'+
-                                      this.configSettings.stationTypeURL + '=' + this.params.stationType +'&'+
-                                      this.configSettings.statisticGrpURL + '=' + this.params.statisticGroup +'&'+
-                                      this.configSettings.regTypeURL + '=' + this.params.regressionType +'&'+
-                                      this.configSettings.variableTypeURL + '=' + this.params.variableType
-                                      ).subscribe((at: Array<Agency>) => {
-      this.agencies = at;
-      console.log(this.agencies)
-    });
-  }
-
-  public changeStatisticGroupType(){
-    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL +'?'+ 
-                                      this.configSettings.filterURL + '=' + this.params.keyword +'&'+
-                                      this.configSettings.regionURL + '=' + this.params.region +'&'+
-                                      this.configSettings.stationTypeURL + '=' + this.params.stationType +'&'+
-                                      this.configSettings.agenciesURL + '=' + this.params.agency +'&'+
-                                      this.configSettings.regTypeURL + '=' + this.params.regressionType +'&'+
-                                      this.configSettings.variableTypeURL + '=' + this.params.variableType
-                                      ).subscribe((sg: Array<Statisticgroup>) => {
-      this.statisticGroups = sg;
-    });
-  }
-
-  public changeRegressionType(){
-    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL +'?'+ 
-                                      this.configSettings.filterURL + '=' + this.params.keyword +'&'+
-                                      this.configSettings.regionURL + '=' + this.params.region +'&'+
-                                      this.configSettings.stationTypeURL + '=' + this.params.stationType +'&'+
-                                      this.configSettings.agenciesURL + '=' + this.params.agency +'&'+
-                                      this.configSettings.statisticGrpURL + '=' + this.params.statisticGroup +'&'+
-                                      this.configSettings.variableTypeURL + '=' + this.params.variableType
-                                      ).subscribe((rt: Array<Regressiontype>) => {
-      this.regressionTypes = rt;
-    });
-  }
-
   public changeVariableTypes(){
     this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL +'?'+ 
                                       this.configSettings.filterURL + '=' + this.params.keyword +'&'+
@@ -176,82 +111,69 @@ export class GsSidebarComponent implements OnInit {
     });
   }
 
-  public onTextChange(){
-    this.changeRegions();
-    this.changeStationType();
-    this.changeAgencyType();
-    this.changeStatisticGroupType();
-    this.changeRegressionType();
-    this.changeVariableTypes();
-    this.onSearch();
-  }
-
-  public onRegionSelect(){
-    this.changeStationType();
-    this.changeAgencyType();
-    this.changeStatisticGroupType();
-    this.changeRegressionType();
-    this.changeVariableTypes();
-    this.onSearch();
-  }
-
-  public onStationSelect(){
-    this.changeRegions();
-    this.changeAgencyType();
-    this.changeStatisticGroupType();
-    this.changeRegressionType();
-    this.changeVariableTypes();
-    this.onSearch();
-  }
-
-  public onAgencySelect(){
-    this.changeRegions();
-    this.changeStationType();
-    this.changeStatisticGroupType();
-    this.changeRegressionType();
-    this.changeVariableTypes();
-    this.onSearch();
-  }
-
-  public onStatGrpSelect(){
-    this.changeRegions();
-    this.changeStationType();
-    this.changeAgencyType();
-    this.changeRegressionType();
-    this.changeVariableTypes();
-    this.onSearch();
-  }
-
-  public onRegTypeSelect(){
-    this.changeRegions();
-    this.changeStationType();
-    this.changeAgencyType();
-    this.changeStatisticGroupType();
-    this.changeVariableTypes();
-    this.onSearch();
-  }
-
-  public onVarTypeSelect(){
-    this.changeRegions();
-    this.changeStationType();
-    this.changeAgencyType();
-    this.changeStatisticGroupType();
-    this.changeRegressionType();
-    this.onSearch();
-  }
-
   // search stations
   public onSearch() {
-    this.params.page = 1;
-    this._nssService.setSelectedFilterParams(this.params);
-    this._nssService.searchStations(this.params);
+    this.test = this.test.set('page', '1');
+    console.log(this.region,this.agency,this.stationType, this.statisticGroup, this.regressionType,this.variableType)
+
+    this.test = this.test.set('regions', this.region); 
+    this.test = this.test.set('agencies', this.agency); 
+    this.test = this.test.set('stationtypes', this.stationType); 
+    this.test = this.test.set('statisticgroups', this.statisticGroup); 
+    this.test = this.test.set('regressiontypes', this.regressionType); 
+    this.test = this.test.set('variableTypes', this.variableType); 
+
+    //regions
+    this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.regionURL}?${this.test.toString()}`;
+    console.log( this.fullURL );
+    this._settingsservice.getEntities(this.fullURL).subscribe((reg: Array<Region>) => {
+      console.log(reg)
+      this.regions = reg;
+    });
+
+    //station type
+    this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL}?${this.test.toString()}`;
+    console.log( this.fullURL );
+    this._settingsservice.getEntities(this.fullURL).subscribe((st: Array<Stationtype>) => {
+      this.stationTypes = st;
+    });
+
+    //agency type
+    this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL}?${this.test.toString()}`;
+    console.log( this.fullURL );
+    this._settingsservice.getEntities(this.fullURL).subscribe((at: Array<Agency>) => {
+      this.agencies = at;
+    });
+
+    //statistic group
+    this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL}?${this.test.toString()}`;
+    console.log( this.fullURL );
+    this._settingsservice.getEntities(this.fullURL).subscribe((sg: Array<Statisticgroup>) => {
+      this.statisticGroups = sg;
+    });
+
+    //regression type
+    this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL}?${this.test.toString()}`;
+    console.log( this.fullURL );
+    this._settingsservice.getEntities(this.fullURL).subscribe((rt: Array<Regressiontype>) => {
+      this.regressionTypes = rt;
+    });
+
+    //variable type
+    this.fullURL = `${this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL}?${this.test.toString()}`;
+    console.log( this.fullURL );
+    this._settingsservice.getEntities(this.fullURL).subscribe((vt: Array<Variabletype>) => {
+      this.variableTypes = vt;
+    });
+
+    //this._nssService.setSelectedFilterParams(this.params);
+    this._nssService.searchStations(this.test);
   }
 
   //Clear filters
   public clearGagestatsFilters() {
     //Reset search parameters to bring gage table back to default view
-    this.params = new GageStatsFilterClass();
-
+    this.test = new HttpParams();
     //Refresh the search without any filters selected
     this.onSearch();
   }

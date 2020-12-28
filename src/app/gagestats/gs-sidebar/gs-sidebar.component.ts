@@ -36,7 +36,7 @@ export class GsSidebarComponent implements OnInit {
   public regressionType = [];
   public variableType = [];
   public keyword = "";
-  timeout: any = null;
+  public timeout: any = null;
 
   constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
@@ -141,7 +141,6 @@ export class GsSidebarComponent implements OnInit {
       this.variableTypes = vt;
     });
 
-
     this._nssService.setSelectedFilterParams(this.params);
     this._nssService.searchStations(this.params);
   }
@@ -167,7 +166,7 @@ export class GsSidebarComponent implements OnInit {
     this.variableType = [];
     this.regressionType = [];
     this.statisticGroup = [];
-    this.keyword="";
+    this.keyword = "";
     //Refresh the search without any filters selected
     this._nssService.setSelectedFilterParams(this.params);
     this._nssService.searchStations(this.params);

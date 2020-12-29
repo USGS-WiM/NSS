@@ -12,6 +12,7 @@ import { Manager } from './shared/interfaces/manager';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { SettingsService } from './settings/settings.service';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-root',
@@ -32,7 +33,6 @@ export class AppComponent implements OnInit, OnDestroy {
     public title;
     public loginBoolean;
     loading = false;
-    returnUrl: string;
     isLoggedIn: boolean;
     isloginShow: boolean;
     showGageStats: boolean;
@@ -45,6 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private _loginService: LoginService,
         public _settingsservice: SettingsService,
         private _fb: FormBuilder,
+        public location: Location,
         private _toasterService: ToasterService,
         private _modalService: NgbModal
     ) {
@@ -86,9 +87,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this._nssService.showLoginModal.subscribe(show => {
             if (show) { this.showLoginModal(); }
         });
-
-        // get return url from route parameters or default to '/'
-        this.returnUrl = '';
 
         this.modalElement = this.loginModal;
         this.loginError = false;
@@ -158,7 +156,9 @@ export class AppComponent implements OnInit, OnDestroy {
     public logout(click?: boolean) {
         this.LoginForm.reset();
         this._loginService.logout();
-        this.router.navigate(['']);
+        if (this.location.path() != "/gagestats"){
+            this.router.navigate(['']);
+        }
         if (click) {
             window.location.reload();
         }

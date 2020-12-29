@@ -156,7 +156,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public logout(click?: boolean) {
         this.LoginForm.reset();
         this._loginService.logout();
-        if (this.location.path() != "/gagestats"){
+        if (this.location.path() != "/gagestats") {
             this.router.navigate(['']);
         }
         if (click) {

@@ -243,6 +243,8 @@ select{
 //////////////////////////////
 // Additional styling for multiselect plugin
 .dropdown-menu{
+	left: unset !important;
+	right: 0 !important;
 	box-sizing: border-box;
 	max-width: 269px !important;
 	width: 269px !important;
@@ -256,6 +258,10 @@ select{
 			font-weight: bolder;
 		}
 	}
+}
+.app-sidebar .dropdown-menu{
+	left: 0 !important;
+	right: unset !important;
 }
 .dropdown-toggle{
 	overflow: hidden;

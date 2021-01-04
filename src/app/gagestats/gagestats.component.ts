@@ -61,7 +61,7 @@ export class GagestatsComponent implements OnInit {
     this.timestamp = new Date();
     // subscribe to stations subject, which is set in the service's searchStations() function
     this._nssService.Stations.subscribe((s: Array<Station>) => {
-        this.selectedStations = s;
+      this.selectedStations = s;
     });
     // subscribe to all agencies
     this._nssService.agencies.subscribe((agencies: Array<Agency>) => {

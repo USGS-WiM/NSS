@@ -29,12 +29,12 @@ export class GsSidebarComponent implements OnInit {
   public myMSTexts: IMultiSelectTexts;
   public myRTSettings: IMultiSelectSettings;
   public params = new HttpParams();
-  public region = [];
-  public stationType = [];
-  public agency = [];
-  public statisticGroup = [];
-  public regressionType = [];
-  public variableType = [];
+  public selectedRegions = [];
+  public selectedStationTypes = [];
+  public selectedAgencies = [];
+  public selectedStatisticGroups = [];
+  public selectedRegressionTypes = [];
+  public selectedVariableTypes = [];
   public keyword = "";
   public timeout: any = null;
 
@@ -108,12 +108,12 @@ export class GsSidebarComponent implements OnInit {
   public onSearch() {
     //set up params
     this.params = this.params.set('page', '1');
-    this.params = this.params.set('regions', this.region.toString()); 
-    this.params = this.params.set('agencies', this.agency.toString()); 
-    this.params = this.params.set('stationtypes', this.stationType.toString()); 
-    this.params = this.params.set('statisticgroups', this.statisticGroup.toString()); 
-    this.params = this.params.set('regressiontypes', this.regressionType.toString()); 
-    this.params = this.params.set('variableTypes', this.variableType.toString()); 
+    this.params = this.params.set('regions', this.selectedRegions.toString()); 
+    this.params = this.params.set('agencies', this.selectedAgencies.toString()); 
+    this.params = this.params.set('stationtypes', this.selectedStationTypes.toString()); 
+    this.params = this.params.set('statisticgroups', this.selectedStatisticGroups.toString()); 
+    this.params = this.params.set('regressiontypes', this.selectedRegressionTypes.toString()); 
+    this.params = this.params.set('variableTypes', this.selectedVariableTypes.toString()); 
     this.params = this.params.set('filterText', this.keyword.toString()); 
 
     //regions
@@ -160,12 +160,12 @@ export class GsSidebarComponent implements OnInit {
   public clearGagestatsFilters() {
     //Reset search parameters to bring gage table back to default view
     this.params = new HttpParams();
-    this.region = [];
-    this.agency = [];
-    this.stationType = []; 
-    this.variableType = [];
-    this.regressionType = [];
-    this.statisticGroup = [];
+    this.selectedRegions = [];
+    this.selectedAgencies = [];
+    this.selectedStationTypes = []; 
+    this.selectedVariableTypes = [];
+    this.selectedRegressionTypes = [];
+    this.selectedStatisticGroups = [];
     this.keyword = "";
     //Refresh the search without any filters selected
     this._nssService.setSelectedFilterParams(this.params);

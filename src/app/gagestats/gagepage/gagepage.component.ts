@@ -100,6 +100,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this._settingsservice.getEntities('https://waterservices.usgs.gov/nwis/site?site=' + this.gage.code).subscribe(res => {
               console.log(res)
             });
+            this.gage.characteristics.sort((a,b) => b.variableType.statisticGroupTypeID - a.variableType.statisticGroupTypeID);
             //this._nssService.setSelectedRegion(this.gage.region);
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);

@@ -32,15 +32,12 @@
                 </div>
             </div>
 
-            <!-- Method* -->
-            <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('methodID').valid && newRegRegForm.get('methodID').dirty }">
-                <label class="req" for="methodID">Method:</label>
+            <!-- Method -->
+            <div class="form-group required">
+                <label for="methodID">Method:</label>
                 <ng-select formControlName="methodID">
                     <ng-option *ngFor="let m of methods" [value]="m.id">{{ m.name }}</ng-option>
                 </ng-select>
-                <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('methodID').valid && newRegRegForm.get('methodID').dirty">
-                    Method is required
-                </div>
             </div>
 
             <!-- Short Name -->

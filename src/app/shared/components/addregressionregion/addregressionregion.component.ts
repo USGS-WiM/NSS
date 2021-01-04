@@ -90,7 +90,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this.newRegRegForm = _fb.group({
       name: new FormControl(null, Validators.required),
       description: new FormControl(null),
-      methodID: new FormControl(null, Validators.required),
+      methodID: new FormControl(null),
       statusID: new FormControl(null, Validators.required),
       code: new FormControl(null, Validators.required),
       region: new FormControl(null, Validators.required),

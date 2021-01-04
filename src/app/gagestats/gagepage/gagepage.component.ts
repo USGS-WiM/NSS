@@ -49,12 +49,17 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public addCitation: boolean;
   public selectedCitation;
   public statIds = [];
+  public statIdsChar = [];
   public filteredStatGroups;
+  public filteredStatGroupsChar;
   public statGroupIds = [];
+  public statGroupIdsChar = [];
   public selectedStatGroup;
+  public selectedStatGroupChar;
   public filteredGage: Station;
   public preferred: boolean = false;
-  public predIntervals: boolean = false;
+  public predIntervalsHeader: boolean = false;
+  public errorsHeader: boolean = false;
   public agencies: Agency[];
   public stationTypes: Stationtype[];
   public selectedParams: GageStatsSearchFilter;
@@ -78,13 +83,15 @@ export class GagepageComponent implements OnInit, OnDestroy {
               return a.statisticGroupTypeID - b.statisticGroupTypeID;
             });
             this.gage = res;
+            this.gage.characteristics.sort((a,b) => b.variableType.statisticGroupTypeID - a.variableType.statisticGroupTypeID);
             //this._nssService.setSelectedRegion(this.gage.region);
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);
             this.filterStatIds();
             this.showGagePageForm();
             this.selectedStatGroup = [];
-            this.getPredictionIntervals();
+            this.selectedStatGroupChar = [];
+            this.getTableHeaders();
           });
         }
     });
@@ -181,30 +188,51 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }
 
   public getDisplayStatGroupID(g) {
-      var statGroup1;
-      var statGroup2;
-      const ids = [];
-      const groupIds = [];
-      g.statistics.forEach( function(item, index) {
-        statGroup2 = item.statisticGroupTypeID;
-        if ( statGroup1 != statGroup2 ) {
-            statGroup1 = statGroup2
-            ids.push((item.id))
-            groupIds.push(statGroup2)
-         }
-        })
-      this.statIds = ids;
-      this.statGroupIds = groupIds;
+    var statGroup1;
+    var statGroup2;
+    const ids = [];
+    const groupIds = [];
+    g.statistics.forEach( function(item) {
+      statGroup2 = item.statisticGroupTypeID;
+      if ( statGroup1 != statGroup2 ) {
+          statGroup1 = statGroup2
+          ids.push((item.id))
+          groupIds.push(statGroup2)
+        }
+      })
+    this.statIds = ids;
+    this.statGroupIds = groupIds;
+
+    const idsChar = [];
+    const groupIdsChar = [];
+    g.characteristics.forEach( function(item) {
+      statGroup2 = item.variableType.statisticGroupTypeID;
+      if ( statGroup1 != statGroup2 ) {
+          statGroup1 = statGroup2
+          idsChar.push((item.id))
+          groupIdsChar.push(statGroup2)
+        }
+      })
+    this.statIdsChar = idsChar;
+    this.statGroupIdsChar = groupIdsChar;
   }
 
-  public getPredictionIntervals() {  //Search gage for stats w/ a prediction interval, return true if present
+  public getTableHeaders() {  //Search gage for stats w/ a prediction interval and errors, return true if present
     var pred = false;
-    this.gage.statistics.forEach( function(item, idex) {
+    this.gage.statistics.forEach( function(item) {
       if (item.predictionInterval) {
         return pred = true;
       }
     })
-    this.predIntervals = pred;
+    this.predIntervalsHeader = pred;
+
+    var error = false;
+    this.gage.statistics.forEach( function(item) {
+      if (item.statisticErrors.length > 0) {
+        return error = true;
+      }
+    })
+    this.errorsHeader = error;
   }
 
 ///////////////////Edit Gage Info Section//////////////////////////////
@@ -424,7 +452,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.getCitations();
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();
-      this.getPredictionIntervals();
+      this.getTableHeaders();
     });
   }
 
@@ -449,6 +477,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public filterStatIds() {
     this.filteredStatGroups = this.statisticGroups.filter((sg) => this.statGroupIds.includes(sg.id));
+    this.filteredStatGroupsChar = this.statisticGroups.filter((sg) => this.statGroupIdsChar.includes(sg.id));
   }
 
   public limitRowEdits() {

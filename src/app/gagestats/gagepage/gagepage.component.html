@@ -107,6 +107,12 @@
 		<div *ngIf="gage.characteristics.length > 0 || editGage">
 			<div class="table-title">Physical Characteristics
 				<div class="stat-filters">
+					<div><label>Filter by Statistic Group: </label></div>
+					<div>
+						<ss-multiselect-dropdown [options]="filteredStatGroupsChar" [texts]="myMSTexts" [settings]="myRTSettings"
+						[(ngModel)]="selectedStatGroupChar">
+						</ss-multiselect-dropdown>
+					</div>
 					<div><button *ngIf="loggedInRole && editGage" type="button" class="button small blue mright-xs"  (click)="addPhysicalCharacteristic(cIndex)">Add Physical Characteristic</button></div>
 				</div>
 			</div>
@@ -119,7 +125,7 @@
 							<th class="width-10">Value</th>
 							<th class="width-20">Units</th>
                             <th class="width-10">Citation ID</th>
-                            <th class="width-35">Comments</th>
+							<th class="width-35">Comments</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -169,54 +175,61 @@
 								<span *ngIf="newChar.isEditing"><textarea [(ngModel)]="newChar.comments" size="2"></textarea></span>
 							</td>
 						</tr>
-						<tr *ngFor="let c of gage.characteristics, let cIndex = index">
-							<td *ngIf="editGage">	
-								<div class="table-icon-buttons">
-									<button type="button" *ngIf="!c.isEditing" title="Edit Parameter" (click)="editRowClicked(c, cIndex)" class="icon-button" aria-hidden="true">
-										<i class="far fa-pencil"></i>
-									</button>
-									<button type="button" *ngIf="c.isEditing" title="Save Parameter" (click)="saveChar(c)"  class="icon-button" aria-hidden="true">
-										<i class="far fa-floppy-o"></i>
-									</button>
-									<button type="button" *ngIf="c.isEditing" title="Cancel Edit" (click)="cancelEditRowClicked(c)"  class="icon-button" aria-hidden="true">
-										<i class="far fa-history"></i>
-									</button>
-									<button type="button" *ngIf="c.isEditing" title="Delete" (click)="deletePhysicalCharacteristic(c.id)"  class="icon-button" aria-hidden="true">
-										<i class="far fa-times"></i>
-									</button>
-								</div>
-							</td>
-							<td>
-								<span *ngIf="!c.isEditing">{{c.variableType.name}}</span>
-								<span *ngIf="c.isEditing">
-									<ng-select name="variableTypeID" [(ngModel)]="c.variableTypeID" [clearable]="false">
-										<ng-option *ngFor="let variable of variables" [value]="variable.id">{{variable.name}}</ng-option> 
-									</ng-select>
-								</span>
-							</td>
-							<td>
-								<span *ngIf="!c.isEditing">{{c.value}}</span>
-								<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.value" size="1" class="input-100"></span>
-							</td>
-							
-							<td>
-								<span *ngIf="!c.isEditing">{{c.unitType.name}}</span>
-								<span *ngIf="c.isEditing">
-									<ng-select name="unitTypeID" [(ngModel)]="c.unitTypeID" [clearable]="false">
-										<ng-option *ngFor="let unit of units" [value]="unit.id">{{unit.name}}</ng-option>
-									</ng-select>
-								</span>
-							</td>
-							<td>
-								<span *ngIf="!c.isEditing">{{c.citationID}}</span>
-								<span *ngIf="c.isEditing">{{c.citationID}}</span>
-								<button *ngIf="c.isEditing" type="button" title="Change Citation" (click)="showManageCitationsModal(c)"><i class="far fa-pencil"></i></button>
-                            </td>
-                            <td>
-								<span *ngIf="!c.isEditing">{{c.comments}}</span>
-								<span *ngIf="c.isEditing"><textarea [(ngModel)]="c.comments" size="2"></textarea></span>
-							</td>
-						</tr>
+						<ng-container *ngFor="let c of gage.characteristics, let cIndex = index">
+							<ng-container *ngIf="selectedStatGroupChar == 0 && (!preferred || c.isPreferred) || selectedStatGroupChar.includes(c.variableType.statisticGroupTypeID) && (!preferred || c.isPreferred)">
+								<tr *ngIf="statIdsChar.includes(c.id)">
+									<th  colspan="15">{{getStatGroup(c.variableType.statisticGroupTypeID)}}</th>
+								</tr>
+								<tr>
+									<td *ngIf="editGage">	
+										<div class="table-icon-buttons">
+											<button type="button" *ngIf="!c.isEditing" title="Edit Parameter" (click)="editRowClicked(c, cIndex)" class="icon-button" aria-hidden="true">
+												<i class="far fa-pencil"></i>
+											</button>
+											<button type="button" *ngIf="c.isEditing" title="Save Parameter" (click)="saveChar(c)"  class="icon-button" aria-hidden="true">
+												<i class="far fa-floppy-o"></i>
+											</button>
+											<button type="button" *ngIf="c.isEditing" title="Cancel Edit" (click)="cancelEditRowClicked(c)"  class="icon-button" aria-hidden="true">
+												<i class="far fa-history"></i>
+											</button>
+											<button type="button" *ngIf="c.isEditing" title="Delete" (click)="deletePhysicalCharacteristic(c.id)"  class="icon-button" aria-hidden="true">
+												<i class="far fa-times"></i>
+											</button>
+										</div>
+									</td>
+									<td>
+										<span *ngIf="!c.isEditing">{{c.variableType.name}}</span>
+										<span *ngIf="c.isEditing">
+											<ng-select name="variableTypeID" [(ngModel)]="c.variableTypeID" [clearable]="false">
+												<ng-option *ngFor="let variable of variables" [value]="variable.id">{{variable.name}}</ng-option> 
+											</ng-select>
+										</span>
+									</td>
+									<td>
+										<span *ngIf="!c.isEditing">{{c.value}}</span>
+										<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.value" size="1" class="input-100"></span>
+									</td>
+									
+									<td>
+										<span *ngIf="!c.isEditing">{{c.unitType.name}}</span>
+										<span *ngIf="c.isEditing">
+											<ng-select name="unitTypeID" [(ngModel)]="c.unitTypeID" [clearable]="false">
+												<ng-option *ngFor="let unit of units" [value]="unit.id">{{unit.name}}</ng-option>
+											</ng-select>
+										</span>
+									</td>
+									<td>
+										<span *ngIf="!c.isEditing">{{c.citationID}}</span>
+										<span *ngIf="c.isEditing">{{c.citationID}}</span>
+										<button *ngIf="c.isEditing" type="button" title="Change Citation" (click)="showManageCitationsModal(c)"><i class="far fa-pencil"></i></button>
+									</td>
+									<td>
+										<span *ngIf="!c.isEditing">{{c.comments}}</span>
+										<span *ngIf="c.isEditing"><textarea [(ngModel)]="c.comments" size="2"></textarea></span>
+									</td>
+								</tr>
+							</ng-container>
+						</ng-container>
 					</tbody>
 				</table>
 			</div>
@@ -248,9 +261,10 @@
                                     <th class="width-10">Units</th> 
                                     <th class="width-7">Citation ID</th>
 									<th *ngIf="editGage" class="width-15">Statistic Group</th>
-									<th class="width-7" *ngIf="predIntervals || editGage">Model Error Variance or Mean Square Error</th>
-									<th class="width-7" *ngIf="predIntervals || editGage">Lower 90% Prediction Interval</th>
-									<th class="width-7" *ngIf="predIntervals || editGage">Upper 90% Prediction Interval</th>
+									<th class="width-7" *ngIf="predIntervalsHeader || editGage">Model Error Variance or Mean Square Error</th>
+									<th class="width-7" *ngIf="predIntervalsHeader || editGage">Lower 90% Prediction Interval</th>
+									<th class="width-7" *ngIf="predIntervalsHeader || editGage">Upper 90% Prediction Interval</th>
+									<th class="width-7" *ngIf="errorsHeader">Errors</th>
 									<th>Preferred</th>
                                     <th class="width-7">Years of Record</th> 
                                     <th>Comments</th>
@@ -305,17 +319,21 @@
 											</select>
 										</span>
 									</td>
-									<td *ngIf="predIntervals || editGage">
+									<td *ngIf="predIntervalsHeader || editGage">
 										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.variance}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.variance" class="input-100"></span>
 									</td>
-									<td *ngIf="predIntervals || editGage">
+									<td *ngIf="predIntervalsHeader || editGage">
 										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.lowerConfidenceInterval}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.lowerConfidenceInterval" class="input-100"></span>
 									</td>
-									<td *ngIf="predIntervals || editGage">
+									<td *ngIf="predIntervalsHeader || editGage">
 										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.upperConfidenceInterval}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.upperConfidenceInterval" class="input-100"></span>
+									</td>
+									<!--TODO -- add Errors to new statistic-->
+									<td *ngIf="errorsHeader">
+										<span></span>
 									</td>
 									<td>
 										<span *ngIf="!newStat.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"/></span>
@@ -385,17 +403,21 @@
 													</select>
 												</span>
 											</td>
-											<td *ngIf="predIntervals || editGage">
+											<td *ngIf="predIntervalsHeader || editGage">
 												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.variance}}</span>
 												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.variance" class="input-100"></span>
 											</td>
-											<td *ngIf="predIntervals || editGage">
+											<td *ngIf="predIntervalsHeader || editGage">
 												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.lowerConfidenceInterval}}</span>
 												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.lowerConfidenceInterval" class="input-100"></span>
 											</td>
-											<td *ngIf="predIntervals || editGage">
+											<td *ngIf="predIntervalsHeader || editGage">
 												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.upperConfidenceInterval}}</span>
 												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.upperConfidenceInterval" class="input-100"></span>
+											</td>
+											<!--TODO -- edit/add/delete errors to existing statistic-->
+											<td *ngIf="errorsHeader">
+												<span *ngFor="let e of s.statisticErrors">{{e.errorType.code}}: {{e.value}}</span>
 											</td>
 											<td>
 												<span *ngIf="!s.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"></span>

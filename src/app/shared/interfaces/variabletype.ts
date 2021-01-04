@@ -3,5 +3,6 @@ export interface Variabletype {
     name: string;
     description: string;
     code: string;
+    statisticGroupTypeID?: any;
     isEditing?: boolean;
 }

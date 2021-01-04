@@ -581,6 +581,24 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     }));
   }
 
+  public clearUnits(index){
+    const controlArray = <FormArray> this.newLimForm.get('variables');
+    controlArray.controls[index].get('unitTypeID').setValue(null);
+  }
+
+  public defaultUnits(index) {
+    var defaultUnitTypes = [];
+    const controlArray = <FormArray> this.newLimForm.get('variables');
+    const variable = this.variables.find(r => r.id === (controlArray.controls[index].get('variableTypeID').value));
+
+    if (variable && variable.englishUnitTypeID) defaultUnitTypes.push(variable.englishUnitType);
+    if (variable && variable.metricUnitTypeID && (!variable.englishUnitTypeID || variable.metricUnitTypeID != variable.englishUnitTypeID)) 
+      defaultUnitTypes.push(variable.metricUnitType);
+      
+    if (defaultUnitTypes.length == 0) return this.unitTypes;
+    return defaultUnitTypes;
+  }
+
   private cancelCreateLimitaiton() {
     this.newLimForm.reset();
     this.addLim = false;

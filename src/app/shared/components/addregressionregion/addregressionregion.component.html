@@ -141,14 +141,14 @@
                         <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)" class="scenFormGroup">
                             <div class="form-group required">
                                 <label class="req" for="variableTypeID">Explanatory Variable:</label>
-                                <ng-select formControlName="variableTypeID" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
+                                <ng-select formControlName="variableTypeID" bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" (change)="clearUnits(varIndex)">
                                     <ng-option *ngFor="let v of variables" [value]="v.id">{{v.code}} ({{v.description}})</ng-option>
                                 </ng-select>
                             </div>
                             <div class="form-group required">
                                 <label class="req" for="unitTypeID">Explanatory Variable Unit:</label>
                                     <ng-select formControlName="unitTypeID"  bindLabel="name" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false">
-                                        <ng-option *ngFor="let u of unitTypes" [value]="u.id">{{u.name}} ({{u.abbr}})</ng-option>
+                                        <ng-option *ngFor="let u of defaultUnits(varIndex)" [value]="u.id">{{u.name}} ({{u.abbreviation}})</ng-option>
                                     </ng-select>
                             </div>
                         </div>

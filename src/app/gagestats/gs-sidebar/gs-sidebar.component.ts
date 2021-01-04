@@ -10,7 +10,7 @@ import { Config } from 'protractor';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
-import { GageStatsFilterClass, GageStatsSearchFilter } from 'app/shared/interfaces/gagestatsfilter';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'gs-sidebar',
@@ -28,7 +28,16 @@ export class GsSidebarComponent implements OnInit {
   // Dropdown menu default text
   public myMSTexts: IMultiSelectTexts;
   public myRTSettings: IMultiSelectSettings;
-  public params: GageStatsSearchFilter = new GageStatsFilterClass();
+  public params = new HttpParams();
+  public selectedRegions = [];
+  public selectedStationTypes = [];
+  public selectedAgencies = [];
+  public selectedStatisticGroups = [];
+  public selectedRegressionTypes = [];
+  public selectedVariableTypes = [];
+  public keyword = "";
+  public timeout: any = null;
+  public loadCount = 0;
 
   constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
@@ -36,11 +45,17 @@ export class GsSidebarComponent implements OnInit {
 
   ngOnInit() {
     this._nssService.selectedPageNumber.subscribe((page: string) => {
-      this.params.page = page;
+      if (page == " ") {
+        page = '1';
+      }
+      this.params = this.params.set('page', page);
       this._nssService.searchStations(this.params);
     });
-    this._nssService.selectedPerPage.subscribe((perPage: number) => {
-      this.params.pageCount = perPage;
+    this._nssService.selectedPerPage.subscribe((perPage: string) => {
+      if (perPage == " ") {
+        perPage = '50';
+      }
+      this.params = this.params.set('pageCount', perPage);
       this._nssService.searchStations(this.params);
     });
     this._nssService.getStationTypes();
@@ -92,18 +107,74 @@ export class GsSidebarComponent implements OnInit {
 
   // search stations
   public onSearch() {
-    this.params.page = 1;
-    this._nssService.setSelectedFilterParams(this.params);
-    this._nssService.searchStations(this.params);
+    this.loadCount = this.loadCount + 1;
+
+    if (this.loadCount > 5) {  //resolves issue with mupltiple filter calls on load
+      //set up params
+      this.params = this.params.set('page', '1');
+      this.params = this.params.set('regions', this.selectedRegions.toString()); 
+      this.params = this.params.set('agencies', this.selectedAgencies.toString()); 
+      this.params = this.params.set('stationtypes', this.selectedStationTypes.toString()); 
+      this.params = this.params.set('statisticgroups', this.selectedStatisticGroups.toString()); 
+      this.params = this.params.set('regressiontypes', this.selectedRegressionTypes.toString()); 
+      this.params = this.params.set('variableTypes', this.selectedVariableTypes.toString()); 
+      this.params = this.params.set('filterText', this.keyword.toString()); 
+
+      //regions
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.regionURL}?${this.params.toString()}`).subscribe((reg: Array<Region>) => {
+        this.regions = reg;
+      });
+      //station type
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL}?${this.params.toString()}`).subscribe((st: Array<Stationtype>) => {
+        this.stationTypes = st;
+      });
+      //agency type
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL}?${this.params.toString()}`).subscribe((at: Array<Agency>) => {
+        this.agencies = at;
+      });
+      //statistic group
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL}?${this.params.toString()}`).subscribe((sg: Array<Statisticgroup>) => {
+        this.statisticGroups = sg;
+      });
+      //regression type
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL}?${this.params.toString()}`).subscribe((rt: Array<Regressiontype>) => {
+        this.regressionTypes = rt;
+      });
+      //variable type
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL}?${this.params.toString()}`).subscribe((vt: Array<Variabletype>) => {
+        this.variableTypes = vt;
+      });
+
+      this._nssService.setSelectedFilterParams(this.params);
+      this._nssService.searchStations(this.params);
+    }
+  }
+
+  //Waits for user to quit typing
+  private onKeySearch(event: any) {
+    clearTimeout(this.timeout);
+    var $this = this;
+    this.timeout = setTimeout(function () {
+      if (event.keyCode != 13) {
+        $this.onSearch();
+      }
+    }, 750);
   }
 
   //Clear filters
   public clearGagestatsFilters() {
     //Reset search parameters to bring gage table back to default view
-    this.params = new GageStatsFilterClass();
-
+    this.params = new HttpParams();
+    this.selectedRegions = [];
+    this.selectedAgencies = [];
+    this.selectedStationTypes = []; 
+    this.selectedVariableTypes = [];
+    this.selectedRegressionTypes = [];
+    this.selectedStatisticGroups = [];
+    this.keyword = "";
     //Refresh the search without any filters selected
-    this.onSearch();
+    this._nssService.setSelectedFilterParams(this.params);
+    this._nssService.searchStations(this.params);
   }
 
 }

@@ -37,6 +37,7 @@ export class GsSidebarComponent implements OnInit {
   public selectedVariableTypes = [];
   public keyword = "";
   public timeout: any = null;
+  public loadCount = 0;
 
   constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
@@ -106,43 +107,47 @@ export class GsSidebarComponent implements OnInit {
 
   // search stations
   public onSearch() {
-    //set up params
-    this.params = this.params.set('page', '1');
-    this.params = this.params.set('regions', this.selectedRegions.toString()); 
-    this.params = this.params.set('agencies', this.selectedAgencies.toString()); 
-    this.params = this.params.set('stationtypes', this.selectedStationTypes.toString()); 
-    this.params = this.params.set('statisticgroups', this.selectedStatisticGroups.toString()); 
-    this.params = this.params.set('regressiontypes', this.selectedRegressionTypes.toString()); 
-    this.params = this.params.set('variableTypes', this.selectedVariableTypes.toString()); 
-    this.params = this.params.set('filterText', this.keyword.toString()); 
+    this.loadCount = this.loadCount + 1;
 
-    //regions
-    this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.regionURL}?${this.params.toString()}`).subscribe((reg: Array<Region>) => {
-      this.regions = reg;
-    });
-    //station type
-    this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL}?${this.params.toString()}`).subscribe((st: Array<Stationtype>) => {
-      this.stationTypes = st;
-    });
-    //agency type
-    this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL}?${this.params.toString()}`).subscribe((at: Array<Agency>) => {
-      this.agencies = at;
-    });
-    //statistic group
-    this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL}?${this.params.toString()}`).subscribe((sg: Array<Statisticgroup>) => {
-      this.statisticGroups = sg;
-    });
-    //regression type
-    this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL}?${this.params.toString()}`).subscribe((rt: Array<Regressiontype>) => {
-      this.regressionTypes = rt;
-    });
-    //variable type
-    this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL}?${this.params.toString()}`).subscribe((vt: Array<Variabletype>) => {
-      this.variableTypes = vt;
-    });
+    if (this.loadCount > 5) {  //resolves issue with mupltiple filter calls on load
+      //set up params
+      this.params = this.params.set('page', '1');
+      this.params = this.params.set('regions', this.selectedRegions.toString()); 
+      this.params = this.params.set('agencies', this.selectedAgencies.toString()); 
+      this.params = this.params.set('stationtypes', this.selectedStationTypes.toString()); 
+      this.params = this.params.set('statisticgroups', this.selectedStatisticGroups.toString()); 
+      this.params = this.params.set('regressiontypes', this.selectedRegressionTypes.toString()); 
+      this.params = this.params.set('variableTypes', this.selectedVariableTypes.toString()); 
+      this.params = this.params.set('filterText', this.keyword.toString()); 
 
-    this._nssService.setSelectedFilterParams(this.params);
-    this._nssService.searchStations(this.params);
+      //regions
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.regionURL}?${this.params.toString()}`).subscribe((reg: Array<Region>) => {
+        this.regions = reg;
+      });
+      //station type
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL}?${this.params.toString()}`).subscribe((st: Array<Stationtype>) => {
+        this.stationTypes = st;
+      });
+      //agency type
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL}?${this.params.toString()}`).subscribe((at: Array<Agency>) => {
+        this.agencies = at;
+      });
+      //statistic group
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL}?${this.params.toString()}`).subscribe((sg: Array<Statisticgroup>) => {
+        this.statisticGroups = sg;
+      });
+      //regression type
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL}?${this.params.toString()}`).subscribe((rt: Array<Regressiontype>) => {
+        this.regressionTypes = rt;
+      });
+      //variable type
+      this._settingsservice.getEntities(`${this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL}?${this.params.toString()}`).subscribe((vt: Array<Variabletype>) => {
+        this.variableTypes = vt;
+      });
+
+      this._nssService.setSelectedFilterParams(this.params);
+      this._nssService.searchStations(this.params);
+    }
   }
 
   //Waits for user to quit typing

@@ -89,12 +89,11 @@ export class AddStationModal implements OnInit {
   }
 
   public submitStation() {
-    const location = {type: 'Point', coordinates: [ this.addStationForm.get('latitude').value, this.addStationForm.get('longitude').value], locationSource: this.addStationForm.get('locationSource').value}
+    const location = {type: 'Point', coordinates: [ this.addStationForm.get('latitude').value, this.addStationForm.get('longitude').value]}
     //modify form values to fit endpoint format
     let station = JSON.parse(JSON.stringify(this.addStationForm.value));
     delete station.latitude;
     delete station.longitude;
-    delete station.locationSource;
     station = {...station, 'location': location};
     console.log(station)
 

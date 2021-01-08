@@ -40,6 +40,7 @@ export class AddStationModal implements OnInit {
       regionID : new FormControl(null, Validators.required),
       latitude : new FormControl(null, [Validators.min(-90), Validators.max(90), Validators.required] ),
       longitude : new FormControl(null, [Validators.min(-180), Validators.max(180), Validators.required]),
+      locationSource : new FormControl( null, Validators.required)
     });
 
     this.configSettings = this._configService.getConfiguration();
@@ -88,12 +89,14 @@ export class AddStationModal implements OnInit {
   }
 
   public submitStation() {
-    const location = {type: 'Point', coordinates: [ this.addStationForm.get('latitude').value, this.addStationForm.get('longitude').value]}
+    const location = {type: 'Point', coordinates: [ this.addStationForm.get('latitude').value, this.addStationForm.get('longitude').value], locationSource: this.addStationForm.get('locationSource').value}
     //modify form values to fit endpoint format
     let station = JSON.parse(JSON.stringify(this.addStationForm.value));
     delete station.latitude;
     delete station.longitude;
+    delete station.locationSource;
     station = {...station, 'location': location};
+    console.log(station)
 
     this._settingsService.postEntity(station,this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL)
       .subscribe((response:any) =>{

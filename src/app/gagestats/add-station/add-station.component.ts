@@ -95,7 +95,6 @@ export class AddStationModal implements OnInit {
     delete station.latitude;
     delete station.longitude;
     station = {...station, 'location': location};
-    console.log(station)
 
     this._settingsService.postEntity(station,this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL)
       .subscribe((response:any) =>{

@@ -342,6 +342,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         if (deleteID) {    // If characteristic has an ID number (if it comes from the service)
           this._settingsservice.deleteEntity(deleteID, this.configSettings.gageStatsBaseURL + this.configSettings.characteristicsURL).subscribe(
             (res) => {
+              delete(this.itemBeingEdited);
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
             }

@@ -360,9 +360,9 @@ public submitRecords() {
           this.clearTable();
           this.selectUpload = false;
           delete(this.selectedCitation);
-        } // error => {     // If put request fails...
-        //   this._settingsService.outputWimMessages(error);
-        // }
+        } error => {     // If put request fails...
+          this._settingsService.outputWimMessages(error);
+        }
       });
 }
 

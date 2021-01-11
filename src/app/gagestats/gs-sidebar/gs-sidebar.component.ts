@@ -151,7 +151,7 @@ export class GsSidebarComponent implements OnInit {
   }
 
   //Waits for user to quit typing
-  private onKeySearch(event: any) {
+  public onKeySearch(event: any) {
     clearTimeout(this.timeout);
     var $this = this;
     this.timeout = setTimeout(function () {

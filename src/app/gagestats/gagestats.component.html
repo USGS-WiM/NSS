@@ -19,7 +19,7 @@
         <div class="mtop-sm mbottom-sm">
             <i title="Click to go to first page" class="icon fas fa-angle-double-left page-nav-icon" (click)="newPage(1)" aria-hidden="true"></i>
             <i title="Click to go backward" class="icon fas fa-angle-left page-nav-icon" (click)="newPage(currentPageNumber-1)" aria-hidden="true"></i>
-            <input type="number" style="width:40px;" class="center"  [value]="currentPageNumber" (change)="newPage($event.target.value)"/>
+            <input type="number" style="width:60px; padding: 0px 0 0 10px;" class="center"  [value]="currentPageNumber" (change)="newPage($event.target.value)"/>
             <label>&nbsp;/&nbsp;{{lastPageNumber}}</label>
             <i title="Click to go forward" (click)="newPage(currentPageNumber+1)" class="icon fas fa-angle-right page-nav-icon" aria-hidden="true"></i>
             <i title="Click to go to last page" (click)="newPage(lastPageNumber)" class="icon fas fa-angle-double-right page-nav-icon" aria-hidden="true"></i>

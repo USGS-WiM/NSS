@@ -55,10 +55,9 @@
                         is required</div>
                 </div>
 
-                
                 <!-- latitude -->
                 <div class="form-group required width-40">
-                    <label class="req" for="latitude">Latitude:</label>
+                    <label class="req" for="latitude">Latitude (in stream):</label>
                     <i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="format DD.DDD (between -90 and 90)" triggers="click"></i>
                     <input class="form-control"  type="number" formControlName="latitude" >
                     <!--out of range errors-->
@@ -67,13 +66,21 @@
                 </div>
                 <!-- Longitude -->
                 <div class="form-group required width-40" >
-                    <label class="req" for="longitude">Longitude:</label>
+                    <label class="req" for="longitude">Longitude (in stream):</label>
                     <i class="far fa-info-circle" #t="ngbTooltip" ngbTooltip="format DD.DDD (between -180 and 180)" triggers="click"></i>
                     <input class="form-control"  type="number" formControlName="longitude" >
                      <div class="input-invalid-warning" *ngIf="!addStationForm.get('longitude').valid && (addStationForm.get('longitude').touched || addStationForm.get('longitude').dirty) " >
                         <div class="input-invalid-warning" *ngIf="addStationForm.get('longitude').errors.min">Longitude must be greater than -180.00 degrees</div> 
                         <div class="input-invalid-warning" *ngIf="addStationForm.get('longitude').errors.max">Longitude must be less than 180.00 degrees</div> 
                     </div>
+                </div>
+
+                <!-- Location Source -->
+                <div class="form-group" >
+                    <label class="req" for="locationSource">Location Source:</label>
+                    <input class="form-control"  type="text" formControlName="locationSource" >
+                    <div class="input-invalid-warning" *ngIf="!addStationForm.get('locationSource').valid && addStationForm.get('locationSource').touched">Location Source
+                        is required</div>
                 </div>
                 
                 <!--visual output for testing validation-->

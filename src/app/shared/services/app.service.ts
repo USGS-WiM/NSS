@@ -28,7 +28,6 @@ import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Station } from '../interfaces/station';
 import { GagePage } from '../interfaces/gagepage';
-import { GageStatsSearchFilter } from '../interfaces/gagestatsfilter';
 
 @Injectable()
 export class NSSService {
@@ -229,10 +228,6 @@ export class NSSService {
     // -+-+-+-+-+-+ Stations -+-+-+-+-+-+
     private _stationsSubject = new Subject<any>();
 
-    public setStations(stations: Array<Station>) {
-        this._stationsSubject.next(stations);
-    }
-
     public get Stations(): Observable<Array<Station>> {
         return this._stationsSubject.asObservable();
     }
@@ -283,11 +278,11 @@ export class NSSService {
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ gage stats filter section -+-+-+-+-+-+-+
-    private _selectedFilterParams: BehaviorSubject<GageStatsSearchFilter> = new BehaviorSubject<any>(''); // selectedregion for Gagestats
+    private _selectedFilterParams: BehaviorSubject<HttpParams> = new BehaviorSubject<any>(''); // selectedregion for Gagestats
 
      // set and get selectedRegion for Gagestats
      selectedFilterParams = this._selectedFilterParams.asObservable();
-     public setSelectedFilterParams(params: GageStatsSearchFilter) {
+     public setSelectedFilterParams(params: HttpParams) {
          this._selectedFilterParams.next(params);
      }
     // -+-+-+-+-+-+ end gage stats filter section -+-+-+-+-+-+-+
@@ -703,10 +698,9 @@ export class NSSService {
     }
 
     // get stations by text search, station type and other param
-    public searchStations(filter: GageStatsSearchFilter) {
-        const url = "?filterText=" + filter.keyword + "&stationTypes=" + filter.stationType.toString() + "&agencies=" + filter.agency.toString() + "&page=" + filter.page.toString() + "&pageCount="+ filter.pageCount.toString() + "&regions="+ filter.region + "&regressionTypes="+ filter.regressionType + "&variableTypes="+ filter.variableType + "&statisticGroups="+ filter.statisticGroup;
+    public searchStations(filter: HttpParams) {
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + url ,  { headers: this.jsonHeader, observe: 'response' as 'response' })
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL ,{ headers: this.jsonHeader, observe: 'response' as 'response', params:filter })
             .subscribe(res => {
                 this._stationsSubject.next(res.body);
                 this._pagesSubject.next(res.headers.get('x-usgswim-messages'));

@@ -88,7 +88,7 @@
                 </div>
             </div>
             <div>
-                <button *ngIf='tableDisplay && !tableEdit' type="button" class="button small green mright-xs" (click)="checkData()">Verify Data</button>
+                <button *ngIf='tableDisplay && !tableEdit' type="button" class="button small green mright-xs" (click)="verifyData()">Verify Data</button>
                 <button *ngIf='tableDisplay && !tableEdit' type="button" class="button small green mright-xs" [disabled]="disableSumbit" (click)="submitRecords()">Submit</button>
             </div>
         </div>

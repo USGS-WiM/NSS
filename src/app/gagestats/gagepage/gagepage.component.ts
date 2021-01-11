@@ -258,7 +258,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public saveGageInfo(gage){
     const newItem = JSON.parse(JSON.stringify(gage)); 
-    ['agency', 'stationType'].forEach(e => delete newItem[e]);  
+    ['agency', 'stationType', 'statistics', 'characteristics'].forEach(e => delete newItem[e]);  
+    console.log(newItem)
       this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL).subscribe(
         (res) => {
           this.editGageInfo = false;

@@ -40,6 +40,7 @@ export class AddStationModal implements OnInit {
       regionID : new FormControl(null, Validators.required),
       latitude : new FormControl(null, [Validators.min(-90), Validators.max(90), Validators.required] ),
       longitude : new FormControl(null, [Validators.min(-180), Validators.max(180), Validators.required]),
+      locationSource : new FormControl( null, Validators.required)
     });
 
     this.configSettings = this._configService.getConfiguration();

@@ -68,17 +68,24 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Latitude</td>
+							<td>Latitude (in stream)</td>
 							<td>
 								<span *ngIf="!editGageInfo">{{gage.location.coordinates[1]}}</span>
 								<span *ngIf="editGageInfo"><input type="number"  [(ngModel)]="gage.location.coordinates[1]"></span>
 							</td>
 						</tr>
 						<tr>
-							<td>Longitude</td>
+							<td>Longitude (in stream)</td>
 							<td>
 								<span *ngIf="!editGageInfo">{{gage.location.coordinates[0]}}</span>
 								<span *ngIf="editGageInfo"><input type="number" [(ngModel)]="gage.location.coordinates[0]"></span>
+							</td>
+						</tr>
+						<tr>
+							<td>Location Source</td>
+							<td>
+								<span *ngIf="!editGageInfo">{{gage.locationSource}}</span>
+								<span *ngIf="editGageInfo"><input type="text" [(ngModel)]="gage.locationSource"></span>
 							</td>
 						</tr>
 						<tr>

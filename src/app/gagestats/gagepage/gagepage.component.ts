@@ -17,6 +17,7 @@ import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { HttpParams } from '@angular/common/http';
 import { LoaderService } from 'app/shared/services/loader.service';
+import { Region } from 'app/shared/interfaces/region';
 
 @Component({
   selector: 'gagePageModal',
@@ -64,6 +65,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public agencies: Agency[];
   public stationTypes: Stationtype[];
   public selectedParams: HttpParams;
+  public regions: Region[];
 
   constructor(
     private _nssService: NSSService, 
@@ -135,6 +137,10 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this._nssService.getAgencies();
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
+    });
+    // get all regions
+    this._nssService.regions.subscribe((regionList: Array<Region>) => {
+      this.regions = regionList;
     });
     // get all station types
     this._nssService.getStationTypes();
@@ -247,7 +253,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
             this._nssService.searchStations(this.selectedParams);
-            
+            this._nssService.setRequryGSFilter(true);
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -258,7 +264,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public saveGageInfo(gage){
     const newItem = JSON.parse(JSON.stringify(gage)); 
-    ['agency', 'stationType', 'statistics', 'characteristics'].forEach(e => delete newItem[e]);  
+    ['agency', 'stationType', 'region', 'statistics', 'characteristics'].forEach(e => delete newItem[e]);  
       this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL).subscribe(
         (res) => {
           this.editGageInfo = false;
@@ -474,6 +480,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         return a.statisticGroupTypeID - b.statisticGroupTypeID;
       });
       this.gage = res;
+      this._nssService.setRequryGSFilter(true);
       this.getCitations();
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();

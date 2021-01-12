@@ -57,6 +57,17 @@
 							</td>
 						</tr>
 						<tr>
+							<td>Region</td>
+							<td>
+								<span *ngIf="!editGageInfo">{{gage.region.name}}</span>
+								<span *ngIf="editGageInfo">
+									<ng-select name="region" [(ngModel)]="gage.regionID" [clearable]="false">
+										<ng-option *ngFor="let r of regions" [value]="r.id">{{r.name}}</ng-option>
+									</ng-select>
+								</span>
+							</td>
+						</tr>
+						<tr>
 							<td>Station Type</td>
 							<td>
 								<span *ngIf="!editGageInfo">{{gage.stationType.name}}</span>

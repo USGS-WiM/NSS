@@ -275,6 +275,14 @@ export class NSSService {
      public setSelectedFilterParams(params: HttpParams) {
          this._selectedFilterParams.next(params);
      }
+
+    // Requery Filters
+    private requry = new BehaviorSubject<boolean>(false);
+    requryGSFilter = this.requry.asObservable();
+
+    setRequryGSFilter(bool: boolean){
+        this.requry.next(bool);
+    }
     // -+-+-+-+-+-+ end gage stats filter section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ pages section -+-+-+-+-+-+

@@ -253,7 +253,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
             this._nssService.searchStations(this.selectedParams);
-            this._nssService.setRequryGSFilter(true);
+            this._nssService.setRequeryGSFilter(true);
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -480,7 +480,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         return a.statisticGroupTypeID - b.statisticGroupTypeID;
       });
       this.gage = res;
-      this._nssService.setRequryGSFilter(true);
+      this._nssService.setRequeryGSFilter(true);
       this.getCitations();
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();

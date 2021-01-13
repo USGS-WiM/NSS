@@ -277,11 +277,11 @@ export class NSSService {
      }
 
     // Requery Filters
-    private requry = new BehaviorSubject<boolean>(false);
-    requryGSFilter = this.requry.asObservable();
+    private requery = new BehaviorSubject<boolean>(false);
+    requeryGSFilter = this.requery.asObservable();
 
-    setRequryGSFilter(bool: boolean){
-        this.requry.next(bool);
+    setRequeryGSFilter(bool: boolean){
+        this.requery.next(bool);
     }
     // -+-+-+-+-+-+ end gage stats filter section -+-+-+-+-+-+-+
 

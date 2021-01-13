@@ -45,7 +45,7 @@ export class GsSidebarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._nssService.requryGSFilter.subscribe((bool:boolean)=>{
+    this._nssService.requeryGSFilter.subscribe((bool:boolean)=>{
       this.requeryFilter = bool;
       if (this.requeryFilter = true){
         this.onSearch();

@@ -1,26 +1,37 @@
-<ng-template #batchUpload let-c="close" let-d="dismiss" >
+<ng-template #batchUpload let-c="close" let-d="dismiss">
     <div>
         <div class="modal-header">
-            <h3 class="title"> Batch Upload </h3>
+            <div class="title">Batch Upload</div>
             <button class="icon-button" (click)="c('closed'); clearTable()"><i class="far fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <div>    
-                <button *ngIf='!selectUpload' type="button" class="button small blue mright-xs" (click)='selectUpload = true; uploadStations = true'>Upload Stations</button>
-                <button *ngIf='!selectUpload' type="button" class="button small blue mright-xs" (click)='selectUpload = true; uploadStats = true'>Upload Statistics</button>
-                <button *ngIf='!selectUpload' type="button" class="button small blue mright-xs" (click)='selectUpload = true; uploadChars = true'>Upload Characteristics</button>
-                <button *ngIf='selectUpload' type="button" class="button small green mright-xs" (click)='selectUpload = false; clearTable()'>Back</button>
+            <div class="upload-type">    
+                <button *ngIf='!selectUpload' type="button" class="button blue" (click)='selectUpload = true; uploadStations = true'>Upload Stations</button>
+                <button *ngIf='!selectUpload' type="button" class="button blue" (click)='selectUpload = true; uploadStats = true'>Upload Statistics</button>
+                <button *ngIf='!selectUpload' type="button" class="button blue" (click)='selectUpload = true; uploadChars = true'>Upload Characteristics</button>
+			</div>
+			<!-- Back button -->
+			<button *ngIf='selectUpload' type="button" class="button green" (click)='selectUpload = false; clearTable()'>Back</button>
+			<!-- File selector -->
+			<div class="upload-input">
                 <input *ngIf='selectUpload' (change)="selectFile($event)" type='file' multiple='false'/>
-                <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true && disableSumbit = true'>Edit Table</button>
+			</div>
+			<!-- Select worksheet -->
+            <div *ngIf="sheetNamesButtons">
+                <h6 class="title">Select a Worksheet:</h6>
+                <ng-container *ngFor="let sheetName of wb.SheetNames">
+                        <button class="button grey mright-sm mtop-xs" (click)='selectSheet(sheetName)'>{{sheetName}}</button>
+                </ng-container>
+			</div>
+
+			<!-- Edit buttons -->
+			<div class="edit-buttons">
+				<button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true && disableSumbit = true'>Edit Table</button>
                 <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
                 <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='showManageCitationsModal()'>Add Citation</button>
-            </div>
-            <div *ngIf="sheetNamesButtons">
-                <h6 class="title" > Select a Worksheet:</h6>
-                <ng-container *ngFor="let sheetName of wb.SheetNames">
-                        <button class="button small grey mright-xs" (click)='selectSheet(sheetName)'>{{sheetName}}</button>
-                </ng-container>
-            </div>
+			</div>
+
+			
             <div>
                 <table style="border:solid 1px gray" class="custom-table">
                     <thead>
@@ -54,7 +65,9 @@
                                 </td>
                             </ng-container>
                             <ng-container *ngIf="rowIndex != 0">
-                                <td *ngIf='tableEdit'><button title="Delete Row" (click)='deleteRow(rowIndex)'><i class="far fa-times"></i></button></td>
+                                <td *ngIf='tableEdit' class="deleteUploadTableRow">
+									<button title="Delete Row" (click)='deleteRow(rowIndex)'><i class="far fa-times"></i></button>
+								</td>
                                 <td *ngFor='let val of tableData[0], let valIndex = index'>
                                     <span *ngIf='!tableEdit &&  getType( tableData[rowIndex][valIndex]) !== "boolean"' [style.background-color]="setStyle(tableData[rowIndex][valIndex])">{{tableData[rowIndex][valIndex]}}</span>
                                     <span *ngIf='!tableEdit &&  getType( tableData[rowIndex][valIndex]) === "boolean"'><input type="checkbox" [checked]="tableData[rowIndex][valIndex]" onclick="return false"></span>

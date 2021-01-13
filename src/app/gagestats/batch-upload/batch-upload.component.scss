@@ -1,0 +1,41 @@
+.batch-upload-modal{
+
+	.modal-dialog{
+		max-width: 600px;
+	}
+}
+
+// Upload buttons
+.upload-type{
+	display: flex;
+	justify-content: center;
+
+	.button{
+		margin: 6px 12px;
+	}
+}
+
+// Upload input
+.upload-input{
+	display: flex;
+	justify-content: center;
+	box-sizing: border-box;
+	padding: 15px 0;
+}
+
+// Edit button row
+.edit-buttons{
+	display: flex;
+	justify-content: flex-start;
+	box-sizing: border-box;
+	padding: 15px 0 6px 0;
+	
+	.button{
+		margin-right: 10px;
+	}
+}
+
+// Table styles
+.deleteUploadTableRow{
+	width:34px;
+}

@@ -125,7 +125,7 @@ export class BatchUploadModal implements OnInit {
 }        //******* End OnInit //////////
 
   public showModal(): void {
-    this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl' });
+    this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl batch-upload-modal' });
   }
 
 /////////////// Import Excel Data section /////////////////

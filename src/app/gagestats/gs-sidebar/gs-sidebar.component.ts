@@ -38,12 +38,19 @@ export class GsSidebarComponent implements OnInit {
   public keyword = "";
   public timeout: any = null;
   public loadCount = 0;
+  public requeryFilter: boolean;
 
   constructor(private _nssService: NSSService, public _settingsservice: SettingsService, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
   }
 
   ngOnInit() {
+    this._nssService.requeryGSFilter.subscribe((bool:boolean)=>{
+      this.requeryFilter = bool;
+      if (this.requeryFilter = true){
+        this.onSearch();
+      }
+    });
     this._nssService.selectedPageNumber.subscribe((page: string) => {
       if (page == " ") {
         page = '1';
@@ -145,6 +152,7 @@ export class GsSidebarComponent implements OnInit {
         this.variableTypes = vt;
       });
 
+      this.requeryFilter = false;
       this._nssService.setSelectedFilterParams(this.params);
       this._nssService.searchStations(this.params);
     }

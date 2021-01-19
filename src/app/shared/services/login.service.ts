@@ -50,6 +50,7 @@ export class LoginService {
                     this._loggedInSubject.next(true);
                     // store user creds in localStorage and details in service for retrieval
                     localStorage.setItem('auth', 'Bearer ' + user.token);
+                    console.log(user.token)
                     this._authService.storeUserInfo(user);
                 }
             })

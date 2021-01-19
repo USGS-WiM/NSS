@@ -66,6 +66,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public stationTypes: Stationtype[];
   public selectedParams: HttpParams;
   public regions: Region[];
+  public errors;
 
   constructor(
     private _nssService: NSSService, 
@@ -126,11 +127,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
       this.variables = res;
     });
     // get all regression types
-    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
+    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL).subscribe(res => {
       this.regressionTypes = res;
     });
     // get all stat groups 
-    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
+    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
       this.statisticGroups = res;
     });
     // get all agencys
@@ -147,7 +148,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
       this.stationTypes = st;
     });
-
+    // get all errors (use for options in edit/add scenario selects)
+    this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.errorsURL).subscribe(res => {
+      this.errors = res;
+      console.log(this.errors)
+    });
     this.myRTSettings = {
       pullRight: false,
       enableSearch: false,
@@ -272,6 +277,10 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
           this._nssService.searchStations(this.selectedParams);
+        }, error => {
+          this._loaderService.hideFullPageLoad();
+          if (this._settingsservice.outputWimMessages(error)) { return; }
+          this._toasterService.pop('error', 'Error editing Gage', error._body.message || error.statusText);
         }
       )
   }
@@ -299,7 +308,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
     delete(this.itemBeingEdited);
   } 
 
+  public test (test){
+    console.log(test)
+  }
   public editRowClicked(item, index) {
+    console.log(item)
     this.cancelEditGageInfo();
     this.limitRowEdits();
     if (!item.predictionInterval) { //If the stat doesn't have prediction intervals, create empty ones for display
@@ -350,6 +363,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
             (res) => {
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
+            }, error => {
+              if (error.headers) {this._nssService.outputWimMessages(error);
+              } else { this._nssService.handleError(error); }
             }
           )
         } else { delete(this.newChar) }  // If the char does not have an ID (if it has not been saved to the service)
@@ -367,6 +383,10 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.refreshgagepage();
           this._settingsservice.outputWimMessages(res);
           this._loaderService.hideFullPageLoad();
+        }, error => {
+          this._loaderService.hideFullPageLoad();
+          if (this._settingsservice.outputWimMessages(error)) { return; }
+          this._toasterService.pop('error', 'Error editing Characteristic', error._body.message || error.statusText);
         }
       )
     }; if (!item.id) {  // If an item doesn't have an ID, then it needs to be added to NSS
@@ -379,9 +399,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this._toasterService.pop('info', 'Info', 'Characteristic was created');
           this._loaderService.hideFullPageLoad();
       }, error => {
+        this._loaderService.hideFullPageLoad();
         if (this._settingsservice.outputWimMessages(error)) {return; }
         this._toasterService.pop('error', 'Error creating Characteristic', error._body.message || error.statusText);
-        this._loaderService.hideFullPageLoad();
       });
     } 
   }
@@ -417,7 +437,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
       unitTypeID: null,
       yearsofRecord: null,
       citationID: null,
-      predictionInterval: {}
+      predictionInterval: {},
+      statisticErrors: []
     } 
     this.newStat.isEditing = true;
     delete(this.selectedCitation);
@@ -425,6 +446,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public saveStat(item) {
     this._loaderService.showFullPageLoad();
+    console.log(item)
     if (item.id) {  //If statistic has an id, it is already in the SS DB, make PUT request to edit
       const newItem = JSON.parse(JSON.stringify(item));  // Copy stat
       if ( !newItem.predictionInterval.variance && !newItem.predictionInterval.lowerConfidenceInterval && !newItem.predictionInterval.upperConfidenceInterval ) {
@@ -439,6 +461,10 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
           this._loaderService.hideFullPageLoad();
+        }, error => {
+          this._loaderService.hideFullPageLoad();
+          if (this._settingsservice.outputWimMessages(error)) { return; }
+          this._toasterService.pop('error', 'Error editing Statistic', error._body.message || error.statusText);
         }
       )
     } else {  //If statistic doesn't have an id, it needs to be added to the DB, make POST request
@@ -453,8 +479,12 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Statistic was created');
           this._loaderService.hideFullPageLoad();
-        } 
-      ) 
+        }, error => {
+          this._loaderService.hideFullPageLoad();
+          if (this._settingsservice.outputWimMessages(error)) { return; }
+          this._toasterService.pop('error', 'Error creating Statistic', error._body.message || error.statusText);
+        }
+      );
     }
   }
 
@@ -468,11 +498,20 @@ export class GagepageComponent implements OnInit, OnDestroy {
               delete(this.itemBeingEdited);
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
+            }, error => {
+              if (error.headers) {this._nssService.outputWimMessages(error);
+              } else { this._nssService.handleError(error); }
             }
           )
         } else { delete(this.newStat) }  // If the stat does not have an ID (if it has not been saved to the service)
       }
   } 
+
+  public addError(errors) {
+    // if user adds error, push empty object to array
+    console.log(errors)
+    errors.push({});
+  }
 
   private refreshgagepage() {
     this._nssService.getGagePageInfo(this.code).subscribe(res => {

@@ -308,9 +308,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     delete(this.itemBeingEdited);
   } 
 
-  public test (test){
-    console.log(test)
-  }
   public editRowClicked(item, index) {
     console.log(item)
     this.cancelEditGageInfo();
@@ -449,11 +446,15 @@ export class GagepageComponent implements OnInit, OnDestroy {
     console.log(item)
     if (item.id) {  //If statistic has an id, it is already in the SS DB, make PUT request to edit
       const newItem = JSON.parse(JSON.stringify(item));  // Copy stat
+      //Delete uneeded items
       if ( !newItem.predictionInterval.variance && !newItem.predictionInterval.lowerConfidenceInterval && !newItem.predictionInterval.upperConfidenceInterval ) {
-        delete(newItem.predictionInterval), delete(newItem.predictionIntervalID)  //Delete if empty
+        delete(newItem.predictionInterval), delete(newItem.predictionIntervalID) 
       }
       ['regressionType', 'citation',
-      'unitType', 'isEditing', 'statisticGroupType'].forEach(e => delete newItem[e]);  // Delete unneeded items
+      'unitType', 'isEditing', 'statisticGroupType'].forEach(e => delete newItem[e]);  
+      newItem.statisticErrors.forEach((e) => {
+        delete e.errorType
+      })
       this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.statisticsURL).subscribe(
         (res) => {
           item.isEditing = false;

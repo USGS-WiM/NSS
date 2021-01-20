@@ -337,21 +337,19 @@
 										<span *ngIf="!newStat.isEditing">{{newStat.predictionInterval.upperConfidenceInterval}}</span>
 										<span *ngIf="newStat.isEditing"><input type="number" [(ngModel)]="newStat.predictionInterval.upperConfidenceInterval" class="input-100"></span>
 									</td>
-									<!--TODO -- add Errors to new statistic-->
 									<td *ngIf="newStat.statisticErrors">
 										<span *ngFor="let e of newStat.statisticErrors; let eIndex = index">
 											<label class="block bold small">Error {{eIndex + 1}}: </label>
 											<span *ngIf="!newStat.isEditing">{{e.errorType.code}}: {{e.value}}</span>
 											<span *ngIf="newStat.isEditing">
-												<select [(ngModel)]="newStat.statisticErrors[eIndex]" name="e{{eIndex}}" [compareWith]="compareObjects">
-													<option *ngFor="let err of errors" [ngValue]="err"
+												<select [(ngModel)]="newStat.statisticErrors[eIndex].errorTypeID" name="e{{eIndex}}" [compareWith]="compareObjects">
+													<option *ngFor="let err of errors" [ngValue]="err.id"
 														[selected]="err.name === newStat.statisticErrors[eIndex].name">{{err.name}}
 													</option>
 												</select>
 												<input type="number" name="value{{eIndex}}" [(ngModel)]="newStat.statisticErrors[eIndex].value" required>
 											</span>
 										</span>
-										<!-- <br *ngIf="newStat.statisticErrors.length > 0"> -->
 										<i *ngIf="newStat.isEditing" title="Add Error" class="far fa-plus" aria-hidden="true" style="cursor:pointer;padding:5px;" (click)="addError(newStat.statisticErrors)"></i>
 									</td>
 									<td>
@@ -432,15 +430,14 @@
 												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.upperConfidenceInterval}}</span>
 												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.upperConfidenceInterval" class="input-100"></span>
 											</td>
-											<!--TODO -- edit/add/delete errors to existing statistic-->
 											<td *ngIf="errorsHeader">
 												<span *ngFor="let e of s.statisticErrors; let eIndex = index">
 													<label class="block bold small">Error {{eIndex + 1}}: </label>
 													<i *ngIf="s.isEditing" title="Remove Error" class="far fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;" (click)="s.statisticErrors.splice(eIndex, 1)"></i>
-													<span *ngIf="!s.isEditing">{{e.errorType.code}}: {{e.value}}</span>
+													<span *ngIf="!s.isEditing && e.errorType !== undefined">{{e.errorType.code}}: {{e.value}}</span>
 													<span *ngIf="s.isEditing">
-														<select [(ngModel)]="s.statisticErrors[eIndex]" name="e{{eIndex}}">
-															<option *ngFor="let err of errors" [ngValue]="err"
+														<select [(ngModel)]="s.statisticErrors[eIndex].errorTypeID" name="e{{eIndex}}">
+															<option *ngFor="let err of errors" [ngValue]="err.id"
 															[selected]="err.id == s.statisticErrors[0].errorTypeID">{{err.name}}
 													</option>
 														</select>

@@ -151,7 +151,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     // get all errors (use for options in edit/add scenario selects)
     this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.errorsURL).subscribe(res => {
       this.errors = res;
-      console.log(this.errors)
     });
     this.myRTSettings = {
       pullRight: false,
@@ -309,7 +308,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
   } 
 
   public editRowClicked(item, index) {
-    console.log(item)
     this.cancelEditGageInfo();
     this.limitRowEdits();
     if (!item.predictionInterval) { //If the stat doesn't have prediction intervals, create empty ones for display
@@ -443,13 +441,12 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public saveStat(item) {
     this._loaderService.showFullPageLoad();
-    console.log(item)
     if (item.id) {  //If statistic has an id, it is already in the SS DB, make PUT request to edit
       const newItem = JSON.parse(JSON.stringify(item));  // Copy stat
-      //Delete uneeded items
       if ( !newItem.predictionInterval.variance && !newItem.predictionInterval.lowerConfidenceInterval && !newItem.predictionInterval.upperConfidenceInterval ) {
-        delete(newItem.predictionInterval), delete(newItem.predictionIntervalID) 
+        delete(newItem.predictionInterval), delete(newItem.predictionIntervalID) //Delete if empty
       }
+      //Delete uneeded items
       ['regressionType', 'citation',
       'unitType', 'isEditing', 'statisticGroupType'].forEach(e => delete newItem[e]);  
       newItem.statisticErrors.forEach((e) => {
@@ -507,12 +504,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
         } else { delete(this.newStat) }  // If the stat does not have an ID (if it has not been saved to the service)
       }
   } 
-
-  public addError(errors) {
-    // if user adds error, push empty object to array
-    console.log(errors)
-    errors.push({});
-  }
 
   private refreshgagepage() {
     this._nssService.getGagePageInfo(this.code).subscribe(res => {

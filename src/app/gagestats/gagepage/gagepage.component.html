@@ -350,7 +350,7 @@
 												<input type="number" name="value{{eIndex}}" [(ngModel)]="newStat.statisticErrors[eIndex].value" required>
 											</span>
 										</span>
-										<i *ngIf="newStat.isEditing" title="Add Error" class="far fa-plus" aria-hidden="true" style="cursor:pointer;padding:5px;" (click)="addError(newStat.statisticErrors)"></i>
+										<i *ngIf="newStat.isEditing" title="Add Error" class="far fa-plus" aria-hidden="true" style="cursor:pointer;padding:5px;" (click)="newStat.statisticErrors.push({})"></i>
 									</td>
 									<td>
 										<span *ngIf="!newStat.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"/></span>
@@ -445,7 +445,7 @@
 													</span>
 												</span>
 												<br *ngIf="s.statisticErrors.length > 0">
-												<i *ngIf="s.isEditing" title="Add Error" class="far fa-plus" aria-hidden="true" style="cursor:pointer;padding:5px;" (click)="addError(s.statisticErrors)"></i>
+												<i *ngIf="s.isEditing" title="Add Error" class="far fa-plus" aria-hidden="true" style="cursor:pointer;padding:5px;" (click)="s.statisticErrors.push({})"></i>
 											</td>
 											<td>
 												<span *ngIf="!s.isEditing"><input type="checkbox" [checked]="s.isPreferred" onclick="return false"></span>

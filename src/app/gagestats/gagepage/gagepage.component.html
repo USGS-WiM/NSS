@@ -430,10 +430,9 @@
 												<span *ngIf="s.predictionInterval && !s.isEditing">{{s.predictionInterval.upperConfidenceInterval}}</span>
 												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.predictionInterval.upperConfidenceInterval" class="input-100"></span>
 											</td>
-											<td *ngIf="errorsHeader">
+											<td *ngIf="errorsHeader || editGage">
 												<span *ngFor="let e of s.statisticErrors; let eIndex = index">
 													<label class="block bold small">Error {{eIndex + 1}}: </label>
-													<i *ngIf="s.isEditing" title="Remove Error" class="far fa-times" aria-hidden="true" style="cursor:pointer;padding:5px;" (click)="s.statisticErrors.splice(eIndex, 1)"></i>
 													<span *ngIf="!s.isEditing && e.errorType !== undefined">{{e.errorType.code}}: {{e.value}}</span>
 													<span *ngIf="s.isEditing">
 														<select [(ngModel)]="s.statisticErrors[eIndex].errorTypeID" name="e{{eIndex}}">

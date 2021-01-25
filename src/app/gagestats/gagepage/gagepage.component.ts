@@ -16,6 +16,8 @@ import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { HttpParams } from '@angular/common/http';
+import { LoaderService } from 'app/shared/services/loader.service';
+import { Region } from 'app/shared/interfaces/region';
 
 @Component({
   selector: 'gagePageModal',
@@ -63,13 +65,15 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public agencies: Agency[];
   public stationTypes: Stationtype[];
   public selectedParams: HttpParams;
+  public regions: Region[];
 
   constructor(
     private _nssService: NSSService, 
     private _toasterService: ToasterService,
     private _configService: ConfigService, 
     private _modalService: NgbModal, 
-    public _settingsservice: SettingsService) { 
+    public _settingsservice: SettingsService,
+    private _loaderService: LoaderService) { 
     this.configSettings = this._configService.getConfiguration();
   }
 
@@ -133,6 +137,10 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this._nssService.getAgencies();
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
+    });
+    // get all regions
+    this._nssService.regions.subscribe((regionList: Array<Region>) => {
+      this.regions = regionList;
     });
     // get all station types
     this._nssService.getStationTypes();
@@ -245,7 +253,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
             this._nssService.searchStations(this.selectedParams);
-            
+            this._nssService.setRequeryGSFilter(true);
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -256,7 +264,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public saveGageInfo(gage){
     const newItem = JSON.parse(JSON.stringify(gage)); 
-    ['agency', 'stationType'].forEach(e => delete newItem[e]);  
+    ['agency', 'stationType', 'region', 'statistics', 'characteristics'].forEach(e => delete newItem[e]);  
       this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL).subscribe(
         (res) => {
           this.editGageInfo = false;
@@ -348,6 +356,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   }}
 
   public saveChar(item) {
+    this._loaderService.showFullPageLoad();
     if (item.id) {  // If item has an id, then it is already in NSS DB
       const newItem = JSON.parse(JSON.stringify(item));  // Copy the edited char
       delete newItem.unitType, delete newItem.variableType, delete newItem.citation;  // Delete uneeded objects from the copy
@@ -357,6 +366,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           delete(this.itemBeingEdited);
           this.refreshgagepage();
           this._settingsservice.outputWimMessages(res);
+          this._loaderService.hideFullPageLoad();
         }
       )
     }; if (!item.id) {  // If an item doesn't have an ID, then it needs to be added to NSS
@@ -367,11 +377,29 @@ export class GagepageComponent implements OnInit, OnDestroy {
           delete(this.newChar);
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Characteristic was created');
+          this._loaderService.hideFullPageLoad();
       }, error => {
         if (this._settingsservice.outputWimMessages(error)) {return; }
         this._toasterService.pop('error', 'Error creating Characteristic', error._body.message || error.statusText);
+        this._loaderService.hideFullPageLoad();
       });
     } 
+  }
+
+  public clearUnits(item) {
+    item.unitTypeID = null; 
+  }
+
+  public defaultUnits(item) {
+    var defaultUnitTypes = [];
+    const variable = this.variables.find(r => r.id === (item.variableTypeID));
+
+    if (variable && variable.englishUnitTypeID) defaultUnitTypes.push(variable.englishUnitType);
+    if (variable && variable.metricUnitTypeID && (!variable.englishUnitTypeID || variable.metricUnitTypeID != variable.englishUnitTypeID)) 
+      defaultUnitTypes.push(variable.metricUnitType);
+
+    if (defaultUnitTypes.length == 0) return this.units;
+    return defaultUnitTypes;
   }
 
 ///////////////////////Statistic Section/////////////////////
@@ -396,6 +424,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   } 
 
   public saveStat(item) {
+    this._loaderService.showFullPageLoad();
     if (item.id) {  //If statistic has an id, it is already in the SS DB, make PUT request to edit
       const newItem = JSON.parse(JSON.stringify(item));  // Copy stat
       if ( !newItem.predictionInterval.variance && !newItem.predictionInterval.lowerConfidenceInterval && !newItem.predictionInterval.upperConfidenceInterval ) {
@@ -409,6 +438,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           delete(this.itemBeingEdited);
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
+          this._loaderService.hideFullPageLoad();
         }
       )
     } else {  //If statistic doesn't have an id, it needs to be added to the DB, make POST request
@@ -422,6 +452,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           delete(this.itemBeingEdited);
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Statistic was created');
+          this._loaderService.hideFullPageLoad();
         } 
       ) 
     }
@@ -449,6 +480,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         return a.statisticGroupTypeID - b.statisticGroupTypeID;
       });
       this.gage = res;
+      this._nssService.setRequeryGSFilter(true);
       this.getCitations();
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();

@@ -301,7 +301,7 @@
 		<!--close and save-->
 		<div class="xs-f-btw">
 			<button type="button" (click)="clearScenario()" class="button red mright-xs">Clear All</button>
-			<button type="button" (click)="c('closed')" class="button black">Cancel</button>
+			<button type="button" (click)="c('closed'); requeryFilters();" class="button black">Cancel</button>
 			<div class="flex-spacer"></div>
 			<button type="button" *ngIf="edit==false" (click)="createNewScenario()" [disabled]="!newScenForm.valid" class="button blue">Create</button>
 			<button type="button" *ngIf="edit==true" (click)="submitScenario()" [disabled]="!newScenForm.valid" class="button blue">Save</button>

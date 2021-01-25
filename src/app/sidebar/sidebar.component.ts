@@ -43,17 +43,11 @@ export class SidebarComponent implements OnInit {
 
     // regression types
     public selectedRegTypeIDs: Array<number>;
-    public get selectedRegType(): Array<Regressiontype> {
-        return this._nssService.selectedRegressionTypes;
-    }
     public regressionTypes: Array<Regressiontype>;
     private myRTSettings: IMultiSelectSettings;
 
     // statisticGrps
     public selectedStatGrpIDs: Array<number>;
-    public get selectedStatGrp(): Array<Statisticgroup> {
-        return this._nssService.selectedStatGroups;
-    }
     public statisticGroups: Array<Statisticgroup>;
     private mySGSettings: IMultiSelectSettings;
 

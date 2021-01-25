@@ -17,7 +17,6 @@ import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
 import { HttpParams } from '@angular/common/http';
 import { LoaderService } from 'app/shared/services/loader.service';
-import { ViewportScroller } from '@angular/common';
 import { Region } from 'app/shared/interfaces/region';
 
 @Component({
@@ -74,8 +73,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     private _configService: ConfigService, 
     private _modalService: NgbModal, 
     public _settingsservice: SettingsService,
-    private _loaderService: LoaderService,
-    private viewportScroller: ViewportScroller) { 
+    private _loaderService: LoaderService) { 
     this.configSettings = this._configService.getConfiguration();
   }
 

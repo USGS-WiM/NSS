@@ -13,7 +13,6 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
 import { NSSService } from 'app/shared/services/app.service';
-import { Region } from 'app/shared/interfaces/region';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { SettingsService } from '../../settings.service';
 
@@ -31,7 +30,6 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
     @ViewChild('StatGroupForm', {static: true}) statGroupForm;
-    public regressionTypes;
     public selectedRegion;
     public regions;
     public selectedRegRegionIDs;
@@ -44,18 +42,19 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     private navigationSubscription;
     public loggedInRole;
     private configSettings: Config;
-    public allStatGroups: Array<Statisticgroup>;
     public rowBeingEdited: number;
     public tempData;
     public isEditing = false;
     public modalRef;
+    public defTypes = [{"code":"FS", "name": "Flow Statistics"}, {"code":"BC", "name": "Basin Characteristics"}];
 
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router,
         private _toasterService: ToasterService, private _configService: ConfigService) {
             this.newStatGroupForm = _fb.group({
                 'name': new FormControl(null, Validators.required),
-                'code': new FormControl(null, Validators.required)
+                'code': new FormControl(null, Validators.required),
+                'defType': new FormControl(null, Validators.required)
             });
             this.navigationSubscription = this.router.events.subscribe((e: any) => {
                 if (e instanceof NavigationEnd) {
@@ -71,14 +70,10 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         });
         this.selectedRegion = 'none';
         this.getAllStatGroups();
-
-        this._settingsservice.statisticGroups().subscribe(sg => {
-            this.statisticGroups = sg;
-        });
     }
+
     public getAllStatGroups() {
         this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
-            this.allStatGroups = res;
             if (this.selectedRegion === 'none') {this.statisticGroups = res; }
         });
     }
@@ -100,6 +95,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     public showNewStatGroupForm() {
         this.newStatGroupForm.controls['name'].setValue(null);
         this.newStatGroupForm.controls['code'].setValue(null);
+        this.newStatGroupForm.controls['defType'].setValue(null);
         this.showNewStatForm = true;
         this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then((result) => {
@@ -154,7 +150,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
         this.tempData = Object.assign({}, this.statisticGroups[i]); 
         this.rowBeingEdited = i;
         this.isEditing = true; // set to true so create new is disabled
-}
+    }
 
     public CancelEditRowClicked(i: number) {
         this.statisticGroups[i] = Object.assign({}, this.tempData);
@@ -185,7 +181,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating Statistic Group', error._body.message || error.statusText);
-            }
+                }
             );
         }
     }
@@ -204,7 +200,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Statistic Group', error._body.message || error.statusText);
-            }
+                }
             );
         }
     }

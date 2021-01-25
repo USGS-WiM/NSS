@@ -19,8 +19,9 @@
             <thead>
                 <tr>
                     <th class="width-5"></th>
-                    <th class="width-60">Name</th>
-                    <th class="width-35">Code</th>
+                    <th class="width-50">Name</th>
+                    <th class="width-25">Code</th>
+                    <th class="width-20">Def Type</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,6 +47,14 @@
                     <td>
                         <span *ngIf="!r.isEditing">{{ r.code }}</span>
                         <span *ngIf="r.isEditing"><input type="text" name="code" [(ngModel)]="r.code" required/></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!r.isEditing">{{ r.defType }}</span>
+                        <span *ngIf="r.isEditing">
+                            <ng-select  bindLabel="defType" [(ngModel)]="r.defType" name="defType" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                                <ng-option *ngFor="let dt of defTypes" [value]="dt.code">{{dt.code}} ({{dt.name}})</ng-option>
+                            </ng-select>
+                        </span>
                     </td>
                 </tr>
             </tbody>
@@ -83,6 +92,20 @@
                 <input class="form-control" type="text" formControlName="code" />
                 <div class="input-invalid-warning" *ngIf="!newStatGroupForm.get('code').valid && newStatGroupForm.get('code').dirty">
                     Code is required
+                </div>
+            </div>
+
+            <!-- Def Type -->
+            <div
+                class="form-group required"
+                [ngClass]="{ 'form-invalid': !newStatGroupForm.get('defType').valid && newStatGroupForm.get('defType').dirty }"
+            >
+                <label class="req" for="defType">Def Type:</label>
+                <ng-select formControlName="defType"  [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                    <ng-option *ngFor="let dt of defTypes" [value]="dt.code">{{dt.code}} ({{dt.name}})</ng-option>
+                </ng-select>
+                <div class="input-invalid-warning" *ngIf="!newStatGroupForm.get('defType').valid && newStatGroupForm.get('defType').dirty">
+                    Def Type is required
                 </div>
             </div>
         </form>

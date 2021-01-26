@@ -81,7 +81,7 @@
 						<tr>
 							<td>Latitude and Longitude (in stream)</td>
 							<td>
-								<span *ngIf="!editGageInfo">{{gage.location.coordinates[1]}}, {{gage.location.coordinates[0] }}</span>
+								<span *ngIf="!editGageInfo">{{gage.location.coordinates[1]}}, {{gage.location.coordinates[0]}}</span>
 								<span *ngIf="editGageInfo"><input type="number" [(ngModel)]="gage.location.coordinates[1]"></span>
 								<span *ngIf="editGageInfo"><input type="number" [(ngModel)]="gage.location.coordinates[0]"></span>
 							</td>
@@ -89,7 +89,7 @@
 						<tr>
 							<td>NWIS Latitude and Longitude (in stream)</td>
 							<td>
-								<span>NWIS Latitude and Longitude (in stream)</span>
+								<span>{{this.NWISlat}}, {{this.NWISlong}}</span>
 							</td>
 						</tr>
 						<tr>

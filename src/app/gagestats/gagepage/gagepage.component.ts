@@ -15,7 +15,7 @@ import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { LoaderService } from 'app/shared/services/loader.service';
 import { Region } from 'app/shared/interfaces/region';
@@ -67,6 +67,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public stationTypes: Stationtype[];
   public selectedParams: HttpParams;
   public regions: Region[];
+  public NWISlat;
+  public NWISlong;
 
   constructor(
     private _nssService: NSSService, 
@@ -89,23 +91,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
               return a.statisticGroupTypeID - b.statisticGroupTypeID;
             });
             this.gage = res;
-            console.log(this.gage)
-            const header: HttpHeaders = new HttpHeaders({
-              'Access-Control-Allow-Origin': '*',
-              "Access-Control-Allow-Headers":"Content-Type",
-              "Access-Control-Allow-Methods": "GET",
-              Accept: 'text/plain'
-            });
-            this._http.get('https://waterservices.usgs.gov/nwis/site?site=' + this.gage.code, { headers: header})
-              .subscribe(res => {
-                console.log(res)
-              });
-
-            this._settingsservice.getEntities('https://waterservices.usgs.gov/nwis/site?site=' + this.gage.code).subscribe(res => {
-              console.log(res)
-            });
             this.gage.characteristics.sort((a,b) => b.variableType.statisticGroupTypeID - a.variableType.statisticGroupTypeID);
             //this._nssService.setSelectedRegion(this.gage.region);
+            this.getNWISInfo();
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);
             this.filterStatIds();
@@ -192,6 +180,19 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
   }  // end OnInit
   
+  public getNWISInfo(){
+    this._http.get('https://waterservices.usgs.gov/nwis/site?site=' + this.gage.code, { responseType: 'text'})
+    .subscribe(res => {
+      var regex = /[+-]?((\d+(\.\d*)?)|(\.\d+))/g;
+      var latLong = res.split(this.gage.name)[1].match(regex);
+      this.NWISlat = latLong[0];
+      this.NWISlong = latLong[1];
+    }, error => { //for gages that do not have a waterservices page
+      this.NWISlat = "N/A";
+      this.NWISlong = "N/A";
+    });
+  }
+
   public getCitations(){
     this.gage.citations = [];
     this.gage.characteristics.forEach(c => {

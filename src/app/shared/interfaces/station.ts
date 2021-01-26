@@ -7,7 +7,6 @@ export interface Station {
     code: string;
     id: number;
     location: Location;
-    nwisLocation: Location;
     name: string;
     isRegulated: boolean;
     stationTypeID: string;

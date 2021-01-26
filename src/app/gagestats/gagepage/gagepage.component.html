@@ -233,7 +233,7 @@
 										</span>
 									</td>
 									<td>
-										<span *ngIf="!c.isEditing">{{c.citationID}}</span>
+										<span *ngIf="!c.isEditing"><button (click)="scrollToCitations(c.citationID)">{{c.citationID}}</button></span>
 										<span *ngIf="c.isEditing">{{c.citationID}}</span>
 										<button *ngIf="c.isEditing" type="button" title="Change Citation" (click)="showManageCitationsModal(c)"><i class="far fa-pencil"></i></button>
 									</td>
@@ -399,7 +399,7 @@
 												</span>
 											</td>
 											<td>
-												<span *ngIf="!s.isEditing"><a href="/gagestats/#citations">{{s.citationID}}</a></span>
+												<span *ngIf="!s.isEditing"><button (click)="scrollToCitations(s.citationID)">{{s.citationID}}</button></span>
 												<span *ngIf="s.isEditing">{{s.citationID}}</span>
 												<button *ngIf="s.isEditing" type="button" title="Change Citation" (click)="showManageCitationsModal(s)"><i class="far fa-pencil"></i></button>
 											</td>
@@ -451,7 +451,7 @@
 		</div>
 		<!--Citations-->
 		<div *ngIf="gage.citations.length > 0">
-			<div class="table-title" id="citations">Citations</div>
+			<div class="table-title">Citations</div>
 			<div>
 				<table style="border:solid 1px gray" class="custom-table">
 					<thead>
@@ -462,7 +462,7 @@
 					</thead>
 					<tbody >
 						<tr *ngFor="let c of gage.citations">
-							<td>{{c.id}}</td>
+							<td id="citation-{{c.id}}">{{c.id}}</td>
 							<td><a href="{{c.citationURL}}" target="_blank">{{c.author}}&nbsp;{{c.title}}</a></td>
 						</tr>
 					</tbody>

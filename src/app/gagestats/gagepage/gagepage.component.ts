@@ -175,6 +175,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
   }  // end OnInit
   
+  public scrollToCitations(id){
+    var itemToScrollTo = document.getElementById("citation-"+ id);
+    itemToScrollTo.scrollIntoView({behavior: "smooth"});
+  }
+
   public getCitations(){
     this.gage.citations = [];
     this.gage.characteristics.forEach(c => {

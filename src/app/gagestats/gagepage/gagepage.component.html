@@ -233,7 +233,7 @@
 										</span>
 									</td>
 									<td>
-										<span *ngIf="!c.isEditing"><button (click)="scrollToCitations(c.citationID)">{{c.citationID}}</button></span>
+										<span *ngIf="!c.isEditing"><button (click)="scrollToCitations(c.citationID)" class="linkLookalike">{{c.citationID}}</button></span>
 										<span *ngIf="c.isEditing">{{c.citationID}}</span>
 										<button *ngIf="c.isEditing" type="button" title="Change Citation" (click)="showManageCitationsModal(c)"><i class="far fa-pencil"></i></button>
 									</td>
@@ -399,7 +399,7 @@
 												</span>
 											</td>
 											<td>
-												<span *ngIf="!s.isEditing"><button (click)="scrollToCitations(s.citationID)">{{s.citationID}}</button></span>
+												<span *ngIf="!s.isEditing"><button (click)="scrollToCitations(s.citationID)" class="linkLookalike">{{s.citationID}}</button></span>
 												<span *ngIf="s.isEditing">{{s.citationID}}</span>
 												<button *ngIf="s.isEditing" type="button" title="Change Citation" (click)="showManageCitationsModal(s)"><i class="far fa-pencil"></i></button>
 											</td>

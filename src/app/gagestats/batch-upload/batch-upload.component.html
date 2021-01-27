@@ -4,7 +4,7 @@
             <div class="title">Batch Upload</div>
             <button class="icon-button" (click)="c('closed'); clearTable()"><i class="far fa-times"></i></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body batch-scrollbars">
             <div class="upload-type">    
                 <button *ngIf='!selectUpload' type="button" class="button blue" (click)='selectUpload = true; uploadStations = true'>Upload Stations</button>
                 <button *ngIf='!selectUpload' type="button" class="button blue" (click)='selectUpload = true; uploadStats = true'>Upload Statistics</button>

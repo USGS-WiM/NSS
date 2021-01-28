@@ -179,6 +179,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
   }  // end OnInit
   
+  public scrollToCitations(id){
+    var itemToScrollTo = document.getElementById("citation-"+ id);
+    itemToScrollTo.scrollIntoView({behavior: "smooth"});
+  }
+  
   public getNWISInfo(){
     this._http.get('https://waterservices.usgs.gov/nwis/site?site=' + this.gage.code, { responseType: 'text'})
     .subscribe(res => {

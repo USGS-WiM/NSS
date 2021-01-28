@@ -15,6 +15,7 @@ import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
+import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { LoaderService } from 'app/shared/services/loader.service';
 import { Region } from 'app/shared/interfaces/region';
@@ -66,6 +67,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public stationTypes: Stationtype[];
   public selectedParams: HttpParams;
   public regions: Region[];
+  public NWISLatLong = "N/A";
 
   constructor(
     private _nssService: NSSService, 
@@ -73,6 +75,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     private _configService: ConfigService, 
     private _modalService: NgbModal, 
     public _settingsservice: SettingsService,
+    private _http: HttpClient,
     private _loaderService: LoaderService) { 
     this.configSettings = this._configService.getConfiguration();
   }
@@ -89,6 +92,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this.gage = res;
             this.gage.characteristics.sort((a,b) => b.variableType.statisticGroupTypeID - a.variableType.statisticGroupTypeID);
             //this._nssService.setSelectedRegion(this.gage.region);
+            this.getNWISInfo();
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);
             this.filterStatIds();
@@ -175,6 +179,22 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
   }  // end OnInit
   
+  public scrollToCitations(id){
+    var itemToScrollTo = document.getElementById("citation-"+ id);
+    itemToScrollTo.scrollIntoView({behavior: "smooth"});
+  }
+  
+  public getNWISInfo(){
+    this._http.get('https://waterservices.usgs.gov/nwis/site?site=' + this.gage.code, { responseType: 'text'})
+    .subscribe(res => {
+      var regex = /[+-]?((\d+(\.\d*)?)|(\.\d+))/g;
+      var latLong = res.split(this.gage.name)[1].match(regex);
+      this.NWISLatLong = latLong[0] + ', ' + latLong[1];
+    }, error => { //for gages that do not have a waterservices page
+      this.NWISLatLong = "N/A";
+    });
+  }
+
   public getCitations(){
     this.gage.citations = [];
     this.gage.characteristics.forEach(c => {

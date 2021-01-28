@@ -67,8 +67,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public stationTypes: Stationtype[];
   public selectedParams: HttpParams;
   public regions: Region[];
-  public NWISlat;
-  public NWISlong;
+  public NWISLatLong = "N/A";
 
   constructor(
     private _nssService: NSSService, 
@@ -185,11 +184,9 @@ export class GagepageComponent implements OnInit, OnDestroy {
     .subscribe(res => {
       var regex = /[+-]?((\d+(\.\d*)?)|(\.\d+))/g;
       var latLong = res.split(this.gage.name)[1].match(regex);
-      this.NWISlat = latLong[0];
-      this.NWISlong = latLong[1];
+      this.NWISLatLong = latLong[0] + ', ' + latLong[1];
     }, error => { //for gages that do not have a waterservices page
-      this.NWISlat = "N/A";
-      this.NWISlong = "N/A";
+      this.NWISLatLong = "N/A";
     });
   }
 

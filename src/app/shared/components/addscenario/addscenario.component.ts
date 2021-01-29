@@ -171,8 +171,28 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
     }
 
-    public equationCheck(check){
-        this.skipCheck = check;
+    public saveFilters() {
+        this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
+        this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
+        this.tempSelectedRegType = this.selectedRegType;
+    }
+
+    public requeryFilters() {
+        if (this.originalRegion == this.selectedRegion) {
+            this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+            this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
+            this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
+        } else {
+            this._nssService.setSelectedRegion(this.selectedRegion);
+            this._nssService.selectedStatGroups = [];
+            this._nssService.setSelectedRegRegions([]);
+            this._nssService.selectedRegressionTypes = [];
+        }
+    }
+
+    public equationCheck(check) {
+        if (check) { this.skipCheck = check; } 
+        else { this.skipCheck = false; }    //check for null
         if (check) {
             this.newScenForm.get('regressionRegions.regressions.expected.value').disable();    
             this.newScenForm.get('regressionRegions.regressions.expected.intervalBounds.upper').disable();            
@@ -198,6 +218,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.getEntities();
         this.onStatGroupSelect('');
         this.equationCheck(false);
+        this.saveFilters();
         this.selectedRegion = this.originalRegion;
         this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg' });
         this.modalRef.result.then(
@@ -459,9 +480,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     //get scen object ready for put and post
     public setUpScenario(){
-        this.tempSelectedStatisticGrp = this.selectedStatisticGrp;
-        this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
-        this.tempSelectedRegType = this.selectedRegType;
         // adding all necessary properties, since ngValue won't work with all the nested properties
         this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
         const regRegs = this.scen['regressionRegions']; const regs = regRegs.regressions;
@@ -506,25 +524,12 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.scen['regressionRegions'] = [regRegs];
     }
 
-    public setSidebar(){
-        if (this.originalRegion == this.selectedRegion) {
-            this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
-            this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
-            this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
-        } else {
-            this._nssService.setSelectedRegion(this.selectedRegion);
-            this._nssService.selectedStatGroups = [];
-            this._nssService.setSelectedRegRegions([]);
-            this._nssService.selectedRegressionTypes = [];
-        }
-    }
-
     public async submitScenario() {
         // put scenario
-        this.setUpScenario(); 
-        await this._settingsService.putEntity('', this.scen, this.configSettings.nssBaseURL + '/' + this.configSettings.scenariosURL + '?skipCheck=' + this.skipCheck)
+        this.setUpScenario();
+        await this._settingsService.putEntity('', this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?skipCheck=' + this.skipCheck)
             .subscribe((response) => {
-                this.setSidebar();
+                this.requeryFilters();
                 // clear form
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was Updated');
@@ -544,7 +549,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.setUpScenario();
         this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID + '&skipCheck=' + this.skipCheck)
             .subscribe((response: any) => {
-                this.setSidebar();
+                this.requeryFilters();
                 // clear form
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was added');

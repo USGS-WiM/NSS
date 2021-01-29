@@ -9,12 +9,9 @@
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
-
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-
 import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from '../../settings.service';
-
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Config } from 'app/shared/interfaces/config';
@@ -31,9 +28,6 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     @ViewChild('VariableTypeForm', {static: true}) varForm;
     public selectedRegion;
     public regions;
-    public selectedRegRegionIDs;
-    public selectedStatGroupIDs;
-    public selectedRegTypeIDs;
     public newVarForm: FormGroup;
     public showNewVarForm: boolean;
     public variableTypes: Array<Variabletype>;

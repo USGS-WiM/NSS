@@ -9,13 +9,10 @@
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
-
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-
 import { NSSService } from 'app/shared/services/app.service';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { SettingsService } from '../../settings.service';
-
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -33,9 +30,6 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     regressionForm;
     public selectedRegion;
     public regions;
-    public selectedRegRegionIDs;
-    public selectedStatGroupIDs;
-    public selectedRegTypeIDs;
     public regressionTypes: Array<Regressiontype> = [];
     public nssRegressionTypes: Array<Regressiontype> = [];
     public gsRegressionTypes: Array<Regressiontype> = [];
@@ -49,7 +43,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public tempData;
     public isEditing = false;
     public modalRef;
-    public selectedStatisticGroups: Array<Statisticgroup>;
+    public statisticGroups: Array<Statisticgroup>;
     public selectedStatistic;
     public selectedRegionID;
     public selectedStatisticID;
@@ -83,7 +77,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         });
         this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
-            this.selectedStatisticGroups = res;
+            this.statisticGroups = res;
         });
         this.selectedStatistic = 'none';
         this.selectedRegion = 'none';

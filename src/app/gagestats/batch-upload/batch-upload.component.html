@@ -1,8 +1,11 @@
 <ng-template #batchUpload let-c="close" let-d="dismiss" >
     <div>
         <div class="modal-header">
-            <h3 class="title"> Batch Upload </h3>
-            <button class="icon-button" (click)="c('closed'); clearTable()"><i class="far fa-times"></i></button>
+            <ng-container *ngIf='!uploadStations && !uploadChars && !uploadStats'><h3 class="title"> Batch Upload </h3></ng-container>
+            <ng-container *ngIf='uploadStations == true'><h3 class="title"> Batch Upload Stations </h3></ng-container>
+            <ng-container *ngIf='uploadStats == true'><h3 class="title"> Batch Upload Statistics </h3></ng-container>
+            <ng-container *ngIf='uploadChars == true'><h3 class="title"> Batch Upload Characteristics </h3></ng-container>
+            <button class="icon-button" (click)="c('closed'); selectUpload = false; clearTable()"><i class="far fa-times"></i></button>
         </div>
         <div class="modal-body">
             <div>    
@@ -13,7 +16,8 @@
                 <input *ngIf='selectUpload' (change)="selectFile($event)" type='file' multiple='false'/>
                 <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true && disableSumbit = true'>Edit Table</button>
                 <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
-                <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='showManageCitationsModal()'>Add Citation</button>
+                <!-- <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='addRow()'>Add New Row</button> -->
+                <button *ngIf='tableDisplay && !tableEdit && !uploadStations' type='button' class="button small grey mright-xs" (click)='showManageCitationsModal()'>Add Citation</button>
             </div>
             <div *ngIf="sheetNamesButtons">
                 <h6 class="title" > Select a Worksheet:</h6>
@@ -37,30 +41,60 @@
                         <tr *ngFor="let row of tableData, let rowIndex = index">
                             <ng-container *ngIf="rowIndex == 0">
                                 <td *ngIf='tableEdit'></td>
-                                <td *ngFor='let val of tableData[0], let valIndex = index'>
-                                    <ng-select  [items]="dropdownOptions"
-                                                bindLabel= "name"
-                                                bindValue="id"
-                                                placeholder="Select value"
-                                                [closeOnSelect] = 'false' 
-                                                [selectOnTab] = 'false'
-                                                [markFirst] = 'false'
-                                                [openOnEnter] = 'false'
-                                                [(ngModel)]="tableData[rowIndex][valIndex]"
-                                                (change)="changeDropdownOptions()"
-                                                (clear)="tableData[rowIndex][valIndex] = null"  
-                                                (open)="tableData[rowIndex][valIndex] = null">
-                                    </ng-select>
-                                </td>
+                                <ng-container *ngFor='let val of tableData[0], let valIndex = index' >
+                                    <td *ngIf="isError(rowIndex, valIndex)" style="background-color: yellow;">
+                                        <ng-select  [items]="dropdownOptions"
+                                                    bindLabel= "name"
+                                                    bindValue="id"
+                                                    placeholder="Select value"
+                                                    [closeOnSelect] = 'false' 
+                                                    [selectOnTab] = 'false'
+                                                    [markFirst] = 'false'
+                                                    [openOnEnter] = 'false'
+                                                    [(ngModel)]="tableData[rowIndex][valIndex]"
+                                                    (change)="changeDropdownOptions()"
+                                                    (clear)="tableData[rowIndex][valIndex] = null"
+                                                    (open)="changeDropdownOptions()">
+                                        </ng-select>
+                                    </td>
+                                    <td *ngIf="!isError(rowIndex, valIndex)">
+                                        <ng-select  [items]="dropdownOptions"
+                                                    bindLabel= "name"
+                                                    bindValue="id"
+                                                    placeholder="Select value"
+                                                    [closeOnSelect] = 'false' 
+                                                    [selectOnTab] = 'false'
+                                                    [markFirst] = 'false'
+                                                    [openOnEnter] = 'false'
+                                                    [(ngModel)]="tableData[rowIndex][valIndex]"
+                                                    (change)="changeDropdownOptions()"
+                                                    (clear)="tableData[rowIndex][valIndex] = null"
+                                                    (open)="changeDropdownOptions()">
+                                        </ng-select>
+                                    </td>
+                                </ng-container>
                             </ng-container>
                             <ng-container *ngIf="rowIndex != 0">
                                 <td *ngIf='tableEdit'><button title="Delete Row" (click)='deleteRow(rowIndex)'><i class="far fa-times"></i></button></td>
                                 <td *ngFor='let val of tableData[0], let valIndex = index'>
                                     <span *ngIf='!tableEdit &&  getType( tableData[rowIndex][valIndex]) !== "boolean"' [style.background-color]="setStyle(tableData[rowIndex][valIndex])">{{tableData[rowIndex][valIndex]}}</span>
                                     <span *ngIf='!tableEdit &&  getType( tableData[rowIndex][valIndex]) === "boolean"'><input type="checkbox" [checked]="tableData[rowIndex][valIndex]" onclick="return false"></span>
-                                    <span *ngIf='tableEdit  &&  getType( tableData[rowIndex][valIndex]) !== "boolean"' ><input [style.background-color]="setStyle(tableData[rowIndex][valIndex])" [(ngModel)]='tableData[rowIndex][valIndex]'></span>
+                                    <span *ngIf='tableEdit  &&  getType( tableData[rowIndex][valIndex]) !== "boolean"'><input [style.background-color]="setStyle(tableData[rowIndex][valIndex])" [(ngModel)]='tableData[rowIndex][valIndex]'></span>
+                                    <!-- <span *ngIf='tableEdit  &&  getType( tableData[rowIndex][valIndex]) !== "boolean" && !isError(rowIndex, valIndex)'><input [style.background-color]="setStyle(rowIndex, valIndex)" [(ngModel)]='tableData[rowIndex][valIndex]'></span> -->
+                                    <!-- <ng-container *ngIf='tableEdit  &&  getType( tableData[rowIndex][valIndex]) !== "boolean" && isError(rowIndex, valIndex)' style="background-color: yellow;">
+                                        <ng-select  [items]=getCharType(tableData[0][valIndex])
+                                                    bindLabel=getCharType2(tableData[0][valIndex])
+                                                    bindValue=getCharType2(tableData[0][valIndex])
+                                                    placeholder={{tableData[rowIndex][valIndex]}}
+                                                    [closeOnSelect] = 'true' 
+                                                    [selectOnTab] = 'false'
+                                                    [markFirst] = 'false'
+                                                    [openOnEnter] = 'false'
+                                                    [(ngModel)]="tableData[rowIndex][valIndex]">
+                                        </ng-select>
+                                    </ng-container> -->
                                     <span *ngIf='tableEdit  &&  getType( tableData[rowIndex][valIndex]) === "boolean"'><input type="checkbox" [(ngModel)]="tableData[rowIndex][valIndex]" size="3"></span>
-                                    <!-- tableData[rowIndex][valIndex] !== true || !tableEdit && tableData[rowIndex][valIndex] !== false -->
+                                    
                                 </td>
                             </ng-container>
                         </tr>

@@ -146,7 +146,7 @@ export class GagestatsComponent implements OnInit {
     this._nssService.setManageCitationsModal(addManageCitationForm);
   }
 
-  //TODO: Bulk Upload Button
+  // Bulk Upload Button
   openBatchUpload(): void{
     this._nssService.setBatchUploadModal(true);
   }

@@ -15,6 +15,8 @@ import { Unittype } from 'app/shared/interfaces/unitType';
 import { Variabletype } from 'app/shared/interfaces/variableType'
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
+import { HttpParams } from '@angular/common/http';
+import { clear } from 'console';
 
 @Component({
   selector: 'batchUploadModal',
@@ -34,40 +36,6 @@ export class BatchUploadModal implements OnInit {
   public tableDisplay: boolean = false;
   public tableEdit: boolean = false;
   public data: [][];
-  public stationChars = [ {'id': 'code', 'name': 'Station Code', 'disabled': false},
-                          {'id': 'agencyID', 'name': 'Agency', 'disabled': false},                            
-                          {'id': 'name', 'name': 'Name', 'disabled': false}, 
-                          {'id': 'stationTypeID', 'name': 'Station Type', 'disabled': false},
-                          {'id': 'latitude', 'name': 'Latitude', 'disabled': false}, 
-                          {'id': 'longitude', 'name': 'Longitude', 'disabled': false}, 
-                          {'id': 'isRegulated', 'name': 'Regulated?', 'disabled': false},
-                          {'id': 'regionID', 'name': 'Region', 'disabled': false}];
-
-  public statChars = [  {'id': 'code', 'name': 'Station Code', 'disabled': false},
-                        {'id': 'regressionTypeID', 'name': 'Regression Type', 'disabled': false},
-                        {'id': 'value', 'name': 'Value', 'disabled': false},
-                        {'id': 'unitTypeID', 'name': 'Units', 'disabled': false},
-                        {'id': 'statisticGroupTypeID', 'name': 'Stat Group Type', 'disabled': false},
-                        {'id': 'isPreferred', 'name': 'Preferred?', 'disabled': false},
-                        {'id': 'yearsofRecord', 'name': 'Years of Record', 'disabled': false},
-                        {'id': 'startDate', 'name': 'Start Date', 'disabled': false},
-                        {'id': 'endDate', 'name': 'End Date', 'disabled': false},                        
-                        {'id': 'remarks', 'name': 'Remarks', 'disabled': false},
-                        {'id': 'PC', 'name': 'Percent Correct', 'disabled': false},
-                        {'id': 'SE', 'name': 'Standard Error', 'disabled': false},
-                        {'id': 'SEp', 'name': 'Standard Error of Prediction', 'disabled': false}, 
-                        {'id': 'variance', 'name': 'Variance', 'disabled': false},
-                        {'id': 'lowerConfidenceInterval', 'name': 'Lower Confidence Interval', 'disabled': false}, 
-                        {'id': 'upperConfidenceInterval', 'name': 'Upper Confidence Interval', 'disabled': false},
-                        {'id': 'comments', 'name': 'Comments', 'disabled': false}];
-
-  public charChars = [  {'id': "code", 'name': "Station Code", 'disabled': false },
-                        {'id': "variableTypeID", 'name': "Variable Type", 'disabled': false },                        
-                        {'id': "value", 'name': "Value", 'disabled': false },
-                        {'id': "unitTypeID", 'name': "Units", 'disabled': false },
-                        {'id': "comments", 'name': "Comments", 'disabled': false } ];
-  public headers;
-  public tableData;
   public agencies: Array<Agency>;
   public regions: Array<Region>;
   public stationTypes: Array<StationType>;
@@ -75,6 +43,40 @@ export class BatchUploadModal implements OnInit {
   public regressionTypes: Array<Regressiontype>;
   public unitTypes: Array<Unittype>;
   public variableTypes: Array<Variabletype>;
+  public stationChars = [ {'id': 'code', 'name': 'Station Code', 'disabled': false, 'type': null, 'required': true},
+                          {'id': 'agencyID', 'name': 'Agency', 'disabled': false, 'type': 'this.agencies', 'required': true},                            
+                          {'id': 'name', 'name': 'Name', 'disabled': false, 'type': null, 'required': true}, 
+                          {'id': 'stationTypeID', 'name': 'Station Type', 'disabled': false, 'type': 'stationTypes', 'required': true},
+                          {'id': 'latitude', 'name': 'Latitude', 'disabled': false, 'type': null, 'required': true}, 
+                          {'id': 'longitude', 'name': 'Longitude', 'disabled': false, 'type': null, 'required': true}, 
+                          {'id': 'isRegulated', 'name': 'Regulated?', 'disabled': false, 'type': null, 'required': false},
+                          {'id': 'regionID', 'name': 'Region', 'disabled': false, 'type': 'regions', 'required': true}];
+
+  public statChars = [  {'id': 'code', 'name': 'Station Code', 'disabled': false, 'type': null, 'required': true},
+                        {'id': 'regressionTypeID', 'name': 'Regression Type', 'disabled': false, 'type': 'regressionTypes', 'required': true},
+                        {'id': 'value', 'name': 'Value', 'disabled': false, 'type': null, 'required': true},
+                        {'id': 'unitTypeID', 'name': 'Units', 'disabled': false, 'type': 'unitTypes', 'required': true},
+                        {'id': 'statisticGroupTypeID', 'name': 'Stat Group Type', 'disabled': false, 'type': 'statisticGroupTypes', 'required': true},
+                        {'id': 'isPreferred', 'name': 'Preferred?', 'disabled': false, 'type': null, 'required': true},
+                        {'id': 'yearsofRecord', 'name': 'Years of Record', 'disabled': false, 'type': null, 'required': true},
+                        {'id': 'startDate', 'name': 'Start Date', 'disabled': false, 'type': null, 'required': false},
+                        {'id': 'endDate', 'name': 'End Date', 'disabled': false, 'type': null, 'required': false},                        
+                        {'id': 'remarks', 'name': 'Remarks', 'disabled': false, 'type': null, 'required': false},
+                        {'id': 'PC', 'name': 'Percent Correct', 'disabled': false, 'type': null, 'required': false},
+                        {'id': 'SE', 'name': 'Standard Error', 'disabled': false, 'type': null, 'required': false},
+                        {'id': 'SEp', 'name': 'Standard Error of Prediction', 'disabled': false, 'type': null, 'required': false}, 
+                        {'id': 'variance', 'name': 'Variance', 'disabled': false, 'type': null, 'required': false},
+                        {'id': 'lowerConfidenceInterval', 'name': 'Lower Confidence Interval', 'disabled': false, 'type': null, 'required': false}, 
+                        {'id': 'upperConfidenceInterval', 'name': 'Upper Confidence Interval', 'disabled': false, 'type': null, 'required': false},
+                        {'id': 'comments', 'name': 'Comments', 'disabled': false, 'type': null, 'required': true}];
+
+  public charChars = [  {'id': "code", 'name': "Station Code", 'disabled': false, 'type': null, 'required': true},
+                        {'id': "variableTypeID", 'name': "Variable Type", 'disabled': false, 'type': 'variableTypes', 'required': true},                        
+                        {'id': "value", 'name': "Value", 'disabled': false, 'type': null, 'required': true},
+                        {'id': "unitTypeID", 'name': "Units", 'disabled': false, 'type': 'unitTypes', 'required': true},
+                        {'id': "comments", 'name': "Comments", 'disabled': false, 'type': null, 'required': true} ];
+  public headers;
+  public tableData;
   public wb: XLSX.WorkBook
   public sheetNamesButtons: boolean;
   public wsname;
@@ -84,6 +86,7 @@ export class BatchUploadModal implements OnInit {
   public url;
   public errorList = [];
   public disableSumbit: boolean = true;
+  public selectedParams: HttpParams; 
 
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
@@ -122,6 +125,9 @@ export class BatchUploadModal implements OnInit {
     this._nssService.selectedCitation.subscribe(c => {
       this.selectedCitation = c;
     });
+    this._nssService._selectedFilterParams.subscribe((selectedParams: HttpParams) => { 
+      this.selectedParams = selectedParams;
+    });
 }        //******* End OnInit //////////
 
   public showModal(): void {
@@ -145,12 +151,11 @@ export class BatchUploadModal implements OnInit {
   public selectSheet(sheetName) {
     const ws: XLSX.WorkSheet = this.wb.Sheets[sheetName];
     this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));        // Convert data to json
-    //console.log(this.data, typeof(this.data))
-    
+    this.setDropdownOptions();
     this.createTable(this.data);
     this.tableDisplay = true;
     this.sheetNamesButtons = false;
-    this.setDropdownOptions();
+    
   }
 
   //////////////// Create/Edit Table Section ///////////////////
@@ -170,14 +175,21 @@ export class BatchUploadModal implements OnInit {
   public createTable(data){
     this.headers = JSON.parse(JSON.stringify(data[0]));  // copy the first row of the excel sheet as a list of headers
     this.tableData = JSON.parse(JSON.stringify(data));   // copy the data from the excel sheet to display and change
-    for (var i = 0; i < this.tableData[0].length; i++) {
-      this.tableData[0][i] = null                        // Delete header values from first row
+    for (var i = 0; i < this.tableData[0].length; i++) { // loop thru first row
+      var val = this.dropdownOptions.find( d => d.id.toLowerCase() === this.tableData[0][i].toLowerCase() )
+      if(val != undefined){                              // If this tableData value is the same as the dropdownOption
+        this.tableData[0][i] = val.id                    // set the dropdown menu to this value
+      }
+      else{
+        this.tableData[0][i] = null                      // If not, set the value to null
+      }
     }
     for (var x = 1; x < this.tableData.length; x++){    // Iterate thru the tableData and replace yes/no strings w/ boolean values
       for(var i = 0; i < this.tableData[x].length; i++) {
         this.tableData[x][i] = this.getTrueFalse(this.tableData[x][i]);
       }
     }; 
+    this.changeDropdownOptions();
   }
 
   public clearTable() {
@@ -193,7 +205,8 @@ export class BatchUploadModal implements OnInit {
     delete(this.selectedCitation);
     this.errorList = [];
     delete(this.records);
-    this.disableSumbit = true
+    this.disableSumbit = true;
+    delete(this.dropdownOptions);
   }
 
   public changeDropdownOptions() {
@@ -209,6 +222,14 @@ export class BatchUploadModal implements OnInit {
     this.tableData.splice(index, 1);
   }
 
+  // public addRow() {
+  //   console.log(this.tableData)
+  //   var x = new String()
+  //   var newRecord = [ ]
+  //   this.tableData.splice(this.tableData.length, 0, newRecord)
+  //   console.log(this.tableData)
+  // }
+
   public deleteColumn(index) {
     this.headers.splice(index, 1)
     for(var i = 0; i < this.tableData.length; i++ ) {
@@ -219,14 +240,23 @@ export class BatchUploadModal implements OnInit {
 ////////////////// Create and Submit HTTP POST Request ////////////////////////
 
   public verifyData() {
-    //console.log('Input data: ', this.tableData)
+    this.changeDropdownOptions();
     delete(this.records);
     this.errorList = [];
     var rowID = 0;
     this.tableData.forEach(row => { // Loop through the rows of the table
-      if (row == this.tableData[0]) {
+      if (row == this.tableData[0]) {  // If this is the header row
+        var cellID = 0;
+        row.forEach(cell => {     // Loop thru the cells in the header row
+            if(cell == undefined){   // If the cell value is null
+              console.log('header[',cellID,'] is undefined')
+              this.errorList.push({'name':this.tableData[0][cellID]}, {rowID, cellID}, {'type': null})   // Add this to the errorlist
+              cellID ++;
+          } else{
+            cellID++;
+          }
+        })
         rowID += 1;
-        return;
       } 
       else {    
           var cellID = 0;
@@ -244,11 +274,14 @@ export class BatchUploadModal implements OnInit {
           var recordObj = JSON.parse('{' + record + '}');  // Parse strings into JSON objects
           delete recordObj.null;                           // Delete any columns which were not assigned a header
           if (this.selectedCitation) {                     // Add the citation ID, if there is a citation
-            //var cit: 'citationID: ';
             recordObj.citationID = this.selectedCitation.id;
           }
           if(this.uploadStations) {                        // If stations are being uploaded...  
             this.url = "stations/Batch";
+            if(recordObj.code) {
+              var cellIndex = Object.keys(recordObj).indexOf('code');
+              this.checkStation(recordObj, rowID, cellIndex)
+            }
             if (recordObj.agencyID) {
               var cellIndex = Object.keys(recordObj).indexOf('agencyID');
               recordObj.agencyID = this.getVariableID(this.agencies, recordObj.agencyID, rowID, cellIndex);
@@ -265,6 +298,7 @@ export class BatchUploadModal implements OnInit {
               var x = this.getTrueFalse(recordObj.isRegulated);
               recordObj.isRegulated = x;
             }
+
             const location = {type: 'Point', coordinates: [ parseFloat(recordObj.longitude), parseFloat(recordObj.latitude) ]};  // Add location item
             delete recordObj.latitude;  // Delete old location items
             delete recordObj.longitude;
@@ -292,11 +326,29 @@ export class BatchUploadModal implements OnInit {
               var cellIndex = Object.keys(recordObj).indexOf('code');
               this.getStationID(recordObj, rowID, cellIndex);
             }
-            recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
-            if( recordObj.remarks !== 'null' || recordObj.remarks !== undefined ) {
-              recordObj.comments = recordObj.comments + ' ' + recordObj.remarks;
-            } else {
-              recordObj.comments = recordObj.comments; 
+            if(!recordObj.startDate || !recordObj.endDate) {
+              if(recordObj.startDate) {
+                recordObj.comments = 'Statistic Start Date: ' + recordObj.startDate + '.';
+              }
+              if(recordObj.endDate) {
+                recordObj.comments = 'Statistic End Date: ' + recordObj.endDate + '.' ;
+              }
+            }
+            if(recordObj.startDate && recordObj.endDate) {
+              recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
+            }
+            if( recordObj.remarks === 'null' ) {
+              if(!recordObj.startDate && !recordObj.endDate) { }  // If no comments or remarks, do nothing
+              else {
+                recordObj.comments = recordObj.comments;
+              }
+            } 
+            if( recordObj.remarks !== 'null' ) {
+              if(!recordObj.startDate && !recordObj.endDate) {
+                recordObj.comments = recordObj.remarks;
+              } else {
+                recordObj.comments = recordObj.comments + ' ' + recordObj.remarks; 
+              }
             }
             delete(recordObj.remarks), delete(recordObj.startDate), delete(recordObj.endDate);
             if(recordObj.variance || recordObj.lowerConfidenceInterval || recordObj.upperConfidenceInterval) {
@@ -336,9 +388,9 @@ export class BatchUploadModal implements OnInit {
           } 
           else {
               this.records = [...this.records, recordObj ];
-          }  
+          }            
       }  
-  });    
+    });    
     
     if(this.errorList.length == 0) {
       this.disableSumbit = false;
@@ -346,24 +398,27 @@ export class BatchUploadModal implements OnInit {
     }
     if(this.errorList.length > 0) {
       this.disableSumbit = true;
-      this._toasterService.pop('info', 'Info', 'Error! ' + this.errorList.length + ' errors were detected.');
+      this._toasterService.pop('info', 'Info', 'Error! ' + (this.errorList.length/3) + ' errors were detected.');
     }
+    console.log('errorlist: ', this.errorList)
   }
 
 public submitRecords() {
-  //console.log('Submitted records: ', this.records, 'number of records: ', this.records.length);
-  this._settingsService.postEntity(this.records, this.configSettings.gageStatsBaseURL +  this.url)
-      .subscribe((response:any) =>{
-        console.log('response: ' , typeof(response), response)
-        if(!response.headers){   // If put request is a success...
-          this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
-          this.clearTable();
-          this.selectUpload = false;
-          delete(this.selectedCitation);
-        } error => {     // If put request fails...
-          this._settingsService.outputWimMessages(error);
-        }
-      });
+  console.log('Submitted records: ', this.records, 'number of records: ', this.records.length);
+  // this._settingsService.postEntity(this.records, this.configSettings.gageStatsBaseURL +  this.url)
+  //     .subscribe((response:any) =>{
+  //       console.log('response: ' , typeof(response), response)
+  //       if(!response.headers){   // If put request is a success...
+  //         this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
+  //         this.clearTable();
+  //         this.selectUpload = false;
+  //         delete(this.selectedCitation);
+  //       } error => {     // If put request fails...
+  //         this._settingsService.outputWimMessages(error);
+  //       }
+  //     });
+  this.clearTable();
+  this._nssService.searchStations(this.selectedParams);
 }
 
 //////////////// Get NSS Characteristic IDs //////////////////////
@@ -382,7 +437,7 @@ public submitRecords() {
       if(vt) {
       return vt.id;
       } else {
-        this.errorList.push(this.tableData[rowID][cellID]);
+        this.errorList.push({'name':this.tableData[rowID][cellID]}, {rowID, cellID}, {'type': listName});
       }
     }
   }
@@ -395,12 +450,37 @@ public submitRecords() {
       station = s;
       return obj.stationID = station.id;
     }, error => {
-      this.errorList.push(this.tableData[rowID][cellID]);
+      this.errorList.push({'name':this.tableData[rowID][cellID]}, {rowID, cellID}, {'type': null});
       if (error.headers) {this._nssService.outputWimMessages(error);
       } else { this._nssService.handleError(error); }
     });
   }
 
+  public checkStation(obj, rowID, cellID) {
+    console.log(obj, rowID, cellID)
+    var station;
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code)
+    .subscribe((s: Array<Station>) => {
+      station = s;
+      console.log(station)
+      if(obj.code == station.code) {
+        console.log('Station ' + obj.code + ' already exists.')
+        this.errorList.push({'name':this.tableData[rowID][cellID]}, {rowID, cellID}, {'type': null});
+        this._toasterService.pop('info', 'Info', 'Station ' + obj.code + '  already exists.' )
+      };
+    }, error => {
+      if(error.status == 400) {
+        return
+      }
+      else {
+        console.log(error)
+      }
+    });
+    
+
+  }
+
+  // Convert true/false strings to boolean
   public getTrueFalse(val) { 
     if (typeof val === 'string') {
       switch(val.toLocaleLowerCase().trim()){
@@ -415,11 +495,76 @@ public submitRecords() {
     return typeof x;
   }
 
+  // public setStyle(x, y) {
+  //   if(this.errorList.find( e => e.rowID == x && e.cellID == y)) { 
+  //     return "yellow"
+  //   }
+  // }
+
   public setStyle(x) {
-    if(this.errorList.find( e => e == x)) { 
+    if(this.errorList.find( e => e.name == x )) { 
       return "yellow"
     }
   }
+
+  public isError(x, y){
+    if(this.errorList.find( e => e.rowID == x && e.cellID == y)) {
+      //console.log('errorcell: ', x, y)
+      return true
+    }
+  }
+
+  // public getCharType(name) {
+  //   if(name == 'agencyID'){
+  //     return this.agencies;
+  //   }
+  //   if(name == 'regionID'){
+  //     return this.regions;
+  //   }
+  //   if(name == 'stationTypeID'){
+  //     return this.stationTypes;
+  //   }
+  //   if(name == 'statisticGroupTypeID'){
+  //     return this.statisticGroupTypes;
+  //   }
+  //   if(name == 'regressionTypeID'){
+  //     return this.regressionTypes;
+  //   }
+  //   if(name == 'unitTypeID'){
+  //     return this.unitTypes;
+  //   }
+  //   if(name == 'variableTypeID'){
+  //     return this.variableTypes;
+  //   }
+    
+  // }
+
+  // public getCharType2(name) {
+  //   console.log('char2 input: ', name)
+  //   if(name == 'agencyID'){
+  //     return "'abbreviation'";
+  //   }
+  //   if(name == 'regionID'){
+  //     return "'name'";
+  //   }
+  //   if(name == 'stationTypeID'){
+  //     return "'code'";
+  //   }
+  //   if(name == 'statisticGroupTypeID'){
+  //     return 'code';
+  //   }
+  //   if(name == 'regressionTypeID'){
+  //     return 'code';
+  //   }
+  //   if(name == 'unitTypeID'){
+  //     return 'abbreviation';
+  //   }
+  //   if(name == 'variableTypeID'){
+  //     return 'code';
+  //   }
+  // }
+
+
   ///////////////////////Citation Modal Section/////////////////////
 
   public showManageCitationsModal() {

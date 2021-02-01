@@ -278,7 +278,7 @@ export class NSSService {
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ gage stats filter section -+-+-+-+-+-+-+
-    private _selectedFilterParams: BehaviorSubject<HttpParams> = new BehaviorSubject<any>(''); // selectedregion for Gagestats
+    public _selectedFilterParams: BehaviorSubject<HttpParams> = new BehaviorSubject<any>(''); // selectedregion for Gagestats
 
      // set and get selectedRegion for Gagestats
      selectedFilterParams = this._selectedFilterParams.asObservable();

@@ -30,6 +30,8 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     public selectedRegion;
     public regions;
     public statisticGroups: Array<Statisticgroup>;
+    public nssStatisticGroups: Array<Statisticgroup>;
+    public gsStatisticGroups: Array<Statisticgroup>;
     public newStatGroupForm: FormGroup;
     public showNewStatForm: boolean;
     private CloseResult;
@@ -81,8 +83,18 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     private getStatGroups(r) {
         this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + r.id + '/' + this.configSettings.statisticGrpURL)
             .subscribe(res => {
-                this.statisticGroups = res;
+                this.nssStatisticGroups = res;
         });
+        this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL +'?regions=' + r.id)
+            .subscribe(res => {
+                this.gsStatisticGroups = res;
+                this.combineStatGroups();
+        });
+    }
+
+    public combineStatGroups(){
+        this.statisticGroups = this.nssStatisticGroups.concat(this.gsStatisticGroups); //concatenate regressionType arrays
+        this.statisticGroups = Array.from(this.statisticGroups.reduce((m, t) => m.set(t.name, t), new Map()).values()); //remove duplicates
     }
 
     public showNewStatGroupForm() {

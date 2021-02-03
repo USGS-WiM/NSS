@@ -18,7 +18,7 @@
 			<!-- File selector -->
 			<div class="upload-input">
                 <input *ngIf='selectUpload' (change)="selectFile($event)" type='file' multiple='false'/>
-                <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true && disableSumbit = true'>Edit Table</button>
+                <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true && disableSubmit = true'>Edit Table</button>
                 <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
                 <!-- <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='addRow()'>Add New Row</button> -->
                 <button *ngIf='tableDisplay && !tableEdit && !uploadStations' type='button' class="button small grey mright-xs" (click)='showManageCitationsModal()'>Add Citation</button>
@@ -32,7 +32,7 @@
 
 			<!-- Edit buttons -->
 			<div class="edit-buttons">
-				<button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true && disableSumbit = true'>Edit Table</button>
+				<button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true && disableSubmit = true'>Edit Table</button>
                 <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
                 <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='showManageCitationsModal()'>Add Citation</button>
 			</div>
@@ -66,7 +66,7 @@
                                                     [openOnEnter] = 'false'
                                                     [(ngModel)]="tableData[rowIndex][valIndex]"
                                                     (change)="changeDropdownOptions()"
-                                                    (clear)="tableData[rowIndex][valIndex] = null"
+                                                    (clear)="clearDropdownMenu(rowIndex, valIndex)"
                                                     (open)="changeDropdownOptions()">
                                         </ng-select>
                                     </td>
@@ -81,7 +81,7 @@
                                                     [openOnEnter] = 'false'
                                                     [(ngModel)]="tableData[rowIndex][valIndex]"
                                                     (change)="changeDropdownOptions()"
-                                                    (clear)="tableData[rowIndex][valIndex] = null"
+                                                    (clear)="clearDropdownMenu(rowIndex, valIndex)"
                                                     (open)="changeDropdownOptions()">
                                         </ng-select>
                                     </td>
@@ -138,7 +138,7 @@
             </div>
             <div>
                 <button *ngIf='tableDisplay && !tableEdit' type="button" class="button small green mright-xs" (click)="verifyData()">Verify Data</button>
-                <button *ngIf='tableDisplay && !tableEdit' type="button" class="button small green mright-xs" [disabled]="disableSumbit" (click)="submitRecords()">Submit</button>
+                <button *ngIf='tableDisplay && !tableEdit' type="button" class="button small green mright-xs" [disabled]="disableSubmit" (click)="submitRecords()">Submit</button>
             </div>
         </div>
     </div>

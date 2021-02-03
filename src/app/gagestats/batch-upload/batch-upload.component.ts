@@ -85,7 +85,7 @@ export class BatchUploadModal implements OnInit {
   public records;
   public url;
   public errorList = [];
-  public disableSumbit: boolean = true;
+  public disableSubmit: boolean = true;
   public selectedParams: HttpParams; 
 
 
@@ -205,7 +205,7 @@ export class BatchUploadModal implements OnInit {
     delete(this.selectedCitation);
     this.errorList = [];
     delete(this.records);
-    this.disableSumbit = true;
+    this.disableSubmit = true;
     delete(this.dropdownOptions);
   }
 
@@ -235,6 +235,12 @@ export class BatchUploadModal implements OnInit {
     for(var i = 0; i < this.tableData.length; i++ ) {
       this.tableData[i].splice(index, 1)
     }
+  }
+
+  public clearDropdownMenu(rowIndex, valIndex) {
+    this.tableData[rowIndex][valIndex] = null;
+    this.disableSubmit = true;
+    this.changeDropdownOptions()
   }
 
 ////////////////// Create and Submit HTTP POST Request ////////////////////////
@@ -393,11 +399,11 @@ export class BatchUploadModal implements OnInit {
     });    
     
     if(this.errorList.length == 0) {
-      this.disableSumbit = false;
+      this.disableSubmit = false;
       this._toasterService.pop('info', 'Info', 'Excellent! No errors were detected. Data is ready for submission.');
     }
     if(this.errorList.length > 0) {
-      this.disableSumbit = true;
+      this.disableSubmit = true;
       this._toasterService.pop('info', 'Info', 'Error! ' + (this.errorList.length/3) + ' errors were detected.');
     }
     console.log('errorlist: ', this.errorList)
@@ -405,18 +411,18 @@ export class BatchUploadModal implements OnInit {
 
 public submitRecords() {
   console.log('Submitted records: ', this.records, 'number of records: ', this.records.length);
-  // this._settingsService.postEntity(this.records, this.configSettings.gageStatsBaseURL +  this.url)
-  //     .subscribe((response:any) =>{
-  //       console.log('response: ' , typeof(response), response)
-  //       if(!response.headers){   // If put request is a success...
-  //         this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
-  //         this.clearTable();
-  //         this.selectUpload = false;
-  //         delete(this.selectedCitation);
-  //       } error => {     // If put request fails...
-  //         this._settingsService.outputWimMessages(error);
-  //       }
-  //     });
+  this._settingsService.postEntity(this.records, this.configSettings.gageStatsBaseURL +  this.url)
+      .subscribe((response:any) =>{
+        console.log('response: ' , typeof(response), response)
+        if(!response.headers){   // If put request is a success...
+          this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
+          this.clearTable();
+          this.selectUpload = false;
+          delete(this.selectedCitation);
+        } error => {     // If put request fails...
+          this._settingsService.outputWimMessages(error);
+        }
+      });
   this.clearTable();
   this._nssService.searchStations(this.selectedParams);
 }

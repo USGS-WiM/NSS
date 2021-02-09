@@ -68,7 +68,7 @@
 
 		<form #scenarioForm="ngForm" *ngIf="scenarios.length > 0">
 			<div *ngFor="let sc of scenarios;let sInd = index">
-				<h5>{{sc.statisticGroupName}}</h5>
+				<h5>{{sc.statisticGroupName}} Regions:</h5>
 				<div *ngIf="sc.regressionRegions?.length > 0">
 					<table class="custom-table">
 						<tr *ngFor="let rr of sc.regressionRegions;let rInd = index">
@@ -103,7 +103,7 @@
 						<th class="width-20">Explanatory Variable</th>
 						<th class="width-10 center">Code</th>
 						<th class="width-20 center">Value</th>
-						<th class="width-30" *ngIf="multipleRegRegions"></th>
+						<th class="width-30 right" *ngIf="multipleRegRegions">Region Code</th>
 						<th class="width-10">Min Limit</th>
 						<th class="width-10">Max Limit</th>
 					</tr>

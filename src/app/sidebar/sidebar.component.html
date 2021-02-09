@@ -53,7 +53,7 @@
     <div class="sidebar-item" *ngIf="scenarios && scenarios.length > 0 && scenarios[0].regressionRegions.length > 0">
 		<label class="block">Calculate Statistic:</label>
 		<div>
-			<button [disabled]="scenarios[0].regressionRegions[0].Results != undefined || showCompute==false" type="button"class="button full" (click)="CalculateScenario()">
+			<button [disabled]="scenarios[0].regressionRegions[0].Results != undefined || showCompute==false" type="button"class="button full height-45" (click)="CalculateScenario()">
 				<i class="far fa-check"></i>
 				<span>Compute</span>
 			</button>

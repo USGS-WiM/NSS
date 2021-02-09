@@ -220,7 +220,7 @@
 										</span>
 									</td>
 									<td>
-										<span *ngIf="!c.isEditing">{{c.value}}</span>
+										<span *ngIf="!c.isEditing">{{c.value | number:'.0-2'}}</span>
 										<span *ngIf="c.isEditing"><input type="number" [(ngModel)]="c.value" size="1" class="input-100"></span>
 									</td>
 									
@@ -387,7 +387,7 @@
 												</span>
 											</td>
 											<td>
-												<span *ngIf="!s.isEditing">{{s.value}}</span>
+												<span *ngIf="!s.isEditing">{{s.value | number:'.0-2'}}</span>
 												<span *ngIf="s.isEditing"><input type="number" [(ngModel)]="s.value" size="1" class="input-100"></span>
 											</td>
 											<td>
@@ -473,6 +473,6 @@
 
 	<!-- Footer / Buttons -->
 	<div class="modal-body-footer">
-		<button type="button" (click)="d('closed'); editGage=false" [disabled]="editGage" class="button black">Close</button>
+		<button type="button" (click)="d('closed'); onCloseModal()" [disabled]="editGage" class="button black">Close</button>
 	</div>
 </ng-template>

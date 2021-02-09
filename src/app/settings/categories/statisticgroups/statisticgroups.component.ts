@@ -81,14 +81,23 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
     }
 
     private getStatGroups(r) {
+        var nssReturn = false;
+        var gsReturn = false;
         this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + r.id + '/' + this.configSettings.statisticGrpURL)
             .subscribe(res => {
                 this.nssStatisticGroups = res;
+                nssReturn = true;
+                if (nssReturn == true && gsReturn == true) {
+                    this.combineStatGroups();
+                }
         });
         this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.statisticGrpURL +'?regions=' + r.id)
             .subscribe(res => {
                 this.gsStatisticGroups = res;
-                this.combineStatGroups();
+                gsReturn = true;
+                if (nssReturn == true && gsReturn == true) {
+                    this.combineStatGroups();
+                }
         });
     }
 

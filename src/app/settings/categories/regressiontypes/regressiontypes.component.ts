@@ -90,6 +90,8 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this._loaderService.showFullPageLoad();
         this.selectedRegion = r;
         this.selectedRegionID = r.id;
+        var nssReturn = false;
+        var gsReturn = false;
         if (r === 'none') {
             this.selectedRegionID = "";
         } 
@@ -100,12 +102,19 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
             .getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
             .subscribe(res => {
                 this.nssRegressionTypes = res;
+                nssReturn = true;
+                if (nssReturn == true && gsReturn == true) {
+                    this.combineRegressionTypes();
+                }
             });
         this._settingsservice
             .getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
             .subscribe(res => {
                 this.gsRegressionTypes = res;
-                this.combineRegressionTypes();
+                gsReturn = true;
+                if (nssReturn == true && gsReturn == true) {
+                    this.combineRegressionTypes();
+                }
             });
     }
 
@@ -113,6 +122,8 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this._loaderService.showFullPageLoad();
         this.selectedStatistic = e;
         this.selectedStatisticID = e.id;
+        var nssReturn = false;
+        var gsReturn = false;
         if (e === 'none') {
             this.selectedStatisticID = "";
         } 
@@ -123,12 +134,19 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
             .subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.nssRegressionTypes = res;
+            nssReturn = true;
+                if (nssReturn == true && gsReturn == true) {
+                    this.combineRegressionTypes();
+                }
         });
         this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
             .subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
             this.gsRegressionTypes = res;
-            this.combineRegressionTypes();
+            gsReturn = true;
+            if (nssReturn == true && gsReturn == true) {
+                this.combineRegressionTypes();
+            }
         });
     }
 

@@ -71,6 +71,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public get selectedRegType(): Array<Regressiontype> {
         return this._nssService.selectedRegressionTypes;
     }
+
+    public rows;
+    public columns;
+    public numbers=10;
     
     constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,

@@ -174,10 +174,25 @@
 								<!-- Covariance Matrix -->
 								<div class="form-group">
 									<label class="req" for="covarianceMatrix">Covariance Matrix:</label><br/>
-									<label class="example-text">Example: [["0.0038028","-0.001987","0.00076235"],["-0.001987","0.0032803","-0.0058925"],["0.00076235","-0.0058925","0.023215"]]</label>
-									<input class="form-control"  type="text" formControlName="covarianceMatrix">
+									<div class="form-inline">
+										<label class="req">Rows:</label><br/>
+										<input type="number" [(ngModel)] = "rows" [ngModelOptions]="{standalone: true}" style="width: 7em"/>
+										<label class="req">&nbsp;Columns:</label><br/>
+										<input type="number" [(ngModel)] = "columns" [ngModelOptions]="{standalone: true}" style="width: 7em"/>
+									</div>
+									
+									<!-- <label class="example-text">Example: [["0.0038028","-0.001987","0.00076235"],["-0.001987","0.0032803","-0.0058925"],["0.00076235","-0.0058925","0.023215"]]</label> -->
+									<div *ngIf="rows && columns">
+										<div *ngFor="let col of [].constructor(columns)">
+											<div *ngFor="let r of [].constructor(rows)" class="form-inline"> 
+												<input class="form-control" style="width:5%" type="text">
+											</div>
+										</div>
+									</div>
 								</div>
+
 							</div>
+
 							<div formGroupName="expected">
 								<div formGroupName="intervalBounds">
 									<!-- Lower Interval Bound -->
@@ -195,9 +210,6 @@
 								</div>
 							</div>
 						</div>
-
-						
-						
 
 						<!-- Errors-->
 						<div formArrayName="errors">

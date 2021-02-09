@@ -1,28 +1,29 @@
 <ng-template #batchUpload let-c="close" let-d="dismiss">
     <div>
         <div class="modal-header">
-            <ng-container *ngIf='!uploadStations && !uploadChars && !uploadStats'><h3 class="title"> Batch Upload </h3></ng-container>
-            <ng-container *ngIf='uploadStations == true'><h3 class="title"> Batch Upload Stations </h3></ng-container>
-            <ng-container *ngIf='uploadStats == true'><h3 class="title"> Batch Upload Statistics </h3></ng-container>
-            <ng-container *ngIf='uploadChars == true'><h3 class="title"> Batch Upload Characteristics </h3></ng-container>
+            <ng-container *ngIf='!uploadStations && !uploadChars && !uploadStats'><div class="title"> Batch Upload </div></ng-container>
+            <ng-container *ngIf='uploadStations == true'><div class="title"> Batch Upload Stations </div></ng-container>
+            <ng-container *ngIf='uploadStats == true'><div class="title"> Batch Upload Statistics </div></ng-container>
+            <ng-container *ngIf='uploadChars == true'><div class="title"> Batch Upload Characteristics </div></ng-container>
             <button class="icon-button" (click)="c('closed'); selectUpload = false; clearTable()"><i class="far fa-times"></i></button>
         </div>
         <div class="modal-body batch-scrollbars">
-            <div class="upload-type">    
-                <button *ngIf='!selectUpload' type="button" class="button blue" (click)='selectUpload = true; uploadStations = true'>Upload Stations</button>
-                <button *ngIf='!selectUpload' type="button" class="button blue" (click)='selectUpload = true; uploadStats = true'>Upload Statistics</button>
-                <button *ngIf='!selectUpload' type="button" class="button blue" (click)='selectUpload = true; uploadChars = true'>Upload Characteristics</button>
-			</div>
+            <div class="upload-type" *ngIf='!selectUpload'>    
+                <button type="button" class="button blue" (click)='selectUpload = true; uploadStations = true'>Upload Stations</button>
+                <button type="button" class="button blue" (click)='selectUpload = true; uploadStats = true'>Upload Statistics</button>
+                <button type="button" class="button blue" (click)='selectUpload = true; uploadChars = true'>Upload Characteristics</button>
+            </div>
+            
+            <div *ngIf="!selectUpload" class="upload-type">
+                <h6>For an example template download the file <a href="./assets/example_gagestats_bulk_upload.xlsx">here</a>.</h6>
+            </div>
 			<!-- Back button -->
 			<button *ngIf='selectUpload' type="button" class="button green" (click)='selectUpload = false; clearTable()'>Back</button>
 			<!-- File selector -->
 			<div class="upload-input">
                 <input *ngIf='selectUpload' (change)="selectFile($event)" type='file' multiple='false'/>
-                <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true && disableSubmit = true'>Edit Table</button>
-                <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
-                <!-- <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='addRow()'>Add New Row</button> -->
-                <button *ngIf='tableDisplay && !tableEdit && !uploadStations' type='button' class="button small grey mright-xs" (click)='showManageCitationsModal()'>Add Citation</button>
             </div>
+            <!-- Select worksheet -->
             <div *ngIf="sheetNamesButtons">
                 <h6 class="title">Select a Worksheet:</h6>
                 <ng-container *ngFor="let sheetName of wb.SheetNames">
@@ -34,7 +35,7 @@
 			<div class="edit-buttons">
 				<button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true && disableSubmit = true'>Edit Table</button>
                 <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
-                <button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='showManageCitationsModal()'>Add Citation</button>
+                <button *ngIf='tableDisplay && !tableEdit && !uploadStations' type='button' class="button small grey mright-xs" (click)='showManageCitationsModal()'>Add Citation</button>
 			</div>
 
 			
@@ -142,5 +143,6 @@
             </div>
         </div>
     </div>
-    <div class="modal-body-footer"></div>
+    <div class="modal-body-footer">
+    </div>
 </ng-template>

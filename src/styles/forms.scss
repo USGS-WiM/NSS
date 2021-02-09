@@ -297,7 +297,7 @@ button{
 	font-size: 14px;
 	letter-spacing: 0.15px;
 	font-weight: 600;
-	padding: 0px 14px 2px 14px;
+	padding: 0px 14px 0px 14px;
 	background-color: var(--text);
 	box-sizing: border-box;
 	transform: translateY(0px);
@@ -314,6 +314,10 @@ button{
 	&.full{
 		width: 100%;
 		text-align: center;
+	}
+
+	&.height-45{
+		height: 45px !important;
 	}
 
 	// States

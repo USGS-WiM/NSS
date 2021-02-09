@@ -368,6 +368,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         if (deleteID) {    // If characteristic has an ID number (if it comes from the service)
           this._settingsservice.deleteEntity(deleteID, this.configSettings.gageStatsBaseURL + this.configSettings.characteristicsURL).subscribe(
             (res) => {
+              delete(this.itemBeingEdited);
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
             }
@@ -512,6 +513,11 @@ export class GagepageComponent implements OnInit, OnDestroy {
       return this.statisticGroups.find(sg => sg.id == id).name;
   }
 
+  public onCloseModal() {
+    delete(this.selectedCitation);
+    this.editGage = false;
+  }
+
 ///////////////////////Citation Modal Section/////////////////////
 
   public showManageCitationsModal(c) {
@@ -523,7 +529,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
     } 
     this._nssService.setManageCitationsModal(addManageCitationForm);
   }
-
 
 ///////////////////////////////////////////////////////////////////////
 

@@ -9,12 +9,9 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
-
 import { ActivatedRoute } from '@angular/router';
-
 import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from '../../settings.service';
-
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 import { Manager } from 'app/shared/interfaces/manager';
 import { Config } from 'app/shared/interfaces/config';
@@ -31,9 +28,6 @@ export class ManagersComponent implements OnInit {
     @ViewChild('User', {static: true}) userForm;
     public selectedRegion;
     public regions;
-    public selectedRegRegionIDs;
-    public selectedStatGroupIDs;
-    public selectedRegTypeIDs;
     public newUserForm: FormGroup;
     public showUserForm: boolean;
     public managers: Array<Manager>;

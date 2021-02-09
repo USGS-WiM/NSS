@@ -15,8 +15,10 @@ import { StatisticResponse } from 'app/shared/interfaces/statisticresponse';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Agency } from 'app/shared/interfaces/agency';
 import { Stationtype } from 'app/shared/interfaces/stationtype';
+import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { LoaderService } from 'app/shared/services/loader.service';
+import { Region } from 'app/shared/interfaces/region';
 
 @Component({
   selector: 'gagePageModal',
@@ -64,6 +66,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public agencies: Agency[];
   public stationTypes: Stationtype[];
   public selectedParams: HttpParams;
+  public regions: Region[];
+  public NWISLatLong = "N/A";
 
   constructor(
     private _nssService: NSSService, 
@@ -71,6 +75,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
     private _configService: ConfigService, 
     private _modalService: NgbModal, 
     public _settingsservice: SettingsService,
+    private _http: HttpClient,
     private _loaderService: LoaderService) { 
     this.configSettings = this._configService.getConfiguration();
   }
@@ -87,6 +92,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this.gage = res;
             this.gage.characteristics.sort((a,b) => b.variableType.statisticGroupTypeID - a.variableType.statisticGroupTypeID);
             //this._nssService.setSelectedRegion(this.gage.region);
+            this.getNWISInfo();
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);
             this.filterStatIds();
@@ -136,6 +142,10 @@ export class GagepageComponent implements OnInit, OnDestroy {
     this._nssService.agencies.subscribe((ag: Array<Agency>) => {
       this.agencies = ag;
     });
+    // get all regions
+    this._nssService.regions.subscribe((regionList: Array<Region>) => {
+      this.regions = regionList;
+    });
     // get all station types
     this._nssService.getStationTypes();
     this._nssService.stationTypes.subscribe((st: Array<Stationtype>) => {
@@ -169,6 +179,22 @@ export class GagepageComponent implements OnInit, OnDestroy {
     });
   }  // end OnInit
   
+  public scrollToCitations(id){
+    var itemToScrollTo = document.getElementById("citation-"+ id);
+    itemToScrollTo.scrollIntoView({behavior: "smooth"});
+  }
+  
+  public getNWISInfo(){
+    this._http.get('https://waterservices.usgs.gov/nwis/site?site=' + this.gage.code, { responseType: 'text'})
+    .subscribe(res => {
+      var regex = /[+-]?((\d+(\.\d*)?)|(\.\d+))/g;
+      var latLong = res.split(this.gage.name)[1].match(regex);
+      this.NWISLatLong = latLong[0] + ', ' + latLong[1];
+    }, error => { //for gages that do not have a waterservices page
+      this.NWISLatLong = "N/A";
+    });
+  }
+
   public getCitations(){
     this.gage.citations = [];
     this.gage.characteristics.forEach(c => {
@@ -247,7 +273,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this._nssService.outputWimMessages(result); 
             this.modalRef.close();    
             this._nssService.searchStations(this.selectedParams);
-            
+            this._nssService.setRequeryGSFilter(true);
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -258,7 +284,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
 
   public saveGageInfo(gage){
     const newItem = JSON.parse(JSON.stringify(gage)); 
-    ['agency', 'stationType', 'statistics', 'characteristics'].forEach(e => delete newItem[e]);  
+    ['agency', 'stationType', 'region', 'statistics', 'characteristics'].forEach(e => delete newItem[e]);  
       this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL).subscribe(
         (res) => {
           this.editGageInfo = false;
@@ -475,6 +501,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         return a.statisticGroupTypeID - b.statisticGroupTypeID;
       });
       this.gage = res;
+      this._nssService.setRequeryGSFilter(true);
       this.getCitations();
       this.getDisplayStatGroupID(this.gage);
       this.filterStatIds();

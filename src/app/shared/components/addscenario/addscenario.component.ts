@@ -63,7 +63,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public scen;
     public originalScenario = [];
     public editMode: boolean;
-    defaultUnitTypes: any;
+    public defaultUnitTypes: any;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -71,10 +71,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public get selectedRegType(): Array<Regressiontype> {
         return this._nssService.selectedRegressionTypes;
     }
-
     public rows;
     public columns;
-    public numbers=10;
+    public matrix;
     
     constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -486,6 +485,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public setUpScenario(){
         // adding all necessary properties, since ngValue won't work with all the nested properties
         this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
+        console.log(this.scen)
+        console.log(this.matrix)
         const regRegs = this.scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id === this.scen['statisticGroupID']);
         this.scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
@@ -531,42 +532,44 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public async submitScenario() {
         // put scenario
         this.setUpScenario();
-        await this._settingsService.putEntity('', this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?skipCheck=' + this.skipCheck)
-            .subscribe((response) => {
-                this.requeryFilters();
-                // clear form
-                if (!response.headers) {
-                    this._toasterService.pop('info', 'Info', 'Scenario was Updated');
-                } else {
-                    this._settingsService.outputWimMessages(response); 
-                }
-                this.cancelCreateScenario();
-            }, error => {
-                if (this._settingsService.outputWimMessages(error)) { return; }
-                this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
-            }
-        );
+        console.log(this.scen)
+        // await this._settingsService.putEntity('', this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?skipCheck=' + this.skipCheck)
+        //     .subscribe((response) => {
+        //         this.requeryFilters();
+        //         // clear form
+        //         if (!response.headers) {
+        //             this._toasterService.pop('info', 'Info', 'Scenario was Updated');
+        //         } else {
+        //             this._settingsService.outputWimMessages(response); 
+        //         }
+        //         this.cancelCreateScenario();
+        //     }, error => {
+        //         if (this._settingsService.outputWimMessages(error)) { return; }
+        //         this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
+        //     }
+        // );
     }
 
     public createNewScenario() {
         // post scenario
         this.setUpScenario();
-        this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID + '&skipCheck=' + this.skipCheck)
-            .subscribe((response: any) => {
-                this.requeryFilters();
-                // clear form
-                if (!response.headers) {
-                    this._toasterService.pop('info', 'Info', 'Scenario was added');
-                } else {
-                    this._settingsService.outputWimMessages(response); 
-                }
-                this.cancelCreateScenario();
-            }, error => {
-                if (!this._settingsService.outputWimMessages(error)) {                                       
-                    this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
-                }
-            }
-        );
+        console.log(this.scen)
+        // this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID + '&skipCheck=' + this.skipCheck)
+        //     .subscribe((response: any) => {
+        //         this.requeryFilters();
+        //         // clear form
+        //         if (!response.headers) {
+        //             this._toasterService.pop('info', 'Info', 'Scenario was added');
+        //         } else {
+        //             this._settingsService.outputWimMessages(response); 
+        //         }
+        //         this.cancelCreateScenario();
+        //     }, error => {
+        //         if (!this._settingsService.outputWimMessages(error)) {                                       
+        //             this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
+        //         }
+        //     }
+        // );
     }
 
     outputWimMessages(msg) {

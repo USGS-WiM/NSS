@@ -103,6 +103,12 @@ export class NSSService {
     public setAddStationModal(val: any) { 
         this._showHideAddStationModal.next(val);
     }
+    
+    // -+-+-+-+-+-+-+-+-+ Batch Upload modal -+-+-+-+-+-+-+-+
+    private _showHideBatchUploadModal: Subject<boolean> = new Subject<boolean>();
+    public setBatchUploadModal(val: any) { 
+        this._showHideBatchUploadModal.next(val);
+    }
 
     private itemSource = new BehaviorSubject<any>(' ');
     currentItem = this.itemSource.asObservable();
@@ -127,10 +133,15 @@ export class NSSService {
     public get showEditScenarioModal(): any {
         return this._showHideEditScenarioModal.asObservable();
     }
-
+    // show the add station modal in the gagestats page
     public get showAddStationModal(): any {
         return this._showHideAddStationModal.asObservable();
     }
+    // show the add station modal in the gagestats page
+    public get showBatchUploadModal(): any {
+        return this._showHideBatchUploadModal.asObservable();
+    }
+
     // -+-+-+-+-+-+-+-+-+ manage citations modal -+-+-+-+-+-+-+-+
     private _showHideManageCitationsModal: Subject<ManageCitation> = new Subject<ManageCitation>();
     public setManageCitationsModal(val: ManageCitation) { 
@@ -267,7 +278,7 @@ export class NSSService {
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ gage stats filter section -+-+-+-+-+-+-+
-    private _selectedFilterParams: BehaviorSubject<HttpParams> = new BehaviorSubject<any>(''); // selectedregion for Gagestats
+    public _selectedFilterParams: BehaviorSubject<HttpParams> = new BehaviorSubject<any>(''); // selectedregion for Gagestats
 
      // set and get selectedRegion for Gagestats
      selectedFilterParams = this._selectedFilterParams.asObservable();

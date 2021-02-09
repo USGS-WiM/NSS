@@ -36,3 +36,13 @@
 .stat-table-title {
     padding: 10px;
 }
+
+.linkLookalike {
+    cursor:pointer;
+    color: #055CDB;
+}
+
+.linkLookalike:hover {
+    text-decoration:underline;
+    color: #055CDB;
+}

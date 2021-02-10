@@ -14,7 +14,7 @@
 	<label class="block" for="region">Filter By Statistic Group:</label>
     <select [ngModel]="selectedStatistic" (ngModelChange)="onStatGroupSelect($event)" name="statistic" class="input-small">
         <option value="none">None</option>
-        <option [ngValue]="i" *ngFor="let i of selectedStatisticGroups">{{i.name}}</option>
+        <option [ngValue]="i" *ngFor="let i of statisticGroups">{{i.name}}</option>
     </select>
 </div>
 

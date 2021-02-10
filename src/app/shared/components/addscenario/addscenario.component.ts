@@ -96,7 +96,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                         'student_T_Statistic': new FormControl(null),
                         'variance': new FormControl(null),
                         'xiRowVector': new FormControl(null),
-                        'covarianceMatrix': new FormControl(null)
+                        'covarianceMatrix':  this._fb.array([])
                     }),
                     'expected': this._fb.group({
                         'value': new FormControl(null, Validators.required),
@@ -394,7 +394,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
     }
 
-    addVariable() {
+    public addVariable() {
         const control = <FormArray>this.newScenForm.get('regressionRegions.parameters');
         control.push(this._fb.group({
             code: new FormControl(null, Validators.required),
@@ -409,15 +409,44 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.equationCheck(this.newScenForm.get('regressionRegions.equationCheck').value);
     }
 
-    addError() {
+    public removeVariable(i) {
+        const control = <FormArray>this.newScenForm.get('regressionRegions.parameters');
+        control.removeAt(i);
+    }
+
+    public addError() {
         const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         control.push(this._fb.group({
             id: new FormControl(null, Validators.required),
             value: new FormControl(null, Validators.required)
         }));
     }  
+    
+    public removeError(i) {
+        const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
+        control.removeAt(i);
+    }
 
-    showMathjax() {
+    public addMatrix() {
+        const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
+        for (let i = 0; i < this.rows; i++) {
+            control.push(new FormArray([]))
+            for (let j = 0; j < this.columns; j++) {
+              (control.at(i) as FormArray).push(new FormControl())
+            }
+        }
+    }
+
+    public removeMatrix() {
+        this.rows = null;
+        this.columns = null;
+        const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
+        for(let i = matrixControl.length-1; i >= 0; i--) {
+            matrixControl.removeAt(i);
+        }
+    }
+
+    public showMathjax() {
         const exp = this.newScenForm.get('regressionRegions.regressions.equation').value;
         const equ = document.getElementById('mathjaxEq');
         equ.style.visibility = 'hidden';
@@ -444,16 +473,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             });
     }
 
-    removeVariable(i) {
-        const control = <FormArray>this.newScenForm.get('regressionRegions.parameters');
-        control.removeAt(i);
-    }
-
-    removeError(i) {
-        const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
-        control.removeAt(i);
-    }
-
     public clearScenario(){
         this.newScenForm.reset();
         this.selectedRegion = this.originalRegion;
@@ -471,6 +490,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         for(let i = parmControl.length-1; i >= 0; i--) {
             parmControl.removeAt(i);
         }
+        this.removeMatrix();
         this.addPredInt = false
     }
 

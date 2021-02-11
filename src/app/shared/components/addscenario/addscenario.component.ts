@@ -64,6 +64,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public originalScenario = [];
     public editMode: boolean;
     public defaultUnitTypes: any;
+    public rows;
+    public columns;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -71,8 +73,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public get selectedRegType(): Array<Regressiontype> {
         return this._nssService.selectedRegressionTypes;
     }
-    public rows;
-    public columns;
     
     constructor(private _nssService: NSSService, private _modalService: NgbModal, private _fb: FormBuilder,
         private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -282,7 +282,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     //fill the modal when cloning and editing 
-    public fillModal(){
+    public fillModal() {
         console.log(this.cloneParameters)
         this.newScenForm.get('region').valueChanges.subscribe(item => {
             if(item != null){
@@ -295,7 +295,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.newScenForm.patchValue({ regressionRegions: { regressions: { unit: this.unitTypes[index]}}});
             }
         });
-        if(!this.cloneParameters.r.equivalentYears){
+        if(!this.cloneParameters.r.equivalentYears) {
             this.cloneParameters.r.equivalentYears = 0;
         }
         this.newScenForm.patchValue({
@@ -311,31 +311,44 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
         this.onStatGroupSelect(this.cloneParameters.statisticGroupID);
         //Prediction Interval
-        if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null){
+        if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null) {
             this.addPredInt = true;
             this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { biasCorrectionFactor: this.cloneParameters.r.predictionInterval.biasCorrectionFactor.toString()}}}});
         } 
-        if (this.cloneParameters.r.predictionInterval.student_T_Statistic != null){
+        if (this.cloneParameters.r.predictionInterval.student_T_Statistic != null) {
             this.addPredInt = true;
             this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { student_T_Statistic: this.cloneParameters.r.predictionInterval.student_T_Statistic.toString()}}}});
         }
-        if (this.cloneParameters.r.predictionInterval.variance != null){
+        if (this.cloneParameters.r.predictionInterval.variance != null) {
             this.addPredInt = true;
             this.newScenForm.patchValue({ regressionRegions: { regressions:{ predictionInterval: { variance: this.cloneParameters.r.predictionInterval.variance.toString()}}}});
         }
-        if (this.cloneParameters.r.predictionInterval.xiRowVector != null){
+        if (this.cloneParameters.r.predictionInterval.xiRowVector != null) {
             this.addPredInt = true;
             this.newScenForm.patchValue({ regressionRegions: { regressions : { predictionInterval: { xiRowVector: this.cloneParameters.r.predictionInterval.xiRowVector.toString()}}}});
         }
-        if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null){
-            if (this.cloneParameters.r.predictionInterval.covarianceMatrix != "null"){
+        if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null) {
+            if (this.cloneParameters.r.predictionInterval.covarianceMatrix != "null") {
                 this.addPredInt = true;
                 var regex = /[[]/g;
-                this.rows = (this.cloneParameters.r.predictionInterval.covarianceMatrix).match(regex).length-1;
+                this.rows = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(regex).length) - 1;
                 var regex = /[,]/g;
-                this.columns=((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(regex).length+1)/this.rows;
+                this.columns = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(regex).length+1) / this.rows;
                 this.addMatrix();
-                // this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { covarianceMatrix: this.cloneParameters.r.predictionInterval.covarianceMatrix.toString()}}}});
+                var regex = /[\d.]+/g;
+                var numbers = this.cloneParameters.r.predictionInterval.covarianceMatrix.match(regex)
+
+
+                //  TODO: FILL MATRIX WHEN CLONED
+                const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
+                console.log(matrixControl)
+                matrixControl.controls.forEach((rows, index) => {
+                    console.log(rows)
+                    rows.setValue([numbers[0],numbers[1],numbers[2]])
+                    console.log(rows)
+                })
+
+                
             }
         }
         //parameters
@@ -515,19 +528,17 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
         this.scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
 
-        //formatting matrix
+
+        //  TODO: FORMAT MATRIX
         //const matrix = arr1.concat(arr2, arr3);
-
         console.log(this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').value)
-
         const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
         for(let i = 0; i <= matrixControl.length-1; i++) {
             console.log(matrixControl.controls[i].value);
         }
-
-
         [regs.predictionInterval.covarianceMatrix].forEach(e => delete this.scen[e]);  //remove unformatted matrix
         regs.predictionInterval.covarianceMatrix = 3;   //add formated matrix
+
 
         // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);

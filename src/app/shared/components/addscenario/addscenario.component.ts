@@ -283,7 +283,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     //fill the modal when cloning and editing 
     public fillModal() {
-        console.log(this.cloneParameters)
         this.newScenForm.get('region').valueChanges.subscribe(item => {
             if(item != null){
                 this._nssService.setSelectedRegion(item)
@@ -337,18 +336,12 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.addMatrix();
                 var regex = /[\d.]+/g;
                 var numbers = this.cloneParameters.r.predictionInterval.covarianceMatrix.match(regex)
-
-
-                //  TODO: FILL MATRIX WHEN CLONED
+                // Filling matrix
                 const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
-                console.log(matrixControl)
-                matrixControl.controls.forEach((rows, index) => {
-                    console.log(rows)
-                    rows.setValue([numbers[0],numbers[1],numbers[2]])
-                    console.log(rows)
-                })
-
-                
+                for (let i=0, j=numbers.length, x=0; i<j; i+=this.columns,x++) {
+                    var temparray = numbers.slice(i,i+this.columns);
+                    matrixControl.controls[x].setValue(temparray)
+                  }
             }
         }
         //parameters
@@ -530,15 +523,19 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
 
         //  TODO: FORMAT MATRIX
-        //const matrix = arr1.concat(arr2, arr3);
-        console.log(this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').value)
-        const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
-        for(let i = 0; i <= matrixControl.length-1; i++) {
-            console.log(matrixControl.controls[i].value);
+        if(this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').value.length > 0 ){
+            const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
+            var matrix = "";
+            var test= []
+            for(let i = 0; i <= matrixControl.length-1; i++) {
+                var tempMatrix = "[" +  "\"" + matrixControl.controls[i].value.join("\",\"") + "\""  + "]";
+                test.push(tempMatrix)
+            }
+            test.join(",")
+            matrix = "[" + test + "]";
+            [regs.predictionInterval.covarianceMatrix].forEach(e => delete this.scen[e]);  //remove unformatted matrix
+            regs.predictionInterval.covarianceMatrix = matrix;   //add formated matrix
         }
-        [regs.predictionInterval.covarianceMatrix].forEach(e => delete this.scen[e]);  //remove unformatted matrix
-        regs.predictionInterval.covarianceMatrix = 3;   //add formated matrix
-
 
         // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);
@@ -580,44 +577,42 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public async submitScenario() {
         // put scenario
         this.setUpScenario();
-        console.log(this.scen)
-        // await this._settingsService.putEntity('', this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?skipCheck=' + this.skipCheck)
-        //     .subscribe((response) => {
-        //         this.requeryFilters();
-        //         // clear form
-        //         if (!response.headers) {
-        //             this._toasterService.pop('info', 'Info', 'Scenario was Updated');
-        //         } else {
-        //             this._settingsService.outputWimMessages(response); 
-        //         }
-        //         this.cancelCreateScenario();
-        //     }, error => {
-        //         if (this._settingsService.outputWimMessages(error)) { return; }
-        //         this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
-        //     }
-        // );
+        await this._settingsService.putEntity('', this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?skipCheck=' + this.skipCheck)
+            .subscribe((response) => {
+                this.requeryFilters();
+                // clear form
+                if (!response.headers) {
+                    this._toasterService.pop('info', 'Info', 'Scenario was Updated');
+                } else {
+                    this._settingsService.outputWimMessages(response); 
+                }
+                this.cancelCreateScenario();
+            }, error => {
+                if (this._settingsService.outputWimMessages(error)) { return; }
+                this._toasterService.pop('error', 'Error editing Scenario', error._body.message || error.statusText);
+            }
+        );
     }
 
     public createNewScenario() {
         // post scenario
         this.setUpScenario();
-        console.log(this.scen)
-        // this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID + '&skipCheck=' + this.skipCheck)
-        //     .subscribe((response: any) => {
-        //         this.requeryFilters();
-        //         // clear form
-        //         if (!response.headers) {
-        //             this._toasterService.pop('info', 'Info', 'Scenario was added');
-        //         } else {
-        //             this._settingsService.outputWimMessages(response); 
-        //         }
-        //         this.cancelCreateScenario();
-        //     }, error => {
-        //         if (!this._settingsService.outputWimMessages(error)) {                                       
-        //             this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
-        //         }
-        //     }
-        // );
+        this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID + '&skipCheck=' + this.skipCheck)
+            .subscribe((response: any) => {
+                this.requeryFilters();
+                // clear form
+                if (!response.headers) {
+                    this._toasterService.pop('info', 'Info', 'Scenario was added');
+                } else {
+                    this._settingsService.outputWimMessages(response); 
+                }
+                this.cancelCreateScenario();
+            }, error => {
+                if (!this._settingsService.outputWimMessages(error)) {                                       
+                    this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
+                }
+            }
+        );
     }
 
     outputWimMessages(msg) {

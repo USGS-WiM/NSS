@@ -189,7 +189,7 @@
 								</div>
 								<div formArrayName="covarianceMatrix">
 									<div *ngFor="let row of newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls" class="form-inline">
-										<input *ngFor="let col of row.controls" style="width:5em" type="text" [formControl]='col'>
+										<input *ngFor="let col of row.controls" style="width:5em" type="number" [formControl]='col'>
 									</div>
 								</div>
 							</div>

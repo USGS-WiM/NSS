@@ -513,6 +513,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public setUpScenario(){
         // adding all necessary properties, since ngValue won't work with all the nested properties
         this.scen = JSON.parse(JSON.stringify(this.newScenForm.value));
+        console.log(this.scen)
         const regRegs = this.scen['regressionRegions']; const regs = regRegs.regressions;
         const statGroupIndex = this.statisticGroups.findIndex(item => item.id === this.scen['statisticGroupID']);
         this.scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
@@ -528,7 +529,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             }
             [regs.predictionInterval.covarianceMatrix].forEach(e => delete this.scen[e]);  //remove unformatted matrix
             regs.predictionInterval.covarianceMatrix = "[" + matrix.join(",") + "]";   //add formated matrix
+        }else{
+            regs.predictionInterval.covarianceMatrix = null;
         }
+        console.log(this.scen)
 
         // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);

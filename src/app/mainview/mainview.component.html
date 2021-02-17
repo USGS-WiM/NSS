@@ -1233,15 +1233,15 @@
 														Statistics for 90% confidence interval:</b>
 													{{r.predictionInterval.student_T_Statistic}}<br></span>
 												<span
-													*ngIf="r.predictionInterval.variance !=='null' && r.predictionInterval.variance !==''">
+													*ngIf="r.predictionInterval.variance && r.predictionInterval.variance !=='null' && r.predictionInterval.variance !==''">
 													<b>Model Error Variance or Mean Square Error:</b> {{r.predictionInterval.variance}}<br>
 												</span>
 												<span
-													*ngIf="r.predictionInterval.xiRowVector !=='null' && r.predictionInterval.xiRowVector !==''">
+													*ngIf="r.predictionInterval.xiRowVector && r.predictionInterval.xiRowVector !=='null' && r.predictionInterval.xiRowVector !==''">
 													<b>XI Row Vector:</b> {{r.predictionInterval.xiRowVector}}<br>
 												</span>
 												<span
-													*ngIf="r.predictionInterval.covarianceMatrix !=='null' && r.predictionInterval.covarianceMatrix !==''">
+													*ngIf="r.predictionInterval.covarianceMatrix && r.predictionInterval.covarianceMatrix !=='null' && r.predictionInterval.covarianceMatrix !==''">
 													<b>Covariance Matrix:</b>
 													{{r.predictionInterval.covarianceMatrix}}<br>
 												</span>

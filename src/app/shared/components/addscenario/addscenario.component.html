@@ -172,24 +172,28 @@
 								</div>
 		
 								<!-- Covariance Matrix -->
-								<div class="form-inline">
+								<div class="form-group">
 									<label class="req" for="covarianceMatrix">Covariance Matrix:</label><br/>
-									<label class="req">&nbsp;Rows:&nbsp;</label><br/>
-									<input type="number" [(ngModel)]="rows" [ngModelOptions]="{standalone: true}" style="width: 5em"/>
-									<label class="req">&nbsp;Columns:&nbsp;</label><br/>
-									<input type="number" [(ngModel)]="columns" [ngModelOptions]="{standalone: true}" style="width: 5em"/>
-									<button *ngIf = "newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls.length==0" type="button" class="button small blue mright-sm" (click)="addMatrix()" [disabled]="!rows || !columns">
-										<i class="far fa-plus"></i>
-										<span>Create Matrix</span>
-									</button>
-									<button *ngIf = "newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls.length!=0" type="button" class="button small blue mright-sm" (click)="removeMatrix()">
-										<i class="far fa-minus"></i>
-										<span>Remove Matrix</span>
-									</button>
-								</div>
-								<div formArrayName="covarianceMatrix">
-									<div *ngFor="let row of newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls" class="form-inline">
-										<input *ngFor="let col of row.controls" style="width:5em" type="number" [formControl]='col'>
+									<div class="form-inline" *ngIf="newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls.length==0">
+										<label class="req">&nbsp;Rows:&nbsp;</label><br/>
+										<input type="number" [(ngModel)]="rows" [ngModelOptions]="{standalone: true}" style="width: 5em"/>
+										<label class="req">&nbsp;Columns:&nbsp;</label><br/>
+										<input type="number" [(ngModel)]="columns" [ngModelOptions]="{standalone: true}" style="width: 5em"/>
+										<button type="button" class="button small blue mright-sm" (click)="addMatrix()" [disabled]="!rows || !columns">
+											<i class="far fa-plus"></i>
+											<span>Create Matrix</span>
+										</button>
+									</div>
+									<div formArrayName="covarianceMatrix">
+										<div *ngFor="let row of newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls" class="form-inline">
+											<input *ngFor="let col of row.controls" style="width:7em" type="number" [formControl]='col' required>
+										</div>
+									</div>
+									<div *ngIf="newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls.length!=0">
+										<button type="button" class="button small blue mright-sm" (click)="removeMatrix()">
+											<i class="far fa-minus"></i>
+											<span>Remove Matrix</span>
+										</button>
 									</div>
 								</div>
 							</div>
@@ -201,7 +205,6 @@
 										<label class="req" for="lower">Expected Lower Interval Bound:</label>
 										<input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="lower" >
 									</div>
-			
 									<!-- Upper Interval Bound -->
 									<div class="form-group col-md-6">
 										<label class="req" for="upper">Expected Upper Interval Bound:</label>
@@ -215,9 +218,7 @@
 						<!-- Errors-->
 						<div formArrayName="errors">
 							<div *ngFor="let err of newScenForm.get('regressionRegions.regressions.errors').controls; let errIndex = index">
-								
 								<div class="scenario-dropdown">
-
 									<div class="scenario-dropdown-title" (click)="checkDiv('error' + (errIndex + 1)) ? hideDiv('error' + (errIndex + 1)) : showDiv('error' + (errIndex + 1))">
 										<span>Error {{errIndex + 1}}</span>
 										<i class="fas" [ngClass]="{'fa-chevron-down': checkDiv('error' + (errIndex + 1)),'fa-chevron-right': !checkDiv('error' + (errIndex + 1))}"></i>
@@ -225,8 +226,6 @@
 									<!-- <div *ngIf="!checkDiv('predInt')" class="showHideScen" (click)="">Prediction Interval<i class="far fa-chevron-right"></i></div> -->
 									<button class="icon-button" (click)="removeError(errIndex)"><i class="far fa-times"></i></button>
 								</div>
-
-
 								<div [formGroupName]=errIndex [id]="'error' + (errIndex + 1)" class="scenFormGroup">
 									<!--Error ID-->
 									<div class="form-group required">
@@ -304,8 +303,6 @@
 					</div>
 				</div>
 			</form>
-
-			
 		</div>
 	</div>
 

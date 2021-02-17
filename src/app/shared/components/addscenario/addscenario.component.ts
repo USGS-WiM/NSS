@@ -329,19 +329,16 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null) {
             if (this.cloneParameters.r.predictionInterval.covarianceMatrix != "null") {
                 this.addPredInt = true;
-                var regex = /[[]/g;
-                this.rows = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(regex).length) - 1;
-                var regex = /[,]/g;
-                this.columns = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(regex).length+1) / this.rows;
+                this.rows = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(/[[]/g).length) - 1;
+                this.columns = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(/[,]/g).length+1) / this.rows;
                 this.addMatrix();
-                var regex = /[\d.]+/g;
-                var numbers = this.cloneParameters.r.predictionInterval.covarianceMatrix.match(regex)
+                var numbers = this.cloneParameters.r.predictionInterval.covarianceMatrix.match(/[\d.]+/g);
                 // Filling matrix
                 const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
                 for (let i=0, j=numbers.length, x=0; i<j; i+=this.columns,x++) {
                     var temparray = numbers.slice(i,i+this.columns);
-                    matrixControl.controls[x].setValue(temparray)
-                  }
+                    matrixControl.controls[x].setValue(temparray);
+                }
             }
         }
         //parameters
@@ -441,9 +438,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public addMatrix() {
         const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
         for (let i = 0; i < this.rows; i++) {
-            matrixControl.push(new FormArray([]))
+            matrixControl.push(new FormArray([]));
             for (let j = 0; j < this.columns; j++) {
-              (matrixControl.at(i) as FormArray).push(new FormControl())
+              (matrixControl.at(i) as FormArray).push(new FormControl());
             }
         }
     }
@@ -452,7 +449,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.rows = null;
         this.columns = null;
         const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
-        for(let i = matrixControl.length-1; i >= 0; i--) {
+        for (let i = matrixControl.length-1; i >= 0; i--) {
             matrixControl.removeAt(i);
         }
     }
@@ -521,31 +518,29 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
         this.scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
 
-
-        //  TODO: FORMAT MATRIX
-        if(this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').value.length > 0 ){
+        //Add formatted matrix
+        if (this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').value.length > 0 ) {  //Check if matrix was entered 
             const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
-            var matrix = "";
-            var test= []
+            var matrix = [];
             for(let i = 0; i <= matrixControl.length-1; i++) {
-                var tempMatrix = "[" +  "\"" + matrixControl.controls[i].value.join("\",\"") + "\""  + "]";
-                test.push(tempMatrix)
+                var matrixRow = "[" +  "\"" + matrixControl.controls[i].value.join("\",\"") + "\""  + "]";
+                matrix.push(matrixRow)
             }
-            test.join(",")
-            matrix = "[" + test + "]";
             [regs.predictionInterval.covarianceMatrix].forEach(e => delete this.scen[e]);  //remove unformatted matrix
-            regs.predictionInterval.covarianceMatrix = matrix;   //add formated matrix
+            regs.predictionInterval.covarianceMatrix = "[" + matrix.join(",") + "]";   //add formated matrix
         }
 
         // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);
         regRegs['name'] = this.regressionRegions[regRegIndex].name;
         regRegs['code'] = this.regressionRegions[regRegIndex].code;
+
         // add regression code/name/description
         const regIndex = this.regressionTypes.findIndex(item => item.id === regs.ID);
         regs.code = this.regressionTypes[regIndex].code;
         regs.name = this.regressionTypes[regIndex].name;
         regs.description = this.regressionTypes[regIndex].description;
+
         // add parameter name, description, add values/check if between limits
         regs.expected.parameters = {};
         for (const parameter of regRegs.parameters) {

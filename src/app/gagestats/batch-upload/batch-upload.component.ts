@@ -139,7 +139,6 @@ export class BatchUploadModal implements OnInit {
   public selectFile(event: any) {
     const target: DataTransfer = <DataTransfer>(event.target);
     if (target.files.length !== 1)  { //Check for multiple files
-      this.selectUpload = false; 
       this.clearTable()
       this._toasterService.pop('error', 'Error', 'Cannot select multiple files');
       return;
@@ -150,7 +149,6 @@ export class BatchUploadModal implements OnInit {
       case 'xls':
         break;
       default:
-        this.selectUpload = false; 
         this.clearTable()
         this._toasterService.pop('error', 'Error', 'File type must be .xlsx');
         return;

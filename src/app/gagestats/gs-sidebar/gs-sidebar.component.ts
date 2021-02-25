@@ -155,7 +155,6 @@ export class GsSidebarComponent implements OnInit {
       this.requeryFilter = false;
       this._nssService.setSelectedFilterParams(this.params);
       this._nssService.searchStations(this.params);
-      console.log('gs-sidebar this.params:', this.params)
     }
   }
 

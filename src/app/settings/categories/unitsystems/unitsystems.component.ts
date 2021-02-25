@@ -28,9 +28,6 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
     @ViewChild('UnitSystemForm', {static: true}) usForm;
     public selectedRegion;
     public regions;
-    public selectedRegRegionIDs;
-    public selectedStatGroupIDs;
-    public selectedRegTypeIDs;
     public regressionTypes: Array<Regressiontype>;
     public newUnitSystemForm: FormGroup;
     public showNewUnitSystemForm: boolean;

@@ -9,13 +9,10 @@
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
-
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-
 import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from 'app/settings/settings.service';
 import { Agency } from 'app/shared/interfaces/agencies';
-
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -32,9 +29,6 @@ export class AgenciesComponent implements OnInit, OnDestroy {
     agencyForm;
     public selectedRegion;
     public regions;
-    public selectedRegRegionIDs;
-    public selectedStatGroupIDs;
-    public selectedRegTypeIDs;
     public newAgencyForm: FormGroup;
     public showAgencyForm: boolean;
     public agencies: Array<Agency>;

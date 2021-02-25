@@ -9,17 +9,15 @@
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
-
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-
 import { NSSService } from 'app/shared/services/app.service';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { SettingsService } from '../../settings.service';
-
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
+import { LoaderService } from 'app/shared/services/loader.service';
 
 @Component({
     moduleId: module.id,
@@ -32,10 +30,9 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     regressionForm;
     public selectedRegion;
     public regions;
-    public selectedRegRegionIDs;
-    public selectedStatGroupIDs;
-    public selectedRegTypeIDs;
-    public regressionTypes: Array<Regressiontype>;
+    public regressionTypes: Array<Regressiontype> = [];
+    public nssRegressionTypes: Array<Regressiontype> = [];
+    public gsRegressionTypes: Array<Regressiontype> = [];
     public newRegForm: FormGroup;
     public showNewRegForm: boolean;
     private CloseResult;
@@ -46,7 +43,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public tempData;
     public isEditing = false;
     public modalRef;
-    public selectedStatisticGroups: Array<Statisticgroup>;
+    public statisticGroups: Array<Statisticgroup>;
     public selectedStatistic;
     public selectedRegionID;
     public selectedStatisticID;
@@ -58,7 +55,8 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         private _modalService: NgbModal,
         private router: Router,
         private _toasterService: ToasterService,
-        private _configService: ConfigService
+        private _configService: ConfigService,
+        private _loaderService: LoaderService
     ) {
         this.newRegForm = _fb.group({
             name: new FormControl(null, Validators.required),
@@ -79,7 +77,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         });
         this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
-            this.selectedStatisticGroups = res;
+            this.statisticGroups = res;
         });
         this.selectedStatistic = 'none';
         this.selectedRegion = 'none';
@@ -89,8 +87,11 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     }
 
     public onRegSelect(r) {
+        this._loaderService.showFullPageLoad();
         this.selectedRegion = r;
         this.selectedRegionID = r.id;
+        var nssReturn = false;
+        var gsReturn = false;
         if (r === 'none') {
             this.selectedRegionID = "";
         } 
@@ -99,25 +100,60 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         }
         this._settingsservice
             .getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
-            .subscribe(regs => {
-                this.regressionTypes = regs;
+            .subscribe(res => {
+                this.nssRegressionTypes = res;
+                nssReturn = true;
+                if (nssReturn == true && gsReturn == true) {
+                    this.combineRegressionTypes();
+                }
             });
-        
+        this._settingsservice
+            .getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
+            .subscribe(res => {
+                this.gsRegressionTypes = res;
+                gsReturn = true;
+                if (nssReturn == true && gsReturn == true) {
+                    this.combineRegressionTypes();
+                }
+            });
     }
 
     public onStatGroupSelect(e){
+        this._loaderService.showFullPageLoad();
         this.selectedStatistic = e;
         this.selectedStatisticID = e.id;
+        var nssReturn = false;
+        var gsReturn = false;
         if (e === 'none') {
             this.selectedStatisticID = "";
         } 
         if(this.selectedRegion === 'none'){
             this.selectedRegionID = "";
         }
-        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
+            .subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
-            this.regressionTypes = res;
+            this.nssRegressionTypes = res;
+            nssReturn = true;
+                if (nssReturn == true && gsReturn == true) {
+                    this.combineRegressionTypes();
+                }
         });
+        this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
+            .subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.gsRegressionTypes = res;
+            gsReturn = true;
+            if (nssReturn == true && gsReturn == true) {
+                this.combineRegressionTypes();
+            }
+        });
+    }
+
+    public combineRegressionTypes(){
+        this.regressionTypes = this.nssRegressionTypes.concat(this.gsRegressionTypes); //concatenate regressionType arrays
+        this.regressionTypes = Array.from(this.regressionTypes.reduce((m, t) => m.set(t.name, t), new Map()).values()); //remove duplicates
+        this._loaderService.hideFullPageLoad();
     }
 
     public getAllRegTypes() {

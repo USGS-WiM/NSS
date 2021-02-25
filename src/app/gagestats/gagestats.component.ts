@@ -36,7 +36,7 @@ export class GagestatsComponent implements OnInit {
   public itemPerPage = [15,25,50,100]; 
   public perPage = 50;
   private configSettings: Config;
-  public config: ToasterConfig = new ToasterConfig({ timeout: 5000 });
+  public config: ToasterConfig = new ToasterConfig({ timeout: 10000 });
 
 
   constructor(

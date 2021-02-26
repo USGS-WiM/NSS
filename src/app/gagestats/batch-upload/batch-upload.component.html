@@ -117,6 +117,7 @@
                     </tbody>
                 </table>
             </div>
+            <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='addRow();'>Add Row</button>
             <!--Citations-->
             <div *ngIf="selectedCitation">
                 <div class="table-title">Citation</div>

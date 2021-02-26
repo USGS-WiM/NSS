@@ -64,8 +64,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public originalScenario = [];
     public editMode: boolean;
     public defaultUnitTypes: any;
-    public rows;
-    public columns;
+    public rowsAndColumns;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -326,19 +325,16 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             this.addPredInt = true;
             this.newScenForm.patchValue({ regressionRegions: { regressions : { predictionInterval: { xiRowVector: this.cloneParameters.r.predictionInterval.xiRowVector.toString()}}}});
         }
-        if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null) {
-            if (this.cloneParameters.r.predictionInterval.covarianceMatrix != "null") {
-                this.addPredInt = true;
-                this.rows = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(/[[]/g).length) - 1;
-                this.columns = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(/[,]/g).length+1) / this.rows;
-                this.addMatrix();
-                var numbers = this.cloneParameters.r.predictionInterval.covarianceMatrix.match(/[\d.]+/g);
-                // Filling matrix
-                const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
-                for (let i=0, j=numbers.length, x=0; i<j; i+=this.columns,x++) {
-                    var temparray = numbers.slice(i,i+this.columns);
-                    matrixControl.controls[x].setValue(temparray);
-                }
+        if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null && this.cloneParameters.r.predictionInterval.covarianceMatrix != "null") {
+            this.addPredInt = true;
+            this.rowsAndColumns = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(/[[]/g).length) - 1;
+            this.addMatrix();
+            var numbers = this.cloneParameters.r.predictionInterval.covarianceMatrix.match(/[\d.]+/g);
+            // Filling matrix
+            const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
+            for (let i=0, j=numbers.length, x=0; i<j; i+=this.rowsAndColumns,x++) {
+                var temparray = numbers.slice(i,i+this.rowsAndColumns);
+                matrixControl.controls[x].setValue(temparray);
             }
         }
         //parameters
@@ -437,17 +433,16 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     public addMatrix() {
         const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
-        for (let i = 0; i < this.rows; i++) {
+        for (let i = 0; i < this.rowsAndColumns; i++) {
             matrixControl.push(new FormArray([]));
-            for (let j = 0; j < this.columns; j++) {
+            for (let j = 0; j < this.rowsAndColumns; j++) {
               (matrixControl.at(i) as FormArray).push(new FormControl());
             }
         }
     }
 
     public removeMatrix() {
-        this.rows = null;
-        this.columns = null;
+        this.rowsAndColumns = null;
         const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
         for (let i = matrixControl.length-1; i >= 0; i--) {
             matrixControl.removeAt(i);

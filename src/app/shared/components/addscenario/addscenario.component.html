@@ -178,11 +178,9 @@
 								<div class="form-group">
 									<label class="req" for="covarianceMatrix">Covariance Matrix:</label><br/>
 									<div class="form-inline" *ngIf="newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls.length==0">
-										<label class="req">&nbsp;Rows:&nbsp;</label><br/>
-										<input type="number" [(ngModel)]="rows" [ngModelOptions]="{standalone: true}" style="width: 5em"/>
-										<label class="req">&nbsp;Columns:&nbsp;</label><br/>
-										<input type="number" [(ngModel)]="columns" [ngModelOptions]="{standalone: true}" style="width: 5em"/>
-										<button type="button" class="button small blue mright-sm" (click)="addMatrix()" [disabled]="!rows || !columns">
+										<label class="req">&nbsp;Number of Rows and Columns:&nbsp;</label><br/>
+										<input type="number" [(ngModel)]="rowsAndColumns" [ngModelOptions]="{standalone: true}" style="width: 5em"/>&nbsp;
+										<button type="button" class="button small blue mright-sm" (click)="addMatrix()" [disabled]="!rowsAndColumns">
 											<i class="far fa-plus"></i>
 											<span>Create Matrix</span>
 										</button>
@@ -192,7 +190,7 @@
 											<input *ngFor="let col of row.controls" style="width:7em" type="number" [formControl]='col' required>
 										</div>
 									</div>
-									<div *ngIf="newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls.length!=0">
+									<div *ngIf="newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls.length!=0"><br>
 										<button type="button" class="button small blue mright-sm" (click)="removeMatrix()">
 											<i class="far fa-minus"></i>
 											<span>Remove Matrix</span>

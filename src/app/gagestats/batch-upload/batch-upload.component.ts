@@ -16,7 +16,6 @@ import { Variabletype } from 'app/shared/interfaces/variableType'
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
 import { HttpParams } from '@angular/common/http';
-import { clear } from 'console';
 
 @Component({
   selector: 'batchUploadModal',
@@ -125,7 +124,7 @@ export class BatchUploadModal implements OnInit {
     this._nssService.selectedCitation.subscribe(c => {
       this.selectedCitation = c;
     });
-    this._nssService._selectedFilterParams.subscribe((selectedParams: HttpParams) => { 
+    this._nssService.selectedFilterParams.subscribe((selectedParams: HttpParams) => { 
       this.selectedParams = selectedParams;
     });
 }        //******* End OnInit //////////
@@ -237,13 +236,17 @@ export class BatchUploadModal implements OnInit {
     this.tableData.splice(index, 1);
   }
 
-  // public addRow() {
-  //   console.log(this.tableData)
-  //   var x = new String()
-  //   var newRecord = [ ]
-  //   this.tableData.splice(this.tableData.length, 0, newRecord)
-  //   console.log(this.tableData)
-  // }
+  public addRow() {
+    var newRecord = [];
+    for (var i = 0; i < this.tableData[this.tableData.length - 1].length; i++) {
+      if (typeof this.tableData[this.tableData.length - 1][i] === "boolean") {
+        newRecord.push(false);
+      } else {
+        newRecord.push('');
+      }
+    }
+    this.tableData.splice(this.tableData.length, 0, newRecord);
+  }
 
   public deleteColumn(index) {
     this.headers.splice(index, 1)
@@ -434,6 +437,8 @@ public submitRecords() {
           this.clearTable();
           this.selectUpload = false;
           delete(this.selectedCitation);
+          this._nssService.searchStations(this.selectedParams);
+          this._nssService.setRequeryGSFilter(true);
         } error => {     // If put request fails...
           this._settingsService.outputWimMessages(error);
         }

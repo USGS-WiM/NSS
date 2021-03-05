@@ -124,7 +124,7 @@ export class BatchUploadModal implements OnInit {
     this._nssService.selectedCitation.subscribe(c => {
       this.selectedCitation = c;
     });
-    this._nssService._selectedFilterParams.subscribe((selectedParams: HttpParams) => { 
+    this._nssService.selectedFilterParams.subscribe((selectedParams: HttpParams) => { 
       this.selectedParams = selectedParams;
     });
 }        //******* End OnInit //////////
@@ -437,6 +437,8 @@ public submitRecords() {
           this.clearTable();
           this.selectUpload = false;
           delete(this.selectedCitation);
+          this._nssService.searchStations(this.selectedParams);
+          this._nssService.setRequeryGSFilter(true);
         } error => {     // If put request fails...
           this._settingsService.outputWimMessages(error);
         }

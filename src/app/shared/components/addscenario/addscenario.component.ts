@@ -63,7 +63,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public scen;
     public originalScenario = [];
     public editMode: boolean;
-    defaultUnitTypes: any;
+    public defaultUnitTypes: any;
+    public rowsAndColumns;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -93,7 +94,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                         'student_T_Statistic': new FormControl(null),
                         'variance': new FormControl(null),
                         'xiRowVector': new FormControl(null),
-                        'covarianceMatrix': new FormControl(null)
+                        'covarianceMatrix':  this._fb.array([])
                     }),
                     'expected': this._fb.group({
                         'value': new FormControl(null, Validators.required),
@@ -280,7 +281,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     }
 
     //fill the modal when cloning and editing 
-    public fillModal(){
+    public fillModal() {
         this.newScenForm.get('region').valueChanges.subscribe(item => {
             if(item != null){
                 this._nssService.setSelectedRegion(item)
@@ -292,7 +293,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 this.newScenForm.patchValue({ regressionRegions: { regressions: { unit: this.unitTypes[index]}}});
             }
         });
-        if(!this.cloneParameters.r.equivalentYears){
+        if(!this.cloneParameters.r.equivalentYears) {
             this.cloneParameters.r.equivalentYears = 0;
         }
         this.newScenForm.patchValue({
@@ -308,26 +309,32 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         });
         this.onStatGroupSelect(this.cloneParameters.statisticGroupID);
         //Prediction Interval
-        if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null){
-            this.addPredInt = true
+        if (this.cloneParameters.r.predictionInterval.biasCorrectionFactor != null) {
+            this.addPredInt = true;
             this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { biasCorrectionFactor: this.cloneParameters.r.predictionInterval.biasCorrectionFactor.toString()}}}});
         } 
-        if (this.cloneParameters.r.predictionInterval.student_T_Statistic != null){
-            this.addPredInt = true
+        if (this.cloneParameters.r.predictionInterval.student_T_Statistic != null) {
+            this.addPredInt = true;
             this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { student_T_Statistic: this.cloneParameters.r.predictionInterval.student_T_Statistic.toString()}}}});
         }
-        if (this.cloneParameters.r.predictionInterval.variance != null){
-            this.addPredInt = true
+        if (this.cloneParameters.r.predictionInterval.variance != null) {
+            this.addPredInt = true;
             this.newScenForm.patchValue({ regressionRegions: { regressions:{ predictionInterval: { variance: this.cloneParameters.r.predictionInterval.variance.toString()}}}});
         }
-        if (this.cloneParameters.r.predictionInterval.xiRowVector != null){
-            this.addPredInt = true
+        if (this.cloneParameters.r.predictionInterval.xiRowVector != null) {
+            this.addPredInt = true;
             this.newScenForm.patchValue({ regressionRegions: { regressions : { predictionInterval: { xiRowVector: this.cloneParameters.r.predictionInterval.xiRowVector.toString()}}}});
         }
-        if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null){
-            if (this.cloneParameters.r.predictionInterval.covarianceMatrix != "null"){
-                this.addPredInt = true
-                this.newScenForm.patchValue({ regressionRegions: { regressions: { predictionInterval: { covarianceMatrix: this.cloneParameters.r.predictionInterval.covarianceMatrix.toString()}}}});
+        if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null && this.cloneParameters.r.predictionInterval.covarianceMatrix != "null") {
+            this.addPredInt = true;
+            this.rowsAndColumns = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(/[[]/g).length) - 1;
+            this.addMatrix();
+            var numbers = this.cloneParameters.r.predictionInterval.covarianceMatrix.match(/[\d.]+/g);
+            // Filling matrix
+            const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
+            for (let i=0, j=numbers.length, x=0; i<j; i+=this.rowsAndColumns,x++) {
+                var temparray = numbers.slice(i,i+this.rowsAndColumns);
+                matrixControl.controls[x].setValue(temparray);
             }
         }
         //parameters
@@ -391,7 +398,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
     }
 
-    addVariable() {
+    public addVariable() {
         const control = <FormArray>this.newScenForm.get('regressionRegions.parameters');
         control.push(this._fb.group({
             code: new FormControl(null, Validators.required),
@@ -406,15 +413,43 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.equationCheck(this.newScenForm.get('regressionRegions.equationCheck').value);
     }
 
-    addError() {
+    public removeVariable(i) {
+        const control = <FormArray>this.newScenForm.get('regressionRegions.parameters');
+        control.removeAt(i);
+    }
+
+    public addError() {
         const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
         control.push(this._fb.group({
             id: new FormControl(null, Validators.required),
             value: new FormControl(null, Validators.required)
         }));
     }  
+    
+    public removeError(i) {
+        const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
+        control.removeAt(i);
+    }
 
-    showMathjax() {
+    public addMatrix() {
+        const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
+        for (let i = 0; i < this.rowsAndColumns; i++) {
+            matrixControl.push(new FormArray([]));
+            for (let j = 0; j < this.rowsAndColumns; j++) {
+              (matrixControl.at(i) as FormArray).push(new FormControl());
+            }
+        }
+    }
+
+    public removeMatrix() {
+        this.rowsAndColumns = null;
+        const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
+        for (let i = matrixControl.length-1; i >= 0; i--) {
+            matrixControl.removeAt(i);
+        }
+    }
+
+    public showMathjax() {
         const exp = this.newScenForm.get('regressionRegions.regressions.equation').value;
         const equ = document.getElementById('mathjaxEq');
         equ.style.visibility = 'hidden';
@@ -441,16 +476,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             });
     }
 
-    removeVariable(i) {
-        const control = <FormArray>this.newScenForm.get('regressionRegions.parameters');
-        control.removeAt(i);
-    }
-
-    removeError(i) {
-        const control = <FormArray>this.newScenForm.get('regressionRegions.regressions.errors');
-        control.removeAt(i);
-    }
-
     public clearScenario(){
         this.newScenForm.reset();
         this.selectedRegion = this.originalRegion;
@@ -468,6 +493,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         for(let i = parmControl.length-1; i >= 0; i--) {
             parmControl.removeAt(i);
         }
+        this.removeMatrix();
         this.addPredInt = false
     }
 
@@ -487,15 +513,31 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         this.scen['statisticGroupName'] = this.statisticGroups[statGroupIndex].name;
         this.scen['statisticGroupCode'] = this.statisticGroups[statGroupIndex].code;
 
+        //Add formatted matrix
+        if (this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').value.length > 0 ) {  //Check if matrix was entered 
+            const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
+            var matrix = [];
+            for(let i = 0; i <= matrixControl.length-1; i++) {
+                var matrixRow = "[" +  "\"" + matrixControl.controls[i].value.join("\",\"") + "\""  + "]";
+                matrix.push(matrixRow)
+            }
+            [regs.predictionInterval.covarianceMatrix].forEach(e => delete this.scen[e]);  //remove unformatted matrix
+            regs.predictionInterval.covarianceMatrix = "[" + matrix.join(",") + "]";   //add formated matrix
+        }else{
+            regs.predictionInterval.covarianceMatrix = null;
+        }
+
         // add regression region name/code
         const regRegIndex = this.regressionRegions.findIndex(item => item.id === regRegs.ID);
         regRegs['name'] = this.regressionRegions[regRegIndex].name;
         regRegs['code'] = this.regressionRegions[regRegIndex].code;
+
         // add regression code/name/description
         const regIndex = this.regressionTypes.findIndex(item => item.id === regs.ID);
         regs.code = this.regressionTypes[regIndex].code;
         regs.name = this.regressionTypes[regIndex].name;
         regs.description = this.regressionTypes[regIndex].description;
+
         // add parameter name, description, add values/check if between limits
         regs.expected.parameters = {};
         for (const parameter of regRegs.parameters) {

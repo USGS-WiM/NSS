@@ -168,10 +168,27 @@
 								<div class="form-group">
 									<label class="req" for="xiRowVector">XI Row Vector:</label><br/>
 									<label class="example-text">
-										Example: ["logN(DRNAREA,10)","logN((1+LAKEAREA),10)"]
-										<br> Note: A "1" is added as the first element during computation, please leave this out.
+										Note: A "1" is added as the first element during computation, please leave this out.
 									</label>
-									<input class="form-control" type="text" formControlName="xiRowVector">
+									<div class="form-inline" *ngIf="newScenForm.get('regressionRegions.regressions.predictionInterval.xiRowVector').controls.length==0">
+										<label class="req">&nbsp;Number of Rows:&nbsp;</label><br/>
+										<input type="number" [(ngModel)]="rows" [ngModelOptions]="{standalone: true}" style="width: 5em"/>&nbsp;
+										<button type="button" class="button small blue mright-sm" (click)="addRowVector()" [disabled]="!rows">
+											<i class="far fa-plus"></i>
+											<span>Create XI Row Vector</span>
+										</button>
+									</div>
+									<div formArrayName="xiRowVector">
+										<div *ngFor="let row of newScenForm.get('regressionRegions.regressions.predictionInterval.xiRowVector').controls" class="form-inline">
+											<input *ngFor="let col of row.controls"  style="width:10em" [formControl]='col' required>
+										</div>
+									</div>
+									<div *ngIf="newScenForm.get('regressionRegions.regressions.predictionInterval.xiRowVector').controls.length!=0"><br>
+										<button type="button" class="button small blue mright-sm" (click)="removeRowVector()">
+											<i class="far fa-minus"></i>
+											<span>Remove XI Row Vecor</span>
+										</button>
+									</div>								
 								</div>
 		
 								<!-- Covariance Matrix -->
@@ -187,7 +204,7 @@
 									</div>
 									<div formArrayName="covarianceMatrix">
 										<div *ngFor="let row of newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls" class="form-inline">
-											<input *ngFor="let col of row.controls" style="width:7em" type="number" [formControl]='col' required>
+											<input *ngFor="let col of row.controls" style="width:7em" [formControl]='col' required>
 										</div>
 									</div>
 									<div *ngIf="newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix').controls.length!=0"><br>

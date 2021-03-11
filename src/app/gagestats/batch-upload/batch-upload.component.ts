@@ -444,9 +444,9 @@ export class BatchUploadModal implements OnInit {
       });
       const arr1 = this.tableData[0].concat().sort();
       const arr2 = requiredChars.concat().sort();
-      let isNotMissing = (arr2.every(v => arr1.includes(v)));
-      if (!isNotMissing) {
-        this.errorList.push({'name':'missing required columns'}, {'Header': null}, {'type': null});
+      let missingColumns = (arr2.filter(x => !arr1.includes(x)));
+      if (missingColumns.length > 0) {
+        this.errorList.push({'name':'missing required columns ' + missingColumns}, {'Header': null}, {'type': null});
         this._toasterService.pop('error', 'Error', 'Missing required Columns' )
       }
     }

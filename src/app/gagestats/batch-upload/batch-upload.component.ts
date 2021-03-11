@@ -416,11 +416,11 @@ export class BatchUploadModal implements OnInit {
     });    
 
     if (this.uploadStations) { 
-      this.checkRequired(this.stationChars);
+      this.checkForRequiredColumns(this.stationChars);
     } if (this.uploadStats) { 
-      this.checkRequired(this.statChars);
+      this.checkForRequiredColumns(this.statChars);
     } if (this.uploadChars) {  
-      this.checkRequired(this.charChars);
+      this.checkForRequiredColumns(this.charChars);
     }                           
                                     
     if (this.errorList.length == 0) {
@@ -434,7 +434,7 @@ export class BatchUploadModal implements OnInit {
     console.log('errorlist: ', this.errorList);
   }
 
-  public checkRequired(charList) {
+  public checkForRequiredColumns(charList) {
     var requiredChars = [];
     if (this.fullHeaders == true) {
       charList.forEach(char => {

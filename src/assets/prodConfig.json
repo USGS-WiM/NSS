@@ -21,7 +21,7 @@
      "variablesURL": "Variables",
      "statusURL": "Status",
      "methodURL": "Methods",
-     "loginShow": true,
-     "showGageStats": true
+     "loginShow": false,
+     "showGageStats": false
  }
  

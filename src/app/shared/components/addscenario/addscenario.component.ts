@@ -65,6 +65,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public editMode: boolean;
     public defaultUnitTypes: any;
     public rowsAndColumns;
+    public rows;
     public get selectedStatisticGrp(): Array<Statisticgroup> {
         return this._nssService.selectedStatGroups;
     }
@@ -93,7 +94,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                         'biasCorrectionFactor': new FormControl(null),
                         'student_T_Statistic': new FormControl(null),
                         'variance': new FormControl(null),
-                        'xiRowVector': new FormControl(null),
+                        'xiRowVector': this._fb.array([]),
                         'covarianceMatrix':  this._fb.array([])
                     }),
                     'expected': this._fb.group({
@@ -323,13 +324,24 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
         if (this.cloneParameters.r.predictionInterval.xiRowVector != null) {
             this.addPredInt = true;
-            this.newScenForm.patchValue({ regressionRegions: { regressions : { predictionInterval: { xiRowVector: this.cloneParameters.r.predictionInterval.xiRowVector.toString()}}}});
+            this.rows = ((this.cloneParameters.r.predictionInterval.xiRowVector).match(/["]/g).length) / 2;
+            this.addRowVector();
+            var numbers = this.cloneParameters.r.predictionInterval.xiRowVector.match(/"(.*?)"/g);
+            for (var i in numbers) {
+                numbers[i] = numbers[i].split('"').join('');
+            }
+            // Filling vector
+            const vectorControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.xiRowVector');
+            vectorControl.controls[0].setValue(numbers);
         }
         if (this.cloneParameters.r.predictionInterval.covarianceMatrix != null && this.cloneParameters.r.predictionInterval.covarianceMatrix != "null") {
             this.addPredInt = true;
             this.rowsAndColumns = ((this.cloneParameters.r.predictionInterval.covarianceMatrix).match(/[[]/g).length) - 1;
             this.addMatrix();
-            var numbers = this.cloneParameters.r.predictionInterval.covarianceMatrix.match(/[\d.]+/g);
+            var numbers = this.cloneParameters.r.predictionInterval.covarianceMatrix.match(/"(.*?)"/g);
+            for (var i in numbers) {
+                numbers[i] = numbers[i].split('"').join('');
+            }
             // Filling matrix
             const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.covarianceMatrix');
             for (let i=0, j=numbers.length, x=0; i<j; i+=this.rowsAndColumns,x++) {
@@ -449,6 +461,20 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         }
     }
 
+    public addRowVector() {
+        const vectorControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.xiRowVector');
+        vectorControl.push(new FormArray([]));
+        for (let j = 0; j < this.rows; j++) {
+            (vectorControl.at(0) as FormArray).push(new FormControl());
+        }
+    }
+
+    public removeRowVector() {
+        this.rows = null;
+        const vectorControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.xiRowVector');
+        vectorControl.removeAt(0);
+    }
+
     public showMathjax() {
         const exp = this.newScenForm.get('regressionRegions.regressions.equation').value;
         const equ = document.getElementById('mathjaxEq');
@@ -494,7 +520,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             parmControl.removeAt(i);
         }
         this.removeMatrix();
-        this.addPredInt = false
+        this.removeRowVector();
+        this.addPredInt = false;
     }
 
     public onStatGroupSelect(e){
@@ -525,6 +552,14 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             regs.predictionInterval.covarianceMatrix = "[" + matrix.join(",") + "]";   //add formated matrix
         }else{
             regs.predictionInterval.covarianceMatrix = null;
+        }
+
+        //Add formatted xiRowVector
+        if (this.newScenForm.get('regressionRegions.regressions.predictionInterval.xiRowVector').value.length > 0 ) {  //Check if matrix was entered 
+            const matrixControl = <FormArray>this.newScenForm.get('regressionRegions.regressions.predictionInterval.xiRowVector');
+            regs.predictionInterval.xiRowVector = (JSON.stringify(matrixControl.value)).substring(1, (JSON.stringify(matrixControl.value)).length-1);
+        } else {
+            regs.predictionInterval.xiRowVector = null;
         }
 
         // add regression region name/code

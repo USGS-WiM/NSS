@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  configFile: 'assets/config.json',
+  configFile: 'assets/prodConfig.json',
   version: require('../../package.json').version
 };

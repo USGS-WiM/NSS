@@ -36,9 +36,17 @@ Clone the repo and navigate to folder.
 
 ## Building and testing
 
+To compile the project for a production environment run:
 ```
 ng build --prod --base-href
 ```
+
+To compile the project for a non-production environment run:
+```
+ng build --base-href
+```
+
+The `--prod` tag will use the production configuration and point to the production services.
 
 ## Deployment
 

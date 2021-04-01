@@ -18,12 +18,12 @@ import { Station } from 'app/shared/interfaces/station';
 import { HttpParams } from '@angular/common/http';
 
 @Component({
-  selector: 'batchUploadModal',
+  selector: 'batchUploadModalGS',
   templateUrl: './batch-upload.component.html',
   styleUrls: ['./batch-upload.component.scss']
 })
-export class BatchUploadModal implements OnInit {
-  @ViewChild('batchUpload', {static: true}) public batchUploadModal;
+export class BatchUploadComponentGS implements OnInit {
+  @ViewChild('batchUpload', {static: true}) public batchUploadModalGS;
   private configSettings: Config;
   private modalElement: any;
   public modalSubscription: any;
@@ -95,10 +95,10 @@ export class BatchUploadModal implements OnInit {
   }
 
   ngOnInit() {
-    this.modalSubscription = this._nssService.showBatchUploadModal.subscribe((show: boolean) => {
+    this.modalSubscription = this._nssService.showBatchUploadModalGS.subscribe((show: boolean) => {
       if (show) { this.showModal(); }
     });
-    this.modalElement = this.batchUploadModal;
+    this.modalElement = this.batchUploadModalGS;
     // subscribe to all agencies, station types, regions, stat groups, regression types, variable types, units, selected citation...
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL).subscribe((agencies: Array<Agency>) => {
       this.agencies = agencies;

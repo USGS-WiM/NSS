@@ -98,17 +98,23 @@ export class NSSService {
         this._showHideEditScenarioModal.next(val);
     }
 
-     // -+-+-+-+-+-+-+-+-+ Add Station modal (gagestats) -+-+-+-+-+-+-+-+
-     private _showHideAddStationModal: Subject<boolean> = new Subject<boolean>();
-     public setAddStationModal(val: any) { 
-         this._showHideAddStationModal.next(val);
-     }
+    // -+-+-+-+-+-+-+-+-+ Add Station modal (gagestats) -+-+-+-+-+-+-+-+
+    private _showHideAddStationModal: Subject<boolean> = new Subject<boolean>();
+    public setAddStationModal(val: any) { 
+        this._showHideAddStationModal.next(val);
+    }
     
-     // -+-+-+-+-+-+-+-+-+ Batch Upload modal -+-+-+-+-+-+-+-+
-     private _showHideBatchUploadModal: Subject<boolean> = new Subject<boolean>();
-     public setBatchUploadModal(val: any) { 
-         this._showHideBatchUploadModal.next(val);
-     }
+    // -+-+-+-+-+-+-+-+-+ Batch Upload modal (gagestates) -+-+-+-+-+-+-+-+
+    private _showHideBatchUploadModalGS: Subject<boolean> = new Subject<boolean>();
+    public setBatchUploadModalGS(val: any) { 
+        this._showHideBatchUploadModalGS.next(val);
+    }
+
+    // -+-+-+-+-+-+-+-+-+ Batch Upload modal (NSS) -+-+-+-+-+-+-+-+
+    private _showHideBatchUploadModalNSS: Subject<boolean> = new Subject<boolean>();
+    public setBatchUploadModalNSS(val: any) { 
+        this._showHideBatchUploadModalNSS.next(val);
+    }
 
     private itemSource = new BehaviorSubject<any>(' ');
     currentItem = this.itemSource.asObservable();
@@ -138,8 +144,12 @@ export class NSSService {
         return this._showHideAddStationModal.asObservable();
     }
     // show the add station modal in the gagestats page
-    public get showBatchUploadModal(): any {
-        return this._showHideBatchUploadModal.asObservable();
+    public get showBatchUploadModalGS(): any {
+        return this._showHideBatchUploadModalGS.asObservable();
+    }
+    // show the add station modal in the mainview
+    public get showBatchUploadModalNSS(): any {
+        return this._showHideBatchUploadModalNSS.asObservable();
     }
 
     // -+-+-+-+-+-+-+-+-+ manage citations modal -+-+-+-+-+-+-+-+

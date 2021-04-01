@@ -1702,6 +1702,11 @@ export class MainviewComponent implements OnInit {
             );
     }
 
+    // Bulk Upload Button
+    public openBatchUpload(): void{
+        this._nssService.setBatchUploadModalNSS(true);
+    }
+
     private getDismissReason(reason: any): string {
         if (reason === ModalDismissReasons.ESC) {
             return 'by pressing ESC';

@@ -56,7 +56,8 @@ import { GagestatsService } from './gagestats/gagestats.service';
 import { AddStationModal } from './gagestats/add-station/add-station.component';
 import { GagepageComponent } from './gagestats/gagepage/gagepage.component';
 import { MethodsComponent } from './settings/categories/methods/methods.component';
-import { BatchUploadModal } from './gagestats/batch-upload/batch-upload.component';
+import { BatchUploadComponentGS } from './gagestats/batch-upload/batch-upload.component';
+import { BatchuploadComponentNSS } from './shared/components/batchupload/batchupload.component';
 
 
 declare const require: any;
@@ -105,7 +106,7 @@ export function highchartsFactory() {
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
     ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, 
     LoaderComponent, GagestatsComponent, GsSidebarComponent, AgenciesComponent, StationTypesComponent, AddStationModal, GagepageComponent, 
-    MethodsComponent, BatchUploadModal
+    MethodsComponent, BatchUploadComponentGS, BatchuploadComponentNSS
   ],
   imports: [
     NgSelectModule, BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,

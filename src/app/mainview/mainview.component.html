@@ -9,7 +9,9 @@
 	<h6>{{timestamp | date:"MMMM d, y hh:mma"}}</h6>
 
 	<span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span>
-
+	<div *ngIf="loggedInRole" class="hidden-print">
+		<button  type="button" class="button small mright-xs" (click)="openBatchUpload()">Bulk Upload</button>
+	</div>
 
 	<!-- Region -->
 	<div *ngIf="showRegion" class="app-body-section" id="regionSection">

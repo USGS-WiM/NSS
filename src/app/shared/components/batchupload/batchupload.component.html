@@ -2,7 +2,29 @@
     <div>
         <div class="modal-header">
             <ng-container><div class="title"> Batch Upload </div></ng-container>
-            <button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>
+            <button class="icon-button" (click)="d('closed'); selectUpload = false; clearTable()"><i class="far fa-times"></i></button>
+        </div>
+        <div class="modal-body batch-scrollbars">
+            <div class="upload-type" *ngIf='!selectUpload'>    
+                <button type="button" class="button blue" (click)='selectUpload = true;'>Upload Equations</button>
+            </div>
+            
+            <div *ngIf="!selectUpload" class="upload-type">
+                <h6>For an example template download the file <a href="./assets/example_nss_bulk_upload.xlsx">here</a>.</h6>
+            </div>
+            <!-- Back button -->
+			<button *ngIf='selectUpload' type="button" class="button green" (click)='selectUpload = false; clearTable()'>Back</button>
+			<!-- File selector -->
+			<div class="upload-input">
+                <input *ngIf='selectUpload' (change)="selectFile($event)" accept=".xls,.xlsx" type='file' multiple='false'/>
+            </div>
+            <!-- Select worksheet -->
+            <div *ngIf="sheetNamesButtons">
+                <h6 class="title">Select a Worksheet:</h6>
+                <ng-container *ngFor="let sheetName of wb.SheetNames">
+                        <button class="button grey mright-sm mtop-xs" (click)='selectSheet(sheetName)'>{{sheetName}}</button>
+                </ng-container>
+			</div>
         </div>
     </div>
     <div class="modal-body-footer">

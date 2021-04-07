@@ -169,7 +169,6 @@ export class BatchUploadComponentGS implements OnInit {
     this.createTable(this.data);
     this.tableDisplay = true;
     this.sheetNamesButtons = false;
-    
   }
 
   //////////////// Create/Edit Table Section ///////////////////

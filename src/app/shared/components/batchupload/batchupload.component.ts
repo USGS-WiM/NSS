@@ -4,14 +4,23 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 import * as XLSX from 'xlsx';
 
+export interface Equations {
+  state: string;
+  statGroup: string;
+  region: string;
+  equation: string;
+}
+
 @Component({
   selector: 'batchUploadModalNSS',
   templateUrl: './batchupload.component.html',
   styleUrls: ['./batchupload.component.scss']
 })
+
 export class BatchuploadComponentNSS implements OnInit {
   @ViewChild('batchUploadNSS', {static: true}) public batchUploadModalNSS;
 
+  
   public modalSubscription: any;
   public modalRef;
   private modalElement: any;
@@ -19,6 +28,10 @@ export class BatchuploadComponentNSS implements OnInit {
   public sheetNamesButtons: boolean;
   public wb: XLSX.WorkBook
   public data: [][];
+  public tableData;
+  public states = [];
+  public tableDisplay: boolean = false;
+  public equationData: Equations[] = [];
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, private _toasterService: ToasterService) { }
 
@@ -36,6 +49,9 @@ export class BatchuploadComponentNSS implements OnInit {
 
   public clearTable() {
     this.sheetNamesButtons = false;
+    this.tableDisplay = false; 
+    delete(this.data);
+    delete(this.tableData);
   }
 
   public selectFile(event: any) {
@@ -67,9 +83,44 @@ export class BatchuploadComponentNSS implements OnInit {
   public selectSheet(sheetName) {
     const ws: XLSX.WorkSheet = this.wb.Sheets[sheetName];
     this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));        // Convert data to json
-    console.log(this.data)
+    this.createTable(this.data);
+    this.tableDisplay = true;
     this.sheetNamesButtons = false;
   }
 
-  
+  public createTable(data) {
+    this.tableData = JSON.parse(JSON.stringify(data));
+    console.log(this.tableData)
+    console.log(data)
+    var state;
+    var statGroup;
+    var region 
+    var equation;
+    var counter=0;
+    for (var i = 2; i < data.length; i++) { 
+      if (data[i][0]) {
+        state = data[i][0]
+      } if (data[i][2]) {
+        statGroup = data[i][2]
+      } if (data[i][5]) {
+        region = data[i][5]
+      }
+      if (data[i][24]) {
+        equation = data[i][24]
+        this.equationData[counter] = {
+          state: state,
+          statGroup: statGroup,
+          region: region,
+          equation: equation
+        }
+        counter++
+      }
+
+    }
+    console.log(this.equationData)
+  }
+
+  public submitRecords(){
+    console.log('Submit')
+  }
 }

@@ -16,7 +16,7 @@
 			<button *ngIf='selectUpload' type="button" class="button green" (click)='selectUpload = false; clearTable()'>Back</button>
 			<!-- File selector -->
 			<div class="upload-input">
-                <input *ngIf='selectUpload' (change)="selectFile($event)" accept=".xls,.xlsx" type='file' multiple='false'/>
+                <input *ngIf='selectUpload && !tableDisplay' (change)="selectFile($event)" accept=".xls,.xlsx" type='file' multiple='false'/>
             </div>
             <!-- Select worksheet -->
             <div *ngIf="sheetNamesButtons">
@@ -25,8 +25,17 @@
                         <button class="button grey mright-sm mtop-xs" (click)='selectSheet(sheetName)'>{{sheetName}}</button>
                 </ng-container>
 			</div>
+
+
+            <div *ngIf="tableDisplay">
+                <div class="table-title" *ngFor="let s of states">{{s}}</div>
+            </div>
+
+
         </div>
     </div>
     <div class="modal-body-footer">
+        <button type="button" *ngIf="tableDisplay" (click)="submitRecords()" class="button blue">Create</button>
+
     </div>
 </ng-template>

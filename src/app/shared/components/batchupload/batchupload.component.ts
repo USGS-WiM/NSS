@@ -4,11 +4,27 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 import * as XLSX from 'xlsx';
 
-export interface Equations {
-  state: string;
-  statGroup: string;
+export interface equation {
   region: string;
-  equation: string;
+  statisticGroup: string;
+  regressionRegions: Array<{
+    ID: string;
+    parameters: [];
+    regressions: Array<{
+      ID: string;
+      errors: [];
+      unit: string;
+      equation: string;
+      equivalentYears: number;
+      predictionInterval: Array<{
+        biasCorrectionFactor: string;
+        student_T_Statistic: string;
+        variance: string;
+        xiRowVector: string;
+        covarianceMatrix: number;
+      }>
+    }>
+  }>
 }
 
 @Component({
@@ -31,7 +47,7 @@ export class BatchuploadComponentNSS implements OnInit {
   public tableData;
   public states = [];
   public tableDisplay: boolean = false;
-  public equationData: Equations[] = [];
+  public equationData: equation[] = [];
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, private _toasterService: ToasterService) { }
 
@@ -96,7 +112,8 @@ export class BatchuploadComponentNSS implements OnInit {
     var statGroup;
     var region 
     var equation;
-    var counter=0;
+    var xiRowVector;
+    var counter = 0;
     for (var i = 2; i < data.length; i++) { 
       if (data[i][0]) {
         state = data[i][0]
@@ -105,14 +122,27 @@ export class BatchuploadComponentNSS implements OnInit {
       } if (data[i][5]) {
         region = data[i][5]
       }
+      if (data[i][25]) {
+        xiRowVector = data[i][25];
+      }
       if (data[i][24]) {
         equation = data[i][24]
         this.equationData[counter] = {
-          state: state,
-          statGroup: statGroup,
-          region: region,
-          equation: equation
-        }
+          region: state,
+          statisticGroup: statGroup,
+          regressionRegions: [{
+            ID: region,
+            parameters: null,
+            regressions: [{
+              ID: null,
+              errors: null,
+              unit: null,
+              equation: null,
+              equivalentYears: null,
+              predictionInterval: null
+            }]
+          }]
+         }
         counter++
       }
 

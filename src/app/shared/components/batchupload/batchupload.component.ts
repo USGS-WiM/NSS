@@ -9,7 +9,7 @@ export interface equation {
   statisticGroup: string;
   regressionRegions: Array<{
     ID: string;
-    parameters: [];
+    parameters: explanatoryVaraibles[];
     regressions: Array<{
       ID: string;
       errors: [];
@@ -25,6 +25,15 @@ export interface equation {
       }>
     }>
   }>
+}
+
+export interface explanatoryVaraibles{
+  code: string;
+  limits: ({
+      max: number,
+      min: number,
+  }),
+  unitType: string;
 }
 
 @Component({
@@ -48,7 +57,7 @@ export class BatchuploadComponentNSS implements OnInit {
   public states = [];
   public tableDisplay: boolean = false;
   public equationData: equation[] = [];
-
+  public oldParamters=[];
   constructor(private _nssService: NSSService, private _modalService: NgbModal, private _toasterService: ToasterService) { }
 
   ngOnInit() {
@@ -105,47 +114,84 @@ export class BatchuploadComponentNSS implements OnInit {
   }
 
   public createTable(data) {
-    this.tableData = JSON.parse(JSON.stringify(data));
-    console.log(this.tableData)
-    console.log(data)
-    var state;
-    var statGroup;
-    var region 
+    var studyArea;
+    var statisticGroup;
+    var regressionRegion 
+    var regressionVariable;
     var equation;
-    var xiRowVector;
+    var unitType;
+    var explanatoryVaraiblesArray: explanatoryVaraibles[] = [];
+    var tempExplanatoryVaraiblesArray: explanatoryVaraibles[] = [];
+    var explanatoryVaraibles: explanatoryVaraibles = {  
+      code: null,
+      limits: ({
+          max: null,
+          min: null,
+      }),
+      unitType: null
+    };
+
+    var numOfEquationsTotal = 0;
+    for (var i = 2; i < data.length; i++) { 
+      if (data[i][25]) {
+        numOfEquationsTotal++;
+      }
+    }
+ 
+
     var counter = 0;
     for (var i = 2; i < data.length; i++) { 
       if (data[i][0]) {
-        state = data[i][0]
+        studyArea = (data[i][0])
       } if (data[i][2]) {
-        statGroup = data[i][2]
+        statisticGroup= (data[i][2])
       } if (data[i][5]) {
-        region = data[i][5]
+        regressionRegion=(data[i][5])
       }
+      if (data[i][15]) {
+        regressionVariable=(data[i][15])
+      }
+      if (data[i][16]) {
+        unitType=(data[i][16])
+      }
+
+      if (data[i][11]) {
+        explanatoryVaraibles.code = (data[i][11]);
+        explanatoryVaraibles.limits.min = (data[i][12]);
+        explanatoryVaraibles.limits.max = (data[i][13]);
+        explanatoryVaraibles.unitType  = (data[i][14]);
+        explanatoryVaraiblesArray.push(JSON.parse(JSON.stringify(explanatoryVaraibles)));
+        tempExplanatoryVaraiblesArray = explanatoryVaraiblesArray;
+      }
+
       if (data[i][25]) {
-        xiRowVector = data[i][25];
-      }
-      if (data[i][24]) {
-        equation = data[i][24]
+        equation = data[i][25];
+
+        if(explanatoryVaraiblesArray=[]){
+          explanatoryVaraiblesArray = tempExplanatoryVaraiblesArray
+        }else{
+          tempExplanatoryVaraiblesArray = [];
+        }
+
         this.equationData[counter] = {
-          region: state,
-          statisticGroup: statGroup,
+          region: studyArea,
+          statisticGroup: statisticGroup,
           regressionRegions: [{
-            ID: region,
-            parameters: null,
+            ID: regressionRegion,
+            parameters: explanatoryVaraiblesArray,
             regressions: [{
-              ID: null,
+              ID: regressionVariable,
               errors: null,
-              unit: null,
-              equation: null,
+              unit: unitType,
+              equation: equation,
               equivalentYears: null,
               predictionInterval: null
             }]
           }]
          }
-        counter++
+        counter++;
+        explanatoryVaraiblesArray=[];
       }
-
     }
     console.log(this.equationData)
   }

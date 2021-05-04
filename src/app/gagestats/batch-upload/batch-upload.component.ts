@@ -47,15 +47,16 @@ export class BatchUploadModal implements OnInit {
                           {'id': 'name', 'name': 'Name', 'disabled': false, 'type': null, 'required': true}, 
                           {'id': 'stationTypeID', 'name': 'Station Type', 'disabled': false, 'type': 'stationTypes', 'required': true},
                           {'id': 'latitude', 'name': 'Latitude', 'disabled': false, 'type': null, 'required': true}, 
-                          {'id': 'longitude', 'name': 'Longitude', 'disabled': false, 'type': null, 'required': true}, 
+                          {'id': 'longitude', 'name': 'Longitude', 'disabled': false, 'type': null, 'required': true},
+                          {'id': 'locationSource', 'name': 'Location Source', 'disabled': false, 'type': null, 'required': false},
                           {'id': 'isRegulated', 'name': 'Regulated?', 'disabled': false, 'type': null, 'required': true},
-                          {'id': 'regionID', 'name': 'Region', 'disabled': false, 'type': 'regions', 'required': true}];
+                          {'id': 'regionID', 'name': 'Study Area', 'disabled': false, 'type': 'regions', 'required': true}];
 
   public statChars = [  {'id': 'code', 'name': 'Station Code', 'disabled': false, 'type': null, 'required': true},
-                        {'id': 'regressionTypeID', 'name': 'Regression Type', 'disabled': false, 'type': 'regressionTypes', 'required': true},
+                        {'id': 'regressionTypeID', 'name': 'Statistic Type', 'disabled': false, 'type': 'regressionTypes', 'required': true},
                         {'id': 'value', 'name': 'Value', 'disabled': false, 'type': null, 'required': true},
-                        {'id': 'unitTypeID', 'name': 'Units', 'disabled': false, 'type': 'unitTypes', 'required': true},
-                        {'id': 'statisticGroupTypeID', 'name': 'Stat Group Type', 'disabled': false, 'type': 'statisticGroupTypes', 'required': true},
+                        {'id': 'unitTypeID', 'name': 'Unit', 'disabled': false, 'type': 'unitTypes', 'required': true},
+                        {'id': 'statisticGroupTypeID', 'name': 'Statistic Group Type', 'disabled': false, 'type': 'statisticGroupTypes', 'required': true},
                         {'id': 'isPreferred', 'name': 'Preferred?', 'disabled': false, 'type': null, 'required': true},
                         {'id': 'yearsofRecord', 'name': 'Years of Record', 'disabled': false, 'type': null, 'required': false},
                         {'id': 'startDate', 'name': 'Start Date', 'disabled': false, 'type': null, 'required': false},
@@ -72,7 +73,7 @@ export class BatchUploadModal implements OnInit {
   public charChars = [  {'id': "code", 'name': "Station Code", 'disabled': false, 'type': null, 'required': true},
                         {'id': "variableTypeID", 'name': "Variable Type", 'disabled': false, 'type': 'variableTypes', 'required': true},                        
                         {'id': "value", 'name': "Value", 'disabled': false, 'type': null, 'required': true},
-                        {'id': "unitTypeID", 'name': "Units", 'disabled': false, 'type': 'unitTypes', 'required': true},
+                        {'id': "unitTypeID", 'name': "Unit", 'disabled': false, 'type': 'unitTypes', 'required': true},
                         {'id': "comments", 'name': "Comments", 'disabled': false, 'type': null, 'required': false} ];
   public headers;
   public fullHeaders = true;
@@ -190,7 +191,7 @@ export class BatchUploadModal implements OnInit {
     this.headers = JSON.parse(JSON.stringify(data[0]));  // copy the first row of the excel sheet as a list of headers
     this.tableData = JSON.parse(JSON.stringify(data));   // copy the data from the excel sheet to display and change
     for (var i = 0; i < this.tableData[0].length; i++) { // loop thru first row
-      var val = this.dropdownOptions.find(d => d.id.toLowerCase() === this.tableData[0][i].toLowerCase());
+      var val = this.dropdownOptions.find(d => d.id.toLowerCase() === this.tableData[0][i].toLowerCase() || d.name.toLowerCase() === this.tableData[0][i].toLowerCase());
       if (val != undefined) {                              // If this tableData value is the same as the dropdownOption
         this.tableData[0][i] = val.id;                     // set the dropdown menu to this value
       }

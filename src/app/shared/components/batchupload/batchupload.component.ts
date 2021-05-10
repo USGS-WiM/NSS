@@ -3,17 +3,26 @@ import { NSSService } from 'app/shared/services/app.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 import * as XLSX from 'xlsx';
+import { SettingsService } from 'app/settings/settings.service';
+import { Config } from 'app/shared/interfaces/config';
+import { ConfigService } from 'app/config.service';
+import { Region } from 'app/shared/interfaces/region';
 
 export interface equation {
-  region: string;
-  statisticGroup: string;
+  region: {
+    name: string
+  };
+  statisticGroupID: string;
+  statisticGroupName: string;
   regressionRegions: Array<{
     ID: string;
+    code: string;
     parameters: explanatoryVaraibles[];
     regressions: Array<{
-      ID: string;
+      ID: string;    
+      code: string;  
       errors: [];
-      unit: string;
+      unit: { id: number };
       equation: string;
       equivalentYears: number;
       predictionInterval: Array<{
@@ -22,7 +31,11 @@ export interface equation {
         variance: string;
         xiRowVector: string;
         covarianceMatrix: number;
-      }>
+      }>,
+      expected: {
+          parameters: {},
+          intervalBounds: null;
+      }
     }>
   }>
 }
@@ -33,7 +46,7 @@ export interface explanatoryVaraibles{
       max: number,
       min: number,
   }),
-  unitType: string;
+  unitType: { id: number };  
 }
 
 @Component({
@@ -45,7 +58,7 @@ export interface explanatoryVaraibles{
 export class BatchuploadComponentNSS implements OnInit {
   @ViewChild('batchUploadNSS', {static: true}) public batchUploadModalNSS;
 
-  
+  private configSettings: Config;
   public modalSubscription: any;
   public modalRef;
   private modalElement: any;
@@ -57,15 +70,33 @@ export class BatchuploadComponentNSS implements OnInit {
   public states = [];
   public tableDisplay: boolean = false;
   public equationData: equation[] = [];
-  public oldParamters=[];
-  constructor(private _nssService: NSSService, private _modalService: NgbModal, private _toasterService: ToasterService) { }
+  public oldParamters = [];
+  public statisticGroups;
+  public regressionRegions;
+  public regions;
+  
+  constructor(private _nssService: NSSService, 
+    private _modalService: NgbModal, 
+    private _toasterService: ToasterService, 
+    private _configService: ConfigService,
+    public _settingsservice: SettingsService
+    ) {     this.configSettings = this._configService.getConfiguration();
+    }
 
   ngOnInit() {
     this.modalSubscription = this._nssService.showBatchUploadModalNSS.subscribe((show: boolean) => {
       if (show) { this.showModal(); }
     });
     this.modalElement = this.batchUploadModalNSS;
-
+    // Get all statistic groups 
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
+      this.statisticGroups = res;
+    });
+    // Get all regions
+    this._nssService.regions.subscribe((regions: Array<Region>) => {
+      this.regions = regions;
+      console.log(regions)
+    });
   }
 
   public showModal(): void {
@@ -173,19 +204,29 @@ export class BatchuploadComponentNSS implements OnInit {
           tempExplanatoryVaraiblesArray = [];
         }
 
+        this.getRegressionRegions(studyArea);
+
         this.equationData[counter] = {
-          region: studyArea,
-          statisticGroup: statisticGroup,
+          region: {
+            name: studyArea
+          },
+          statisticGroupID: this.getStatGroupID(statisticGroup),
+          statisticGroupName:this.getStatGroupName(statisticGroup),
           regressionRegions: [{
-            ID: regressionRegion,
+            ID: this.getRegRegionID(regressionRegion),
+            code: this.getRegRegionCode(regressionRegion),
             parameters: explanatoryVaraiblesArray,
             regressions: [{
               ID: regressionVariable,
-              errors: null,
-              unit: unitType,
+              code: null,
+              errors: [],
+              unit: {
+                id:unitType
+              },
               equation: equation,
               equivalentYears: null,
-              predictionInterval: null
+              predictionInterval: null,
+              expected:null
             }]
           }]
          }
@@ -196,6 +237,28 @@ export class BatchuploadComponentNSS implements OnInit {
     console.log(this.equationData)
   }
 
+  public getStatGroupID(statisticGroup) {
+    return this.statisticGroups.find(sg => sg.code == statisticGroup).id;
+  }
+  public getStatGroupName(statisticGroup) {
+    return this.statisticGroups.find(sg => sg.code == statisticGroup).name;
+  }
+  public getRegressionRegions(region){
+    const regionID = this.regions.find(r => r.name == region).id;
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions='+regionID).subscribe(res => {
+      this.regressionRegions = res;
+      console.log(this.regressionRegions)
+    });
+  }
+  public getRegRegionID(regressionRegion) {
+    console.log(this.regressionRegions)
+    console.log(regressionRegion)
+    return this.regressionRegions.find(rr => rr.name == regressionRegion).id;
+  }
+  public getRegRegionCode(regressionRegion) {
+    console.log(this.regressionRegions)
+    return this.regressionRegions.find(rr => rr.name == regressionRegion).code;
+  }
   public submitRecords(){
     console.log('Submit')
   }

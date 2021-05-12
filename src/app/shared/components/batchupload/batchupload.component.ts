@@ -7,20 +7,25 @@ import { SettingsService } from 'app/settings/settings.service';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { Region } from 'app/shared/interfaces/region';
+import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
+import { Unittype } from 'app/shared/interfaces/unitType';
+import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 
 export interface equation {
   region: {
     name: string
   };
-  statisticGroupID: string;
+  statisticGroupID: number;
   statisticGroupName: string;
   regressionRegions: Array<{
-    ID: string;
+    ID: number;
     code: string;
+    name: string;
     parameters: explanatoryVaraibles[];
     regressions: Array<{
-      ID: string;    
+      ID: number;    
       code: string;  
+      name: string;
       errors: [];
       unit: { id: number };
       equation: string;
@@ -66,14 +71,17 @@ export class BatchuploadComponentNSS implements OnInit {
   public sheetNamesButtons: boolean;
   public wb: XLSX.WorkBook
   public data: [][];
-  public tableData;
-  public states = [];
   public tableDisplay: boolean = false;
   public equationData: equation[] = [];
-  public oldParamters = [];
-  public statisticGroups;
-  public regressionRegions;
-  public regions;
+
+  public regions: Array<Region>;
+  public statisticGroupTypes: Array<Statisticgroup>;
+  public regressionTypes: Array<Regressiontype>;
+  public unitTypes: Array<Unittype>;
+
+  public regRegionCode: any;
+  public regRegionID: any;
+
   
   constructor(private _nssService: NSSService, 
     private _modalService: NgbModal, 
@@ -88,14 +96,22 @@ export class BatchuploadComponentNSS implements OnInit {
       if (show) { this.showModal(); }
     });
     this.modalElement = this.batchUploadModalNSS;
+
     // Get all statistic groups 
-    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
-      this.statisticGroups = res;
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe((statgroups: Array<Statisticgroup>) => {
+      this.statisticGroupTypes = statgroups;
     });
     // Get all regions
-    this._nssService.regions.subscribe((regions: Array<Region>) => {
+     this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
       this.regions = regions;
-      console.log(regions)
+    });
+    // Get all unit types
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe((unitTypes: Array<Unittype>) => {
+      this.unitTypes = unitTypes;
+    });
+    // Get all regression types (variables)
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe((regtypes: Array<Regressiontype>)  => {
+      this.regressionTypes = regtypes;
     });
   }
 
@@ -107,7 +123,6 @@ export class BatchuploadComponentNSS implements OnInit {
     this.sheetNamesButtons = false;
     this.tableDisplay = false; 
     delete(this.data);
-    delete(this.tableData);
   }
 
   public selectFile(event: any) {
@@ -145,6 +160,7 @@ export class BatchuploadComponentNSS implements OnInit {
   }
 
   public createTable(data) {
+    var counter = 0;
     var studyArea;
     var statisticGroup;
     var regressionRegion 
@@ -159,69 +175,63 @@ export class BatchuploadComponentNSS implements OnInit {
           max: null,
           min: null,
       }),
-      unitType: null
+      unitType: { 
+        id: null 
+      }
     };
 
-    var numOfEquationsTotal = 0;
-    for (var i = 2; i < data.length; i++) { 
-      if (data[i][25]) {
-        numOfEquationsTotal++;
-      }
-    }
- 
-
-    var counter = 0;
+    // Loop through spreadsheet
     for (var i = 2; i < data.length; i++) { 
       if (data[i][0]) {
-        studyArea = (data[i][0])
+        studyArea = (data[i][0]);
       } if (data[i][2]) {
-        statisticGroup= (data[i][2])
+        statisticGroup = (data[i][2]);
       } if (data[i][5]) {
-        regressionRegion=(data[i][5])
+        regressionRegion = (data[i][5]);
+        //this.getRegressionRegionInfo(studyArea, regressionRegion);
       }
       if (data[i][15]) {
-        regressionVariable=(data[i][15])
+        regressionVariable = (data[i][15]);
       }
       if (data[i][16]) {
-        unitType=(data[i][16])
+        unitType = (data[i][16]);
       }
-
       if (data[i][11]) {
-        explanatoryVaraibles.code = (data[i][11]);
-        explanatoryVaraibles.limits.min = (data[i][12]);
-        explanatoryVaraibles.limits.max = (data[i][13]);
-        explanatoryVaraibles.unitType  = (data[i][14]);
+        explanatoryVaraibles.code = data[i][11];
+        explanatoryVaraibles.limits.min = data[i][12];
+        explanatoryVaraibles.limits.max = data[i][13];
+        explanatoryVaraibles.unitType.id  = this.unitTypes.find(ut => ut.abbreviation == (data[i][14])).id;
         explanatoryVaraiblesArray.push(JSON.parse(JSON.stringify(explanatoryVaraibles)));
         tempExplanatoryVaraiblesArray = explanatoryVaraiblesArray;
       }
-
+      // equations
       if (data[i][25]) {
         equation = data[i][25];
-
-        if(explanatoryVaraiblesArray=[]){
+        //clear out explanatoryVaraiblesArray
+        if (explanatoryVaraiblesArray = []) {
           explanatoryVaraiblesArray = tempExplanatoryVaraiblesArray
         }else{
           tempExplanatoryVaraiblesArray = [];
         }
-
-        this.getRegressionRegions(studyArea);
-
+        // Fill array will data from spreadsheet
         this.equationData[counter] = {
           region: {
             name: studyArea
           },
-          statisticGroupID: this.getStatGroupID(statisticGroup),
-          statisticGroupName:this.getStatGroupName(statisticGroup),
+          statisticGroupID: this.statisticGroupTypes.find(sg => sg.code == statisticGroup).id,
+          statisticGroupName: this.statisticGroupTypes.find(sg => sg.code == statisticGroup).name,
           regressionRegions: [{
-            ID: this.getRegRegionID(regressionRegion),
-            code: this.getRegRegionCode(regressionRegion),
+            ID: 999,
+            code: 'working on it',
+            name: regressionRegion,
             parameters: explanatoryVaraiblesArray,
             regressions: [{
-              ID: regressionVariable,
-              code: null,
+              ID: this.regressionTypes.find(vt => vt.code == regressionVariable).id,
+              code: regressionVariable,
+              name: this.regressionTypes.find(vt => vt.code == regressionVariable).name,
               errors: [],
               unit: {
-                id:unitType
+                id: this.unitTypes.find(ut => ut.abbreviation == unitType).id
               },
               equation: equation,
               equivalentYears: null,
@@ -231,34 +241,26 @@ export class BatchuploadComponentNSS implements OnInit {
           }]
          }
         counter++;
-        explanatoryVaraiblesArray=[];
+        explanatoryVaraiblesArray = [];
       }
     }
     console.log(this.equationData)
   }
 
-  public getStatGroupID(statisticGroup) {
-    return this.statisticGroups.find(sg => sg.code == statisticGroup).id;
+  // public getRegressionRegionInfo(region, regressionRegionName) {
+  //   const regionID = this.regions.find(r => r.name == region).id;
+  //   this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions=' + regionID).subscribe(res => {
+  //     this.regressionRegions = res;
+  //     this.regRegionCode = this.regressionRegions.find(rr => rr.name == regressionRegionName).code;
+  //     this.regRegionID = this.regressionRegions.find(rr => rr.name == regressionRegionName).id;
+  //     console.log(this.regRegionCode, this.regRegionID)
+  //   });
+  // }
+
+  public getUnitType(unitTypeID){
+    return this.unitTypes.find(ut => ut.id == unitTypeID).name
   }
-  public getStatGroupName(statisticGroup) {
-    return this.statisticGroups.find(sg => sg.code == statisticGroup).name;
-  }
-  public getRegressionRegions(region){
-    const regionID = this.regions.find(r => r.name == region).id;
-    this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions='+regionID).subscribe(res => {
-      this.regressionRegions = res;
-      console.log(this.regressionRegions)
-    });
-  }
-  public getRegRegionID(regressionRegion) {
-    console.log(this.regressionRegions)
-    console.log(regressionRegion)
-    return this.regressionRegions.find(rr => rr.name == regressionRegion).id;
-  }
-  public getRegRegionCode(regressionRegion) {
-    console.log(this.regressionRegions)
-    return this.regressionRegions.find(rr => rr.name == regressionRegion).code;
-  }
+
   public submitRecords(){
     console.log('Submit')
   }

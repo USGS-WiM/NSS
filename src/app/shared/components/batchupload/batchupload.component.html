@@ -29,10 +29,12 @@
 
             <div *ngIf="tableDisplay">
                 <div class="table-title" *ngFor="let e of equationData, let i = index">
+                    <h5 class="mtop-sm">Explanatory Variables</h5>
                     <div *ngFor="let p of e.regressionRegions[0].parameters">
                         {{p.code}} {{p.limits.min}} {{p.limits.max}} {{getUnitType(p.unitType.id)}}
                     </div>
                     <div>
+                        <h5 class="mtop-sm">Regression</h5>
                         {{e.region.name}} 
                         {{e.statisticGroupName}} 
                         {{e.regressionRegions[0].name}} 

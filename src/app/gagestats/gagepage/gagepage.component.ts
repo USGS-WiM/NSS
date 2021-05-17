@@ -91,7 +91,6 @@ export class GagepageComponent implements OnInit, OnDestroy {
             });
             this.gage = res;
             this.gage.characteristics.sort((a,b) => b.variableType.statisticGroupTypeID - a.variableType.statisticGroupTypeID);
-            //this._nssService.setSelectedRegion(this.gage.region);
             this.getNWISInfo();
             this.getCitations();
             this.getDisplayStatGroupID(this.gage);

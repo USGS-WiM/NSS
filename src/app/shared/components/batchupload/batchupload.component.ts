@@ -10,6 +10,7 @@ import { Region } from 'app/shared/interfaces/region';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Unittype } from 'app/shared/interfaces/unitType';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
+import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 
 export interface equation {
   region: {
@@ -78,9 +79,7 @@ export class BatchuploadComponentNSS implements OnInit {
   public statisticGroupTypes: Array<Statisticgroup>;
   public regressionTypes: Array<Regressiontype>;
   public unitTypes: Array<Unittype>;
-
-  public regRegionCode: any;
-  public regRegionID: any;
+  public regressionRegions: Array<Regressionregion>;
 
   
   constructor(private _nssService: NSSService, 
@@ -97,19 +96,16 @@ export class BatchuploadComponentNSS implements OnInit {
     });
     this.modalElement = this.batchUploadModalNSS;
 
-    // Get all statistic groups 
+    // Get all statistic groups, regions, unit types, regression (variable) types
     this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe((statgroups: Array<Statisticgroup>) => {
       this.statisticGroupTypes = statgroups;
     });
-    // Get all regions
      this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
       this.regions = regions;
     });
-    // Get all unit types
     this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe((unitTypes: Array<Unittype>) => {
       this.unitTypes = unitTypes;
     });
-    // Get all regression types (variables)
     this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe((regtypes: Array<Regressiontype>)  => {
       this.regressionTypes = regtypes;
     });
@@ -159,11 +155,13 @@ export class BatchuploadComponentNSS implements OnInit {
     this.sheetNamesButtons = false;
   }
 
-  public createTable(data) {
+  async createTable(data) {
     var counter = 0;
     var studyArea;
     var statisticGroup;
-    var regressionRegion 
+    var regressionRegionName; 
+    var regressionRegionCode; 
+    var regressionRegionID; 
     var regressionVariable;
     var equation;
     var unitType;
@@ -187,8 +185,11 @@ export class BatchuploadComponentNSS implements OnInit {
       } if (data[i][2]) {
         statisticGroup = (data[i][2]);
       } if (data[i][5]) {
-        regressionRegion = (data[i][5]);
-        //this.getRegressionRegionInfo(studyArea, regressionRegion);
+        regressionRegionName = (data[i][5]);
+        const regionID = this.regions.find(r => r.name == studyArea).id;
+        this.regressionRegions = await this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions=' + regionID).toPromise();
+        regressionRegionCode = this.regressionRegions.find(rr => rr.name == regressionRegionName).code;
+        regressionRegionID = this.regressionRegions.find(rr => rr.name == regressionRegionName).id;
       }
       if (data[i][15]) {
         regressionVariable = (data[i][15]);
@@ -221,9 +222,9 @@ export class BatchuploadComponentNSS implements OnInit {
           statisticGroupID: this.statisticGroupTypes.find(sg => sg.code == statisticGroup).id,
           statisticGroupName: this.statisticGroupTypes.find(sg => sg.code == statisticGroup).name,
           regressionRegions: [{
-            ID: 999,
-            code: 'working on it',
-            name: regressionRegion,
+            ID: regressionRegionID,
+            code: regressionRegionCode,
+            name: regressionRegionName,
             parameters: explanatoryVaraiblesArray,
             regressions: [{
               ID: this.regressionTypes.find(vt => vt.code == regressionVariable).id,
@@ -247,21 +248,22 @@ export class BatchuploadComponentNSS implements OnInit {
     console.log(this.equationData)
   }
 
-  // public getRegressionRegionInfo(region, regressionRegionName) {
-  //   const regionID = this.regions.find(r => r.name == region).id;
-  //   this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions=' + regionID).subscribe(res => {
-  //     this.regressionRegions = res;
-  //     this.regRegionCode = this.regressionRegions.find(rr => rr.name == regressionRegionName).code;
-  //     this.regRegionID = this.regressionRegions.find(rr => rr.name == regressionRegionName).id;
-  //     console.log(this.regRegionCode, this.regRegionID)
-  //   });
-  // }
+  public getRegressionRegionInfo(region, regressionRegionName) {
+    const regionID = this.regions.find(r => r.name == region).id;
+     this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions=' + regionID).subscribe(res => {
+      console.log(res)
+      return (res);
+      // this.regRegionCode = this.regressionRegions.find(rr => rr.name == regressionRegionName).code;
+      // this.regRegionID = this.regressionRegions.find(rr => rr.name == regressionRegionName).id;
+      // console.log(this.regRegionCode, this.regRegionID)
+    });
+  }
 
-  public getUnitType(unitTypeID){
+  public getUnitType(unitTypeID) {
     return this.unitTypes.find(ut => ut.id == unitTypeID).name
   }
 
-  public submitRecords(){
+  public submitRecords() {
     console.log('Submit')
   }
 }

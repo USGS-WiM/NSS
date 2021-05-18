@@ -31,13 +31,13 @@ export interface equation {
       unit: { id: number };
       equation: string;
       equivalentYears: number;
-      predictionInterval: Array<{
+      predictionInterval: {
         biasCorrectionFactor: string;
         student_T_Statistic: string;
         variance: string;
         xiRowVector: string;
         covarianceMatrix: number;
-      }>,
+      },
       expected: {
           parameters: {},
           intervalBounds: null;
@@ -157,14 +157,6 @@ export class BatchuploadComponentNSS implements OnInit {
 
   async createTable(data) {
     var counter = 0;
-    var studyArea;
-    var statisticGroup;
-    var regressionRegionName; 
-    var regressionRegionCode=''; 
-    var regressionRegionID; 
-    var regressionVariable;
-    var equation;
-    var unitType;
     var explanatoryVaraiblesArray: explanatoryVaraibles[] = [];
     var tempExplanatoryVaraiblesArray: explanatoryVaraibles[] = [];
     var explanatoryVaraibles: explanatoryVaraibles = {  
@@ -180,24 +172,24 @@ export class BatchuploadComponentNSS implements OnInit {
 
     // Loop through spreadsheet
     for (var i = 2; i < data.length; i++) { 
-      if (data[i][0]) {
-        studyArea = (data[i][0]);
-      } if (data[i][2]) {
-        statisticGroup = (data[i][2]);
-      } if (data[i][5]) {
-        regressionRegionName = (data[i][5]);
+      if (data[i][0]) { // Study area
+        var studyArea = (data[i][0]);
+      } if (data[i][2]) { // Statistic Group
+        var statisticGroup = (data[i][2]);
+      } if (data[i][5]) { // Regression Region
+        var regressionRegionName = (data[i][5]);
         const regionID = this.regions.find(r => r.name == studyArea).id;
         this.regressionRegions = await this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions=' + regionID).toPromise();
-        regressionRegionCode = this.regressionRegions.find(rr => rr.name == regressionRegionName).code;
-        regressionRegionID = this.regressionRegions.find(rr => rr.name == regressionRegionName).id;
+        var regressionRegionCode = this.regressionRegions.find(rr => rr.name == regressionRegionName).code;
+        var regressionRegionID = this.regressionRegions.find(rr => rr.name == regressionRegionName).id;
       }
-      if (data[i][15]) {
-        regressionVariable = (data[i][15]);
+      if (data[i][15]) {  // Regression (statistic) variable
+        var regressionVariable = (data[i][15]);
       }
-      if (data[i][16]) {
-        unitType = (data[i][16]);
+      if (data[i][16]) {  // Unit type
+        var unitType = (data[i][16]);
       }
-      if (data[i][11]) {
+      if (data[i][11]) {  // Explanatory Varaibles
         explanatoryVaraibles.code = data[i][11];
         explanatoryVaraibles.limits.min = data[i][12];
         explanatoryVaraibles.limits.max = data[i][13];
@@ -205,17 +197,44 @@ export class BatchuploadComponentNSS implements OnInit {
         explanatoryVaraiblesArray.push(JSON.parse(JSON.stringify(explanatoryVaraibles)));
         tempExplanatoryVaraiblesArray = explanatoryVaraiblesArray;
       }
-      // equations
-      if (data[i][25]) {
-        equation = data[i][25];
-        //clear out explanatoryVaraiblesArray
-        if (explanatoryVaraiblesArray = []) {
+      if (data[i][20]) {  // Equivalent Years of Record
+        var eYoR = data[i][20];
+      } else {
+        eYoR = null;
+      }
+      if (data[i][21]) {  // Bias correction factor
+        var biasCF = data[i][21];
+      } else {
+        biasCF = null;
+      }
+      if (data[i][22]) {  // Student T Statistic
+        var studentT = data[i][22];
+      } else {
+        studentT = null;
+      }
+      if (data[i][23]) {  // Variance
+        var variance = data[i][23];
+      } else {
+        variance = null;
+      }
+      // if (data[i][26]) {  // xiRowVector
+      //   var xiRowVector = data[i][26];
+      // } else {
+      //   xiRowVector = null;
+      // }
+      // if (data[i][21]) {  // Covariance Matrix 29-33
+      //   var covarianceMatrix = data[i][21];
+      // } else {
+      //   covarianceMatrix = null;
+      // }
+      if (data[i][25]) {  //Equation
+        var equation = data[i][25];
+        if (explanatoryVaraiblesArray = []) { //clear out explanatoryVaraiblesArray
           explanatoryVaraiblesArray = tempExplanatoryVaraiblesArray
         }else{
           tempExplanatoryVaraiblesArray = [];
         }
-        // Fill array will data from spreadsheet
-        this.equationData[counter] = {
+        this.equationData[counter] = {  // Fill array will data from spreadsheet
           region: {
             name: studyArea
           },
@@ -235,8 +254,14 @@ export class BatchuploadComponentNSS implements OnInit {
                 id: this.unitTypes.find(ut => ut.abbreviation == unitType).id
               },
               equation: equation,
-              equivalentYears: null,
-              predictionInterval: null,
+              equivalentYears: eYoR,
+              predictionInterval: {
+                biasCorrectionFactor: biasCF,
+                student_T_Statistic: studentT,
+                variance: variance,
+                xiRowVector: null,
+                covarianceMatrix: null,
+              },
               expected:{
                 parameters: {},
                 intervalBounds: null

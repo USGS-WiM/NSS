@@ -79,7 +79,7 @@ export class BatchuploadComponentNSS implements OnInit {
   public statisticGroupTypes: Array<Statisticgroup>;
   public regressionTypes: Array<Regressiontype>;
   public unitTypes: Array<Unittype>;
-  public regressionRegions: Array<Regressionregion>;
+  public regressionRegions: Array<Regressionregion> = [];
 
   
   constructor(private _nssService: NSSService, 
@@ -160,7 +160,7 @@ export class BatchuploadComponentNSS implements OnInit {
     var studyArea;
     var statisticGroup;
     var regressionRegionName; 
-    var regressionRegionCode; 
+    var regressionRegionCode=''; 
     var regressionRegionID; 
     var regressionVariable;
     var equation;
@@ -237,7 +237,10 @@ export class BatchuploadComponentNSS implements OnInit {
               equation: equation,
               equivalentYears: null,
               predictionInterval: null,
-              expected:null
+              expected:{
+                parameters: {},
+                intervalBounds: null
+              }
             }]
           }]
          }
@@ -248,22 +251,29 @@ export class BatchuploadComponentNSS implements OnInit {
     console.log(this.equationData)
   }
 
-  public getRegressionRegionInfo(region, regressionRegionName) {
-    const regionID = this.regions.find(r => r.name == region).id;
-     this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions=' + regionID).subscribe(res => {
-      console.log(res)
-      return (res);
-      // this.regRegionCode = this.regressionRegions.find(rr => rr.name == regressionRegionName).code;
-      // this.regRegionID = this.regressionRegions.find(rr => rr.name == regressionRegionName).id;
-      // console.log(this.regRegionCode, this.regRegionID)
-    });
-  }
-
   public getUnitType(unitTypeID) {
     return this.unitTypes.find(ut => ut.id == unitTypeID).name
   }
 
   public submitRecords() {
-    console.log('Submit')
+    this.equationData.forEach(scen => {
+      for (const parameter of scen.regressionRegions[0].parameters) {
+        scen.regressionRegions[0].regressions[0].expected.parameters[parameter.code] = 0;
+      }
+      console.log(scen)
+      this._settingsservice.postEntity(scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID + '&skipCheck=true')
+      .subscribe((response: any) => {
+          if (!response.headers) {
+              this._toasterService.pop('info', 'Info', 'Scenario was added');
+          } else {
+              this._settingsservice.outputWimMessages(response); 
+          }
+      }, error => {
+          if (!this._settingsservice.outputWimMessages(error)) {                                       
+              this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
+          }
+      });
+    
+    });
   }
 }

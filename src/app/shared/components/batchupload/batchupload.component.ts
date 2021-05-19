@@ -217,11 +217,14 @@ export class BatchuploadComponentNSS implements OnInit {
       } else {
         variance = null;
       }
-      // if (data[i][26]) {  // xiRowVector
-      //   var xiRowVector = data[i][26];
-      // } else {
-      //   xiRowVector = null;
-      // }
+      if (data[i][26]) {  // xiRowVector  [\"logN(DRNAREA,10)\",\"AL_SVI2020\",\"PRECPRIS10\",\"L3_PIEDMNT\",\"L3_SE_PLNS\"]
+        var xiRowVector = data[i][26];
+        xiRowVector = "[\"" + xiRowVector + "\"]";
+        xiRowVector = xiRowVector.replace(/ : /gi, "\",\""); 
+        xiRowVector = xiRowVector.replace(/\s/g, "");
+      } else {
+        xiRowVector = null;
+      }
       // if (data[i][21]) {  // Covariance Matrix 29-33
       //   var covarianceMatrix = data[i][21];
       // } else {
@@ -259,7 +262,7 @@ export class BatchuploadComponentNSS implements OnInit {
                 biasCorrectionFactor: biasCF,
                 student_T_Statistic: studentT,
                 variance: variance,
-                xiRowVector: null,
+                xiRowVector: xiRowVector,
                 covarianceMatrix: null,
               },
               expected:{

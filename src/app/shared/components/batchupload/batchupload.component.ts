@@ -11,6 +11,7 @@ import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Unittype } from 'app/shared/interfaces/unitType';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Regressionregion } from 'app/shared/interfaces/regressionregion';
+import { Error } from 'app/shared/interfaces/error';
 
 export interface equation {
   region: {
@@ -27,7 +28,7 @@ export interface equation {
       ID: number;    
       code: string;  
       name: string;
-      errors: [];
+      errors: errors[];
       unit: { id: number };
       equation: string;
       equivalentYears: number;
@@ -46,13 +47,18 @@ export interface equation {
   }>
 }
 
-export interface explanatoryVaraibles{
+export interface explanatoryVaraibles {
   code: string;
   limits: ({
       max: number,
       min: number,
   }),
   unitType: { id: number };  
+}
+
+export interface errors {
+  id: number;
+  value: number;  
 }
 
 @Component({
@@ -79,8 +85,8 @@ export class BatchuploadComponentNSS implements OnInit {
   public statisticGroupTypes: Array<Statisticgroup>;
   public regressionTypes: Array<Regressiontype>;
   public unitTypes: Array<Unittype>;
-  public regressionRegions: Array<Regressionregion> = [];
-
+  public regressionRegions: Array<Regressionregion>;
+  public errors: Array<Error>;
   
   constructor(private _nssService: NSSService, 
     private _modalService: NgbModal, 
@@ -96,9 +102,9 @@ export class BatchuploadComponentNSS implements OnInit {
     });
     this.modalElement = this.batchUploadModalNSS;
 
-    // Get all statistic groups, regions, unit types, regression (variable) types
-    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe((statgroups: Array<Statisticgroup>) => {
-      this.statisticGroupTypes = statgroups;
+    // Get all statistic groups, regions, unit types, regression (variable) types, errors
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe((statGroups: Array<Statisticgroup>) => {
+      this.statisticGroupTypes = statGroups;
     });
      this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regionURL).subscribe((regions: Array<Region>) => {
       this.regions = regions;
@@ -106,9 +112,12 @@ export class BatchuploadComponentNSS implements OnInit {
     this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe((unitTypes: Array<Unittype>) => {
       this.unitTypes = unitTypes;
     });
-    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe((regtypes: Array<Regressiontype>)  => {
-      this.regressionTypes = regtypes;
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe((regTypes: Array<Regressiontype>)  => {
+      this.regressionTypes = regTypes;
     });
+    this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.errorsURL).subscribe((errorTypes: Array<Error>) => {
+      this.errors = errorTypes;
+  });
   }
 
   public showModal(): void {
@@ -158,6 +167,7 @@ export class BatchuploadComponentNSS implements OnInit {
   async createTable(data) {
     var counter = 0;
     var explanatoryVaraiblesArray: explanatoryVaraibles[] = [];
+    var errorsArray:errors[] = [];
     var tempExplanatoryVaraiblesArray: explanatoryVaraibles[] = [];
     var explanatoryVaraibles: explanatoryVaraibles = {  
       code: null,
@@ -168,6 +178,10 @@ export class BatchuploadComponentNSS implements OnInit {
       unitType: { 
         id: null 
       }
+    };
+    var errors: errors = {  
+      id: null,
+      value:  null 
     };
 
     // Loop through spreadsheet
@@ -196,6 +210,22 @@ export class BatchuploadComponentNSS implements OnInit {
         explanatoryVaraibles.unitType.id  = this.unitTypes.find(ut => ut.abbreviation == (data[i][14])).id;
         explanatoryVaraiblesArray.push(JSON.parse(JSON.stringify(explanatoryVaraibles)));
         tempExplanatoryVaraiblesArray = explanatoryVaraiblesArray;
+      }
+      // Errors
+      if (data[i][17]) { // 	Average standard error (of either estimate or prediction)
+        errors.id = this.errors.find(et => et.code == ("SE")).id;
+        errors.value = data[i][17];
+        errorsArray.push(JSON.parse(JSON.stringify(errors)));
+      }
+      if (data[i][19]) { // Average standard error of prediction
+        errors.id = this.errors.find(et => et.code == ("SEp")).id;
+        errors.value = data[i][19];
+        errorsArray.push(JSON.parse(JSON.stringify(errors)));
+      }
+      if (data[i][28]) { // Percent Correct
+        errors.id = this.errors.find(et => et.code == ("PC")).id;
+        errors.value = data[i][28];
+        errorsArray.push(JSON.parse(JSON.stringify(errors)));
       }
       if (data[i][20]) {  // Equivalent Years of Record
         var eYoR = data[i][20];
@@ -232,7 +262,7 @@ export class BatchuploadComponentNSS implements OnInit {
       // }
       if (data[i][25]) {  //Equation
         var equation = data[i][25];
-        if (explanatoryVaraiblesArray = []) { //clear out explanatoryVaraiblesArray
+        if (explanatoryVaraiblesArray = []) { // clear out explanatoryVaraiblesArray
           explanatoryVaraiblesArray = tempExplanatoryVaraiblesArray
         }else{
           tempExplanatoryVaraiblesArray = [];
@@ -252,7 +282,7 @@ export class BatchuploadComponentNSS implements OnInit {
               ID: this.regressionTypes.find(vt => vt.code == regressionVariable).id,
               code: regressionVariable,
               name: this.regressionTypes.find(vt => vt.code == regressionVariable).name,
-              errors: [],
+              errors: errorsArray,
               unit: {
                 id: this.unitTypes.find(ut => ut.abbreviation == unitType).id
               },
@@ -271,9 +301,10 @@ export class BatchuploadComponentNSS implements OnInit {
               }
             }]
           }]
-         }
+        }
         counter++;
         explanatoryVaraiblesArray = [];
+        errorsArray = [];
       }
     }
     console.log(this.equationData)
@@ -292,13 +323,13 @@ export class BatchuploadComponentNSS implements OnInit {
       this._settingsservice.postEntity(scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID + '&skipCheck=true')
       .subscribe((response: any) => {
           if (!response.headers) {
-              this._toasterService.pop('info', 'Info', 'Scenario was added');
+            this._toasterService.pop('info', 'Info', 'Scenario was added');
           } else {
-              this._settingsservice.outputWimMessages(response); 
+            this._settingsservice.outputWimMessages(response);
           }
       }, error => {
           if (!this._settingsservice.outputWimMessages(error)) {                                       
-              this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
+            this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
           }
       });
     

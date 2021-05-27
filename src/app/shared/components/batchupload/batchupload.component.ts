@@ -23,7 +23,7 @@ export interface equation {
     ID: number;
     code: string;
     name: string;
-    parameters: explanatoryVaraibles[];
+    parameters: explanatoryVariables[];
     regressions: Array<{
       ID: number;    
       code: string;  
@@ -47,7 +47,7 @@ export interface equation {
   }>
 }
 
-export interface explanatoryVaraibles {
+export interface explanatoryVariables {
   code: string;
   limits: ({
       max: number,
@@ -117,7 +117,7 @@ export class BatchuploadComponentNSS implements OnInit {
     });
     this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.errorsURL).subscribe((errorTypes: Array<Error>) => {
       this.errors = errorTypes;
-  });
+    });
   }
 
   public showModal(): void {
@@ -166,10 +166,10 @@ export class BatchuploadComponentNSS implements OnInit {
 
   async createTable(data) {
     var counter = 0;
-    var explanatoryVaraiblesArray: explanatoryVaraibles[] = [];
-    var tempExplanatoryVaraiblesArray: explanatoryVaraibles[] = [];
+    var explanatoryVariablesArray: explanatoryVariables[] = [];
+    var tempExplanatoryVariablesArray: explanatoryVariables[] = [];
     var errorsArray:errors[] = [];
-    var explanatoryVaraibles: explanatoryVaraibles = {  
+    var explanatoryVariables: explanatoryVariables = {  
       code: null,
       limits: ({
           max: null,
@@ -203,13 +203,13 @@ export class BatchuploadComponentNSS implements OnInit {
       if (data[i][16]) {  // Unit type
         var unitType = (data[i][16]);
       }
-      if (data[i][11]) {  // Explanatory Varaibles
-        explanatoryVaraibles.code = data[i][11];
-        explanatoryVaraibles.limits.min = data[i][12];
-        explanatoryVaraibles.limits.max = data[i][13];
-        explanatoryVaraibles.unitType.id  = this.unitTypes.find(ut => ut.abbreviation == (data[i][14])).id;
-        explanatoryVaraiblesArray.push(JSON.parse(JSON.stringify(explanatoryVaraibles)));
-        tempExplanatoryVaraiblesArray = explanatoryVaraiblesArray;
+      if (data[i][11]) {  // Explanatory Variables
+        explanatoryVariables.code = data[i][11];
+        explanatoryVariables.limits.min = data[i][12];
+        explanatoryVariables.limits.max = data[i][13];
+        explanatoryVariables.unitType.id  = this.unitTypes.find(ut => ut.abbreviation == (data[i][14])).id;
+        explanatoryVariablesArray.push(JSON.parse(JSON.stringify(explanatoryVariables)));
+        tempExplanatoryVariablesArray = explanatoryVariablesArray;
       }
       // Errors
       if (data[i][17]) { // 	Average standard error (of either estimate or prediction)
@@ -256,10 +256,10 @@ export class BatchuploadComponentNSS implements OnInit {
         xiRowVector = null;
       }
       if (data[i][25]) {  
-        if (explanatoryVaraiblesArray = []) { // clear out explanatoryVaraiblesArray
-          explanatoryVaraiblesArray = tempExplanatoryVaraiblesArray;
+        if (explanatoryVariablesArray = []) { // clear out explanatoryVaraiblesArray
+          explanatoryVariablesArray = tempExplanatoryVariablesArray;
         } else {
-          tempExplanatoryVaraiblesArray = [];
+          tempExplanatoryVariablesArray = [];
         }
         // Get covariance matrix and format 29-35
         if (data[i+1] && data[i+1][29]) {  var col = 1;
@@ -301,7 +301,7 @@ export class BatchuploadComponentNSS implements OnInit {
             ID: regressionRegionID,
             code: regressionRegionCode,
             name: regressionRegionName,
-            parameters: explanatoryVaraiblesArray,
+            parameters: explanatoryVariablesArray,
             regressions: [{
               ID: this.regressionTypes.find(vt => vt.code == regressionVariable).id,
               code: regressionVariable,
@@ -327,7 +327,7 @@ export class BatchuploadComponentNSS implements OnInit {
           }]
         }
         counter++;
-        explanatoryVaraiblesArray = [];
+        explanatoryVariablesArray = [];
         covarianceMatrix = [];
         errorsArray = [];
       }

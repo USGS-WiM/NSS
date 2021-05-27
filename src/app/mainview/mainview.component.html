@@ -9,6 +9,8 @@
 	<h6>{{timestamp | date:"MMMM d, y hh:mma"}}</h6>
 
 	<span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span>
+	
+	<!-- Batch Upload Button -->
 	<div *ngIf="loggedInRole" class="hidden-print">
 		<button  type="button" class="button small mright-xs" (click)="openBatchUpload()">Bulk Upload</button>
 	</div>

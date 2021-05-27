@@ -1703,7 +1703,7 @@ export class MainviewComponent implements OnInit {
     }
 
     // Bulk Upload Button
-    public openBatchUpload(): void{
+    public openBatchUpload(): void {
         this._nssService.setBatchUploadModalNSS(true);
     }
 

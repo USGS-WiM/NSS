@@ -37,7 +37,7 @@ export interface equation {
         student_T_Statistic: string;
         variance: string;
         xiRowVector: string;
-        covarianceMatrix: number;
+        covarianceMatrix: string;
       },
       expected: {
           parameters: {},
@@ -167,8 +167,8 @@ export class BatchuploadComponentNSS implements OnInit {
   async createTable(data) {
     var counter = 0;
     var explanatoryVaraiblesArray: explanatoryVaraibles[] = [];
-    var errorsArray:errors[] = [];
     var tempExplanatoryVaraiblesArray: explanatoryVaraibles[] = [];
+    var errorsArray:errors[] = [];
     var explanatoryVaraibles: explanatoryVaraibles = {  
       code: null,
       limits: ({
@@ -247,7 +247,7 @@ export class BatchuploadComponentNSS implements OnInit {
       } else {
         variance = null;
       }
-      if (data[i][26]) {  // xiRowVector  [\"logN(DRNAREA,10)\",\"AL_SVI2020\",\"PRECPRIS10\",\"L3_PIEDMNT\",\"L3_SE_PLNS\"]
+      if (data[i][26]) {  // xiRowVector  
         var xiRowVector = data[i][26];
         xiRowVector = "[\"" + xiRowVector + "\"]";
         xiRowVector = xiRowVector.replace(/ : /gi, "\",\""); 
@@ -255,19 +255,43 @@ export class BatchuploadComponentNSS implements OnInit {
       } else {
         xiRowVector = null;
       }
-      // if (data[i][21]) {  // Covariance Matrix 29-33
-      //   var covarianceMatrix = data[i][21];
-      // } else {
-      //   covarianceMatrix = null;
-      // }
-      if (data[i][25]) {  //Equation
-        var equation = data[i][25];
+      if (data[i][25]) {  
         if (explanatoryVaraiblesArray = []) { // clear out explanatoryVaraiblesArray
-          explanatoryVaraiblesArray = tempExplanatoryVaraiblesArray
-        }else{
+          explanatoryVaraiblesArray = tempExplanatoryVaraiblesArray;
+        } else {
           tempExplanatoryVaraiblesArray = [];
         }
-        this.equationData[counter] = {  // Fill array will data from spreadsheet
+        // Get covariance matrix and format 29-35
+        if (data[i+1] && data[i+1][29]) {  var col = 1;
+          if (data[i+1][30]) {  col = 2;
+            if (data[i+1][31]) {  col = 3;
+              if (data[i+1][32]) {  col = 4;
+                if (data[i+1][33]) {  col = 5;
+                  if (data[i+1][34]) {  col = 6;
+                    if (data[i+1][35]) {  col = 7;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          var matrixRow = [];
+          var covarianceMatrix: any = [];
+          for (let row = 0; row < col; row++) { 
+            for (let column = 0; column < col; column++) { 
+              matrixRow.push(JSON.parse(JSON.stringify("\"" + data[i+1+row][29+column] + "\"")));
+            } 
+            covarianceMatrix.push(JSON.parse(JSON.stringify('['+ matrixRow + ']')));
+            matrixRow = [];
+          } 
+          covarianceMatrix = '[' + covarianceMatrix.toString() + ']';
+        } else {
+          covarianceMatrix = null;
+        }
+
+        var equation = data[i][25]; // Equation
+        // Fill array will data from spreadsheet
+        this.equationData[counter] = {  
           region: {
             name: studyArea
           },
@@ -293,7 +317,7 @@ export class BatchuploadComponentNSS implements OnInit {
                 student_T_Statistic: studentT,
                 variance: variance,
                 xiRowVector: xiRowVector,
-                covarianceMatrix: null,
+                covarianceMatrix: covarianceMatrix,
               },
               expected:{
                 parameters: {},
@@ -304,14 +328,15 @@ export class BatchuploadComponentNSS implements OnInit {
         }
         counter++;
         explanatoryVaraiblesArray = [];
+        covarianceMatrix = [];
         errorsArray = [];
       }
     }
-    console.log(this.equationData)
+    console.log(this.equationData);
   }
 
   public getUnitType(unitTypeID) {
-    return this.unitTypes.find(ut => ut.id == unitTypeID).name
+    return this.unitTypes.find(ut => ut.id == unitTypeID).name;
   }
 
   public submitRecords() {
@@ -319,7 +344,6 @@ export class BatchuploadComponentNSS implements OnInit {
       for (const parameter of scen.regressionRegions[0].parameters) {
         scen.regressionRegions[0].regressions[0].expected.parameters[parameter.code] = 0;
       }
-      console.log(scen)
       this._settingsservice.postEntity(scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID + '&skipCheck=true')
       .subscribe((response: any) => {
           if (!response.headers) {
@@ -332,7 +356,7 @@ export class BatchuploadComponentNSS implements OnInit {
             this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
           }
       });
-    
     });
   }
+
 }

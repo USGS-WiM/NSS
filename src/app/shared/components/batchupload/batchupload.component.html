@@ -26,30 +26,60 @@
                 </ng-container>
 			</div>
 
-
             <div *ngIf="tableDisplay">
-                <div class="table-title" *ngFor="let e of equationData, let i = index">
-                    <h5 class="mtop-sm">Explanatory Variables</h5>
-                    <div *ngFor="let p of e.regressionRegions[0].parameters">
-                        {{p.code}} {{p.limits.min}} {{p.limits.max}} {{getUnitType(p.unitType.id)}}
+                <form class="editScen">
+                    <div class="table-title" *ngFor="let e of equationData, let i = index">
+                        <h4 [ngStyle]="{'color': success[i]}">Equation {{i+1}}</h4>
+                        <div class="edit-scen-wrapper">
+                            <h5 class="mtop-sm">Explanatory Variables</h5>
+							<table class="custom-table">
+								<thead>
+									<tr>
+										<th class="width-10">Code</th>
+										<th class="width-15">Unit</th>
+										<th class="width-10">Min Limit</th>
+										<th class="width-10">Max Limit</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let p of e.regressionRegions[0].parameters">
+										<td>{{ p.code }}</td>
+										<td>{{ getUnitType(p.unitType.id) }}</td>
+										<td>{{ p.limits.min }}</td>
+										<td>{{ p.limits.max }}</td>
+									</tr>
+								</tbody>
+							</table>
+                            <h5 class="mtop-sm">Regressions</h5>
+							<table class="custom-table">
+								<thead>
+									<tr>
+										<th class="width-10">Region</th>
+										<th class="width-20">Statistic Group</th>
+										<th class="width-10">Regression Region</th>
+										<th class="width-15">Regression Variable</th>
+										<th class="width-10">Equation</th>
+										<th class="width-10">Equivalent Years</th>
+										<th class="width-20">Unit Type</th>
+									</tr>
+								</thead>
+								<tbody>
+                                    <td>{{ e.region.name }}</td>
+                                    <td>{{ e.statisticGroupName }}</td>
+                                    <td>{{ e.regressionRegions[0].name }}</td>
+                                    <td>{{ e.regressionRegions[0].regressions[0].code }}</td>
+                                    <td>{{ e.regressionRegions[0].regressions[0].equation }}</td>
+                                    <td>{{ e.regressionRegions[0].regressions[0].equivalentYears }}</td>
+                                    <td>{{ getUnitType(e.regressionRegions[0].regressions[0].unit.id) }}</td>
+								</tbody>
+							</table>
+                        </div> <br>
                     </div>
-                    <div>
-                        <h5 class="mtop-sm">Regression</h5>
-                        {{e.region.name}} 
-                        {{e.statisticGroupName}} 
-                        {{e.regressionRegions[0].name}} 
-                        {{e.regressionRegions[0].regressions[0].name}} 
-                        {{e.regressionRegions[0].regressions[0].equation}} 
-                        {{getUnitType(e.regressionRegions[0].regressions[0].unit.id)}}
-                    </div>
-                </div>
+                </form>
             </div>
-
-
         </div>
     </div>
     <div class="modal-body-footer">
-        <button type="button" *ngIf="tableDisplay" (click)="submitRecords()" class="button blue">Create</button>
-
+        <button type="button" *ngIf="tableDisplay" [disabled]="clicked" (click)="submitRecords(); clicked = true;" class="button blue">Create</button>
     </div>
 </ng-template>

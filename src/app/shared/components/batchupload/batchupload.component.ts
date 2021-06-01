@@ -88,6 +88,9 @@ export class BatchuploadComponentNSS implements OnInit {
   public regressionRegions: Array<Regressionregion>;
   public errors: Array<Error>;
   
+  public success = []
+  public clicked = false;
+
   constructor(private _nssService: NSSService, 
     private _modalService: NgbModal, 
     private _toasterService: ToasterService, 
@@ -165,6 +168,8 @@ export class BatchuploadComponentNSS implements OnInit {
   }
 
   async createTable(data) {
+    this.success = [];
+    this.clicked = false;
     var counter = 0;
     var explanatoryVariablesArray: explanatoryVariables[] = [];
     var tempExplanatoryVariablesArray: explanatoryVariables[] = [];
@@ -346,17 +351,20 @@ export class BatchuploadComponentNSS implements OnInit {
       }
       this._settingsservice.postEntity(scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID + '&skipCheck=true')
       .subscribe((response: any) => {
+        this.success.push("green")
           if (!response.headers) {
             this._toasterService.pop('info', 'Info', 'Scenario was added');
           } else {
             this._settingsservice.outputWimMessages(response);
           }
       }, error => {
+        this.success.push("red")
           if (!this._settingsservice.outputWimMessages(error)) {                                       
             this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
           }
       });
     });
+    console.log(this.success)
   }
 
 }

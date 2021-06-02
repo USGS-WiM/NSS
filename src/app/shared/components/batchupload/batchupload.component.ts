@@ -223,7 +223,7 @@ export class BatchuploadComponentNSS implements OnInit {
         errorsArray.push(JSON.parse(JSON.stringify(errors)));
       }
       if (data[i][19]) { // Average standard error of prediction
-        errors.id = this.errors.find(et => et.code == ("SEp")).id;
+        errors.id = this.errors.find(et => et.code == ("ASEp")).id;
         errors.value = data[i][19];
         errorsArray.push(JSON.parse(JSON.stringify(errors)));
       }

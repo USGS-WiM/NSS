@@ -16,7 +16,7 @@
 			<button *ngIf='selectUpload' type="button" class="button green" (click)='selectUpload = false; clearTable()'>Back</button>
 			<!-- File selector -->
 			<div class="upload-input">
-                <input *ngIf='selectUpload && !tableDisplay' (change)="selectFile($event)" accept=".xls,.xlsx" type='file' multiple='false'/>
+                <input *ngIf='selectUpload && !tableDisplay' (change)="selectFile($event)" accept=".xls,.xlsx" type='file'/>
             </div>
             <!-- Select worksheet -->
             <div *ngIf="sheetNamesButtons">

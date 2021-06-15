@@ -140,7 +140,7 @@ export class BatchuploadComponentNSS implements OnInit {
       this._toasterService.pop('error', 'Error', 'Cannot select multiple files');
       return;
     } 
-    var ext = event.target.files[0].name.match(/\.([^\.]+)$/)[1];
+    let ext = event.target.files[0].name.match(/\.([^\.]+)$/)[1];
     switch (ext) {  //check for incompatible file type
       case 'xlsx':
       case 'xls':
@@ -170,11 +170,24 @@ export class BatchuploadComponentNSS implements OnInit {
   async createTable(data) {
     this.success = [];
     this.clicked = false;
-    var counter = 0;
-    var explanatoryVariablesArray: explanatoryVariables[] = [];
-    var tempExplanatoryVariablesArray: explanatoryVariables[] = [];
-    var errorsArray:errors[] = [];
-    var explanatoryVariables: explanatoryVariables = {  
+    let counter = 0;
+    let studyArea;
+    let statisticGroup;
+    let regressionRegionName;
+    let regressionRegionCode;
+    let regressionRegionID;
+    let regressionVariable;
+    let unitType;
+    let eYoR;
+    let biasCF;
+    let studentT;
+    let variance;
+    let xiRowVector;
+    let covarianceMatrix: any = [];
+    let explanatoryVariablesArray: explanatoryVariables[] = [];
+    let tempExplanatoryVariablesArray: explanatoryVariables[] = [];
+    let errorsArray:errors[] = [];
+    let explanatoryVariables: explanatoryVariables = {  
       code: null,
       limits: ({
           max: null,
@@ -184,31 +197,31 @@ export class BatchuploadComponentNSS implements OnInit {
         id: null 
       }
     };
-    var errors: errors = {  
+    let errors: errors = {  
       id: null,
       value:  null 
     };
 
     // Loop through spreadsheet
-    for (var i = 2; i < data.length; i++) { 
+    for (let i = 2; i < data.length; i++) { 
       if (data[i][0]) { // Study area
-        var studyArea = (data[i][0]);
+        studyArea = (data[i][0]);
       } 
       if (data[i][2]) { // Statistic Group
-        var statisticGroup = (data[i][2]);
+        statisticGroup = (data[i][2]);
       } 
       if (data[i][5]) { // Regression Region
-        var regressionRegionName = (data[i][5]);
+        regressionRegionName = (data[i][5]);
         const regionID = this.regions.find(r => r.name == studyArea).id;
         this.regressionRegions = await this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions=' + regionID).toPromise();
-        var regressionRegionCode = this.regressionRegions.find(rr => rr.name == regressionRegionName).code;
-        var regressionRegionID = this.regressionRegions.find(rr => rr.name == regressionRegionName).id;
+        regressionRegionCode = this.regressionRegions.find(rr => rr.name == regressionRegionName).code;
+        regressionRegionID = this.regressionRegions.find(rr => rr.name == regressionRegionName).id;
       }
       if (data[i][15]) {  // Regression (statistic) variable
-        var regressionVariable = (data[i][15]);
+        regressionVariable = (data[i][15]);
       }
       if (data[i][16]) {  // Unit type
-        var unitType = (data[i][16]);
+        unitType = (data[i][16]);
       }
       if (data[i][11]) {  // Explanatory Variables
         explanatoryVariables.code = data[i][11];
@@ -235,27 +248,27 @@ export class BatchuploadComponentNSS implements OnInit {
         errorsArray.push(JSON.parse(JSON.stringify(errors)));
       }
       if (data[i][20]) {  // Equivalent Years of Record
-        var eYoR = data[i][20];
+        eYoR = data[i][20];
       } else {
         eYoR = null;
       }
       if (data[i][21]) {  // Bias correction factor
-        var biasCF = data[i][21];
+        biasCF = data[i][21];
       } else {
         biasCF = null;
       }
       if (data[i][22]) {  // Student T Statistic
-        var studentT = data[i][22];
+        studentT = data[i][22];
       } else {
         studentT = null;
       }
       if (data[i][23]) {  // Variance
-        var variance = data[i][23];
+        variance = data[i][23];
       } else {
         variance = null;
       }
       if (data[i][26]) {  // xiRowVector  
-        var xiRowVector = data[i][26];
+        xiRowVector = data[i][26];
         xiRowVector = "[\"" + xiRowVector + "\"]";
         xiRowVector = xiRowVector.replace(/ : /gi, "\",\""); 
         xiRowVector = xiRowVector.replace(/\s/g, "");
@@ -269,7 +282,7 @@ export class BatchuploadComponentNSS implements OnInit {
           tempExplanatoryVariablesArray = [];
         }
         // Get covariance matrix and format 29-35
-        if (data[i+1] && data[i+1][29]) {  var col = 1;
+        if (data[i+1] && data[i+1][29]) {  let col = 1;
           if (data[i+1][30]) {  col = 2;
             if (data[i+1][31]) {  col = 3;
               if (data[i+1][32]) {  col = 4;
@@ -282,8 +295,7 @@ export class BatchuploadComponentNSS implements OnInit {
               }
             }
           }
-          var matrixRow = [];
-          var covarianceMatrix: any = [];
+          let matrixRow = [];
           for (let row = 0; row < col; row++) { 
             for (let column = 0; column < col; column++) { 
               matrixRow.push(JSON.parse(JSON.stringify("\"" + data[i+1+row][29+column] + "\"")));
@@ -296,7 +308,7 @@ export class BatchuploadComponentNSS implements OnInit {
           covarianceMatrix = null;
         }
 
-        var equation = data[i][25]; // Equation
+        let equation = data[i][25]; // Equation
         // Fill array will data from spreadsheet
         this.equationData[counter] = {  
           region: {

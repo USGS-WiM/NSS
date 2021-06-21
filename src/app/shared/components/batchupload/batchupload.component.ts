@@ -223,7 +223,7 @@ export class BatchuploadComponentNSS implements OnInit {
       if (data[i][16]) {  // Unit type
         unitType = (data[i][16]);
       }
-      if (data[i][11]) {  // Explanatory Variables
+      if (data[i][11]) {  // Explanatory Variables WIP Excel sheet
         explanatoryVariables.code = data[i][11];
         explanatoryVariables.limits.min = data[i][12];
         explanatoryVariables.limits.max = data[i][13];
@@ -237,58 +237,58 @@ export class BatchuploadComponentNSS implements OnInit {
         errors.value = data[i][17];
         errorsArray.push(JSON.parse(JSON.stringify(errors)));
       }
-      if (data[i][19]) { // Average standard error of prediction
+      if (data[i][18]) { // Average standard error of prediction
         errors.id = this.errors.find(et => et.code == ("ASEp")).id;
-        errors.value = data[i][19];
+        errors.value = data[i][18];
         errorsArray.push(JSON.parse(JSON.stringify(errors)));
       }
-      if (data[i][28]) { // Percent Correct
+      if (data[i][27]) { // Percent Correct
         errors.id = this.errors.find(et => et.code == ("PC")).id;
-        errors.value = data[i][28];
+        errors.value = data[i][27];
         errorsArray.push(JSON.parse(JSON.stringify(errors)));
       }
-      if (data[i][20]) {  // Equivalent Years of Record
-        eYoR = data[i][20];
+      if (data[i][19]) {  // Equivalent Years of Record
+        eYoR = data[i][19];
       } else {
         eYoR = null;
       }
-      if (data[i][21]) {  // Bias correction factor
-        biasCF = data[i][21];
+      if (data[i][20]) {  // Bias correction factor
+        biasCF = data[i][20];
       } else {
         biasCF = null;
       }
-      if (data[i][22]) {  // Student T Statistic
-        studentT = data[i][22];
+      if (data[i][21]) {  // Student T Statistic
+        studentT = data[i][21];
       } else {
         studentT = null;
       }
-      if (data[i][23]) {  // Variance
-        variance = data[i][23];
+      if (data[i][22]) {  // Variance
+        variance = data[i][22];
       } else {
         variance = null;
       }
-      if (data[i][26]) {  // xiRowVector  
-        xiRowVector = data[i][26];
+      if (data[i][25]) {  // xiRowVector  
+        xiRowVector = data[i][25];
         xiRowVector = "[\"" + xiRowVector + "\"]";
         xiRowVector = xiRowVector.replace(/ : /gi, "\",\""); 
         xiRowVector = xiRowVector.replace(/\s/g, "");
       } else {
         xiRowVector = null;
       }
-      if (data[i][25]) {  
+      if (data[i][24]) {  
         if (explanatoryVariablesArray = []) { // clear out explanatoryVaraiblesArray
           explanatoryVariablesArray = tempExplanatoryVariablesArray;
         } else {
           tempExplanatoryVariablesArray = [];
         }
-        // Get covariance matrix and format 29-35
-        if (data[i+1] && data[i+1][29]) {  let col = 1;
-          if (data[i+1][30]) {  col = 2;
-            if (data[i+1][31]) {  col = 3;
-              if (data[i+1][32]) {  col = 4;
-                if (data[i+1][33]) {  col = 5;
-                  if (data[i+1][34]) {  col = 6;
-                    if (data[i+1][35]) {  col = 7;
+        // Get covariance matrix and format 28-34
+        if (data[i+1] && data[i+1][28]) {  let col = 1;
+          if (data[i+1][29]) {  col = 2;
+            if (data[i+1][30]) {  col = 3;
+              if (data[i+1][31]) {  col = 4;
+                if (data[i+1][32]) {  col = 5;
+                  if (data[i+1][33]) {  col = 6;
+                    if (data[i+1][34]) {  col = 7;
                     }
                   }
                 }
@@ -298,7 +298,7 @@ export class BatchuploadComponentNSS implements OnInit {
           let matrixRow = [];
           for (let row = 0; row < col; row++) { 
             for (let column = 0; column < col; column++) { 
-              matrixRow.push(JSON.parse(JSON.stringify("\"" + data[i+1+row][29+column] + "\"")));
+              matrixRow.push(JSON.parse(JSON.stringify("\"" + data[i+1+row][28+column] + "\"")));
             } 
             covarianceMatrix.push(JSON.parse(JSON.stringify('['+ matrixRow + ']')));
             matrixRow = [];
@@ -308,7 +308,7 @@ export class BatchuploadComponentNSS implements OnInit {
           covarianceMatrix = null;
         }
 
-        let equation = data[i][25]; // Equation
+        let equation = data[i][24]; // Equation
         // Fill array will data from spreadsheet
         this.equationData[counter] = {  
           region: {

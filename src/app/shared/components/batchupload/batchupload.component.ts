@@ -171,6 +171,7 @@ export class BatchuploadComponentNSS implements OnInit {
     this.success = [];
     this.clicked = false;
     let counter = 0;
+    const columnNames = data[1];
     let studyArea;
     let statisticGroup;
     let regressionRegionName;
@@ -187,6 +188,7 @@ export class BatchuploadComponentNSS implements OnInit {
     let explanatoryVariablesArray: explanatoryVariables[] = [];
     let tempExplanatoryVariablesArray: explanatoryVariables[] = [];
     let errorsArray:errors[] = [];
+    let errorRows = [];
     let explanatoryVariables: explanatoryVariables = {  
       code: null,
       limits: ({
@@ -201,6 +203,12 @@ export class BatchuploadComponentNSS implements OnInit {
       id: null,
       value:  null 
     };
+    this.errors.forEach(error => {
+      errorRows.push({
+        code: error.code,
+        row: columnNames.findIndex(x => x === error.code)}
+      );
+    })
 
     // Loop through spreadsheet
     for (let i = 2; i < data.length; i++) { 
@@ -232,21 +240,13 @@ export class BatchuploadComponentNSS implements OnInit {
         tempExplanatoryVariablesArray = explanatoryVariablesArray;
       }
       // Errors
-      if (data[i][17]) { // 	Average standard error (of either estimate or prediction)
-        errors.id = this.errors.find(et => et.code == ("SE")).id;
-        errors.value = data[i][17];
-        errorsArray.push(JSON.parse(JSON.stringify(errors)));
-      }
-      if (data[i][18]) { // Average standard error of prediction
-        errors.id = this.errors.find(et => et.code == ("ASEp")).id;
-        errors.value = data[i][18];
-        errorsArray.push(JSON.parse(JSON.stringify(errors)));
-      }
-      if (data[i][27]) { // Percent Correct
-        errors.id = this.errors.find(et => et.code == ("PC")).id;
-        errors.value = data[i][27];
-        errorsArray.push(JSON.parse(JSON.stringify(errors)));
-      }
+      errorRows.forEach(error => {
+        if (data[i][error.row]) {
+          errors.id = this.errors.find(et => et.code == (error.code)).id;
+          errors.value = data[i][error.row];
+          errorsArray.push(JSON.parse(JSON.stringify(errors)));
+        }
+      })
       if (data[i][19]) {  // Equivalent Years of Record
         eYoR = data[i][19];
       } else {
@@ -356,6 +356,10 @@ export class BatchuploadComponentNSS implements OnInit {
 
   public getUnitType(unitTypeID) {
     return this.unitTypes.find(ut => ut.id == unitTypeID).name;
+  }
+
+  public getErrorCode(errorID) {
+    return this.errors.find(err => err.id == errorID).code;
   }
 
   public submitRecords() {

@@ -55,12 +55,14 @@
 								<thead>
 									<tr>
 										<th class="width-10">Region</th>
-										<th class="width-20">Statistic Group</th>
+										<th class="width-15">Statistic Group</th>
 										<th class="width-10">Regression Region</th>
-										<th class="width-15">Regression Variable</th>
+										<th class="width-10">Regression Variable</th>
+                                        <th class="width-5">Unit Type</th>
+                                        <th class="width-15">Errors</th>
 										<th class="width-10">Equation</th>
-										<th class="width-10">Equivalent Years</th>
-										<th class="width-20">Unit Type</th>
+										<th class="width-5">Equiv. Years</th>
+                                        <th class="width-20">Prediction Interval</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -68,9 +70,43 @@
                                     <td>{{ e.statisticGroupName }}</td>
                                     <td>{{ e.regressionRegions[0].name }}</td>
                                     <td>{{ e.regressionRegions[0].regressions[0].code }}</td>
+                                    <td>{{ getUnitType(e.regressionRegions[0].regressions[0].unit.id) }}</td>
+                                    <td> 
+                                        <span *ngFor="let err of e.regressionRegions[0].regressions[0].errors; let eIndex = index">
+                                            <label class="block bold small">Error {{eIndex + 1}}: </label>
+                                            <span>{{ getErrorCode(err.id)}}, value: {{err.value}}</span>
+                                        </span>
+                                        <span *ngIf="e.regressionRegions[0].regressions[0].errors.length === 0">None</span> 
+                                    </td>
                                     <td>{{ e.regressionRegions[0].regressions[0].equation }}</td>
                                     <td>{{ e.regressionRegions[0].regressions[0].equivalentYears }}</td>
-                                    <td>{{ getUnitType(e.regressionRegions[0].regressions[0].unit.id) }}</td>
+                                    <td> 
+                                        <span *ngIf="(e.regressionRegions[0].regressions[0].predictionInterval.biasCorrectionFactor || e.regressionRegions[0].regressions[0].predictionInterval.student_T_Statistic || e.regressionRegions[0].regressions[0].predictionInterval.variance 
+										|| e.regressionRegions[0].regressions[0].predictionInterval.xiRowVector || e.regressionRegions[0].regressions[0].predictionInterval.covarianceMatrix); else none">
+                                            <span
+                                                *ngIf="e.regressionRegions[0].regressions[0].predictionInterval.biasCorrectionFactor && e.regressionRegions[0].regressions[0].predictionInterval.biasCorrectionFactor !=='null' && e.regressionRegions[0].regressions[0].predictionInterval.biasCorrectionFactor !==''">
+                                                <b>Bias Correction Factor:</b>{{e.regressionRegions[0].regressions[0].predictionInterval.biasCorrectionFactor}}<br>
+                                            </span>
+                                            <span
+                                                *ngIf="e.regressionRegions[0].regressions[0].predictionInterval.student_T_Statistic && e.regressionRegions[0].regressions[0].predictionInterval.student_T_Statistic !=='null' && e.regressionRegions[0].regressions[0].predictionInterval.student_T_Statistic !==''">
+                                                <b>Student's T Statistics for 90% confidence interval:</b> {{e.regressionRegions[0].regressions[0].predictionInterval.student_T_Statistic}}<br></span>
+                                            <span
+                                                *ngIf="e.regressionRegions[0].regressions[0].predictionInterval.variance && e.regressionRegions[0].regressions[0].predictionInterval.variance !=='null' && e.regressionRegions[0].regressions[0].predictionInterval.variance !==''">
+                                                <b>Model Error Variance or Mean Square Error:</b> {{e.regressionRegions[0].regressions[0].predictionInterval.variance}}<br>
+                                            </span>
+                                            <span
+                                                *ngIf="e.regressionRegions[0].regressions[0].predictionInterval.xiRowVector && e.regressionRegions[0].regressions[0].predictionInterval.xiRowVector !=='null' && e.regressionRegions[0].regressions[0].predictionInterval.xiRowVector !==''">
+                                                <b>XI Row Vector:</b>{{e.regressionRegions[0].regressions[0].predictionInterval.xiRowVector}}<br>
+                                            </span>
+                                            <span
+                                                *ngIf="e.regressionRegions[0].regressions[0].predictionInterval.covarianceMatrix && e.regressionRegions[0].regressions[0].predictionInterval.covarianceMatrix !=='null' && e.regressionRegions[0].regressions[0].predictionInterval.covarianceMatrix !==''">
+                                                <b>Covariance Matrix:</b>{{e.regressionRegions[0].regressions[0].predictionInterval.covarianceMatrix}}<br>
+                                            </span>
+										</span>
+                                        <ng-template #none>
+                                            <span>None</span> 
+                                        </ng-template>
+                                    </td>
 								</tbody>
 							</table>
                         </div> <br>

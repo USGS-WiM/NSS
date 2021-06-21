@@ -205,15 +205,15 @@ export class BatchuploadComponentNSS implements OnInit {
     // Loop through spreadsheet
     for (let i = 2; i < data.length; i++) { 
       if (data[i][0]) { // Study area
-        studyArea = (data[i][0]);
+        studyArea = (data[i][0]);            
+        const regionID = this.regions.find(r => r.name == studyArea).id;
+        this.regressionRegions = await this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions=' + regionID).toPromise();
       } 
       if (data[i][2]) { // Statistic Group
         statisticGroup = (data[i][2]);
       } 
       if (data[i][5]) { // Regression Region
         regressionRegionName = (data[i][5]);
-        const regionID = this.regions.find(r => r.name == studyArea).id;
-        this.regressionRegions = await this._settingsservice.getEntities(this.configSettings.nssBaseURL + 'regressionregions?regions=' + regionID).toPromise();
         regressionRegionCode = this.regressionRegions.find(rr => rr.name == regressionRegionName).code;
         regressionRegionID = this.regressionRegions.find(rr => rr.name == regressionRegionName).id;
       }

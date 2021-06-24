@@ -2,9 +2,9 @@
     <div>
         <div class="modal-header">
             <ng-container><div class="title"> Batch Upload </div></ng-container>
-            <button class="icon-button" (click)="d('closed'); selectUpload = false; clearTable()"><i class="far fa-times"></i></button>
+            <button class="icon-button" (click)="d('closed'); closeTable()"><i class="far fa-times"></i></button>
         </div>
-        <div class="modal-body batch-scrollbars">
+        <div class="modal-body batch-scrollbars" id="body">
             <div class="upload-type" *ngIf='!selectUpload'>    
                 <button type="button" class="button blue" (click)='selectUpload = true;'>Upload Equations</button>
             </div>
@@ -12,8 +12,6 @@
             <div *ngIf="!selectUpload" class="upload-type">
                 <h6>For an example template download the file <a href="./assets/example_nss_bulk_upload.xlsx">here</a>.</h6>
             </div>
-            <!-- Back button -->
-			<button *ngIf='selectUpload' type="button" class="button green" (click)='selectUpload = false; clearTable()'>Back</button>
 			<!-- File selector -->
 			<div class="upload-input">
                 <input *ngIf='selectUpload && !tableDisplay' (change)="selectFile($event)" accept=".xls,.xlsx" type='file'/>
@@ -116,6 +114,7 @@
         </div>
     </div>
     <div class="modal-body-footer">
-        <button type="button" *ngIf="tableDisplay" [disabled]="clicked" (click)="submitRecords(); clicked = true;" class="button blue">Create</button>
+        <button type="button" *ngIf="tableDisplay && !submitted"  (click)="submitRecords(); submitted = true;" class="button blue">Create</button>
+        <button type="button" *ngIf="submitted" (click)="d('closed'); closeTable();" class="button red">Close</button>
     </div>
 </ng-template>

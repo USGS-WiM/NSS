@@ -80,6 +80,8 @@ export class BatchuploadComponentNSS implements OnInit {
   public data: [][];
   public tableDisplay: boolean = false;
   public equationData: equation[] = [];
+  public success = [];
+  public submitted = false;
 
   public regions: Array<Region>;
   public statisticGroupTypes: Array<Statisticgroup>;
@@ -87,9 +89,11 @@ export class BatchuploadComponentNSS implements OnInit {
   public unitTypes: Array<Unittype>;
   public regressionRegions: Array<Regressionregion>;
   public errors: Array<Error>;
-  
-  public success = []
-  public clicked = false;
+
+  public tempSelectedStatisticGrp: Array<Statisticgroup>;
+  public tempSelectedRegType: Array<Regressiontype>;
+  public selectedRegressionRegion: Array<Regressionregion>;
+  public tempSelectedRegressionRegion: Array<Regressionregion>;
 
   constructor(private _nssService: NSSService, 
     private _modalService: NgbModal, 
@@ -121,10 +125,26 @@ export class BatchuploadComponentNSS implements OnInit {
     this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.errorsURL).subscribe((errorTypes: Array<Error>) => {
       this.errors = errorTypes;
     });
+
+    this._nssService.selectedRegRegions.subscribe((regRegions: Array<Regressionregion>) => {
+      this.selectedRegressionRegion = regRegions;
+    });
   }
 
   public showModal(): void {
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl batch-upload-modal' });
+  }
+
+  public saveFilters() {
+    this.tempSelectedStatisticGrp = this._nssService.selectedStatGroups;
+    this.tempSelectedRegressionRegion = this.selectedRegressionRegion;
+    this.tempSelectedRegType = this._nssService.selectedRegressionTypes;
+  }
+
+public requeryFilters() {
+    this._nssService.selectedStatGroups = this.tempSelectedStatisticGrp;
+    this._nssService.setSelectedRegRegions(this.tempSelectedRegressionRegion);
+    this._nssService.selectedRegressionTypes = this.tempSelectedRegType;
   }
 
   public clearTable() {
@@ -169,7 +189,6 @@ export class BatchuploadComponentNSS implements OnInit {
 
   async createTable(data) {
     this.success = [];
-    this.clicked = false;
     let counter = 0;
     const columnNames = data[1];
     let studyArea;
@@ -363,6 +382,10 @@ export class BatchuploadComponentNSS implements OnInit {
   }
 
   public submitRecords() {
+    // Can be removed if we allow for editing
+    var div = document.getElementById('body');    
+    div.setAttribute("style", "opacity: 0.6; filter: alpha(opacity = 60);");    
+  
     this.equationData.forEach(scen => {
       for (const parameter of scen.regressionRegions[0].parameters) {
         scen.regressionRegions[0].regressions[0].expected.parameters[parameter.code] = 0;
@@ -383,6 +406,16 @@ export class BatchuploadComponentNSS implements OnInit {
       });
     });
     console.log(this.success)
+  }
+
+  public closeTable(){
+    if (this.submitted == true) {     // reload equations for selected state
+      this.saveFilters();
+      this.requeryFilters();
+    }
+    this.submitted = false;
+    this.clearTable();
+    this.selectUpload = false;
   }
 
 }

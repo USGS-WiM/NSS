@@ -45,6 +45,7 @@ export interface equation {
       }
     }>
   }>
+  success: string;
 }
 
 export interface explanatoryVariables {
@@ -80,7 +81,6 @@ export class BatchuploadComponentNSS implements OnInit {
   public data: [][];
   public tableDisplay: boolean = false;
   public equationData: equation[] = [];
-  public success = [];
   public submitted = false;
 
   public regions: Array<Region>;
@@ -188,7 +188,6 @@ public requeryFilters() {
   }
 
   async createTable(data) {
-    this.success = [];
     let counter = 0;
     const columnNames = data[1];
     let studyArea;
@@ -362,7 +361,8 @@ public requeryFilters() {
                 intervalBounds: null
               }
             }]
-          }]
+          }],
+          success: null
         }
         counter++;
         explanatoryVariablesArray = [];
@@ -386,26 +386,25 @@ public requeryFilters() {
     var div = document.getElementById('body');    
     div.setAttribute("style", "opacity: 0.6; filter: alpha(opacity = 60);");    
   
-    this.equationData.forEach(scen => {
+    this.equationData.forEach((scen, index) => {
       for (const parameter of scen.regressionRegions[0].parameters) {
         scen.regressionRegions[0].regressions[0].expected.parameters[parameter.code] = 0;
       }
       this._settingsservice.postEntity(scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + scen.statisticGroupID + '&skipCheck=true')
       .subscribe((response: any) => {
-        this.success.push("green")
+        this.equationData[index].success = "yes"
           if (!response.headers) {
             this._toasterService.pop('info', 'Info', 'Scenario was added');
           } else {
             this._settingsservice.outputWimMessages(response);
           }
       }, error => {
-        this.success.push("red")
+        this.equationData[index].success = "no"
           if (!this._settingsservice.outputWimMessages(error)) {                                       
             this._toasterService.pop('error', 'Error creating Scenario', error.message || error.statusText);
           }
       });
     });
-    console.log(this.success)
   }
 
   public closeTable(){

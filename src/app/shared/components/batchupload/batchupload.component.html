@@ -27,7 +27,9 @@
             <div *ngIf="tableDisplay">
                 <form class="editScen">
                     <div class="table-title" *ngFor="let e of equationData, let i = index">
-                        <h4 [ngStyle]="{'color': success[i]}">Equation {{i+1}}</h4>
+                        <h4>Equation {{i+1}}
+                        <span style="color:red; font-size:12px;" *ngIf="e.success=='no'">*Equation wasn't uploaded*</span>
+                        </h4>
                         <div class="edit-scen-wrapper">
                             <h5 class="mtop-sm">Explanatory Variables</h5>
 							<table class="custom-table">

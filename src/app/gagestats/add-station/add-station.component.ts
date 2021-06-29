@@ -10,6 +10,7 @@ import { Agency } from 'app/shared/interfaces/agency';
 import { Region } from  'app/shared/interfaces/region';
 import { StationType } from 'app/shared/interfaces/stationtypes';
 import { HttpParams } from '@angular/common/http';
+declare let gtag: Function;
 
 @Component({
   selector: 'addStationModal',
@@ -100,6 +101,7 @@ export class AddStationModal implements OnInit {
       .subscribe((response:any) =>{
         if(!response.headers){
           this._toasterService.pop('info', 'Info', 'Station Added');
+          gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Station was added'});
         } else {
           this._settingsService.outputWimMessages(response);
         }

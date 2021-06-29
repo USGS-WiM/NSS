@@ -19,6 +19,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { LoaderService } from 'app/shared/services/loader.service';
 import { Region } from 'app/shared/interfaces/region';
+declare let gtag: Function;
 
 @Component({
   selector: 'gagePageModal',
@@ -398,6 +399,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           delete(this.newChar);
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Characteristic was created');
+          gtag('event', 'click', { 'event_category': 'Post Characteristic', 'event_label': 'Characteristic was added'});
           this._loaderService.hideFullPageLoad();
       }, error => {
         if (this._settingsservice.outputWimMessages(error)) {return; }
@@ -473,6 +475,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           delete(this.itemBeingEdited);
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Statistic was created');
+          gtag('event', 'click', { 'event_category': 'Post Statistic', 'event_label': 'Statistic was added'});
           this._loaderService.hideFullPageLoad();
         } 
       ) 

@@ -24,6 +24,7 @@ import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
+declare let gtag: Function;
 
 @Component({
   selector: 'addRegressionRegionModal',
@@ -339,6 +340,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         response.isEditing = false;
         if (!response.headers) {
           this._toasterService.pop('info', 'Info', 'Regression region was added');
+          gtag('event', 'click', { 'event_category': 'Post Regression Region', 'event_label': 'Regression Region was added' });
         } else { this._settingsService.outputWimMessages(response); }
         if (this.addCitation && this.newCitation == true){ // if user elected to add a citation, send that through
           this.createNewCitation(response);
@@ -363,6 +365,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(res => {
       if (!res.headers) {
         this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+        gtag('event', 'click', { 'event_category': 'Put Regression Region', 'event_label': 'Regression Region was edited' });
         this.modalRef.close();
       } else {
         this._settingsService.outputWimMessages(res); 
@@ -417,6 +420,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         rr.citationID = response.id;
         if (!response.headers) {
           this._toasterService.pop('info', 'Info', 'Citation was added');
+          gtag('event', 'click', { 'event_category': 'Post Citation', 'event_label': 'Citation was created' });
         } else { this._settingsService.outputWimMessages(response); }
         this.cancelCreateRegression();
         this.requeryFilters();

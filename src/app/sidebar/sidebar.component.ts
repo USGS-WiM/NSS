@@ -11,6 +11,7 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { AddRegressionRegion } from '../shared/interfaces/addregressionregion';
 import { LoaderService } from 'app/shared/services/loader.service';
+declare let gtag: Function;
 
 @Component({
     selector: 'wim-sidebar',
@@ -304,6 +305,7 @@ export class SidebarComponent implements OnInit {
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
             const sParams = '?regressiontypes=' + regTypesIDstring;
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
+            gtag('event', 'click', { 'event_category': 'Compute', 'event_label': 'Region: ' + this.selectedRegion.name});
         }
     }
 

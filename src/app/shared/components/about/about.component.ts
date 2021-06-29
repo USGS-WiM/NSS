@@ -123,7 +123,7 @@ export class AboutModal implements OnInit, OnDestroy {
 
     public submitFreshDeskTicket(): void {
         var url = "https://streamstats.freshdesk.com/api/v2/tickets"
-        var token = 'yxAClTZwexFeIxpRR6g'
+        var token = null;
 
         // need formdata object to send file correctly
         var formdata = new FormData();

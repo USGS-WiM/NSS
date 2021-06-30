@@ -275,6 +275,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this.modalRef.close();    
             this._nssService.searchStations(this.selectedParams);
             this._nssService.setRequeryGSFilter(true);
+            gtag('event', 'click', { 'event_category': 'Delete Station', 'event_label': 'Station was deleted' });
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -372,6 +373,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
               delete(this.itemBeingEdited);
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
+              gtag('event', 'click', { 'event_category': 'Delete Characteristic', 'event_label': 'Characteristic was deleted' });
             }
           )
         } else { delete(this.newChar) }  // If the char does not have an ID (if it has not been saved to the service)
@@ -386,6 +388,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         (res) => { 
           item.isEditing = false;
           delete(this.itemBeingEdited);
+          gtag('event', 'click', { 'event_category': 'Put Characteristic', 'event_label': 'Characteristic was edited'});
           this.refreshgagepage();
           this._settingsservice.outputWimMessages(res);
           this._loaderService.hideFullPageLoad();
@@ -460,6 +463,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           item.isEditing = false;
           delete(this.itemBeingEdited);
           this._settingsservice.outputWimMessages(res);
+          gtag('event', 'click', { 'event_category': 'Put Statistic', 'event_label': 'Statistic was edited'});
           this.refreshgagepage();
           this._loaderService.hideFullPageLoad();
         }
@@ -492,6 +496,8 @@ export class GagepageComponent implements OnInit, OnDestroy {
               delete(this.itemBeingEdited);
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
+              gtag('event', 'click', { 'event_category': 'Delete Statistic', 'event_label': 'Statistic was deleted' });
+
             }
           )
         } else { delete(this.newStat) }  // If the stat does not have an ID (if it has not been saved to the service)

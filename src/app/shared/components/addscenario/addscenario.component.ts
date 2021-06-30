@@ -611,10 +611,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 // clear form
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was Updated');
+                    gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
                 } else {
                     this._settingsService.outputWimMessages(response); 
                 }
-                gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
                 this.cancelCreateScenario();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) { return; }

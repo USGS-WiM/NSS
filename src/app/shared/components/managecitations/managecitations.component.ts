@@ -244,7 +244,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.showNewCitation = false;
             if (!response.headers) {
                 this._toasterService.pop('info', 'Info', 'Citation was added');
-                gtag('event', 'click', { 'event_category': 'Post Citation', 'event_label': 'Citation was created' });
+                gtag('event', 'click', { 'event_category': 'Post Citation', 'event_label': 'Citation was added' });
             } else { 
                 this._settingsService.outputWimMessages(response); 
             }

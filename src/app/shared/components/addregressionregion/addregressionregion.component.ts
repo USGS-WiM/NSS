@@ -375,7 +375,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           .subscribe((response: any) => {
             if (!response.headers) { // Citation successfully updated
               this._toasterService.pop('info', 'Info', 'Citation was updated');
-              gtag('event', 'click', { 'event_category': 'Put Citation', 'event_label': 'Citation was edited' });
+              gtag('event', 'click', { 'event_category': 'Put Citation', 'event_label': 'Citation was added' });
             } else {
               this._settingsService.outputWimMessages(response);
               this.cancelCreateRegression();

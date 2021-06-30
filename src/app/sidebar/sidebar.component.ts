@@ -309,7 +309,7 @@ export class SidebarComponent implements OnInit {
         }
     }
 
-    public getCode(IDs, fullArray){
+    public getCode(IDs, fullArray) {
         if (IDs.length == 0) {
             return("all");
         } else {

@@ -305,7 +305,23 @@ export class SidebarComponent implements OnInit {
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
             const sParams = '?regressiontypes=' + regTypesIDstring;
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
-            gtag('event', 'click', { 'event_category': 'Compute', 'event_label': 'Region: ' + this.selectedRegion.name});
+            gtag('event', 'click', { 'event_category': 'Compute', 'event_label': 'Region: ' + this.selectedRegion.name + ' Statistic Group: ' + this.getCode(this.selectedStatGrpIDs, this.statisticGroups) + " Stat Label: " + this.getCode(this.selectedRegTypeIDs, this.regressionTypes)});
+        }
+    }
+
+    public getCode(IDs, fullArray){
+        if (IDs.length == 0) {
+            return("all");
+        } else {
+            var codes = [];
+            IDs.forEach(y => {
+                fullArray.forEach(z => {
+                    if (y === z.id) {
+                        codes.push(z.code);
+                    }
+                });
+            });
+            return(codes.join(', '));
         }
     }
 

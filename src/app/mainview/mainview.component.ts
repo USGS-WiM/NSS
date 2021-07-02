@@ -518,21 +518,17 @@ export class MainviewComponent implements OnInit {
                                 if (rr.name == 'Area-Averaged') {
                                     F_areaAveraged = true; // area averaged, add title to chart stating
                                     this.frequencyPlotChart.curveLabel = 'Computed Points (Area-weighted average)';
-                                    rr.results.forEach(R => {
-                                        let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                                        freqDataArray.push([x, R.value]);
-                                    });
                                 }
-                            });
-                        } else {
-                            s.regressionRegions.forEach(rr => {
                                 rr.results.forEach(R => {
-                                    let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                                    freqDataArray.push([x, R.value]);
+                                    let x: number = +(R.name.match(/D*\d+\.?\d*/));
+                                    freqDataArray.push([100 / x, R.value]);
                                 });
                             });
-                        }
+                        } 
                     }); // end foreach scenario
+                    freqDataArray.sort(function(a,b) {
+                        return a[0]-b[0]
+                    });
                     console.log('freq (start): ' + freqDataArray);
                     this.fChartValues = freqDataArray;
                     this.showChartBtn_txt = 'Hide';
@@ -555,7 +551,7 @@ export class MainviewComponent implements OnInit {
                             },
                             fallbackToExportServer: false
                         },
-                        chart: { type: 'line', zoomType: 'xy' },
+                        chart: { type: 'scatter', zoomType: 'xy' },
                         title: { text: '' },
                         series: [
                             {
@@ -1036,8 +1032,8 @@ export class MainviewComponent implements OnInit {
                 s.regressionRegions.forEach(rr => {
                     if (rr.results) {
                         rr.results.forEach(R => {
-                            let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                            freqDataArray.push([(1 / x) * 100, R.value]);
+                            let x: number = +(R.name.match(/D*\d+\.?\d*/));
+                            freqDataArray.push([100 / (1 / x) * 100, R.value]);
                         });
                     }
                 });
@@ -1057,8 +1053,8 @@ export class MainviewComponent implements OnInit {
                 s.regressionRegions.forEach(rr => {
                     if (rr.results) {
                         rr.results.forEach(R => {
-                            let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                            freqDataArray.push([1 / x, R.value]);
+                            let x: number = +(R.name.match(/D*\d+\.?\d*/));
+                            freqDataArray.push([100 / (1 / x), R.value]);
                         });
                     }
                 });
@@ -1078,8 +1074,8 @@ export class MainviewComponent implements OnInit {
                 s.regressionRegions.forEach(rr => {
                     if (rr.results) {
                         rr.results.forEach(R => {
-                            let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                            freqDataArray.push([x, R.value]);
+                            let x: number = +(R.name.match(/D*\d+\.?\d*/));
+                            freqDataArray.push([100 / x, R.value]);
                         });
                     }
                 });

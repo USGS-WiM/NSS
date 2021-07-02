@@ -11,7 +11,7 @@
 <!-- Top Nav bar -->
 <nav id="main">
 	<!-- Mobile menu toggle -->
-	<button type="button" class="sidebar-toggle" (click)="showMobileMenu = !showMobileMenu">
+	<button aria-label="sidebar toggle" type="button" class="sidebar-toggle" (click)="showMobileMenu = !showMobileMenu">
 	<!-- <button class="sidebar-toggle" (click)="toggleSidebar()"> -->
 		<i class="far fa-bars"></i>
 	</button>
@@ -19,7 +19,7 @@
 	<!-- Logo and name -->
 	<div class="branding">
 		<a href="https://usgs.gov">
-            <img src="assets/img/usgs-logo.png"/>
+            <img alt="USGS Logo" src="assets/img/usgs-logo.png"/>
         </a>
         <span class="app-title">
             {{title}}

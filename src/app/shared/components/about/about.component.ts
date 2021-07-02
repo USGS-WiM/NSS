@@ -101,6 +101,8 @@ export class AboutModal implements OnInit, OnDestroy {
         if (!!(<any>window).chrome && (!!(<any>window).chrome.webstore||!!(<any>window).chrome.runtime)) this.Browser = "Chrome";
         // Edge 20+
         if (!(/*@cc_on!@*/false || !!(<any>document).documentMode) && !!(<any>window).StyleMedia) this.Browser = "Edge";
+        // Chromium-based Edge
+        if (window.navigator.userAgent.toLowerCase().indexOf('edg/') > -1) this.Browser = "Chromium Edge";
         // Internet Explorer 6-11
         if (/*@cc_on!@*/false || !!(<any>document).documentMode) this.Browser = "IE";
     }

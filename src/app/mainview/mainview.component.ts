@@ -28,10 +28,14 @@ import { Citation } from 'app/shared/interfaces/citation';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 
-
 declare var MathJax: {
     Hub: { Queue };
 };
+
+export interface freqDataArray { // frequency data
+    name: string;
+    fchartvalues: number[][];
+}
 
 @Component({
     selector: 'wim-mainview',
@@ -76,7 +80,8 @@ export class MainviewComponent implements OnInit {
     public hChartXAxisValues: string[]; // holds Recurrence Interval dropdown values for chart
     // public hChartYAxisText: string;               // chart y axis
     public fChartOptions: any; // frequency chart
-    public fChartValues: Array<number>[]; // frequency data
+    //public fChartValues: Array<number>[]; // frequency data
+    public freqDataArray: freqDataArray[]
     public showCharts_btn: boolean; // toggle button boolean
     public showChartBtn_txt: string; // string "show" / "hide"
     public selectedPlot: string; // which plot are they asking for ("Hydrograph" or "Frequency Plot")
@@ -481,7 +486,7 @@ export class MainviewComponent implements OnInit {
                 this.hydroChartsArray.push(this.hChartOptions);
                 this.hydrographs.push(hydroG); */
             if (c == 'Frequency Plot') {
-                if (this.fChartValues == undefined) {
+                if (this.freqDataArray == undefined) {
                     let F_areaAveraged: boolean = false;
                     this.fChartOptions = {};
                     // only come in here if there isn't already a frequency plot
@@ -510,27 +515,28 @@ export class MainviewComponent implements OnInit {
                         pointSymbols: true
                     };
                     // get array of recurrences from result
-                    let freqDataArray: number[][];
-                    freqDataArray = [];
+                    let dataArray: number[][] = [];
+                    this.freqDataArray = [];
+
                     this.scenarios.forEach(s => {
                         if (s.regressionRegions.length > 1) {
-                            s.regressionRegions.forEach(rr => {
+                            s.regressionRegions.forEach((rr, index) => {
+                                dataArray=[];
                                 if (rr.name == 'Area-Averaged') {
                                     F_areaAveraged = true; // area averaged, add title to chart stating
                                     this.frequencyPlotChart.curveLabel = 'Computed Points (Area-weighted average)';
                                 }
                                 rr.results.forEach(R => {
                                     let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                                    freqDataArray.push([100 / x, R.value]);
+                                    dataArray.push([100 / x, R.value]);
                                 });
+                                this.freqDataArray[index] = {
+                                    name: rr.name,
+                                    fchartvalues: dataArray
+                                }
                             });
                         } 
                     }); // end foreach scenario
-                    freqDataArray.sort(function(a,b) {
-                        return a[0]-b[0]
-                    });
-                    console.log('freq (start): ' + freqDataArray);
-                    this.fChartValues = freqDataArray;
                     this.showChartBtn_txt = 'Hide';
                     this.showCharts_btn = true;
                     this.fChartOptions = {
@@ -551,18 +557,9 @@ export class MainviewComponent implements OnInit {
                             },
                             fallbackToExportServer: false
                         },
-                        chart: { type: 'scatter', zoomType: 'xy' },
+                        chart: { type: 'line', zoomType: 'xy' },
                         title: { text: '' },
-                        series: [
-                            {
-                                data: this.fChartValues,
-                                marker: { enabled: true },
-                                name: F_areaAveraged ? 'Computed Points (Area-weighted average)' : 'Computed Points',
-                                states: {
-                                    hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
-                                }
-                            }
-                        ],
+                        series: [],
                         tooltip: {
                             formatter: function () {
                                 var s = '<b>(' + this.x + ', ' + this.y + ')</b>';
@@ -597,6 +594,16 @@ export class MainviewComponent implements OnInit {
                             minorTickColor: '#000000'
                         }
                     };
+                    this.freqDataArray.forEach((data, index) => {
+                        this.fChartOptions.series[index]={
+                            data:data.fchartvalues,
+                            marker: { enabled: true },
+                            name: data.name,
+                            states: {
+                                hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
+                            }
+                        };
+                    })
                 } // if this.fchartvalues == undefined (only go in there to make a new one not overwrite one)
             } else {
                 // it's "" something was changed in the filters, clear out the charts
@@ -606,7 +613,7 @@ export class MainviewComponent implements OnInit {
                 this.hChartXAxisValues = [];
                 this.hydroChartsArray = [];
                 this.fChartOptions = undefined;
-                this.fChartValues = undefined;
+                this.freqDataArray = undefined;
                 this.hydrographs = [];
             }
         });
@@ -1024,17 +1031,21 @@ export class MainviewComponent implements OnInit {
     }
     // clicked Bottom x & type == update chart FREQUENCY
     public setFreqXaxisType(newType: string) {
-        let freqDataArray: number[][];
-        freqDataArray = [];
+        let dataArray: number[][] = [];
+        this.freqDataArray = [];
         // converting 'percent', 'fraction', or 'returnPeriod' (default/onload is returnPeriod)
         if (newType == 'percent') {
             this.scenarios.forEach(s => {
-                s.regressionRegions.forEach(rr => {
+                s.regressionRegions.forEach((rr, index) => {
                     if (rr.results) {
                         rr.results.forEach(R => {
                             let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                            freqDataArray.push([100 / (1 / x) * 100, R.value]);
+                            dataArray.push([100 / (1 / x) * 100, R.value]);
                         });
+                        this.freqDataArray[index] = {
+                            name: rr.name,
+                            fchartvalues: dataArray
+                        }
                     }
                 });
             }); // end foreach scenario
@@ -1050,12 +1061,16 @@ export class MainviewComponent implements OnInit {
         } else if (newType == 'fraction') {
             // divide 1 into probability (pk500)
             this.scenarios.forEach(s => {
-                s.regressionRegions.forEach(rr => {
+                s.regressionRegions.forEach((rr, index) => {
                     if (rr.results) {
                         rr.results.forEach(R => {
                             let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                            freqDataArray.push([100 / (1 / x), R.value]);
+                            dataArray.push([100 / (1 / x), R.value]);
                         });
+                        this.freqDataArray[index] = {
+                            name: rr.name,
+                            fchartvalues: dataArray
+                        }
                     }
                 });
             }); // end foreach scenario
@@ -1071,12 +1086,16 @@ export class MainviewComponent implements OnInit {
         } else {
             // returnPeriod
             this.scenarios.forEach(s => {
-                s.regressionRegions.forEach(rr => {
+                s.regressionRegions.forEach((rr, index) => {
                     if (rr.results) {
                         rr.results.forEach(R => {
                             let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                            freqDataArray.push([100 / x, R.value]);
+                            dataArray.push([100 / x, R.value]);
                         });
+                        this.freqDataArray[index] = {
+                            name: rr.name,
+                            fchartvalues: dataArray
+                        }
                     }
                 });
             }); // end foreach scenario
@@ -1089,9 +1108,17 @@ export class MainviewComponent implements OnInit {
                     }
                 }
             });
-            console.log('return period: ' + freqDataArray);
         }
-        this.freqChart.series[0].setData(freqDataArray);
+        this.freqDataArray.forEach((data, index) => {
+            this.fChartOptions.series[index]={
+                data:data.fchartvalues,
+                marker: { enabled: true },
+                name: data.name,
+                states: {
+                    hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
+                }
+            };
+        })
     }
     // update title on x axis as they type FREQUENCY
     public updateFreqBXtitle() {
@@ -1192,7 +1219,7 @@ export class MainviewComponent implements OnInit {
         this.frequencyPlotChart = undefined;
         this.freqChart = undefined;
         this.fChartOptions = undefined;
-        this.fChartValues = undefined;
+        this.freqDataArray = undefined;
     }
     //////////////////////////////////////end FREQUENCY STUFF  /////////////////////////////////////////////////////
     // toggle charts

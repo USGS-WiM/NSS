@@ -30,8 +30,7 @@ export class AboutModal implements OnInit, OnDestroy {
     private modalSubscript;
     public appVersion: string;
     public Browser: string;
-    public user: string
-    public token: string
+    public freshdeskCredentials;
     public WorkspaceID: string;
     public RegionID: string;
     public Server: string;
@@ -102,6 +101,8 @@ export class AboutModal implements OnInit, OnDestroy {
         if (!!(<any>window).chrome && (!!(<any>window).chrome.webstore||!!(<any>window).chrome.runtime)) this.Browser = "Chrome";
         // Edge 20+
         if (!(/*@cc_on!@*/false || !!(<any>document).documentMode) && !!(<any>window).StyleMedia) this.Browser = "Edge";
+        // Chromium-based Edge
+        if (window.navigator.userAgent.toLowerCase().indexOf('edg/') > -1) this.Browser = "Chromium Edge";
         // Internet Explorer 6-11
         if (/*@cc_on!@*/false || !!(<any>document).documentMode) this.Browser = "IE";
     }
@@ -121,9 +122,9 @@ export class AboutModal implements OnInit, OnDestroy {
         this.removeFile();
     }
 
-    public submitFreshDeskTicket(): void {
+    async submitFreshDeskTicket() {
+        this.freshdeskCredentials = await this.http.get('./assets/secrets.json').toPromise()
         var url = "https://streamstats.freshdesk.com/api/v2/tickets"
-        var token = null
 
         // need formdata object to send file correctly
         var formdata = new FormData();
@@ -145,12 +146,12 @@ export class AboutModal implements OnInit, OnDestroy {
         formdata.append('description', formVal.description);
 
         const headers: HttpHeaders = new HttpHeaders({
-            "Authorization": "Basic " + btoa(token + ":" + 'X')
+            "Authorization": "Basic " + btoa(this.freshdeskCredentials.Token + ":" + 'X')
         });
         // delete content type so webkit boundaries don't get added
         headers.delete('Content-Type');
 
-         this.http.post<any>(url, formdata, { headers: headers, observe: "response"}).subscribe(
+        this.http.post<any>(url, formdata, { headers: headers, observe: "response"}).subscribe(
             (res) => {
                 this._toasterService.pop('info', 'Info', 'Ticket was created'),
                 this.cancelAbout();

@@ -16,6 +16,7 @@ import { Variabletype } from 'app/shared/interfaces/variableType'
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
 import { HttpParams } from '@angular/common/http';
+declare let gtag: Function;
 
 @Component({
   selector: 'batchUploadModal',
@@ -458,6 +459,7 @@ public submitRecords() {
       .subscribe((response:any) =>{
         if(!response.headers){   // If put request is a success...
           this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
+          gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Bulk stations were added'});
           this.clearTable();
           this.selectUpload = false;
           delete(this.selectedCitation);

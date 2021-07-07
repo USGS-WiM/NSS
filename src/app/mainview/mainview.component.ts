@@ -1331,7 +1331,7 @@ export class MainviewComponent implements OnInit {
             const sParams = '?statisticgroupID=' + sgID + '&regressionregionID=' + rrID + '&regressiontypeID=' + rID;
             this._settingsService.deleteEntity('', this.configSettings.nssBaseURL + this.configSettings.scenariosURL, sParams).subscribe(result => {
                 this.requeryFilters();
-                gtag('event', 'click', { 'event_category': 'Delete Regression', 'event_label': 'Regression was deleted' });
+                gtag('event', 'click', { 'event_category': 'Delete Scenario', 'event_label': 'Scenario was deleted' });
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
                 if (error.headers) {

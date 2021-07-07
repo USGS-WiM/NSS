@@ -609,9 +609,9 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             .subscribe((response) => {
                 this.requeryFilters();
                 // clear form
+                gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was Updated');
-                    gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
                 } else {
                     this._settingsService.outputWimMessages(response); 
                 }

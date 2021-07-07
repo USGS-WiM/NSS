@@ -294,6 +294,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
           this._nssService.searchStations(this.selectedParams);
+          gtag('event', 'click', { 'event_category': 'Put Station', 'event_label': 'Station was edited' });
         }
       )
   }

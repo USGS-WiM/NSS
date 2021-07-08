@@ -1,5 +1,5 @@
 import { Citation } from './citation';
-import { Unittype } from './unitType';
+import { Unittype } from './unittype';
 import { Regressiontype } from './regressiontype';
 import { Statisticgroup } from './statisticgroup';
 

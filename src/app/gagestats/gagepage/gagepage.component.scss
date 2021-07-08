@@ -1,0 +1,48 @@
+.modal-body p {
+    padding-top: 10px;
+}
+
+.stat-filters button {
+    margin: 0px 0px 10px 10px;
+}
+
+.table-title{
+    font-size: 16px;
+	font-weight: 600;
+}
+
+.table-icon-buttons button {
+    text-align: center;
+}
+
+.stat-filters div{
+    display: inline-block;
+    //margin-right: 10px;
+}
+
+.modal-body{
+    overflow-y: auto;
+}
+
+.stat-filters{
+    float: right;
+}
+
+.stat-filters label {
+    margin-right: 10px !important;
+    font-size: 14px;
+}
+
+.stat-table-title {
+    padding: 10px;
+}
+
+.linkLookalike {
+    cursor:pointer;
+    color: #055CDB;
+}
+
+.linkLookalike:hover {
+    text-decoration:underline;
+    color: #055CDB;
+}

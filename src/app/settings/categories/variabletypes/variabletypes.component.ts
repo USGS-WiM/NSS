@@ -1,20 +1,17 @@
 // ------------------------------------------------------------------------------
-// ----- regions.component.ts -----------------------------------------------
+// ----- variables.component.ts -----------------------------------------------
 // ------------------------------------------------------------------------------
 
 // copyright:   2017 WiM - USGS
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
-// purpose: regions crud in admin settings page
+// purpose: varialbes crud in admin settings page
 
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
-
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-
 import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from '../../settings.service';
-
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Config } from 'app/shared/interfaces/config';
@@ -31,9 +28,6 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     @ViewChild('VariableTypeForm', {static: true}) varForm;
     public selectedRegion;
     public regions;
-    public selectedRegRegionIDs;
-    public selectedStatGroupIDs;
-    public selectedRegTypeIDs;
     public newVarForm: FormGroup;
     public showNewVarForm: boolean;
     public variableTypes: Array<Variabletype>;
@@ -45,12 +39,18 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public rowBeingEdited: number;
     public tempData;
     public modalRef;
+    public englishUnitTypes;
+    public metricUnitTypes;
+    public statisticGroups;
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _toasterService: ToasterService,
         private _configService: ConfigService) {
             this.newVarForm = _fb.group({
                 'name': new FormControl(null, Validators.required),
                 'description': new FormControl(null),
+                'englishUnitTypeID': new FormControl(null),
+                'metricUnitTypeID': new FormControl(null),
+                'statisticGroupTypeID': new FormControl(null),
                 'code': new FormControl(null, Validators.required)
             });
             this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -62,18 +62,37 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
         }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.variablesURL).subscribe(res => {
-            this.variableTypes = res;
-        });
-
         this._settingsservice.variables().subscribe(res => {
             this.variableTypes = res;
+        });
+        this.getEntites();
+    }
+
+    public getEntites(){
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(res => {
+            this.variableTypes = res;
+        });
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            this.statisticGroups = res.filter(statGrup => statGrup.defType == "BC");
+        });
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            for (const unit of res) {
+                unit['unit'] = unit['name'];
+                unit['abbr'] = unit['abbreviation'];
+            }
+            this.englishUnitTypes = res.filter(unitType => unitType.unitSystemTypeID !== 1);
+            this.metricUnitTypes = res.filter(unitType => unitType.unitSystemTypeID !== 2);
         });
     }
 
     showNewVariableForm() {
         this.newVarForm.controls['name'].setValue(null);
         this.newVarForm.controls['description'].setValue(null);
+        this.newVarForm.controls['englishUnitTypeID'].setValue(null);
+        this.newVarForm.controls['metricUnitTypeID'].setValue(null);
+        this.newVarForm.controls['statisticGroupTypeID'].setValue(null);
         this.newVarForm.controls['code'].setValue(null);
         this.showNewVarForm = true;
         this.modalRef = this._modalService.open(this.addRef, { backdrop: 'static', keyboard: false, size: 'lg' });
@@ -105,11 +124,11 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
 
     private createNewVariableType() {
         const newItem = this.newVarForm.value;
-        this._settingsservice.postEntity(newItem, this.configSettings.variablesURL)
+        this._settingsservice.postEntity(newItem, this.configSettings.nssBaseURL + this.configSettings.variablesURL)
             .subscribe((response: Variabletype) => {
                 response.isEditing = false;
                 this.variableTypes.push(response);
-                this._settingsservice.setVariables(this.variableTypes);
+                this.getEntites();
                 this._toasterService.pop('info', 'Info', 'Variable was created');
                 this.cancelCreateVariableType();
             }, error => {
@@ -120,10 +139,15 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     }
 
     private EditRowClicked(i: number) {
-       this.rowBeingEdited = i;
-       this.tempData = Object.assign({}, this.variableTypes[i]); // make a copy in case they cancel
-       this.variableTypes[i].isEditing = true;
-       this.isEditing = true; // set to true so create new is disabled
+        // make a copy in case they cancel
+        this.variableTypes[i].isEditing = true;
+        //if there is a row already being edited, cancel that edit
+        if (this.isEditing == true) {
+            this.CancelEditRowClicked(this.rowBeingEdited);
+        }
+        this.tempData = Object.assign({}, this.variableTypes[i]); 
+        this.rowBeingEdited = i;
+        this.isEditing = true; // set to true so create new is disabled
     }
 
     public CancelEditRowClicked(i: number) {
@@ -143,7 +167,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Variable', 'Name, description and Code are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.variablesURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.variableTypes[i] = u;
@@ -166,7 +190,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.variableTypes.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.variablesURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.variablesURL)
                 .subscribe(result => {
                     this.variableTypes.splice(index, 1);
                     this._settingsservice.setVariables(this.variableTypes); // update service

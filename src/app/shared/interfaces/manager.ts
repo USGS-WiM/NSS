@@ -10,4 +10,5 @@ export interface Manager{
     username: string;
     password?: string;
     isEditing?: boolean;
+    regionManagers?: any;
 }

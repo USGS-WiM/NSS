@@ -1,3 +1,4 @@
+
 // ------------------------------------------------------------------------------
 // ----- settings.service..ts -----------------------------------------------
 // ------------------------------------------------------------------------------
@@ -26,6 +27,12 @@ import { UnitSystem } from 'app/shared/interfaces/unitsystems';
 import { Citation } from 'app/shared/interfaces/citation';
 import { Error } from 'app/shared/interfaces/error';
 import { ToasterService } from 'angular2-toaster';
+import { Stationtype } from 'app/shared/interfaces/stationtype';
+import { Agency } from 'app/shared/interfaces/agency';
+import { Station } from 'app/shared/interfaces/station';
+import { GageCharacteristic } from 'app/shared/interfaces/gagecharacteristic';
+import { GageStatistic } from 'app/shared/interfaces/gagestatistic';
+import { Method } from 'app/shared/interfaces/method';
 
 @Injectable()
 export class SettingsService {
@@ -36,6 +43,7 @@ export class SettingsService {
     private configSettings: Config;
     // SUBJECTS //////////////////////////////////////
     private _regionSubject: BehaviorSubject<Array<Region>> = <BehaviorSubject<Region[]>>new BehaviorSubject([]);
+    private _methodSubject: BehaviorSubject<Array<Method>> = <BehaviorSubject<Method[]>>new BehaviorSubject([]);
     private _statisticGroupSubject: BehaviorSubject<Array<Statisticgroup>> = <BehaviorSubject<Statisticgroup[]>>new BehaviorSubject([]);
     private _regRegionSubject: BehaviorSubject<Array<Regressionregion>> = <BehaviorSubject<Regressionregion[]>>new BehaviorSubject([]);
     private _regTypeSubject: BehaviorSubject<Array<Regressiontype>> = <BehaviorSubject<Regressiontype[]>>new BehaviorSubject([]);
@@ -46,6 +54,11 @@ export class SettingsService {
     private _managersSubject: BehaviorSubject<Array<Manager>> = <BehaviorSubject<Manager[]>>new BehaviorSubject([]);
     private _citationsSubject: BehaviorSubject<Array<Citation>> = <BehaviorSubject<Citation[]>>new BehaviorSubject([]);
     private _errorsSubject: BehaviorSubject<Array<Error>> = <BehaviorSubject<Error[]>>new BehaviorSubject([]);
+    private _stationTypeSubject: BehaviorSubject<Array<Stationtype>> = <BehaviorSubject<Stationtype[]>>new BehaviorSubject([]);
+    private _agenciesSubject: BehaviorSubject<Array<Agency>> = <BehaviorSubject<Agency[]>>new BehaviorSubject([]);
+    private _stationSubject: BehaviorSubject<Array<Station>> = <BehaviorSubject<Station[]>>new BehaviorSubject([]);
+    private _gageCharacteristicSubject: BehaviorSubject<Array<GageCharacteristic>> = <BehaviorSubject<GageCharacteristic[]>>new BehaviorSubject([]);
+    private _gageStatisticSubject: BehaviorSubject<Array<GageStatistic>> = <BehaviorSubject<GageStatistic[]>>new BehaviorSubject([]);
 
 
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService) {
@@ -87,12 +100,25 @@ export class SettingsService {
         return this._errorsSubject.asObservable();
     }
 
+    //Gagestats
+    public agencies(): Observable<Array<Agency>> {
+        return this._agenciesSubject.asObservable();
+    }
+    public stationTypes(): Observable<Array<Stationtype>> {
+        return this._stationTypeSubject.asObservable();
+    }
+    public gageCharacteristics(): Observable<Array<GageCharacteristic>> {
+        return this._gageCharacteristicSubject.asObservable();
+    }
+    public gageStatistics(): Observable<Array<GageStatistic>> {
+        return this._gageStatisticSubject.asObservable();
+    }
     // HTTP REQUESTS ////////////////////////////////////
 
     // ------------ GETS ---------------------------
     public getEntities(url: string) {
         return this._http
-            .get(this.configSettings.baseURL + url, { headers: this.authHeader })
+            .get(url, { headers: this.authHeader })
             .map(res => { if (res) {return <Array<any>>res }})
             .catch(this.errorHandler);
     }
@@ -100,12 +126,12 @@ export class SettingsService {
     // ------------ POSTS ------------------------------
     public postEntity(entity: object, url: string) {
         return this._http
-            .post(this.configSettings.baseURL + url, entity, { headers: this.authHeader, observe: 'response' })
+            .post(url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => {
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
                 } else {this.outputWimMessages(res); }
                 return res.body;
-            })
+            }) 
             .catch(this.errorHandler);
     }
 
@@ -113,7 +139,7 @@ export class SettingsService {
     public putEntity(id, entity, url: string) {
         if (id !== '') {url += '/' + id; }
         return this._http
-            .put(this.configSettings.baseURL + url, entity, { headers: this.authHeader, observe: 'response' })
+            .put(url, entity, { headers: this.authHeader, observe: 'response' })
             .map(res => res)
             .catch(this.errorHandler);
     }
@@ -122,37 +148,40 @@ export class SettingsService {
     public deleteEntity(id, url: string, params?: string) {
         if (id !== '') {url += '/' + id; }
         if (params) {url += params; }
-        return this._http.delete(this.configSettings.baseURL + url, { headers: this.authHeader, observe: 'response'})
+        return this._http.delete( url, { headers: this.authHeader, observe: 'response'})
             .catch(this.errorHandler);
     }
 
     public errorHandler(error: Response | any) {
         //if (error._body !== '') {error._body = JSON.parse(error._body); }
-        return Observable.throw(error);
+        return Observable.throwError(error);
     }
 
     public outputWimMessages(res) {
-        this._toasterService.clear();
-        const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
-        const existingMsgs = [];
-        if (wimMessages) {
-            for (const key of Object.keys(wimMessages)) {
-                for (const item of wimMessages[key]) {
-                    // skip duplicates and counts
-                    if (item.indexOf('Count:') === -1 && existingMsgs.indexOf(item) == -1) {
-                        existingMsgs.push(item);
-                        this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+            //this._toasterService.clear();
+            const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
+            const existingMsgs = [];
+            if (wimMessages) {
+                for (const key of Object.keys(wimMessages)) {
+                    for (const item of wimMessages[key]) {
+                        // skip duplicates and counts
+                        if (item.indexOf('Count:') === -1 && existingMsgs.indexOf(item) == -1) {
+                            existingMsgs.push(item);
+                            this._toasterService.pop(key, key.charAt(0).toUpperCase() + key.slice(1), item);
+                        }
                     }
                 }
+                return true;
             }
-            return true;
-        }
-        return false;
+            return false;
     }
 
     // SETTERS ///////////////////////////////////////////
     public setRegions(r: Array<Region>) {
         this._regionSubject.next(r);
+    }
+    public setMethods(m: Array<Method>) {
+        this._methodSubject.next(m);
     }
     public setStatGroups(s: Array<Statisticgroup>) {
         this._statisticGroupSubject.next(s);
@@ -183,5 +212,14 @@ export class SettingsService {
     }
     public setErrors(e: Array<Error>) {
         this._errorsSubject.next(e);
+    }
+    public setAgencies(a: Array<Agency>) {
+        this._agenciesSubject.next(a);
+    }
+    public setStationTypes(a: Array<Stationtype>) {
+        this._stationTypeSubject.next(a);
+    }
+    public setGageCharacteristics(a: Array<GageCharacteristic>) {
+        this._gageCharacteristicSubject.next(a);
     }
 }

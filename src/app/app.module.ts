@@ -28,6 +28,8 @@ import { UnitSystemsComponent } from './settings/categories/unitsystems/unitsyst
 import { VariableTypesComponent } from './settings/categories/variabletypes/variabletypes.component';
 import { ManagersComponent } from './settings/categories/managers/managers.component';
 import { ErrorsComponent } from './settings/categories/errors/errors.component';
+import { AgenciesComponent } from './settings/categories/agencies/agencies.component';
+import { StationTypesComponent } from './settings/categories/stationtypes/stationtypes.component';
 
 import { environment } from '../environments/environment';
 import { UniquePipe } from './mainview/unique.pipe';
@@ -48,6 +50,14 @@ import { AddScenarioModal } from './shared/components/addscenario/addscenario.co
 import { ManageCitationsModal } from './shared/components/managecitations/managecitations.component';
 import { ToasterService} from 'angular2-toaster';
 import { AddRegressionRegionModal } from './shared/components/addregressionregion/addregressionregion.component';
+import { GagestatsComponent } from './gagestats/gagestats.component';
+import { GsSidebarComponent } from './gagestats/gs-sidebar/gs-sidebar.component';
+import { GagestatsService } from './gagestats/gagestats.service';
+import { AddStationModal } from './gagestats/add-station/add-station.component';
+import { GagepageComponent } from './gagestats/gagepage/gagepage.component';
+import { MethodsComponent } from './settings/categories/methods/methods.component';
+import { BatchUploadModal } from './gagestats/batch-upload/batch-upload.component';
+
 
 declare const require: any;
 
@@ -64,12 +74,16 @@ const appRoutes: Routes = [
       { path: 'unitsystems', component: UnitSystemsComponent },
       { path: 'variabletypes', component: VariableTypesComponent },
       { path: 'managers', component: ManagersComponent },
-      { path: 'errors', component: ErrorsComponent}
+      { path: 'errors', component: ErrorsComponent},
+      { path: 'agencies', component: AgenciesComponent},
+      { path: 'stationtypes', component: StationTypesComponent},
+      { path: 'methods', component: MethodsComponent}
     ],
     runGuardsAndResolvers: 'always'
   },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
-  { path: '', component: MainviewComponent, pathMatch: 'full' }
+  { path: '', component: MainviewComponent, pathMatch: 'full' },
+  { path: 'gagestats', component: GagestatsComponent}
 ];
 
 export function ConfigLoader(configService: ConfigService) {
@@ -89,7 +103,9 @@ export function highchartsFactory() {
   declarations: [
     AppComponent, MainviewComponent, SidebarComponent, SettingsComponent, AboutModal, UniquePipe, StatisticGroupsComponent,
     MathjaxDirective, RegressionTypesComponent, UnitTypesComponent, UnitSystemsComponent, VariableTypesComponent, ManagersComponent,
-    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, LoaderComponent
+    ProfileComponent, ErrorsComponent, RegionsComponent, AddScenarioModal, ManageCitationsModal, CitationFilterPipe, AddRegressionRegionModal, 
+    LoaderComponent, GagestatsComponent, GsSidebarComponent, AgenciesComponent, StationTypesComponent, AddStationModal, GagepageComponent, 
+    MethodsComponent, BatchUploadModal
   ],
   imports: [
     NgSelectModule, BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,
@@ -99,7 +115,7 @@ export function highchartsFactory() {
   providers: [
     NSSService, { provide: HighchartsStatic, useFactory: highchartsFactory }, ConfigService,
     { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
-    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ToasterService, LoaderService
+    LoginService, AuthService, SettingsService, AuthGuard, AdminGuard, ToasterService, LoaderService, GagestatsService
   ],
   bootstrap: [AppComponent],
   exports: [RouterModule]

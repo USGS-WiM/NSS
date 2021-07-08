@@ -1,0 +1,88 @@
+<h3 class="mbottom-md">Station Types</h3>
+
+<button type="button" class="button blue small " (click)="showNewStationTypeForm()">
+	<i class="far fa-plus" aria-hidden="true"></i> 
+	<span>Add New Station Type</span>
+</button>
+
+<form #StationTypeForm="ngForm">
+    <div class="form-group" *ngIf="stationTypes">
+        <table class="custom-table mtop-sm">
+            <thead>
+                <tr>
+                    <th class="width-5"></th>
+                    <th class="width-60">Name</th>
+                    <th class="width-30">Description</th>
+                    <th class="width-5">Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let s of stationTypes; let i = index">
+                    <td class="table-icon-buttons">
+                       
+                            <button *ngIf="!s.isEditing" title="Edit Station Type" (click)="EditRowClicked(i)"
+                                aria-hidden="true" class="icon-button"><i class="far fa-pencil"></i></button>
+                            <button *ngIf="!s.isEditing" title="Delete Station Type" (click)="deleteStationType(s.id)"
+                                aria-hidden="true" class="icon-button hover-red"><i class="far fa-times"></i></button>
+                            <button *ngIf="s.isEditing" title="Save Station Type" (click)="saveStationType(s,i)" 
+                                aria-hidden="true" class="icon-button"><i class="far fa-floppy-o"></i></button>
+                            <button *ngIf="s.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" 
+                                aria-hidden="true" class="icon-button"><i class="far fa-history"></i></button>
+                       
+                    </td>
+                    <td>
+                        <span *ngIf="!s.isEditing">{{ s.name }}</span>
+                        <span *ngIf="s.isEditing"><input type="text" name="name" [(ngModel)]="s.name" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!s.isEditing">{{ s.description }}</span>
+                        <span *ngIf="s.isEditing"><textarea rows="3" name="description" [(ngModel)]="s.description"></textarea></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!s.isEditing">{{ s.code }}</span>
+                        <span *ngIf="s.isEditing"><input type="text" name="code" [(ngModel)]="s.code" required></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<br />
+
+<!-- new station type form -->
+<ng-template #add let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<div class="title">New Station Type</div>  
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+	</div>
+    <div class="modal-body">
+        <form [formGroup]="newStationTypeForm">
+            <!-- Name -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newStationTypeForm.get('name').valid && newStationTypeForm.get('name').dirty}">
+                <label class="req" for="name">Name:</label>
+                <input class="form-control" type="text" placeholder="" formControlName="name" required>
+                <div class="input-invalid-warning" *ngIf="!newStationTypeForm.get('name').valid && newStationTypeForm.get('name').dirty">Station Type Name
+                        is required</div>
+            </div>
+            <!-- Description -->
+            <div class="form-group">
+                <label for="Description">Description:</label>
+                <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
+            </div>
+            <!-- Code -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newStationTypeForm.get('code').valid && newStationTypeForm.get('code').dirty}">
+                <label class="req" for="code">Code:</label>
+                <input class="form-control" type="text" formControlName="code" required>
+                <div class="input-invalid-warning" *ngIf="!newStationTypeForm.get('code').valid && newStationTypeForm.get('code').dirty">Code
+                    is required</div>
+            </div>
+
+        </form>
+    </div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button">Cancel</button>
+		<button type="button" (click)="createNewStationType()" [disabled]="!newStationTypeForm.valid" class="button blue">Create</button>
+	</div>
+</ng-template>

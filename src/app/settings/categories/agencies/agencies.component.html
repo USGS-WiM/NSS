@@ -1,0 +1,94 @@
+<h3 class="mbottom-md">Agencies</h3>
+
+<button type="button" class="button blue small mbottom-sm" (click)="showNewAgencyForm()">
+	<i class="far fa-plus" aria-hidden="true"></i> 
+	<span>Add New Agency</span>
+</button>
+
+<form #AgencyForm="ngForm">
+    <div class="form-group" *ngIf="agencies">
+        <table class="custom-table mtop-sm">
+            <thead>
+                <tr>
+                    <th class="width-5"></th>
+                    <th class="width-35">Name</th>
+                    <th class="width-30">Description</th>
+                    <th class="width-30">Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let v of agencies; let i = index">
+					<td class="table-icon-buttons">
+						<button *ngIf="!v.isEditing" title="Edit Agency" (click)="EditRowClicked(i)" class="icon-button">
+							<i class="far fa-pencil"></i>
+						</button>
+						<button *ngIf="!v.isEditing" title="Delete Agency" (click)="deleteAgency(v.id)" class="icon-button hover-red">
+							<i class="far fa-times"></i>
+						</button>
+						<button *ngIf="v.isEditing" title="Save Agency" (click)="saveAgency(v,i)" class="icon-button">
+							<i class="far fa-floppy-o"></i>
+						</button>
+						<button *ngIf="v.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button">
+							<i class="far fa-history"></i>
+						</button>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.name }}</span>
+                        <span *ngIf="v.isEditing"><input type="text" name="name" [(ngModel)]="v.name" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.description }}</span>
+                        <span *ngIf="v.isEditing"><textarea rows="3" name="description" [(ngModel)]="v.description"></textarea></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!v.isEditing">{{ v.code }}</span>
+                        <span *ngIf="v.isEditing"><input type="text" name="code" [(ngModel)]="v.code" required></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+
+
+<!-- new agency form -->
+<ng-template #add let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<div class="title">New Agency</div>  
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+	</div>
+    <div class="modal-body">
+		
+		<form [formGroup]="newAgencyForm">
+            <!-- Name -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newAgencyForm.get('name').valid && newAgencyForm.get('name').dirty}">
+                <label class="req" for="name">Name:</label>
+                <input class="form-control" type="text" placeholder="" formControlName="name" required>
+                <div class="input-invalid-warning" *ngIf="!newAgencyForm.get('name').valid && newAgencyForm.get('name').dirty">
+					Agency Name is required
+				</div>
+            </div>
+            <!-- Description -->
+            <div class="form-group">
+                <label for="Description">Description:</label>
+                <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
+            </div>
+            <!-- Code -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newAgencyForm.get('code').valid && newAgencyForm.get('code').dirty}">
+                <label class="req" for="code">Code:</label>
+                <input class="form-control" type="text" formControlName="code" required>
+                <div class="input-invalid-warning" *ngIf="!newAgencyForm.get('code').valid && newAgencyForm.get('code').dirty">Code
+                    is required</div>
+            </div>
+
+        </form>
+    </div>
+
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('clicked')" class="button">Cancel</button>
+		<button type="button" (click)="createNewAgency()" [disabled]="!newAgencyForm.valid" class="button blue">Create</button>
+	</div>
+</ng-template>
+
+
+        

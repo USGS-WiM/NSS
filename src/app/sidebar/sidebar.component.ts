@@ -11,17 +11,19 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { AddRegressionRegion } from '../shared/interfaces/addregressionregion';
 import { LoaderService } from 'app/shared/services/loader.service';
+declare let gtag: Function;
 
 @Component({
     selector: 'wim-sidebar',
+    host: { 'class': 'app-sidebar' },
     templateUrl: './sidebar.component.html',
-    styleUrls: ['./sidebar.component.css']
+    styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit {
     public doShow: boolean;
     public showChart: boolean; // show the Chart: Sidebar option
     //public plotTypes: Array<string> = ['Frequency Plot', 'Hydrograph']; // Hydrograph, Frequency Plot
-    public plotTypes: Array<string> = ['Frequency Plot']; 
+    public plotTypes: Array<string> = ['Frequency Plot'];
     public selectedPlot: string; // which chart type they selected
     // regions
     // public get selectedRegion():Region {return this._nssService.selectedRegion;};
@@ -30,6 +32,7 @@ export class SidebarComponent implements OnInit {
     public loggedInRole;
     public region;
     public showCompute;
+    public originalRegRegion;
 
     // regression regions
     public selectedRegRegionIDs: Array<number>; // multiselect populates this with those selected
@@ -41,24 +44,18 @@ export class SidebarComponent implements OnInit {
 
     // regression types
     public selectedRegTypeIDs: Array<number>;
-    public get selectedRegType(): Array<Regressiontype> {
-        return this._nssService.selectedRegressionTypes;
-    }
     public regressionTypes: Array<Regressiontype>;
     private myRTSettings: IMultiSelectSettings;
 
     // statisticGrps
     public selectedStatGrpIDs: Array<number>;
-    public get selectedStatGrp(): Array<Statisticgroup> {
-        return this._nssService.selectedStatGroups;
-    }
     public statisticGroups: Array<Statisticgroup>;
     private mySGSettings: IMultiSelectSettings;
 
     // scenario
     public scenarios: Array<Scenario>;
 
-    constructor(private _nssService: NSSService, private _authService: AuthService, private _toasterService: ToasterService, private _loaderService: LoaderService) {}
+    constructor(private _nssService: NSSService, private _authService: AuthService, private _toasterService: ToasterService, private _loaderService: LoaderService) { }
 
     ngOnInit() {
         this._nssService.currentCompute.subscribe(bool => this.showCompute = bool);
@@ -82,7 +79,7 @@ export class SidebarComponent implements OnInit {
             this._loaderService.hideFullPageLoad();
         });
         this._nssService.selectedRegion.subscribe((r: Region) => {
-            if (r && r.id && this.regions) {this.selectedRegion = this.regions.find(reg => reg.id == r.id);}
+            if (r && r.id && this.regions) { this.selectedRegion = this.regions.find(reg => reg.id == r.id); }
             // this.clearSelections();
         });
         // subscribe to selected regression regions
@@ -95,13 +92,13 @@ export class SidebarComponent implements OnInit {
             // remove from selectedRegRegion if not in response.
             if (this.selectedRegRegionIDs !== undefined) {
                 if (rr.length > 0) {
-                    for (let rri = this.selectedRegRegionIDs.length; rri--; ) {
+                    for (let rri = this.selectedRegRegionIDs.length; rri--;) {
                         const RRind = rr
-                            .map(function(eachrr) {
+                            .map(function (eachrr) {
                                 return eachrr.id;
                             })
                             .indexOf(this.selectedRegRegionIDs[rri]);
-                        if (RRind < 0) {this.selectedRegRegionIDs.splice(rri, 1); }
+                        if (RRind < 0) { this.selectedRegRegionIDs.splice(rri, 1); }
                     }
                 } else { this.selectedRegRegionIDs = []; }
             }
@@ -112,9 +109,9 @@ export class SidebarComponent implements OnInit {
             // remove from selectedStatGrp if not in response.
             if (this.selectedStatGrpIDs !== undefined) {
                 if (sg.length > 0) {
-                    for (let si = this.selectedStatGrpIDs.length; si--; ) {
+                    for (let si = this.selectedStatGrpIDs.length; si--;) {
                         const SSind = sg
-                            .map(function(eachsg) {
+                            .map(function (eachsg) {
                                 return eachsg.id;
                             })
                             .indexOf(this.selectedStatGrpIDs[si]);
@@ -129,9 +126,9 @@ export class SidebarComponent implements OnInit {
             // remove from selectedRegType if not in response
             if (this.selectedRegTypeIDs !== undefined) {
                 if (rt.length > 0) {
-                    for (let rti = this.selectedRegTypeIDs.length; rti--; ) {
+                    for (let rti = this.selectedRegTypeIDs.length; rti--;) {
                         const RTind = rt
-                            .map(function(eachrt) {
+                            .map(function (eachrt) {
                                 return eachrt.id;
                             })
                             .indexOf(this.selectedRegTypeIDs[rti]);
@@ -140,6 +137,8 @@ export class SidebarComponent implements OnInit {
                 } else { this.selectedRegTypeIDs = []; }
             }
         });
+        // subscribe to temRegRegion
+        this._nssService.currentTempRegRegion.subscribe(originalRegRegion => this.originalRegRegion = originalRegRegion);
         // subscribe to scenario
         this._nssService.scenarios.subscribe((s: Array<Scenario>) => {
             this.scenarios = s;
@@ -147,9 +146,6 @@ export class SidebarComponent implements OnInit {
                 // if there are results, show the chart buttons
                 if (sc.regressionRegions.length > 0 && sc.regressionRegions[0].results && sc.statisticGroupName.indexOf('Peak-Flow') > -1) {
                     this.showChart = true;
-                    sc.regressionRegions[0].results.forEach((r) => {
-                        r.equation = r.equation.replace(/_/g, ' \\_');
-                    });
                 } else { this.showChart = false; }
             });
             this._loaderService.hideFullPageLoad();
@@ -202,6 +198,8 @@ export class SidebarComponent implements OnInit {
 
     // select Region. get regressionRegions, regressionTypes, StatisticGroups
     public onRegSelect(r: Region) {
+        this.originalRegRegion = [];
+        this._nssService.showTempRegRegion(this.originalRegRegion);
         this._loaderService.showFullPageLoad();
         this.selectedRegRegionIDs = [];
         this.selectedStatGrpIDs = [];
@@ -216,7 +214,7 @@ export class SidebarComponent implements OnInit {
         this.selectedRegRegionIDs.forEach(srr => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedRegRegions.push(
-                this.regressionRegions.filter(function(rr) {
+                this.regressionRegions.filter(function (rr) {
                     return rr.id === srr;
                 })[0]
             );
@@ -230,7 +228,7 @@ export class SidebarComponent implements OnInit {
         this.selectedStatGrpIDs.forEach(ssg => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedStatGroups.push(
-                this.statisticGroups.filter(function(rr) {
+                this.statisticGroups.filter(function (rr) {
                     return rr.id === ssg;
                 })[0]
             );
@@ -244,7 +242,7 @@ export class SidebarComponent implements OnInit {
         this.selectedRegTypeIDs.forEach(srt => {
             // for each selected (number only) get the IRegressionRegion to send as array to the _service for updating on main
             selectedRegTypes.push(
-                this.regressionTypes.filter(function(rr) {
+                this.regressionTypes.filter(function (rr) {
                     return rr.id === srt;
                 })[0]
             );
@@ -254,6 +252,9 @@ export class SidebarComponent implements OnInit {
 
     // submit / Compute button click
     public CalculateScenario(): void {
+        //store original regression regions
+        this.originalRegRegion = this.scenarios[0].regressionRegions;
+        this._nssService.showTempRegRegion(this.originalRegRegion);
         this._loaderService.showFullPageLoad();
         let ValueRequired = false;
         let totalWeight: number = Number(0);
@@ -264,7 +265,7 @@ export class SidebarComponent implements OnInit {
             s.regressionRegions.forEach(rr => {
                 if (numOfRegRegions > 1) { totalWeight += Number(rr.percentWeight); }
                 rr.parameters.forEach(p => {
-                    if (p.value==null) {
+                    if (p.value == null) {
                         ValueRequired = true;
                         p.missingVal = true;
                     } else { p.missingVal = false; }
@@ -304,11 +305,30 @@ export class SidebarComponent implements OnInit {
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
             const sParams = '?regressiontypes=' + regTypesIDstring;
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
+            gtag('event', 'click', { 'event_category': 'Compute', 'event_label': 'Region: ' + this.selectedRegion.name + ' Statistic Group: ' + this.getCode(this.selectedStatGrpIDs, this.statisticGroups) + " Stat Label: " + this.getCode(this.selectedRegTypeIDs, this.regressionTypes)});
+        }
+    }
+
+    public getCode(IDs, fullArray) {
+        if (IDs.length == 0) {
+            return("all");
+        } else {
+            var codes = [];
+            IDs.forEach(y => {
+                fullArray.forEach(z => {
+                    if (y === z.id) {
+                        codes.push(z.code);
+                    }
+                });
+            });
+            return(codes.join(', '));
         }
     }
 
     // clear all selected stat groups, reg regions and reg types
     public clearSelections() {
+        this.originalRegRegion = [];
+        this._nssService.showTempRegRegion(this.originalRegRegion);
         this._loaderService.showFullPageLoad();
         this.selectedStatGrpIDs = [];
         this.selectedRegRegionIDs = [];

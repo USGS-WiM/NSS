@@ -1,4 +1,4 @@
-![WiM](wimlogo.png)
+![WIM](wimlogo.png)
 
 
 # NSS
@@ -33,16 +33,30 @@ Clone the repo and navigate to folder.
 ```
 'ng serve' to build and run the application.
 ```
+For Freshdesk functionalities (used in the About modal), you will need the secrets.json from [here](https://doimspp.sharepoint.com/sites/StreamStatsTeam/Shared%20Documents/Forms/AllItems.aspx?viewid=9f283fd0%2D4904%2D450b%2D80ce%2Da5211e70406e&id=%2Fsites%2FStreamStatsTeam%2FShared%20Documents%2FSS%5FTeamSpace%2FV4%20Freshdesk%20Creds). This requires access to the StreamStats Sharepoint, and should be placed locally at src/assets.
+
+Note: the secrets file is in the .gitignore and should _never_ be uploaded to GitHub 
 
 ## Building and testing
 
+To compile the project for a production environment run:
 ```
 ng build --prod --base-href
 ```
 
+To compile the project for a non-production environment run:
+```
+ng build --base-href
+```
+
+The `--prod` tag will use the production configuration and point to the production services.
+
 ## Deployment
 
-Deploy to AWS S3 bucket test.wim.usgs.gov, nss directory
+Deploy directly onto a server (instructions for https://test.streamstats.usgs.gov/nss-dev/):
+1. Copy the files in the /dist/ folder to C:/inetpub/wwwroot/nss-dev/ on the test.streamstats.usgs.gov server
+2. Make sure the index.html base href="/nss-dev/"
+3. Make sure the web.config in the assets folder is placed at the app root: C:/inetpub/wwwroot/nss-dev/
 
 ## Built With
 
@@ -94,4 +108,4 @@ In the spirit of open source, please cite any re-use of the source code stored i
 ## About WIM
 * This project authored by the [USGS WIM team](https://wim.usgs.gov)
 * WIM is a team of developers and technologists who build and manage tools, software, web services, and databases to support USGS science and other federal government cooperators.
-* WiM is a part of the [Upper Midwest Water Science Center](https://www.usgs.gov/centers/wisconsin-water-science-center).
+* WIM is a part of the [Upper Midwest Water Science Center](https://www.usgs.gov/centers/wisconsin-water-science-center).

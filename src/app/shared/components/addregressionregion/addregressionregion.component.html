@@ -1,15 +1,11 @@
 <!--Add regression region modal-->
 <ng-template #addRegressionRegion let-c="close" let-d="dismiss">
-  <div class="modal-header">
-      <div class="col-xs-12">
-          <h4 class="modal-title pull-left" *ngIf="addRegReg">New Regression Region </h4>
-          <h4 class="modal-title pull-left" *ngIf="!addRegReg">Edit Regression Region </h4>
-          <button class="close pull-right" (click)="d('closed')">x</button>
-      </div>
-  </div>
+<div class="modal-header">
+	<div class="title" *ngIf="addRegReg">New Regression Region</div>  
+	<div class="title" *ngIf="!addRegReg">Edit Regression Region</div>  
+	<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+</div>
   <div class="modal-body">
-      <h3 class="modal-title" *ngIf="addRegReg">New Regression Region</h3>
-      <h3 class="modal-title" *ngIf="!addRegReg">Edit Regression Region</h3>
       <form [formGroup]="newRegRegForm" style="margin-bottom: 10px;">
           <!-- Regression Type Name* -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('name').valid && newRegRegForm.get('name').dirty}">
@@ -25,6 +21,28 @@
               <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
           </div>
 
+          <!-- Status* -->
+          <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty }">
+              <label class="req" for="statusID">Status:</label>
+              <ng-select formControlName="statusID">
+                  <ng-option *ngFor="let s of status" [value]="s.id">{{ s.name }} ({{s.description}})</ng-option>
+              </ng-select>
+              <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('statusID').valid && newRegRegForm.get('statusID').dirty">
+                  Status is required
+              </div>
+          </div>
+
+          <!-- Method* -->
+          <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('methodID').valid && newRegRegForm.get('methodID').dirty }">
+            <label class="req" for="methodID">Method:</label>
+            <ng-select formControlName="methodID">
+                <ng-option *ngFor="let m of methods" [value]="m.id">{{ m.name }}</ng-option>
+            </ng-select>
+            <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('methodID').valid && newRegRegForm.get('methodID').dirty">
+                Method is required
+            </div>
+        </div>
+
           <!-- Short Name -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newRegRegForm.get('code').valid && newRegRegForm.get('code').dirty || (newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC'))}">
               <label class="req" for="code">Code (e.g. GC1234):</label>
@@ -34,14 +52,15 @@
               <div class="input-invalid-warning" *ngIf="newRegRegForm.get('code').value != '' && newRegRegForm.get('code').value != null && !newRegRegForm.get('code').value.startsWith('GC')">
                       Code must start with "GC"</div>
           </div>
+
           <!-- Region* -->
-          <div class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty }">
-              <label class="req" for="region">Region:</label>
-              <select class="form-control" formControlName="region">
-                  <option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</option>
-              </select>
+          <div *ngIf="addRegReg" class="form-group required" [ngClass]="{ 'form-invalid': !newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty }">
+              <label class="req" for="region">Study Area:</label>
+              <ng-select formControlName="region">
+                  <ng-option *ngFor="let reg of regions" [value]="reg.id">{{ reg.name }}</ng-option>
+              </ng-select>
               <div class="input-invalid-warning" *ngIf="!newRegRegForm.get('region').valid && newRegRegForm.get('region').dirty">
-                  Region is required
+                Study Area is required
               </div>
           </div>
       </form>
@@ -51,14 +70,14 @@
           <!-- Title -->
           <div class="form-group required">
               <label for="title">Title:</label>
-              <textarea class="form-control" rows="3" placeholder="" formControlName="title"></textarea>
-              <div class="input-invalid-warning" *ngIf="!newCitForm.get('title').valid && newCitForm.get('title').dirty">Author
+              <textarea [readonly]="!newCitation" class="form-control" rows="3" placeholder="" formControlName="title"></textarea>
+              <div class="input-invalid-warning" *ngIf="!newCitForm.get('title').valid && newCitForm.get('title').dirty">Title
                       is required</div>
           </div>
           <!-- Author* -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('author').valid && newCitForm.get('author').dirty}">
               <label class="req" for="author">Author:</label>
-              <input class="form-control" type="text" formControlName="author" required>
+              <input [readonly]="!newCitation" class="form-control" type="text" formControlName="author" required>
               <div class="input-invalid-warning" *ngIf="!newCitForm.get('author').valid && newCitForm.get('author').dirty">Author
                   is required</div>
           </div>
@@ -66,15 +85,18 @@
           <!-- Short Name -->
           <div class="form-group required" [ngClass]="{'form-invalid': !newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty}">
               <label class="req" for="citationURL">Citation URL:</label>
-              <input class="form-control" type="text" formControlName="citationURL">
+              <input [readonly]="!newCitation" class="form-control" type="text" formControlName="citationURL">
               <div class="input-invalid-warning" *ngIf="!newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty">URL
                   is required</div>
           </div>
-          <button *ngIf="addCitation" type="button" class="btn-blue" (click)="newRegRegForm.get('citationID').setValue(null); addCitation = false; newCitForm.reset();">Remove Citation</button>
+          <button *ngIf="addCitation" type="button" class="button small blue" (click)="removeCitation()">Remove Citation</button>
       </form>
-      
-    <button *ngIf="!addCitation" type="button" class="btn-blue" (click)="addCitation = true" >Add Citation</button>
-    <button *ngIf="!uploadPolygon" type="button" class="btn-blue" (click)="showMap()">Upload Polygon</button>        
+	  
+	  <div class="xs-f-start pbottom-xs">
+		<button *ngIf="!addCitation" type="button" class="button mright-xs" (click)="addCitation=true; newCitation=true">Add New Citation</button>
+		<button *ngIf="!addCitation" type="button" class="button mright-xs" (click)="showManageCitationsModal(); addCitation=true; newCitation=false">Find Existing Citation</button>
+		<button *ngIf="!uploadPolygon" type="button" class="button mright-xs" (click)="showMap()">Upload Polygon</button>        
+	  </div>
 
       <form *ngIf="uploadPolygon">
         <form #f="ngForm" class="ui form">
@@ -91,12 +113,14 @@
           <div id="map"></div>
         </div>
       </div>
-      <button *ngIf="uploadPolygon" type="button" class="btn-blue" (click)="uploadPolygon = false">Remove Polygon</button>
+      <button *ngIf="uploadPolygon" type="button" class="button small blue" (click)="uploadPolygon = false">Remove Polygon</button>
 
-      <div class="modal-footer">
-          <button type="button" (click)="d('closed')" class="btn-black">Cancel</button>
-          <button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="btn-blue">Create</button>
-          <button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid" class="btn-blue">Save</button>
-      </div>
   </div>
+
+  <!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button">Cancel</button>
+		<button *ngIf="addRegReg" type="button" (click)="createNewRegression()" [disabled]="!newRegRegForm.valid" class="button blue">Create</button>
+		<button *ngIf="!addRegReg" type="button" (click)="editRegressionRegion()" [disabled]="!newRegRegForm.valid" class="button blue">Save</button>
+	</div>
 </ng-template>

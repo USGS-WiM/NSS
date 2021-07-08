@@ -1,0 +1,162 @@
+.app-body-section{
+	margin-top: 25px;
+}
+
+// Misc styles
+// Citation link
+.citation{
+	display: block;
+	font-size: 15px;
+	line-height: 17px;
+	margin: 15px 0;
+	font-weight: 500;
+	box-sizing: border-box;
+	padding-left: 15px;
+}
+
+.sortable tr:hover {
+	cursor: pointer;
+	background: #b4b4b433;
+}
+
+.download-divider{
+	display: flex;
+	height: 30px;
+	margin-top: 40px;
+
+	.controls{
+	}
+
+	.divider{
+		flex-grow: 3;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		position: relative;
+
+		&:after{
+			content: 'x';
+			font-size: 0;
+			height: 3px;
+			background-color: var(--grey);
+			margin-left: 20px;
+		}
+		&:before{
+			content: '\f0d7';
+			font-size: 36px;
+			position: absolute;
+			right: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			font-family: var(--fontAwesome);
+			height: 3px;
+			color: var(--grey);
+			font-weight: bolder;
+			top: 18px;
+		}
+	}
+}
+
+
+// Equations
+.equation-wrapper{
+	display: flex;
+	flex-wrap: wrap;
+
+	.equation-table{
+		width: auto;
+		margin-right: 25px;
+	}
+}
+
+
+// Charts
+.charts-header{
+	display: flex;
+	justify-content: flex-start;
+	height: 60px;
+
+	.header-button{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		margin: 0 0 0 25px;
+
+		.button{
+			margin: 2px 0 0 0;
+		}
+	}
+
+	h2{
+		display: flex;
+		margin: 0 !important;
+		flex-direction: column;
+		justify-content: center;
+	}
+}
+
+
+
+
+
+
+.reqError {
+    background-color: #efe1e1!important;
+    border: 1px solid #a94442!important;
+}
+
+[hidden] { display: none !important;}
+[type="radio"] {
+    position: initial !important;
+}
+[type="checkbox"] {
+    position: initial !important;
+}
+@media print{
+    body * {
+        visibility: hidden;
+        -webkit-print-color-adjust: exact !important;
+    }
+    .hidden-print {
+        display: none !important;
+    }
+    #printArea {
+        margin-top: 0rem;
+    }
+}
+
+.icon {
+	cursor: pointer;
+	padding: 5px;
+}
+
+.addErrorButton {
+    padding: 5px;
+    height: 30px;
+}
+
+.chart-wrapper{
+	border: 1px solid rgba(0,0,0,0.3);
+	display:inline-block;
+	margin-bottom:65px !important;
+	max-height: 460px !important;
+	padding: 0 !important;
+}
+
+
+.page-nav-icon{
+	opacity: 0.65;
+
+	&:hover{
+		opacity: 1;
+	}
+
+	&.fa-angle-left{
+		padding-right: 10px;
+	}
+	&.fa-angle-right{
+		padding-left: 8px;
+	}
+}

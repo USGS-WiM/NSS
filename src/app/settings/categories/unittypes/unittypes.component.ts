@@ -1,22 +1,19 @@
 // ------------------------------------------------------------------------------
-// ----- regions.component.ts -----------------------------------------------
+// ----- unittypes.component.ts -----------------------------------------------
 // ------------------------------------------------------------------------------
 
 // copyright:   2017 WiM - USGS
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
-// purpose: regions crud in admin settings page
+// purpose: unit types crud in admin settings page
 
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
-
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-
 import { NSSService } from 'app/shared/services/app.service';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Unittype } from 'app/shared/interfaces/unittype';
 import { SettingsService } from '../../settings.service';
-
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -32,9 +29,6 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
     @ViewChild('UnitTypeForm', {static: true}) unitForm;
     public selectedRegion;
     public regions;
-    public selectedRegRegionIDs;
-    public selectedStatGroupIDs;
-    public selectedRegTypeIDs;
     public regressionTypes: Array<Regressiontype>;
     public newUnitForm: FormGroup;
     public showNewUnitForm: boolean;
@@ -61,7 +55,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         this.newUnitForm = _fb.group({
             id: new FormControl(null),
             name: new FormControl(null, Validators.required),
-            abbreviation: new FormControl(null),
+            abbreviation: new FormControl(null, Validators.required),
             unitSystemTypeID: new FormControl(null, Validators.required)
         });
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -74,10 +68,10 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.isEditing = false;
-        this._settingsservice.getEntities(this.configSettings.unitsURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
             this.unitTypes = res;
         });
-        this._settingsservice.getEntities(this.configSettings.unitSystemsURL).subscribe(usys => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitSystemsURL).subscribe(usys => {
             this.unitSystems = usys;
         });
 
@@ -113,6 +107,12 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         );
     }
 
+    public getUnitName(ID){
+        if (this.unitSystems && this.unitSystems.find(s => s.id === ID)) {
+            return (this.unitSystems.find(s => s.id === ID).unitSystem);
+        }
+    }
+
     private getDismissReason(reason: any): string {
         if (reason === ModalDismissReasons.ESC) {
             return 'by pressing ESC';
@@ -130,7 +130,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
 
     private createNewUnit() {
         const newUnit = this.newUnitForm.value;
-        this._settingsservice.postEntity(newUnit, this.configSettings.unitsURL)
+        this._settingsservice.postEntity(newUnit, this.configSettings.nssBaseURL + this.configSettings.unitsURL)
             .subscribe((response: Unittype) => {
                 response.isEditing = false;
                 this.unitTypes.push(response);
@@ -140,16 +140,20 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error creating Unit', error._body.message || error.statusText);
-        }
+            }
         );
     }
 
     private EditRowClicked(i: number) {
-       // from wateruse
-       this.rowBeingEdited = i;
-       this.tempData = Object.assign({}, this.unitTypes[i]); // make a copy in case they cancel
-       this.unitTypes[i].isEditing = true;
-       this.isEditing = true; // set to true so create new is disabled
+        // make a copy in case they cancel
+        this.unitTypes[i].isEditing = true;
+        //if there is a row already being edited, cancel that edit
+        if (this.isEditing == true) {
+            this.CancelEditRowClicked(this.rowBeingEdited);
+        }
+        this.tempData = Object.assign({}, this.unitTypes[i]); 
+        this.rowBeingEdited = i;
+        this.isEditing = true; // set to true so create new is disabled
     }
 
     public CancelEditRowClicked(i: number) {
@@ -169,7 +173,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Unit', 'Name, abbreviation and unit system ID are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.unitsURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.unitTypes[i] = u;
@@ -192,7 +196,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.unitTypes.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.unitsURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.unitsURL)
                 .subscribe(result => {
                     this.unitTypes.splice(index, 1);
                     this._settingsservice.setUnits(this.unitTypes); // update service

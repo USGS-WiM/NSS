@@ -1,31 +1,34 @@
-<div>
-    <legend style="margin-bottom:25px;margin-top:0;">Unit Systems</legend>
-</div>
-<button [hidden]="loggedInRole !== 'Administrator'" type="button" class="btn-blue" (click)="showNewForm()"><i class="fa fa-plus"
-    aria-hidden="tru"></i> Add New Unit System</button>
+<h3 class="mbottom-md">Unit Systems</h3>
+
+<button type="button" class="button blue small mbottom-sm" (click)="showNewForm()">
+	<i class="far fa-plus" aria-hidden="true"></i> 
+	<span>Add New Unit System</span>
+</button>
 
 <form #UnitSystemForm="ngForm">
     <div class="form-group" *ngIf="unitSystems">
-        <table class="table">
+        <table class="custom-table">
             <thead>
                 <tr>
-                    <th class="col-xs-1"></th>
-                    <th class="col-xs-2">Unit System</th>
+                    <th class="width-5"></th>
+                    <th class="width-95">Unit System</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let u of unitSystems; let i = index">
-                    <td>
-                        <div class="data-controls">
-                            <i *ngIf="!u.isEditing" title="Edit Unit Type" (click)="EditRowClicked(i)" class="fa fa-pencil"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>&nbsp;
-                            <i *ngIf="!u.isEditing" title="Delete Unit Type" (click)="deleteUnit(u.id)" class="fa fa-times"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="u.isEditing" title="Save Unit Type" (click)="saveUnitSystem(u,i)" class="fa fa-floppy-o"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                            <i *ngIf="u.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="fa fa-history"
-                                aria-hidden="true" style="cursor:pointer;padding:5px;"></i>
-                        </div>
+                    <td class="table-icon-buttons">
+						<button *ngIf="!u.isEditing" title="Edit Unit Type" (click)="EditRowClicked(i)" class="icon-button">
+							<i class="far fa-pencil"></i>
+						</button>
+						<button *ngIf="!u.isEditing" title="Delete Unit Type" (click)="deleteUnit(u.id)" class="icon-button hover-red">
+							<i class="far fa-times"></i>
+						</button>
+						<button *ngIf="u.isEditing" title="Save Unit Type" (click)="saveUnit(u,i)" class="icon-button">
+							<i class="far fa-floppy-o"></i>
+						</button>
+						<button *ngIf="u.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button">
+							<i class="far fa-history"></i>
+						</button>
                     </td>
                     <td>
                         <span *ngIf="!u.isEditing">{{ u.unitSystem }}</span>
@@ -41,28 +44,27 @@
 
 <!-- new unit type form -->
 <ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <div class="col-xs-12">
-            <h4 class="modal-title pull-left">New Unit Type </h4>
-            <button class="close pull-right" (click)="d('closed')">x</button>
-        </div>
-    </div>
+	<div class="modal-header">
+		<div class="title">New Unit Type</div>  
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+	</div>
     <div class="modal-body">
-        <h3 class="modal-title">New Unit Type</h3>
         <form [formGroup]="newUnitSystemForm">
             <!-- Unit Type Name* -->
             <div class="form-group required" [ngClass]="{'form-invalid': !newUnitSystemForm.get('unitSystem').valid && newUnitSystemForm.get('unitSystem').dirty}">
                 <label class="req" for="unitSystem">Unit System Name:</label>
                 <input class="form-control" type="text" formControlName="unitSystem" required>
-                <div class="input-invalid-warning" *ngIf="!newUnitSystemForm.get('unitSystem').valid && newUnitSystemForm.get('unitSystem').dirty">Unit
-                    Unit System Name is required</div>
+                <div class="input-invalid-warning" *ngIf="!newUnitSystemForm.get('unitSystem').valid && newUnitSystemForm.get('unitSystem').dirty">
+					Unit System Name is required
+				</div>
             </div>
 
         </form>
-
-        <div class="modal-footer">
-            <button type="button" (click)="d('clicked')" class="btn-black">Cancel</button>
-            <button type="button" (click)="createNewUnit()" [disabled]="!newUnitSystemForm.valid" class="btn-blue">Create</button>
-        </div>
     </div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('clicked')" class="button">Cancel</button>
+		<button type="button" (click)="createNewUnit()" [disabled]="!newUnitSystemForm.valid" class="button blue">Create</button>
+	</div>
 </ng-template>

@@ -23,6 +23,11 @@ import { ToasterService } from 'angular2-toaster';
 import { Predictioninterval } from '../interfaces/predictioninterval';
 import { AddRegressionRegion } from '../interfaces/addregressionregion';
 import { LoaderService } from './loader.service';
+import { ManageCitation } from '../interfaces/managecitations';
+import { Stationtype } from 'app/shared/interfaces/stationtype';
+import { Agency } from 'app/shared/interfaces/agency';
+import { Station } from '../interfaces/station';
+import { GagePage } from '../interfaces/gagepage';
 
 @Injectable()
 export class NSSService {
@@ -31,11 +36,13 @@ export class NSSService {
     private _regTypeIdParams: string;
     private _statGrpIdParams: string;
     private configSettings: Config;
+    private citationIDList = [];
     private jsonHeader: HttpHeaders = new HttpHeaders({
         Accept: 'application/json',
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('auth') || ''
     });
+
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService, private _loaderService: LoaderService) {
         this.configSettings = this._configService.getConfiguration();
         this.getRegions();
@@ -49,6 +56,21 @@ export class NSSService {
     public get getVersion(): any {
         return this.appversion.asObservable();
     }
+    // -+-+-+-+-+-+-+-+-+ show gagestats -+-+-+-+-+-+-+-+
+    private _showGageStatsSubject = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+    public showGageStats(): Observable<boolean> {
+        this._showGageStatsSubject = <BehaviorSubject<boolean>>new BehaviorSubject(this.configSettings.showGageStats);
+        return this._showGageStatsSubject.asObservable();
+    }
+    // -+-+-+-+-+-+-+-+-+ show gagepage -+-+-+-+-+-+-+-+
+    private _showHideGagePageModal: Subject<GagePage> = new Subject<GagePage>();
+    public setGagePageModal(val: GagePage) {
+        this._showHideGagePageModal.next(val);
+    }
+    // show gagepage modal in the mainview
+    public get showGagePageModal(): any {
+        return this._showHideGagePageModal.asObservable();
+    }
     // -+-+-+-+-+-+-+-+-+ about modal -+-+-+-+-+-+-+-+
     private _showHideAboutModal: Subject<boolean> = new Subject<boolean>();
     public setAboutModal(val: any) {
@@ -58,16 +80,35 @@ export class NSSService {
     public get showAboutModal(): any {
         return this._showHideAboutModal.asObservable();
     }
+    //+++++++ Used to reset regression regions when the editScenario button is clicked++++++++
+    //Stores user's original regression regions selection 
+    private tempRegRegion = new BehaviorSubject<any>([]);
+    currentTempRegRegion = this.tempRegRegion.asObservable();
+    showTempRegRegion(tempRR : any) {
+        this.tempRegRegion.next(tempRR);
+    }
     // -+-+-+-+-+-+-+-+-+ add scenario modal -+-+-+-+-+-+-+-+
     private _showHideAddScenarioModal: Subject<boolean> = new Subject<boolean>();
     public setAddScenarioModal(val: any) { 
         this._showHideAddScenarioModal.next(val);
     }
     // -+-+-+-+-+-+-+-+-+ clone scenario modal -+-+-+-+-+-+-+-+
-    private _showHideCloneScenarioModal: Subject<boolean> = new Subject<boolean>();
+    private _showHideEditScenarioModal: Subject<boolean> = new Subject<boolean>();
     public setCloneScenarioModal(val: any) { 
-        this._showHideCloneScenarioModal.next(val);
+        this._showHideEditScenarioModal.next(val);
     }
+
+     // -+-+-+-+-+-+-+-+-+ Add Station modal (gagestats) -+-+-+-+-+-+-+-+
+     private _showHideAddStationModal: Subject<boolean> = new Subject<boolean>();
+     public setAddStationModal(val: any) { 
+         this._showHideAddStationModal.next(val);
+     }
+    
+     // -+-+-+-+-+-+-+-+-+ Batch Upload modal -+-+-+-+-+-+-+-+
+     private _showHideBatchUploadModal: Subject<boolean> = new Subject<boolean>();
+     public setBatchUploadModal(val: any) { 
+         this._showHideBatchUploadModal.next(val);
+     }
 
     private itemSource = new BehaviorSubject<any>(' ');
     currentItem = this.itemSource.asObservable();
@@ -89,18 +130,42 @@ export class NSSService {
         return this._showHideAddScenarioModal.asObservable();
     }
     // show the add scenario modal in the mainview
-    public get showCloneScenarioModal(): any {
-        return this._showHideCloneScenarioModal.asObservable();
+    public get showEditScenarioModal(): any {
+        return this._showHideEditScenarioModal.asObservable();
     }
+    // show the add station modal in the gagestats page
+    public get showAddStationModal(): any {
+        return this._showHideAddStationModal.asObservable();
+    }
+    // show the add station modal in the gagestats page
+    public get showBatchUploadModal(): any {
+        return this._showHideBatchUploadModal.asObservable();
+    }
+
     // -+-+-+-+-+-+-+-+-+ manage citations modal -+-+-+-+-+-+-+-+
-    private _showHideManageCitationsModal: Subject<boolean> = new Subject<boolean>();
-    public setManageCitationsModal(val: any) { 
+    private _showHideManageCitationsModal: Subject<ManageCitation> = new Subject<ManageCitation>();
+    public setManageCitationsModal(val: ManageCitation) { 
         this._showHideManageCitationsModal.next(val);
     }
-    // show the manage citations modal in the mainview
+    // show the manage citations modal 
     public get showManageCitationsModal(): any {
         return this._showHideManageCitationsModal.asObservable();
     }
+    // add existing citation
+    private citationSource = new BehaviorSubject<any>(' ');
+    currentCitation = this.citationSource.asObservable();
+    addExistingCitation(item: any){
+        this.citationSource.next(item);
+    }
+    // set selected citation
+    private _selectedCitation: Subject<Citation> = new Subject<Citation>();
+    public setSelectedCitation(val: Citation) {
+        this._selectedCitation.next(val);
+    }
+    public get selectedCitation(): Observable<Citation> {
+        return this._selectedCitation.asObservable();
+    }
+
     // -+-+-+-+-+-+-+-+-+ add regression region modal -+-+-+-+-+-+-+-+
     private _showHideAddRegressioRegionModal: Subject<AddRegressionRegion> = new Subject<AddRegressionRegion>();
     public setAddRegressionRegionModal(val: AddRegressionRegion) {
@@ -160,6 +225,13 @@ export class NSSService {
         return this.toastBind.asObservable();
     }
 
+    // -+-+-+-+-+-+ Stations -+-+-+-+-+-+
+    private _stationsSubject = new Subject<any>();
+
+    public get Stations(): Observable<Array<Station>> {
+        return this._stationsSubject.asObservable();
+    }
+
     // -+-+-+-+-+-+ region section -+-+-+-+-+-+-+
     private _regionSubject: Subject<Array<Region>> = new Subject<Array<Region>>(); // array of regions that sidebar and mainview use
     private _selectedRegion: BehaviorSubject<Region> = new BehaviorSubject<any>(''); // selectedregion
@@ -195,14 +267,96 @@ export class NSSService {
     // get all regions
     public getRegions(): void {
         this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL, { headers: this.jsonHeader })
             .map(res => <Array<Region>>res)
             .catch(this.handleError)
             .subscribe(r => {
                 this._regionSubject.next(r);
             });
     }
+
     // -+-+-+-+-+-+ end region section -+-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ gage stats filter section -+-+-+-+-+-+-+
+    public _selectedFilterParams: BehaviorSubject<HttpParams> = new BehaviorSubject<any>(''); // selectedregion for Gagestats
+
+     // set and get selectedRegion for Gagestats
+     selectedFilterParams = this._selectedFilterParams.asObservable();
+     public setSelectedFilterParams(params: HttpParams) {
+         this._selectedFilterParams.next(params);
+     }
+
+    // Requery Filters
+    private requery = new BehaviorSubject<boolean>(false);
+    requeryGSFilter = this.requery.asObservable();
+
+    setRequeryGSFilter(bool: boolean){
+        this.requery.next(bool);
+    }
+    // -+-+-+-+-+-+ end gage stats filter section -+-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ pages section -+-+-+-+-+-+
+    private _pagesSubject: BehaviorSubject<string> = new BehaviorSubject<any>('');
+    private _selectedPageNumber = new BehaviorSubject<any>(' ');
+    private _selectedPerPage = new BehaviorSubject<any>(' ');
+
+    // Response from x-usgswim-messages
+    public get pageResponse(): Observable<string> {
+        return this._pagesSubject.asObservable();
+    } 
+
+    selectedPageNumber = this._selectedPageNumber.asObservable();
+    changePageNumber(pageNumber: any){
+        this._selectedPageNumber.next(pageNumber);
+    }
+
+    selectedPerPage = this._selectedPerPage.asObservable();
+    changePerPage(perPage: any){
+        this._selectedPerPage.next(perPage);
+    }
+    // -+-+-+-+-+-+ end pages section-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ station type section -+-+-+-+-+-+-+
+    private _stationTypeSubject: Subject<Array<Stationtype>> = new Subject<Array<Stationtype>>(); // array of station types that sidebar and mainview use
+
+    public get stationTypes(): Observable<Array<Stationtype>> {
+        // getter all (station type)
+        return this._stationTypeSubject.asObservable();
+    }
+
+    // get all station types
+    public getStationTypes(): void {
+        this._http
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL, { headers: this.jsonHeader })
+            .map(res => <Array<Stationtype>>res)
+            .catch(this.handleError)
+            .subscribe(r => {
+                this._stationTypeSubject.next(r);
+            });
+    }
+
+    // -+-+-+-+-+-+ end station type section -+-+-+-+-+-+-+
+
+    // -+-+-+-+-+-+ agency section -+-+-+-+-+-+-+
+    private _agencySubject: Subject<Array<Agency>> = new Subject<Array<Agency>>(); // array of agencies that sidebar and mainview use
+
+    public get agencies(): Observable<Array<Agency>> {
+        // getter all (agencies)
+        return this._agencySubject.asObservable();
+    }
+
+    // get all agencies types
+    public getAgencies(): void {
+        this._http
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL, { headers: this.jsonHeader })
+            .map(res => <Array<Agency>>res)
+            .catch(this.handleError)
+            .subscribe(r => {
+                this._agencySubject.next(r);
+            });
+    }
+
+    // -+-+-+-+-+-+ end agency section -+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ regressionregion -+-+-+-+-+-+-+
     private _regressionRegionSubject: Subject<Array<Regressionregion>> = new Subject<Array<Regressionregion>>();
@@ -302,6 +456,7 @@ export class NSSService {
 
     // -+-+-+-+-+-+ statisticgroups section -+-+-+-+-+-+-+-+-+-+
     private _statisticGroupSubject: Subject<Array<Statisticgroup>> = new Subject<Array<Statisticgroup>>();
+
     public get statisticGroups(): Observable<Array<Statisticgroup>> {
         return this._statisticGroupSubject.asObservable();
     }
@@ -396,6 +551,7 @@ export class NSSService {
         }
         this._statisticGroupSubject.next(sg);
     }
+
     // -+-+-+-+-+-+ end statisticgroups section -+-+-+-+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ regressionTypes -+-+-+-+-+-+-+-+-+-+-+-+
@@ -492,6 +648,7 @@ export class NSSService {
         }
         this._regressionTypeSubject.next(rt);
     }
+
     // -+-+-+-+-+-+ end regressionTypes section -+-+-+-+-+-+-+-+-+-+
 
     // -+-+-+-+-+-+ Scenarios section -+-+-+-+-+-+-+-+-+-+
@@ -502,6 +659,11 @@ export class NSSService {
     public setScenarios(s: Array<Scenario>) {
         this._scenarioSubject.next(s);
         this.chartBind.next('');
+    }
+
+    private _scenarioCitationSubject: Subject<Array<any>> = new Subject<Array<any>>();
+    public get scenarioCitations(): Observable<Array<any>> {
+        return this._scenarioCitationSubject.asObservable();
     }
     // -+-+-+-+-+-+ end Scenarios section -+-+-+-+-+-+-+-+-+-+
 
@@ -528,19 +690,36 @@ export class NSSService {
             url += params; 
         }
         return this._http
-        .get(this.configSettings.baseURL + url, { headers: this.jsonHeader })
+        .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
         .map(res => <Array<Unittype>>res);
     }
 
     // get variable types
     public getVariableTypes(params?: string) {
-        let url = this.configSettings.variablesURL
-        if (params) {
-            url += params; 
-        }
+    let url = this.configSettings.variablesURL
+    if (params) {
+        url += params; 
+    }
+    return this._http
+        .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
+        .map(res => <Array<Variabletype>>res);
+    }
+
+    // get stations by text search, station type and other param
+    public searchStations(filter: HttpParams) {
         return this._http
-            .get(this.configSettings.baseURL + url, { headers: this.jsonHeader })
-            .map(res => <Array<Variabletype>>res);
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL ,{ headers: this.jsonHeader, observe: 'response' as 'response', params:filter })
+            .subscribe(res => {
+                this._stationsSubject.next(res.body);
+                this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
+            })
+    }
+
+    // get gage page info
+    public getGagePageInfo(code) {
+        return this._http
+        .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + code)
+        .map(res => <Station>res);
     }
 
     // get regressionRegions by region
@@ -550,7 +729,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Array<Regressionregion>>res);
     }
 
@@ -561,7 +740,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Regressiontype[]>res);
     }
 
@@ -572,7 +751,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Statisticgroup[]>res);
     }
 
@@ -583,17 +762,17 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + this.configSettings.regionURL + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
             .map(res => <Scenario[]>res)
             .subscribe(
                 s => {
                     s.forEach(scen => {
                         // get citations
-                        const i = scen.links[0].href.indexOf('?');
-                        const param =  '?' + scen.links[0].href.substring(i + 1);
-                        this.getCitations(param).subscribe(c => {
-                            if (!(c.length === 1 && c[0] === null)) { scen.citations = c; }
-                        });
+                        scen.regressionRegions.forEach(rr => {
+                            if (this.citationIDList.findIndex(i => i == rr.id) === -1) {
+                                this.citationIDList.push(rr.id);
+                            }
+                        })
                         // clear Parameter.'Value'
                         scen.regressionRegions.forEach(rr => {
                             rr.parameters.forEach(p => {
@@ -610,6 +789,13 @@ export class NSSService {
                             }
                         });
                     });
+                    this.citationIDList = this.citationIDList.map(String);
+                    const citationParam =  '?regressionregions=' + this.citationIDList;
+                    this.getCitations(citationParam).subscribe(c => {
+                        if (!(c.length === 1 && c[0] === null)) { 
+                            this._scenarioCitationSubject.next(c);
+                        }
+                    });
                     this._scenarioSubject.next(s);
                 },
                 error => this.handleError
@@ -618,9 +804,9 @@ export class NSSService {
 
     // calculate Scenarios (POST)
     postScenarios(id: number, s: Scenario[], searchArgs?: string) {
-        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };       
+        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };      
         return this._http
-            .post(this.configSettings.baseURL + this.configSettings.regionURL + id + '/scenarios/estimate/' + searchArgs, s, options)
+            .post(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/scenarios/estimate/' + searchArgs, s, options)
             // .map(sResult => sResult.json())
             .subscribe(
                 res => {
@@ -630,7 +816,7 @@ export class NSSService {
                         if (scen.regressionRegions.length > 0) {
                             // get citations
                             const i = scen.links[0].href.indexOf('?');
-                            const param = '?' + scen.links[0].href.substring(i + 1);
+                            const param = '?' + scen.links[0].href.substring(i + 1); 
                             this.getCitations(param).subscribe(
                                 c => {
                                     if (!(c.length === 1 && c[0] === null)) { scen.citations = c; }
@@ -660,7 +846,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.baseURL + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
             .map(cit => <Citation[]>cit)
             .catch(this.handleError);
     }
@@ -672,7 +858,7 @@ export class NSSService {
 
     public outputWimMessages(res) {
         this._toasterService.clear();
-        const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages'));
+        const wimMessages = JSON.parse(res.headers.get('x-usgswim-messages')); 
         const existingMsgs = [];
         if (wimMessages) {
             for (const key of Object.keys(wimMessages)) {

@@ -1,21 +1,18 @@
 // ------------------------------------------------------------------------------
-// ----- regions.component.ts -----------------------------------------------
+// ----- errors.component.ts -----------------------------------------------
 // ------------------------------------------------------------------------------
 
 // copyright:   2017 WiM - USGS
 // authors:  Tonia Roddick - USGS Wisconsin Internet Mapping
-// purpose: regions crud in admin settings page
+// purpose: errors crud in admin settings page
 
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
-
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-
 import { NSSService } from 'app/shared/services/app.service';
 import { SettingsService } from 'app/settings/settings.service';
 import { Error } from 'app/shared/interfaces/error';
-
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
@@ -56,7 +53,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
         }
 
     ngOnInit() {
-        this._settingsservice.getEntities(this.configSettings.errorsURL).subscribe(res => {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.errorsURL).subscribe(res => {
             this.errors = res;
         });
 
@@ -98,7 +95,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
 
     private createNewError() {
         const newItem = this.newErrForm.value;
-        this._settingsservice.postEntity(newItem, this.configSettings.errorsURL)
+        this._settingsservice.postEntity(newItem, this.configSettings.nssBaseURL + this.configSettings.errorsURL)
             .subscribe((response: Error) => {
                 response.isEditing = false;
                 this.errors.push(response);
@@ -113,10 +110,15 @@ export class ErrorsComponent implements OnInit, OnDestroy {
     }
 
     private EditRowClicked(i: number) {
-       this.rowBeingEdited = i;
-       this.tempData = Object.assign({}, this.errors[i]); // make a copy in case they cancel
-       this.errors[i].isEditing = true;
-       this.isEditing = true; // set to true so create new is disabled
+        // make a copy in case they cancel
+        this.errors[i].isEditing = true;
+        //if there is a row already being edited, cancel that edit
+        if (this.isEditing == true) {
+            this.CancelEditRowClicked(this.rowBeingEdited);
+        }
+        this.tempData = Object.assign({}, this.errors[i]); 
+        this.rowBeingEdited = i;
+        this.isEditing = true; // set to true so create new is disabled
     }
 
     public CancelEditRowClicked(i: number) {
@@ -136,7 +138,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
             this._toasterService.pop('error', 'Error updating Error', 'Name and Code are required.');
         } else {
             delete u.isEditing;
-            this._settingsservice.putEntity(u.id, u, this.configSettings.errorsURL).subscribe(
+            this._settingsservice.putEntity(u.id, u, this.configSettings.nssBaseURL + this.configSettings.errorsURL).subscribe(
                 (resp) => {
                     u.isEditing = false;
                     this.errors[i] = u;
@@ -159,7 +161,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
         if (check) {
             // delete it
             const index = this.errors.findIndex(item => item.id === deleteID);
-            this._settingsservice.deleteEntity(deleteID, this.configSettings.errorsURL)
+            this._settingsservice.deleteEntity(deleteID, this.configSettings.nssBaseURL + this.configSettings.errorsURL)
                 .subscribe(result => {
                     this.errors.splice(index, 1);
                     this._settingsservice.setErrors(this.errors); // update service

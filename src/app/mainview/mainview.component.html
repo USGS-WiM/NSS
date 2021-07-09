@@ -615,7 +615,9 @@
 						<div class="chart-wrapper">
 							<button type="button" class="pull-right hidden-print"
 								(click)="removeFreqChart()">x</button><br clear="all" />
-							<chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>
+							<div role="img" aria-label="Frequency Plot showing data from above tables">
+								<chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions" aria-hidden="true"></chart>
+							</div>
 						</div>
 						<div style="flex-grow: 4;">
 

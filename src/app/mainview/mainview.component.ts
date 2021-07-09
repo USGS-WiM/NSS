@@ -27,6 +27,7 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { Citation } from 'app/shared/interfaces/citation';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
+declare let gtag: Function;
 
 declare var MathJax: {
     Hub: { Queue };
@@ -1353,6 +1354,7 @@ export class MainviewComponent implements OnInit {
             const sParams = '?statisticgroupID=' + sgID + '&regressionregionID=' + rrID + '&regressiontypeID=' + rID;
             this._settingsService.deleteEntity('', this.configSettings.nssBaseURL + this.configSettings.scenariosURL, sParams).subscribe(result => {
                 this.requeryFilters();
+                gtag('event', 'click', { 'event_category': 'Delete Scenario', 'event_label': 'Scenario was deleted' });
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
                 if (error.headers) {
@@ -1368,6 +1370,7 @@ export class MainviewComponent implements OnInit {
             this.saveFilters();
             this._settingsService.deleteEntity(rrID, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(result => {
                 this.requeryFilters();
+                gtag('event', 'click', { 'event_category': 'Delete Regression Region', 'event_label': 'Regression Region was deleted' });
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
                 if (error.headers) {
@@ -1578,6 +1581,7 @@ export class MainviewComponent implements OnInit {
             .subscribe((response) => {
                 this.requeryFilters();
                 this._nssService.outputWimMessages(response);
+                gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
                 this.modalRef.close();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) { return; }

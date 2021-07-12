@@ -81,8 +81,7 @@ export class MainviewComponent implements OnInit {
     public hChartXAxisValues: string[]; // holds Recurrence Interval dropdown values for chart
     // public hChartYAxisText: string;               // chart y axis
     public fChartOptions: any; // frequency chart
-    //public fChartValues: Array<number>[]; // frequency data
-    public freqDataArray: freqDataArray[]
+    public freqDataArray: freqDataArray[];
     public showCharts_btn: boolean; // toggle button boolean
     public showChartBtn_txt: string; // string "show" / "hide"
     public selectedPlot: string; // which plot are they asking for ("Hydrograph" or "Frequency Plot")
@@ -518,11 +517,10 @@ export class MainviewComponent implements OnInit {
                     // get array of recurrences from result
                     let dataArray: number[][] = [];
                     this.freqDataArray = [];
-
                     this.scenarios.forEach(s => {
-                        if (s.regressionRegions.length > 1) {
+                        if (s.regressionRegions.length > 0) {
                             s.regressionRegions.forEach((rr, index) => {
-                                dataArray=[];
+                                dataArray = [];
                                 if (rr.name == 'Area-Averaged') {
                                     F_areaAveraged = true; // area averaged, add title to chart stating
                                     this.frequencyPlotChart.curveLabel = 'Computed Points (Area-weighted average)';
@@ -535,9 +533,14 @@ export class MainviewComponent implements OnInit {
                                     name: rr.name,
                                     fchartvalues: dataArray
                                 }
+                                this.freqDataArray[index].fchartvalues.sort(function(a,b) {
+                                    return a[0]-b[0];
+                                });
                             });
-                        } 
+                        }
                     }); // end foreach scenario
+                    
+                    console.log('freq (start): ' + JSON.stringify(this.freqDataArray));
                     this.showChartBtn_txt = 'Hide';
                     this.showCharts_btn = true;
                     this.fChartOptions = {
@@ -596,8 +599,8 @@ export class MainviewComponent implements OnInit {
                         }
                     };
                     this.freqDataArray.forEach((data, index) => {
-                        this.fChartOptions.series[index]={
-                            data:data.fchartvalues,
+                        this.fChartOptions.series[index] = {
+                            data: data.fchartvalues,
                             marker: { enabled: true },
                             name: data.name,
                             states: {
@@ -1111,7 +1114,7 @@ export class MainviewComponent implements OnInit {
             });
         }
         this.freqDataArray.forEach((data, index) => {
-            this.fChartOptions.series[index]={
+            this.fChartOptions.series[index] = {
                 data:data.fchartvalues,
                 marker: { enabled: true },
                 name: data.name,

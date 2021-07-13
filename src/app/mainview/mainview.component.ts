@@ -489,8 +489,8 @@ export class MainviewComponent implements OnInit {
                         Faxis: 'BottomX',
                         type_BX: 'returnPeriod',
                         type_LY: 'returnPeriod',
-                        title_LY: 'Peak Discharge, In cubic feet per second',
-                        title_BX: 'Percent Annual Exceedance Probability',
+                        title_LY: 'Peak Discharge, in cubic feet per second',
+                        title_BX: 'Annual Exceedance Probability, in percent',
                         lineWidth: 1,
                         lineSymbol: 'circle',
                         majorTic_BX: true,
@@ -566,7 +566,7 @@ export class MainviewComponent implements OnInit {
                             }
                         },
                         xAxis: {
-                            title: { text: 'Percent Annual Exceedance Probability' },
+                            title: { text: 'Annual Exceedance Probability, in percent' },
                             type: 'logarithmic',
                             startOnTick: true,
                             endOnTick: true,
@@ -581,7 +581,7 @@ export class MainviewComponent implements OnInit {
                             reversed: true
                         },
                         yAxis: {
-                            title: { text: 'Peak Discharge, In cubic feet per second' },
+                            title: { text: 'Peak Discharge, in cubic feet per second' },
                             type: 'logarithmic',
                             startOnTick: true,
                             endOnTick: true,

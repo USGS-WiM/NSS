@@ -489,8 +489,8 @@ export class MainviewComponent implements OnInit {
                         Faxis: 'BottomX',
                         type_BX: 'returnPeriod',
                         type_LY: 'returnPeriod',
-                        title_LY: 'Peak Discharge, In cubic meters per second',
-                        title_BX: 'Recurrence Interval, in years\nFlood Frequency Plot',
+                        title_LY: 'Peak Discharge, In cubic feet per second',
+                        title_BX: 'Percent Annual Exceedance Probability',
                         lineWidth: 1,
                         lineSymbol: 'circle',
                         majorTic_BX: true,
@@ -522,7 +522,7 @@ export class MainviewComponent implements OnInit {
                                 }
                                 rr.results.forEach(R => {
                                     let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                                    dataArray.push([100 / x, R.value]);
+                                    dataArray.push([x, R.value]);
                                 });
                                 this.freqDataArray[index] = {
                                     name: rr.name,
@@ -557,7 +557,7 @@ export class MainviewComponent implements OnInit {
                             fallbackToExportServer: false
                         },
                         chart: { type: 'line', zoomType: 'xy' },
-                        title: { text: '' },
+                        title: { text: 'Flood Frequency Plot' },
                         series: [],
                         tooltip: {
                             formatter: function () {
@@ -566,7 +566,7 @@ export class MainviewComponent implements OnInit {
                             }
                         },
                         xAxis: {
-                            title: { text: 'Recurrence Interval, in years<br/>Flood Frequency Plot' },
+                            title: { text: 'Percent Annual Exceedance Probability' },
                             type: 'logarithmic',
                             startOnTick: true,
                             endOnTick: true,
@@ -580,7 +580,7 @@ export class MainviewComponent implements OnInit {
                             minorTickColor: '#000000'
                         },
                         yAxis: {
-                            title: { text: 'Peak Discharge, In cubic meters per second' },
+                            title: { text: 'Peak Discharge, In cubic feet per second' },
                             type: 'logarithmic',
                             startOnTick: true,
                             endOnTick: true,
@@ -1039,7 +1039,7 @@ export class MainviewComponent implements OnInit {
                     if (rr.results) {
                         rr.results.forEach(R => {
                             let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                            dataArray.push([100 / (1 / x) * 100, R.value]);
+                            dataArray.push([(1 / x) * 100, R.value]);
                         });
                         this.freqDataArray[index] = {
                             name: rr.name,
@@ -1064,7 +1064,7 @@ export class MainviewComponent implements OnInit {
                     if (rr.results) {
                         rr.results.forEach(R => {
                             let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                            dataArray.push([100 / (1 / x), R.value]);
+                            dataArray.push([(1 / x), R.value]);
                         });
                         this.freqDataArray[index] = {
                             name: rr.name,
@@ -1089,7 +1089,7 @@ export class MainviewComponent implements OnInit {
                     if (rr.results) {
                         rr.results.forEach(R => {
                             let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                            dataArray.push([100 / x, R.value]);
+                            dataArray.push([x, R.value]);
                         });
                         this.freqDataArray[index] = {
                             name: rr.name,

@@ -1,6 +1,4 @@
 import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild, TemplateRef } from '@angular/core';
-import { DOCUMENT } from "@angular/common";
-
 import { Region } from '../shared/interfaces/region';
 import { Regressionregion } from '../shared/interfaces/regressionregion';
 import { Regressiontype } from '../shared/interfaces/regressiontype';
@@ -15,7 +13,6 @@ import { Chart } from '../shared/interfaces/chart';
 import { NSSService } from '../shared/services/app.service';
 import { ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
-import { PageScrollService } from 'ngx-page-scroll-core';
 import * as Highcharts from 'highcharts';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Router, NavigationStart } from '@angular/router';
@@ -140,8 +137,6 @@ export class MainviewComponent implements OnInit {
     constructor(
         private _nssService: NSSService,
         private _toasterService: ToasterService,
-        @Inject(DOCUMENT) private _document: any,
-        private _pageScrollService: PageScrollService,
         private _authService: AuthService,
         private _fb: FormBuilder,
         private router: Router,
@@ -343,9 +338,8 @@ export class MainviewComponent implements OnInit {
         this._nssService.getChart().subscribe(c => {
             if (c !== '') {
                 // scroll down to the chart section
-                this._pageScrollService.scroll({document: this._document, scrollTarget: '#chart'})
-                //let pageScrollInstance: PageScrollInstance = PageScrollInstance.simpleInstance(this._document, '#chart');
-                //this._pageScrollService.start(pageScrollInstance);
+                let el = document.getElementById("chart");
+                el.scrollIntoView({ behavior: 'smooth' });
             }
             /* if (c == 'Hydrograph') {
                 let H_areaAveraged: boolean = false;

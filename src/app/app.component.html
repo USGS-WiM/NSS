@@ -28,7 +28,7 @@
 
 	<!-- Links -->
 	<div class="nav-links">
-		<a routerLink="" [class.active]="router.url == ''">
+		<a routerLink="" [class.active]="router.url == ''" [class.hidden]="!showGageStats && !isloginShow">
 			<span>NSS</span>
 		</a>
 		<a routerLink="gagestats" [class.active]="router.url == ''" [class.hidden]="!showGageStats">

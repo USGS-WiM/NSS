@@ -17,7 +17,7 @@ import { Hydrochart } from 'app/shared/interfaces/hydrochart';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from '../../config.service';
 import { Toast } from 'angular2-toaster/src/toast';
-import { Unittype } from 'app/shared/interfaces/unitType';
+import { Unittype } from 'app/shared/interfaces/unittype';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { ToasterService } from 'angular2-toaster';
 import { Predictioninterval } from '../interfaces/predictioninterval';

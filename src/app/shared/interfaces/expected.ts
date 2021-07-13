@@ -1,4 +1,4 @@
-import { Intervalbound } from './intervalBound';
+import { Intervalbound } from './intervalbound';
 
 export interface Expected {
     value: number;

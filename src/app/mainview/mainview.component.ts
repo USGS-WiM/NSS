@@ -577,7 +577,8 @@ export class MainviewComponent implements OnInit {
                             tickPosition: 'inside',
                             minorTickPosition: 'inside',
                             tickColor: '#000000',
-                            minorTickColor: '#000000'
+                            minorTickColor: '#000000',
+                            reversed: true
                         },
                         yAxis: {
                             title: { text: 'Peak Discharge, In cubic feet per second' },
@@ -1029,7 +1030,7 @@ export class MainviewComponent implements OnInit {
         this.freqChart = freqChartInst;
     }
     // clicked Bottom x & type == update chart FREQUENCY
-    // public setFreqXaxisType(newType: string) { // **This was used the labels were x year peak flood
+    // public setFreqXaxisType(newType: string) { //This was used the labels were x year peak flood
     //     let dataArray: number[][] = [];
     //     this.freqDataArray = [];
     //     // converting 'percent', 'fraction', or 'returnPeriod' (default/onload is returnPeriod)
@@ -1168,9 +1169,9 @@ export class MainviewComponent implements OnInit {
     // reverse the data FREQUENCY
     public setFreqReverseData(which: string, value: boolean) {
         if (which == 'bx') {
-            this.freqChart.xAxis[0].update({ reversed: value });
+            this.freqChart.xAxis[0].update({ reversed: !value });
         } else {
-            this.freqChart.yAxis[0].update({ reversed: value });
+            this.freqChart.yAxis[0].update({ reversed: !value });
         }
     }
     // change line color FREQUENCY

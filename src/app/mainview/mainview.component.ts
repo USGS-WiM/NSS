@@ -15,7 +15,7 @@ import { Chart } from '../shared/interfaces/chart';
 import { NSSService } from '../shared/services/app.service';
 import { ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
-import { PageScrollService, PageScrollInstance } from 'ng2-page-scroll';
+import { PageScrollService } from 'ngx-page-scroll-core';
 import * as Highcharts from 'highcharts';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Router, NavigationStart } from '@angular/router';
@@ -343,8 +343,9 @@ export class MainviewComponent implements OnInit {
         this._nssService.getChart().subscribe(c => {
             if (c !== '') {
                 // scroll down to the chart section
-                let pageScrollInstance: PageScrollInstance = PageScrollInstance.simpleInstance(this._document, '#chart');
-                this._pageScrollService.start(pageScrollInstance);
+                this._pageScrollService.scroll({document: this._document, scrollTarget: '#chart'})
+                //let pageScrollInstance: PageScrollInstance = PageScrollInstance.simpleInstance(this._document, '#chart');
+                //this._pageScrollService.start(pageScrollInstance);
             }
             /* if (c == 'Hydrograph') {
                 let H_areaAveraged: boolean = false;

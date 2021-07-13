@@ -1,7 +1,6 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { MainviewComponent } from './mainview/mainview.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { PageScrollConfig } from 'ng2-page-scroll';
 import { environment } from '../environments/environment';
 import { NSSService } from './shared/services/app.service';
 import { AuthService } from './shared/services/auth.service';
@@ -49,7 +48,6 @@ export class AppComponent implements OnInit, OnDestroy {
         private _toasterService: ToasterService,
         private _modalService: NgbModal
     ) {
-        PageScrollConfig.defaultScrollOffset = 85;
         this._nssService.setVersion(environment.version);
         this.LoginForm = _fb.group({
             username: new FormControl(null, Validators.required),

@@ -1,4 +1,4 @@
 export interface Link {
     rel: string;
-    Href: string;
+    href: string;
 }

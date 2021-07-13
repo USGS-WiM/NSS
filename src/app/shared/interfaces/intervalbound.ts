@@ -1,4 +1,4 @@
 export interface Intervalbound {
-    Lower: number;
-    Upper: number;
+    lower: number;
+    upper: number;
 }

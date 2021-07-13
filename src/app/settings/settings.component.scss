@@ -1,0 +1,201 @@
+@import "styles/variables.scss";
+
+
+.settings-page{
+	display: flex;
+	height: 100%;
+	max-height: 100%;
+
+	// Full width mobile
+	@media (max-width: $screenLG) {
+		flex-direction: column
+	}
+
+	.setting-sidebar{
+		width: 300px;
+		min-width: 300px;
+		background-color: var(--layer);
+		border-right: 1px solid var(--border);
+		box-sizing: border-box;
+		padding: 15px;
+
+		// Full width mobile
+		@media (max-width: $screenLG) {
+			min-width: 100%;
+			height: auto;
+			border-bottom: 1px solid var(--border);
+			border-right: none;
+		}
+		
+
+		.sidebar-links{
+			display: block;
+			list-style-type: none;
+			padding: 10px 0 0 0;
+			margin: 0;
+
+			// Horizontal links small screens
+			@media (max-width: $screenLG) {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: flex-start;
+				border-bottom: 1px solid var(--border);
+				padding-bottom: 15px;
+			}
+
+			li{
+				padding: 6px 0 6px 10px;
+				font-size: 18px;
+				color: var(--blue);
+
+				// Remove padding mobile
+				@media (max-width: $screenLG) {
+					padding: 0 0 15px 0;
+				}
+
+
+				a{
+					color: var(--text);
+					font-weight: 600;
+					position: relative;
+					width: 100%;
+					box-sizing: border-box;
+					padding: 0 40px 0 0;
+					display: flex;
+					justify-content: space-between;
+					letter-spacing: 0;
+
+					&:after{
+						display: flex;
+						flex-direction: column;
+						justify-content: center;
+						content: '\f105';
+						font-family: var(--fontAwesome);
+						position: absolute;
+						right: 0;
+						height: 100%;
+						opacity: 0.2;
+						transition: var(--transition);
+					}
+
+					&:hover{
+						&:after{
+							opacity: 1;
+							transition: var(--transition);
+						}
+					}
+
+					&.active{
+						color: var(--blue);
+						font-weight: 700;
+
+						&:hover{
+							cursor: default;
+						}
+
+						&:after{
+							display: none;
+						}
+					}
+
+					// Smaller screens
+					@media (max-width: $screenLG) {
+						padding: 3px 6px;
+						margin: 0 15px 0 0;
+						width: auto;
+
+						&.active{
+							border-bottom: 3px solid var(--blue);
+						}
+						&:after{
+							display: none;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.settings-page-content{
+		flex-grow: 3;
+		box-sizing: border-box;
+		padding: 15px;
+		overflow: auto;
+
+		// Full width mobile
+		@media (max-width: $screenLG) {
+			width: 100%;
+			padding: 15px;
+		}
+	}
+}
+
+
+
+.page-padding { 
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 55px;
+    padding-top: 75px;
+ }
+
+
+
+#resource-list #page-content-wrapper {
+    width: calc(100% - 235px);
+    display: inline-block;
+    vertical-align: top;
+    padding: 20px;
+    position: relative;
+}
+
+h1 {
+    font-size: 2.5rem !important;
+}
+
+.hidden {
+    display: none;
+}
+
+.btn-blue {
+    margin-right: 5px;
+}
+
+.settings-links {
+    padding-top: 0;
+}
+
+.settings-links a {
+    color: #111111;
+    font-size: 15px !important;
+}
+
+#sidebar-wrapper {
+    overflow-x: scroll !important;
+    padding: 25px 15px;
+    overflow: visible !important;
+    box-sizing: inherit;
+    left: 0;
+    margin: 0 auto;
+    transform: translate3d(0px, 0px, 0px);
+    z-index: 100;
+    background-color: #eceef4 !important;
+    width: 300px;
+    pointer-events: auto;
+    position: fixed;
+    height: 100%;
+}
+.sidebar-item{
+    display: block;
+    box-sizing: border-box;
+    padding: 0 0 15px 0;
+}
+
+::ng-deep legend {
+    font-size: 16px !important;
+}
+
+::ng-deep button {
+    margin: 5px 0px;
+}

@@ -1,6 +1,6 @@
 export interface Limit {
-    Max: number;
-    Min: number;
-    OutOfRange?:boolean;
+    max: number;
+    min: number;
+    outOfRange?:boolean;
     rrID?: string;
 }

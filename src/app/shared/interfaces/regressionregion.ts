@@ -1,11 +1,22 @@
 import {Link} from './link';
+import { Parameter } from './parameter';
+import { Result } from './result';
+import { Regressiontype } from './regressiontype';
 
 export interface Regressionregion {
     Links: Link[];
-    ID: number;
-    id: number; //for multiselect
-    Name: string;
-    name: string; //for multiselect
-    Code: string;
-    CitationID: number;
+    id: number;
+    name: string;
+    code: string;
+    description: string;
+    citationID?: number;
+    locationID?: number;
+    location?: [];
+    isEditing?: boolean;
+    parameters?: Array<Parameter>; // for scenario rrs
+    extensions?: [];
+    results?: Result[];
+    percentWeight?: number;
+    regressions?: Array<Regressiontype>;
+    statusID?: number;
 }

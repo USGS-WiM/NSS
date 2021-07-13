@@ -26,4 +26,5 @@ export interface Hydrochart {
     reverse_LY: boolean;
     reverse_BX:boolean;
     dataLabels:boolean;
+    pointSymbols:boolean;
 }

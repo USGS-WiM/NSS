@@ -23,4 +23,5 @@ export interface Freqchart {
     reverse_LY: boolean;
     reverse_BX:boolean;
     dataLabels:boolean;
+    pointSymbols:boolean;
 }

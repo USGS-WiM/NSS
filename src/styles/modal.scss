@@ -1,0 +1,146 @@
+// Modal Styles
+
+.modal-dialog{
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;	
+	margin: 0 auto !important;
+	padding: 0;
+
+	@media (max-width: 730px) {
+		justify-content: flex-end;
+		border-bottom-right-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+}
+
+.modal-header{
+	display: flex;
+	justify-content: space-between;
+
+	.title{
+		flex-grow: 3;
+		font-size: 18px;
+		font-weight: 500;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		line-height: 20px;
+		font-weight: 600;
+	}
+
+	button{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		font-size: 30px;
+		color: var(--textLight);
+
+		&:hover{
+			cursor: pointer;
+			color: var(--black);
+		}
+	}
+}
+
+.modal-body{
+	max-height: 60vh;
+	overflow: auto;
+
+	&.modal-body-fixed{
+		max-height: 60vh;
+		min-height: 60vh;
+		height: 60vh;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		padding: 0 !important;
+
+		&.side-padding{
+			padding: 10px 10px 0 10px !important;
+		}
+
+		table{
+			flex-grow: 3;
+			height: 300px;
+			max-height: 100%;
+		}
+	}
+}
+
+// Tab plugin styles
+.fixed-tabs{
+	display: flex;
+	flex-direction: column;
+	max-height: 100%;
+
+	.tab-content{
+		overflow-x: hidden;
+		flex-grow: 3;
+		box-sizing: border-box;
+		padding: 25px 15px;
+	}
+}
+// Styles
+.nav-tabs{
+	padding-bottom: 0;
+	min-height: 46px;
+	.nav-item{
+		padding: 0;
+
+		.nav-link{
+			border-top-right-radius: var(--borderRadius);
+			border-top-left-radius: var(--borderRadius);
+			padding: 8px 14px;
+			color: var(--blue);
+			font-size: 15px;
+			letter-spacing: 0;
+			font-weight: 600;
+			transition: var(--transition);
+
+			i{
+				margin-right: 8px;
+				transform: scale(1.2);
+			}
+
+			&:hover{
+				color: var(--text);
+				transition: var(--transition);
+			}
+
+			&.active{
+				background-color: var(--grey);
+				color: var(--text);
+
+				&:hover{
+					color: var(--text);
+				}
+			}
+
+		}
+	}
+}
+.modal-body-footer{
+	justify-content: space-between;
+	display: flex;
+	padding: 15px;
+	box-sizing: border-box;
+	border-top: 1px solid #eceeef;
+}
+
+// Xl modal
+.modal-xl{
+	.modal-dialog{
+		width: 94%;
+		max-width: 1200px !important;
+	}
+}
+@media (min-width: 576px){
+	.modal-xl {
+		.modal-dialog{
+			width: 94%;
+			max-width: 1200px !important;
+		}
+	}
+}

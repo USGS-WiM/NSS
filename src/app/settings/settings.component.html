@@ -1,0 +1,60 @@
+<!-- toaster directive -->
+<toaster-container [toasterconfig]="config"></toaster-container>
+<!-- / toaster directive -->
+
+<div class="settings-page">
+
+	<!-- Sidebar -->
+	<div class="setting-sidebar">
+		<h3>Lookups</h3>
+		<ul class="sidebar-links">
+			<li>
+				<a [routerLink]="['agencies']" routerLinkActive="active">Agencies</a>
+			</li>
+			<li>
+				<a [routerLink]="['errors']" routerLinkActive="active">Errors</a>
+			</li>
+			<li>
+				<a [routerLink]="['managers']" routerLinkActive="active">Managers</a>
+			</li>
+			<li>
+				<a [routerLink]="['methods']" routerLinkActive="active">Methods</a>
+			</li>
+			<li>
+				<a [routerLink]="['regions']"  routerLinkActive="active">Study Areas</a>
+			</li>
+			<li>
+				<a [routerLink]="['regressiontypes']" routerLinkActive="active">Regression Types (Statistics)</a>
+			</li>
+			<li>
+				<a [routerLink]="['stationtypes']" routerLinkActive="active">Station Types</a>
+			</li>
+			<li>
+				<a [routerLink]="['statisticgroups']" routerLinkActive="active">Statistic Groups</a>
+			</li>
+			<li>
+				<a [routerLink]="['unittypes']" routerLinkActive="active">Unit Types</a>
+			</li>
+			<li>
+				<a [routerLink]="['unitsystems']" routerLinkActive="active">Unit Systems</a>
+			</li>
+			<li>
+				<a [routerLink]="['variabletypes']"  routerLinkActive="active">Variable Types</a>
+			</li>
+		</ul>
+	</div>
+
+	<div class="settings-page-content">
+
+		<!-- Main settings page content - only shown on /settings -->
+		<div *ngIf="router.url == '/settings'">
+			<h3>Settings</h3>
+			<p>
+				Select a lookup.
+			</p>
+		</div>
+
+		<!-- Routes -->
+		<router-outlet></router-outlet>
+	</div>
+</div>

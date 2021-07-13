@@ -1,8 +1,16 @@
+import { Error } from './error';
+import { Unittype } from './unittype';
+import { Predictioninterval } from './predictioninterval';
+
 export interface Regressiontype {
-    ID: number;
-    id: number; //for multiselect
-    Name: string;
-    name: string; //for multiselect
-    Code: string;
-    Description: string;
+    id: number;
+    name: string;
+    code: string;
+    description: string;
+    isEditing?: boolean;
+    errors?: Array<Error>;
+    unit?: Unittype[];
+    equation?: string;
+    equivalentYears?: number;
+    predictionInterval?: Predictioninterval;
 }

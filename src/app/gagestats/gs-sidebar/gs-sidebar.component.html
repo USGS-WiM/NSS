@@ -1,0 +1,74 @@
+<div class="gs-sidebar-content">
+
+    <div class="sidebar-item">
+        <label>Search by keyword:</label>
+            <input type="text" [(ngModel)]="keyword" (keyup)="onKeySearch($event)" placeholder="Search">
+    </div>
+
+    <div class="sidebar-item">
+        <label>Limit by Study Area:</label>
+        <ss-multiselect-dropdown [options]="regions" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedRegions" (ngModelChange)="onSearch()" name="regions">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
+        <label>Limit by Station Type:</label>
+        <ss-multiselect-dropdown [options]="stationTypes" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedStationTypes" (ngModelChange)="onSearch()" name="stationTypes">
+        </ss-multiselect-dropdown>
+    </div>
+    
+    <div class="sidebar-item">
+        <label>Limit by Agency:</label>
+        <ss-multiselect-dropdown [options]="agencies" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedAgencies" (ngModelChange)="onSearch()" name="agencies">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
+        <label>Limit by Statistic Groups:</label>
+        <ss-multiselect-dropdown [options]="statisticGroups" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedStatisticGroups" (ngModelChange)="onSearch()" name="statisticGroups">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
+        <label>Limit by Statistic Variables:</label>
+        <ss-multiselect-dropdown [options]="regressionTypes" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedRegressionTypes" (ngModelChange)="onSearch()" name="regressionTypes">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <div class="sidebar-item">
+        <label>Limit by Characteristic Variables:</label>
+        <ss-multiselect-dropdown [options]="variableTypes" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedVariableTypes" (ngModelChange)="onSearch()" name="variableTypes">
+        </ss-multiselect-dropdown>
+    </div>
+
+    <!-- Fix This -->
+    <div class="sidebar-item center" *ngIf="keyword!='' || selectedAgencies.length > 0 || selectedRegions.length > 0 || selectedStationTypes.length > 0 || selectedStatisticGroups.length > 0 || selectedRegressionTypes.length > 0 || selectedVariableTypes.length > 0" >
+        <button type="button" class="button blue small" (click)="clearGagestatsFilters()">
+			<i class="far fa-times"></i>
+			<span>Reset Filters</span>
+		</button>
+    </div>
+
+    	<!-- Spacer - fills space to align footer at bottom -->
+	<div class="flex-spacer"></div>
+
+    <div class="sidebar-footer">
+        <div class="identification">Powered by <a href="https://wim.usgs.gov/" target="_blank">WIM <img alt="WIM logo" src="assets/img/favicon-pin.png"/></a></div>
+        <div class="sidebar-footer-links">
+            <a href="https://usgs.gov" target="_blank">USGS Home</a><a href="https://answers.usgs.gov" target="_blank">Contact
+                USGS</a>
+            <a href="https://search.usgs.gov" target="_blank">Search USGS</a>
+            <a href="https://www2.usgs.gov/laws/accessibility.html" target="_blank">Accessibility</a>
+            <a href="https://www2.usgs.gov/foia/" target="_blank">FOIA</a>
+            <a href="https://www2.usgs.gov/laws/privacy.html" target="_blank">Privacy</a>
+            <a href="https://www2.usgs.gov/laws/policies_notices.html" target="_blank">Policies &amp; Notices</a>
+        </div>
+    </div>
+</div>
+

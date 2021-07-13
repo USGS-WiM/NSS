@@ -1,28 +1,111 @@
-# Nss
+![WIM](wimlogo.png)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0.
 
-## Development server
+# NSS
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+An Angular CLI web application, the National Streamflow Statistics (NSS) Program is a computer program that provides a simple method for 
+applying regional flood-peak streamflow estimates and low flow frequency/duration streamflow estimates. See https://water.usgs.gov/osw/programs/nss/index.html
+for more information.
 
-## Code scaffolding
+### Prerequisites
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class/module`.
+This project has dependencies that require Angular CLI, Node 6.9.0  or higher, and NPM 3 or higher. NPM is downloaded with Node.js here: https://nodejs.org/en/.
 
-## Build
+```
+npm install -g @angular/cli
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+```
 
-## Running unit tests
+## Getting Started
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+See deployment for notes on how to deploy the project on a live system.
 
-## Running end-to-end tests
+### Installing
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
+```
+Clone the repo and navigate to folder.
+```
 
-## Further help
+```
+'npm install' to install all dependencies.
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+```
+'ng serve' to build and run the application.
+```
+For Freshdesk functionalities (used in the About modal), you will need the secrets.json from [here](https://doimspp.sharepoint.com/sites/StreamStatsTeam/Shared%20Documents/Forms/AllItems.aspx?viewid=9f283fd0%2D4904%2D450b%2D80ce%2Da5211e70406e&id=%2Fsites%2FStreamStatsTeam%2FShared%20Documents%2FSS%5FTeamSpace%2FV4%20Freshdesk%20Creds). This requires access to the StreamStats Sharepoint, and should be placed locally at src/assets.
+
+Note: the secrets file is in the .gitignore and should _never_ be uploaded to GitHub 
+
+## Building and testing
+
+To compile the project for a production environment run:
+```
+ng build --prod --base-href
+```
+
+To compile the project for a non-production environment run:
+```
+ng build --base-href
+```
+
+The `--prod` tag will use the production configuration and point to the production services.
+
+## Deployment
+
+Deploy directly onto a server (instructions for https://test.streamstats.usgs.gov/nss-dev/):
+1. Copy the files in the /dist/ folder to C:/inetpub/wwwroot/nss-dev/ on the test.streamstats.usgs.gov server
+2. Make sure the index.html base href="/nss-dev/"
+3. Make sure the web.config in the assets folder is placed at the app root: C:/inetpub/wwwroot/nss-dev/
+
+## Built With
+
+* [Angular](https://angular.io/) - The main web framework used
+* [NPM](https://www.npmjs.com/) - Dependency Management
+* [Highcharts](https://www.highcharts.com/products/highcharts/) - Flowchart and Hydrograph
+
+## Contributing
+
+Please read [CONTRIBUTING.md]() for details on the process for submitting pull requests to us. Please read [CODE_OF_CONDUCT.md]() for details on adhering by the [USGS Code of Scientific Conduct](https://www2.usgs.gov/fsp/fsp_code_of_scientific_conduct.asp).
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+
+Advance the version when adding features, fixing bugs or making minor enhancement. Follow semver principles. To add tag in git, type git tag v{major}.{minor}.{patch}. Example: git tag v2.0.5
+
+To push tags to remote origin: `git push origin --tags`
+
+*Note that your alias for the remote origin may differ.
+
+## Authors
+
+* **[Katrin Jacobsen](https://www.usgs.gov/staff-profiles/katrin-jacobsen)**  - *Point of Contact* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+* **[Andrea Medenblik](https://www.usgs.gov/staff-profiles/andrea-s-medenblik)**  - *Developer* 
+* **[Harper Wavra](https://www.usgs.gov/staff-profiles/harper-wavra)**  - *Developer* 
+* **[Jeremy Newson](https://www.usgs.gov/staff-profiles/jeremy-k-newson)**  - *Developer*
+
+See also the list of [contributors](https://github.com/USGS-WiM/NSS/graphs/contributors) who participated in this project.
+
+## License
+
+This project is licensed under the Creative Commons CC0 1.0 Universal License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Suggested Citation
+In the spirit of open source, please cite any re-use of the source code stored in this repository. Below is the suggested citation:
+
+`This project contains code produced by the Web Informatics and Mapping (WIM) team at the United States Geological Survey (USGS). As a work of the United States Government, this project is in the public domain within the United States. https://wim.usgs.gov`
+
+
+## Acknowledgments
+
+* [angular cli](https://angular.io/)
+* [angular-2-dropdown-multiselect](http://softsimon.github.io/angular-2-dropdown-multiselect/)
+* [Mathjax](https://www.mathjax.org/)
+* [Angular2-Toaster](https://github.com/stabzs/Angular2-Toaster)
+
+
+## About WIM
+* This project authored by the [USGS WIM team](https://wim.usgs.gov)
+* WIM is a team of developers and technologists who build and manage tools, software, web services, and databases to support USGS science and other federal government cooperators.
+* WIM is a part of the [Upper Midwest Water Science Center](https://www.usgs.gov/centers/wisconsin-water-science-center).

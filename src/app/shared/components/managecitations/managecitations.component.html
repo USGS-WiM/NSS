@@ -1,0 +1,144 @@
+<ng-template #manageCitations let-c="close" let-d="dismiss">
+	<div>
+		<div class="modal-header">
+			<div class="title">Manage Citations</div>
+			<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>
+		</div>
+
+		<div class="modal-body modal-body-fixed side-padding">
+			<!-- Search Input -->
+			<div>
+				<input type="text" #input placeholder="Search" (keyup)="filter(input.value)">
+			</div>
+			<div [class.hidden]="showNewCitation" class="mtop-sm">
+				<button type="button" (click)="showNewCitation = true" class="button blue"><i class="far fa-plus" aria-hidden="true"></i>Create New Citation</button>
+			</div>
+			<form *ngIf="showNewCitation" [formGroup]="newCitForm" class="newCitForm">
+				<label>New Citation</label>
+				<!-- Title -->
+				<div class="form-group required">
+					<label for="title">Title:</label>
+					<textarea class="form-control" rows="3" placeholder="" formControlName="title"></textarea>
+					<div class="input-invalid-warning"
+						*ngIf="!newCitForm.get('title').valid && newCitForm.get('title').dirty">Author
+						is required</div>
+				</div>
+				<!-- Author* -->
+				<div class="form-group required"
+					[ngClass]="{'form-invalid': !newCitForm.get('author').valid && newCitForm.get('author').dirty}">
+					<label class="req" for="author">Author:</label>
+					<input class="form-control" type="text" formControlName="author" required>
+					<div class="input-invalid-warning"
+						*ngIf="!newCitForm.get('author').valid && newCitForm.get('author').dirty">Author
+						is required</div>
+				</div>
+				<!-- Short Name -->
+				<div class="form-group required"
+					[ngClass]="{'form-invalid': !newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty}">
+					<label class="req" for="citationURL">Citation URL:</label>
+					<input class="form-control" type="text" formControlName="citationURL">
+					<div class="input-invalid-warning"
+						*ngIf="!newCitForm.get('citationURL').valid && newCitForm.get('citationURL').dirty">URL
+						is required</div>
+				</div>
+				<button type="button" (click)="showNewCitation = false; clearCitation()" class="button">Cancel</button>
+				<button type="button" (click)="createNewCitation()" [disabled]="!newCitForm.valid"
+					class="button blue">Create</button>
+			</form>
+
+			
+			<table class="custom-table table-striped table-scroll mtop-sm no-scrollbars" [class.table-hover-rows]="inGagePage && !inGageStats">
+				<thead>
+					<tr>
+						<th *ngIf="inGagePage" class="width-5">ID</th>
+						<th [class.citationHeader]="!inGagePage" [class.width-85]="inGagePage">Citation</th>
+						<th [class.citationEditHeader]="!inGagePage" [class.width-10]="inGagePage"></th>
+						<!-- <th *ngIf="inGagePage" class="width-10"></th> -->
+						<th class=regRegionHeader *ngIf="!inGagePage">Associated Regression Regions</th>
+						<th class="empty-cell regRegionEditHeader" *ngIf="!inGagePage">
+							<!-- Filler button - not used for anything -->
+							<div class="cell-buttons"><button class="icon-button" aria-hidden="true"><i class="far fa-circle"></i></button></div>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let c of filteredData; let cIndex = index" [ngClass]="{'selectedRow': selectedRow === c.id}">
+						<!-- Col 1 -->
+						<td *ngIf="inGagePage" class="width-5">
+							<div>{{c.id}}</div>
+						</td>
+						<!-- Col 2, Citation -->
+						<td [class.col1]="!inGagePage" [class.width-85]='inGagePage' (click)= "!inGageStats && inGagePage && setSelectedCitation(c)">
+							<div class="half-space">
+								<span *ngIf="!c.isEditing">{{ c.author }}</span>
+								<span *ngIf="c.isEditing"><textarea class='break' name="author" [(ngModel)]="c.author"
+										required></textarea></span>
+							</div>
+							<div>
+								<span *ngIf="!c.isEditing">{{ c.title }}</span>
+								<span *ngIf="c.isEditing"><textarea class='break' name="title" [(ngModel)]="c.title"
+										required></textarea></span>
+							</div>
+							<div>
+								<a *ngIf="!c.isEditing" [href]="c.citationURL" [target]="_blank">
+									<span *ngIf="!c.isEditing">{{ c.citationURL }}</span>
+								</a>
+								<span *ngIf="c.isEditing"><textarea class='break' name="citationURL"
+										[(ngModel)]="c.citationURL" required></textarea></span>
+							</div>
+						</td>
+						<!-- Col 3 - Citation Buttons -->
+						<td [class.editCol]='!inGagePage' [class.width-10]="inGagePage">
+							<!-- Editing -->
+							<div [class.hidden]="!showAddCitations" class="cell-buttons">
+								<button *ngIf="!c.isEditing" title="Edit Citation" (click)="editRowClicked(c, cIndex)"
+									class="icon-button" [disabled]="!checkManagerCitations(c)" aria-hidden="true">
+									<i class="far fa-pencil"></i>
+								</button>
+								<button *ngIf="c.isEditing" title="Save Citation" (click)="saveCitation(c)"
+									class="icon-button" aria-hidden="true">
+									<i class="far fa-floppy-o"></i>
+								</button>
+								<button *ngIf="c.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()"
+									class="icon-button" aria-hidden="true">
+									<i class="far fa-history"></i>
+								</button>
+								<button *ngIf="loggedInRole === 'Administrator' && !c.isEditing" title="Delete Citation"
+									(click)="deleteCitation(c.id)" class="icon-button"
+									[disabled]="c.regressionRegions?.length>0" aria-hidden="true">
+									<i class="far fa-times"></i>
+								</button>
+							</div>
+							<!-- Not editing -->
+							<div [class.hidden]="showAddCitations" class="cell-buttons">
+								<button title="Add Citation" (click)="addExistingCitation(c); d('closed')"
+									class="icon-button" aria-hidden="true">
+									<i class="far fa-plus"></i>
+								</button>
+							</div>
+						</td>
+						<!-- Col 4, Associated Regression Region -->
+						<td *ngIf="!inGagePage">
+							<div *ngFor="let e of c.regressionRegions; last as isLast">
+								<!-- Col 3, Associated Regression Region (all but the last one) -->
+								<td [class.regRegionLast]=isLast [class.regRegion]=!isLast>{{e.name}}</td>
+								<!-- Col 4 - Regression Buttons -->
+								<td [class.editRegRegionLast]=isLast [class.editRegRegion]=!isLast [class.hidden]="!showAddCitations">
+									<button title="Edit Regression Region" (click)="editRegRegion(e.id)" class="icon-button"
+										[disabled]="!checkManagerRegressionRegions(e)" aria-hidden="true">
+										<i class="far fa-pencil"></i>
+									</button>
+								</td>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>		
+		</div>
+	</div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button black">Close</button>
+	</div>
+</ng-template>

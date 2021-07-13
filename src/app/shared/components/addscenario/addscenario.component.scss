@@ -1,0 +1,98 @@
+.scenario-dropdown {
+    background-color: var(--grey);
+    padding: 8px 6px 6px 6px;
+    font-size: 14px;
+	border-radius: var(--borderRadius);
+	margin-bottom: 5px;
+	display: flex;
+	
+	&:hover{
+		cursor: pointer;
+	}
+
+	.showHideScen i {
+		float: right;
+		padding-right: 5px;
+		font-size: 20px !important; /*need to center vertically*/
+		bottom: 4px;
+		position: relative;
+	}
+
+	.scenario-dropdown-title{
+		display: flex;
+		flex-grow: 3;
+
+		span{
+			font-size: 16px;
+			font-weight: 600;
+		}
+
+		i{
+			margin-left: 25px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+	}
+
+	// Delete button
+	.icon-button{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		height: 100%;
+
+		&:hover{
+			color: var(--red);
+			span{
+				color: var(--red);
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+.modal-body p {
+    padding-top: 15px;
+}
+
+
+.example-text {
+    color: #6f7697;
+    padding: 0!important;
+    font-size: 11px!important;
+}
+.scenFormGroup {
+    margin-left: 5px;
+}
+
+
+
+.ion-close {
+    float: left;
+    font-size: 10px !important;
+    position: relative;
+    padding: 5px;
+}
+
+button {
+    margin: 0px 5px 5px 0px;
+}
+
+.form-group.col-md-6 {
+    padding-left: 0;
+}
+
+.ion-information-circled {
+    margin: 0px 5px;
+    cursor: pointer;
+}
+.ion-plus-circled {
+    margin: 0px 5px;
+    cursor: pointer;
+}

@@ -1,16 +1,18 @@
-import {Unittype} from './unitType';
 import {Limit } from './limit';
+import { Unittype } from './unittype';
 
 export interface Parameter {
-    ID: number;
-    Name: string;
-    Description: string;
-    Code: string;
-    UnitType: Unittype;
-    Value: number;
-    Limits: Limit;
-    LimitArray?:Array<Limit>;
-    OutOfRange?: boolean;
+    id: number;
+    name: string;
+    description: string;
+    code: string;
+    unitType: Unittype;
+    value: number;
+    limits: Limit;
+    rrid?: number;
+    limitArray?: Array<Limit>;
+    outOfRange?: boolean;
     missingVal?: boolean;
-    seeDescription?: boolean;   
+    seeDescription?: boolean;
+    isEditing?: boolean;
 }

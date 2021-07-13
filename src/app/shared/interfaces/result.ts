@@ -1,15 +1,15 @@
-import { Unittype} from './unitType';
+import { Unittype} from './unittype';
 import { Error } from './error';
-import { Intervalbound} from './intervalBound';
+import { Intervalbound} from './intervalbound';
 
 export interface Result {
-    Description: string;
-    Equation: string;
-    EquivalentYears: number;
-    Name: string;
-    Value: number;
+    description: string;
+    equation: string;
+    equivalentYears: number;
+    name: string;
+    value: number;
     code: string;
-    Errors: Error[];
-    IntervalBounds: Intervalbound;
-    Unit: Unittype;
+    errors: Error[];
+    intervalBounds: Intervalbound;
+    unit: Unittype;
 }

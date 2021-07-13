@@ -1,636 +1,1290 @@
-<div id="printArea" class="mainPage scrollable">
+<div>
 
-    <!-- toaster directive -->
-    <toaster-container></toaster-container>
-    <!-- / toaster directive -->
+	<!-- toaster directive -->
+	<toaster-container [toasterconfig]="config"></toaster-container>
+	<!-- / toaster directive -->
 
-    <div><h3>{{title}}</h3></div>
-    <div>{{timestamp | date:"MMMM d, y hh:mma"}}</div>
+	<h2 class="bold">{{title}}</h2>
 
-    <div *ngIf="selectedRegion">
-       <label>Region:</label>
-       <div>{{selectedRegion.Name}}</div>
-    </div>
+	<div class="date">{{timestamp | date:"MMMM d, y hh:mma"}}</div>
 
-    <br/>
-    <div *ngIf="selectedStatisticGrp">
-        <label>Statistic Group(s):</label>
-        <div>
-            <span *ngFor="let st of selectedStatisticGrp;let isLast=last">{{st.Name}}{{isLast ? "" : ", "}}</span>
-        </div>
-    </div>
+	<span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span>
 
-    <br />
-    <div *ngIf="selectedRegRegion">
-        <label>Regression Group(s):</label>
-        <div>
-            <span *ngFor="let rr of selectedRegRegion;let isLast=last">{{rr.Name}}{{isLast ? "" : ", "}}</span>
-        </div>
-    </div>
 
-    <br />
+	<!-- Region -->
+	<div *ngIf="showRegion" class="app-body-section" id="regionSection">
+		<h3 class="section-header">Study Area:</h3>
+		<div class="data-value">{{selectedRegion.name}}</div>
+	</div>
 
-     <!-- scenarios && !resultsBack-->
-    <div class="hidden-print" *ngIf="scenarios && !resultsBack">
-        <label>Equation Variables</label>
-        <br/>
-        <div *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</div>
-        <form #scenarioForm="ngForm">
-            <div class="row">
-                <div class="col-xs-11" *ngFor="let sc of scenarios;let sInd = index">
-                    <h3>{{sc.StatisticGroupName}}</h3>
-                    <div class="col-xs-10" *ngIf="sc.RegressionRegions?.length > 0">
-                        <table class="table">
-                            <tr *ngFor="let rr of sc.RegressionRegions;let rInd = index">
-                                <td style="vertical-align:middle;">{{rr.Name}} <span *ngIf="multipleRegRegions" style="font-size: x-small">(RG_ID: {{rr.ID}})</span></td>
-                                <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
-                                <td *ngIf="showWeights" class="col-xs-2">
-                                    <input style="display:inline;" type="text" id="PercentWeight"class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.PercentWeight">
-                                </td>
-                            </tr>
-                        </table>
-                    </div><!-- end length > 0-->
-                    <div *ngIf="sc.RegressionRegions.length == 0"><h3>There are no Results for your selection. Please try another .... </h3></div>
-                </div>  <!-- end ngFor scenarios -->
-            </div>
-            <table *ngIf="scenarios[0].RegressionRegions.length > 0" style="border:solid 1px gray" class="table">
-                <thead>
-                    <tr>
-                        <th class="col-xs-5">Parameter</th>
-                        <th>Code</th>
-                        <th class="col-xs-2">Value</th>
-                        <th class="col-xs-1" *ngIf="multipleRegRegions"></th>
-                        <th class="col-xs-2">Min Limit</th>
-                        <th class="col-xs-3">Max Limit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let p of uniqueParameters;let pInd=index ">
-                        <td>{{p.Name}} <a (click)="showDescription(p, pInd)"><span class="glyphicon glyphicon-question-sign nss-tooltip"></span></a>
-                            <!-- description span -->
-                            <br *ngIf="p.seeDescription"/>
-                            <span style="font-size:small;" *ngIf="p.seeDescription">{{p.Description}}</span>
-                            <!-- outOfRange span -->
-                            <br *ngIf="p.OutOfRange"/>
-                            <span *ngIf="p.OutOfRange" class="warning-text">Warning: Parameter is outside of suggested range. Estimates will be extrapolations with unknown errors</span>
-                        </td>
-                        <td>{{p.Code}}</td>
-                        <td>
-                            <div class="col-xs-10" style="margin-left:0;padding-left:0;">
-                                <input class="form-control" style="display:inline;width: 70%" [ngClass]="{'reqError':p.missingVal}" type="text"
-                                        (keypress)="_keyPress($event)" (blur)="compareValue(p)" [(ngModel)]="p.Value" name="Value-{{pInd}}" required>
-                                (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)" style="display:inline;"></span>)
-                            </div>
-                        </td>
-                        <td *ngIf="multipleRegRegions">
-                            <span *ngFor="let l of p.LimitArray">
-                                <span  class="pull-right" style="white-space:nowrap;" *ngIf="l != undefined" [ngClass]="{'redFont':l.OutOfRange}">
-                                    <span style="font-size: x-small">{{l != undefined ? l.rrID : ''}}</span><br />
-                                </span>
-                            </span>
-                        </td>
-                        <td>
-                            <span *ngFor="let l of p.LimitArray">
-                            <span *ngIf="l!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? sigFigures(l.Min): "--"}}
-                                (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)
-                                <br/>
-                            </span>
-                        </span></td>
-                        <td>
-                            <span *ngFor="let l of p.LimitArray">
-                                <span *ngIf="l!=undefined" style="white-space:nowrap;" [ngClass]="{'redFont':l.OutOfRange}">{{l != undefined ? sigFigures(l.Max) : "--"}} (
-                                    <span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)
-                                    <br/>
-                                </span>
-                            </span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
 
-            <h2 style="margin:0;padding:0">Citations</h2>
-            <div *ngFor="let sc of scenarios">
-                <label *ngIf="sc.Citations">{{sc.StatisticGroupName}} Citations</label>
-                <div *ngFor="let l of sc.Citations">
-                    <a [href]="l.CitationURL" [target]="_blank">
-                        <div>{{l.Author}}</div>
-                        <div>{{l.Title}}</div>
-                    </a>
-                    <br />
-                </div>
-            </div><!--end foreach scenario (for citations) {{l != undefined ? l.rrID : ''}}-->
-        </form>
-    </div> <!--end if scenarios-->
+	<!-- Statistic Group -->
+	<div class="app-body-section" *ngIf="selectedStatisticGrp?.length>0">
+		<h3 class="section-header">Statistic Group(s):</h3>
+		<div>
+			<span class="data-value" *ngFor="let st of selectedStatisticGrp;let isLast=last">{{st.name}}{{isLast ? "" : ", "}}</span>
+		</div>
+	</div>
 
-     <!-- resultsBack-->
-    <div *ngIf="resultsBack">
-        <button type="button" class="btn-wim-primary hidden-print" (click)="editScenario()">Edit Scenario Parameters</button>
-        <div *ngFor="let s of scenarios">
-            <h3>{{s.StatisticGroupName}}</h3>
-            <div *ngFor="let rr of s.RegressionRegions;let r = index">
-                <div><!-- *ngIf="rr.ID > 0">  -->
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
-                            <table #inputsTable>
-                                <tr><td>{{rr.Name}} Region</td></tr>
-                                <tr *ngIf="rr.PercentWeight"><td>{{rr.PercentWeight}}% Weighted</td></tr>
-                                <tr *ngFor="let p of rr.Parameters"><td>{{p.Name}} = {{p.Value}} (<span [innerHTML]="setSuperScript(p.UnitType.Abbr)"></span>)</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                    <br />
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <!--<a class="hidden-print" (click)="exportTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>-->
-                            <span>[SEe, Standard Error of Estimate; SEp, Standard Error of Prediction; SE, Standard Error (other -- see report)]</span>
-                            <table #resultsTable style="border:solid 1px gray" class="table">
-                                <thead>
-                                    <tr style="border-bottom: white solid;">
-                                        <th class="col-xs-6">{{rr.Name}} Region</th>
-                                        <th>Value</th>
-                                        <th *ngIf="rr.Results[0].IntervalBounds" colspan="2">Prediction Interval</th>
-                                        <th *ngIf="rr.Results[0].Errors && rr.Results[0].Errors.length > 0" [attr.colspan]="rr.Results[0].Errors.length">Errors (%)</th>
-                                        <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent Yrs.</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="col-xs-6">Description</th>
-                                        <th>(<span [innerHTML]="setSuperScript(rr.Results[0].Unit.Abbr)"></span>)</th>
-                                        <th *ngIf="rr.Results[0].IntervalBounds">Low</th>
-                                        <th *ngIf="rr.Results[0].IntervalBounds">High</th>
-                                        <th *ngFor="let e of rr.Results[0]?.Errors">{{e.Code}}</th>
-                                        <th *ngIf="rr.Results[0].EquivalentYears>0"></th><!--space for if Equivalent Yrs-->
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let result of rr.Results">
-                                        <td>{{result.Description}} ({{result.code}})</td>
-                                        <td>{{sigFigures(result.Value)}}</td>
-                                        <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Lower != "NaN" ? sigFigures(result.IntervalBounds.Lower) : '---'}}</td>
-                                        <td *ngIf="rr.Results[0].IntervalBounds">{{result.IntervalBounds != undefined && result.IntervalBounds.Upper != "NaN" ? sigFigures(result.IntervalBounds.Upper) : '---'}}</td>
-                                        <td *ngFor="let e of result?.Errors">{{e.Value}}</td>
-                                        <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears > 0 && result.EquivalentYears !== 999 ? result.EquivalentYears : 'N/A'}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div><!-- END rr.ID > 0
-                <div *ngIf="rr.ID == 0">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
-                            <table #inputsTable>
-                                <tr><td>{{rr.Name}}</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                    <br />
-                    <br />
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <table #resultsTable style="border:solid 1px gray" class="table">
-                                <thead>
-                                    <tr>
-                                        <th class="col-xs-6">Description</th>
-                                        <th>Value</th>
-                                        <th *ngIf="rr.Results[0].EquivalentYears>0">Equivalent<br/>Years</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let result of rr.Results">
-                                        <td>{{result.Description}} ({{result.code}})</td>
-                                        <td>{{sigFigures(result.Value)}}</td>
-                                        <td *ngIf="rr.Results[0].EquivalentYears>0">{{result.EquivalentYears}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div> --><!-- end 'Area-averaged'-->
-            </div>
-        </div> <!-- end for each Scenario-->
+	<!-- Regression Regions -->
+	<div class="app-body-section" *ngIf="selectedRegressionRegion?.length>0">
+		<h3 class="section-header">Regression Region(s):</h3>
+		<div>
+			<span *ngFor="let rr of selectedRegressionRegion;let isLast=last" class="data-value">{{rr.name}}{{isLast ? "" : ", "}}</span>
+		</div>
+	</div>
 
-        <!-- Citations -->
-        <h2 id="citations" style="margin:0;padding:0">Citations</h2>
-        <div *ngFor="let sc of scenarios">
-            <div *ngFor="let c of sc.Citations"><!--" | unique">-->
-            <a [href]="c.CitationURL" [target]="_blank">
-                <div>{{c.Author}}</div>
-                <div>{{c.Title}}</div>
-            </a>
-            <br />
-        </div>
-        <!-- ngfor each chart being added show here
-            //if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
-            //if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show" -->
-        <!-- charts-->
-        <div id="chart">
-            <div class="row">
-                <div class="col-xs-12" *ngIf="hydroChartsArray.length >0">
-                    <h2 style="display:inline-block;margin-right:42px;">Charts</h2>
-                    <button class="hidden-print" style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
-                </div>
-            </div>
-            <div [hidden]="!showCharts_btn">
-                <div class="row">
-                    <div class="col-xs-11" *ngFor="let c of hydroChartsArray;let i = index"> <!-- For Each hydroChartsArray start -->
-                        <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
-                            <button type="button" class="pull-right hidden-print" (click)="removeHydroChart(i)">x</button><br clear="all" />
-                            <chart (load)="saveInstance($event.context)" [options]="c"></chart>
-                        </div>
-                        <div class="col-xs-5 pull-right hidden-print" *ngIf="selectedPlot=='Hydrograph'">
-                            <!-- Start of FORM for hydrochart -->
-                            <form id="myChartForm" name="myChartForm" #myChartForm="ngForm" (ngSubmit)="refreshHydrograph()">
-                                <div class="form-group">
-                                    <label class="col-xs-7">Recurrence Interval:</label>
-                                    <div class="col-xs-5">
-                                        <span class="select-wim">
-                                            <select [(ngModel)]="hydrographs[i].recurrence" (ngModelChange)="refreshHydrograph(i, myChartForm.form.controls)" name="recurrence">
-                                                <option [value]="r" *ngFor="let r of hChartXAxisValues">{{r}}</option>
-                                            </select>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="form-group" style="padding-top:5px;">
-                                    <label class="col-xs-7">Lag Time (hrs):</label>
-                                    <div class="col-xs-5">
-                                        <input type="text" class="form-control" name="lagTime" (keypress)="_keyPress($event)" [(ngModel)]="hydrographs[i].lagTime" (keyup)="refreshHydrograph(i, myChartForm.form.controls)">
-                                    </div>
-                                </div>
+	<!-- Buttons -->
+	<div class="app-body-section hidden-print" *ngIf="loggedInRole">
+		<button
+			*ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)"
+			type="button" class="button small blue mright-xs" (click)="showAddScenarioModal()">
+			<i class="far fa-plus"></i>
+			<span>Add Scenario</span>
+		</button>
+		<button *ngIf="loggedInRole && showRegion && !editRegionScenario" type="button" class="button small mright-xs"
+			(click)="editRegScenario()">
+			<i class="far fa-pencil-alt"></i>
+			<span>Edit Scenario</span>
+		</button>
+		<button *ngIf="loggedInRole && showRegion && editRegionScenario" type="button"
+			class="button small green mright-xs" (click)="cancelEditRegionScenario()">
+			<i class="far fa-check"></i>
+			<span>Finish Editing</span>
+		</button>
+		<button
+			*ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)"
+			type="button" class="button small" (click)="showManageCitationsModal()">
+			<i class="far fa-asterisk"></i>
+			<span>Manage Citations</span>
+		</button>
+	</div>
 
-                                <br clear="all" />
-                                <div class="pull-right hidden-print"><a class="hidden-print" (click)="showHideAdditionalChartSettings(i)" style="cursor: pointer">More options</a></div>
-                                <br clear="all" />
-                                <div *ngIf="hydrographs[i]?.showExtraSettings" [hidden]="!hydrographs[i].showExtraSettings" class="panel panel-default hidden-print">
-                                    <div class="panel-body">
-                                        <div style="font-size: small">
-                                            <span>* To zoom in, click and drag a box in the chart</span>
 
-                                        </div>
-                                        <!-- AXIS -->
-                                        <div>
-                                            <div style="font-size: large">Axes</div>
-                                            <div class="form-group col-xs-6">
-                                                <label class="control-label">Choose Axis to update:</label>
-                                                <div>
-                                                    <span style="padding-right: 10px">
-                                                        <input type="radio"  name="axis" [(ngModel)]="hydrographs[i].axis" value="BottomX" (click)="axis='BottomX'" />Bottom X
-                                                    </span>
-                                                    <span>
-                                                        <input type="radio" name="axis" [(ngModel)]="hydrographs[i].axis" value="LeftY" (click)="axis='LeftY'" />Left Y
-                                                    </span>
-                                                </div>
-                                            </div> <!-- end (AXIS) form group  -->
-                                            <!-- TYPE -->
-                                            <div class="form-group col-xs-6">
-                                                <label class="control-label">Type:</label>
-                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">
-                                                    <span style="padding-right:10px">
-                                                        <input type="radio" name="type_BX" [(ngModel)]="hydrographs[i].type_BX" (click)="setXaxisType(i, 'linear')" value="linear" />Linear
-                                                    </span>
-                                                    <span>
-                                                        <input type="radio" name="type_BX" [(ngModel)]="hydrographs[i].type_BX" (click)="setXaxisType(i, 'logarithmic')" value="logarithmic" />Logarithmic
-                                                    </span>
-                                                </div>
-                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">
-                                                    <span style="padding-right: 10px">
-                                                        <input type="radio" name="type_LY" [(ngModel)]="hydrographs[i].type_LY" (click)="setYaxisType(i, 'linear')" value="linear" />Linear
-                                                    </span>
-                                                    <span>
-                                                        <input type="radio" name="type_LY" [(ngModel)]="hydrographs[i].type_LY" (click)="setYaxisType(i, 'logarithmic')" value="logarithmic" />Logarithmic
-                                                    </span>
-                                                </div>
-                                            </div> <!-- end (TYPE) form group -->
-                                            <!-- TITLE -->
-                                            <div class="form-group  col-xs-12">
-                                                <label class="control-label">Axis Title:</label>
-                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">
-                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_BX" name="title_BX" (keyup)="updateBXtitle(i)" [(ngModel)]="hydrographs[i].title_BX"></textarea>
-                                                </div>
-                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">
-                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="hydrographs[i].title_LY" name="title_LY" (keyup)="updateLYtitle(i)"  [(ngModel)]="hydrographs[i].title_LY"></textarea>
-                                                </div>
-                                            </div> <!-- end (TITLE) form group -->
-                                            <!-- MAJOR UNITS -->
-                                            <div class="form-group col-xs-4">
-                                                <label class="control-label">Major Units:</label>
-                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">
-                                                    <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_BX" (change)="setXChartLines(i, 'gridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorGrid_BX" /> grid</span>
-                                                    <span><input type="checkbox" name="majorTic_BX" (change)="setXChartLines(i, 'tickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorTic_BX"  /> tics</span>
-                                                </div>
-                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">
-                                                    <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_LY" (change)="setYChartLines(i, 'gridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorGrid_LY" /> grid</span>
-                                                    <span><input type="checkbox" name="majorTic_LY" (change)="setYChartLines(i, 'tickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].majorTic_LY" /> tics</span>
-                                                </div>
-                                            </div> <!-- end (MAJOR UNITS) form group -->
+	<!-- scenarios && !resultsBack-->
+	<div class="hidden-print app-body-section" *ngIf="scenarios && !resultsBack && !editRegionScenario">
+		<h3 class="section-header">Equation Variables</h3>
+		<p *ngIf="scenarios.length == 0">There are no scenarios available for the options chosen.</p>
 
-                                            <!-- MINOR UNITS -->
-                                            <div class="form-group col-xs-4">
-                                                <label class="control-label">Minor Units:</label>
-                                                <div [hidden]="hydrographs[i].axis != 'BottomX'">
-                                                    <span style="padding-right: 10px"><input [disabled]="hydrographs[i].type_BX == 'logarithmic'" type="checkbox" name="minorGrid_BX" (change)="setXChartLines(i, 'minorGridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorGrid_BX"/> grid</span>
-                                                    <span style="padding-right:5px"><input [disabled]="hydrographs[i].type_BX == 'logarithmic'" type="checkbox" name="minorTic_BX" (change)="setXChartLines(i, 'minorTickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorTic_BX" /> tics</span>
-                                                    <span [hidden]="hydrographs[i].type_LY != 'logarithmic' && hydrographs[i].type_BX != 'logarithmic'" style="font-size: small">(Disabled with Log)</span>
-                                                </div>
+		<form #scenarioForm="ngForm" *ngIf="scenarios.length > 0">
+			<div *ngFor="let sc of scenarios;let sInd = index">
+				<h5>{{sc.statisticGroupName}} Regions:</h5>
+				<div *ngIf="sc.regressionRegions?.length > 0">
+					<table class="custom-table">
+						<tr *ngFor="let rr of sc.regressionRegions;let rInd = index">
+							<td>
+								{{rr.name}}
+								<small *ngIf="multipleRegRegions">(RG_Code: {{rr.code}})</small>
+							</td>
+							<!-- <td *ngIf="showWeights" class="col-xs-3" style="vertical-align:middle;text-align:end;">% Area Weight:</td>
+							<td *ngIf="showWeights" class="col-xs-2">
+								<input style="display:inline;" type="text" class="form-control" (keypress)="_keyPress($event)" name="PercentWeight-{{rInd}}" [(ngModel)]="rr.percentWeight">
+							</td> -->
+						</tr>
+					</table>
+				</div><!-- end length > 0-->
 
-                                                <div [hidden]="hydrographs[i].axis != 'LeftY'">
-                                                    <span style="padding-right: 10px"><input [disabled]="hydrographs[i].type_LY == 'logarithmic'" type="checkbox" name="minorGrid_LY" (change)="setYChartLines(i, 'minorGridLineWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorGrid_LY" /> grid</span>
-                                                    <span style="padding-right:5px"><input [disabled]="hydrographs[i].type_LY == 'logarithmic'" type="checkbox" name="minorTic_LY" (change)="setYChartLines(i, 'minorTickWidth', $event.target.checked)" [(ngModel)]="hydrographs[i].minorTic_LY" /> tics</span>
-                                                    <span [hidden]="hydrographs[i].type_LY != 'logarithmic' && hydrographs[i].type_BX != 'logarithmic'" style="font-size: x-small;font-weight: bold">(Disabled with Log)</span>
-                                                </div>
-                                            </div> <!-- end (MINOR UNITS) form group -->
-                                            <div class="form-group col-xs-4">
-                                                <label class="control-label">
-                                                    <div [hidden]="hydrographs[i].axis != 'BottomX'">
-                                                        <span><input type="checkbox" name="reverse_BX" (change)="setReverseData(i, 'bx', $event.target.checked)" [(ngModel)]="hydrographs[i].reverse_BX"/> reverse</span>
-                                                    </div>
-                                                    <div [hidden]="hydrographs[i].axis != 'LeftY'">
-                                                        <span><input type="checkbox" name="reverse_LY" (change)="setReverseData(i, 'ly', $event.target.checked)" [(ngModel)]="hydrographs[i].reverse_LY"/> reverse</span>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </div><!-- end Axes -->
-                                        <br clear="all"/>
-                                        <!--Curves and Legend-->
-                                        <div>
-                                            <div style="font-size: large">Curves and Legend</div>
-                                            <div><!--Curves color/width -->
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">Curve Color:</label>
-                                                  <div><input [colorPicker]="hydrographs[i].colorPickerColor" (colorPickerChange)="changeLineColor(i,$event)" [style.background]="hydrographs[i].colorPickerColor" [value]="hydrographs[i].colorPickerColor"/></div>
-                                                </div>
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">Curve Width:</label>
-                                                    <div><input type="text" name="lineWidth" (keyup)="setLineWidth(i)" [(ngModel)]="hydrographs[i].lineWidth"/></div>
-                                                </div>
-                                            </div>
-                                            <div><!-- Line symbol color/point symbol -->
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">Line Symbol Color:</label>
-                                                    <div><input [colorPicker]="hydrographs[i].lineSymbolFillColor" (colorPickerChange)="changeLineSymbolColor(i,$event)" [style.background]="hydrographs[i].lineSymbolFillColor" [value]="hydrographs[i].lineSymbolFillColor"/></div>
-                                                </div>
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">Point Symbol:</label>
-                                                    <div>
-                                                        <span class="select-wim">
-                                                            <select [(ngModel)]="hydrographs[i].lineSymbol" (ngModelChange)="setLineSymbol(i,$event)" name="lineSymbol">
-                                                                <option value="circle">Circle</option>
-                                                                <option value="square">Square</option>
-                                                                <option value="diamond">Diamond</option>
-                                                                <option value="triangle">Triangle</option>
-                                                                <option value="triangle-down">Triangle-down</option>
-                                                            </select>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <br clear="all"/>
-                                            <div>
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">Legend Label:</label>
-                                                    <div><input type="text" class="form-control" name="curveLabel" [(ngModel)]="hydrographs[i].curveLabel" (keyup)="updateCurveLabel(i)" /></div>
-                                                </div>
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">
-                                                        <input type="checkbox" name="dataLabels" (change)="updateDataLabels(i, $event.target.checked)" [(ngModel)]="hydrographs[i].dataLabels"/> Show Data Values
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div> <!-- end curves-->
-                                    </div> <!-- end panel-body -->
-                                </div>
-                                <br clear="all" />
-                            </form>
-                        </div><!-- end form for inputs-->
-                    </div> <!-- end for each hydroChartsArray loop -->
-                </div>
-            </div>
-            <div *ngIf="fChartOptions">
-                <div *ngIf="hydroChartsArray.length == 0">
-                    <!-- show show/hide button only if there are no hydrographs above it (because that has the button also)-->
-                    <h2 style="display:inline-block;margin-right:42px;">Charts</h2>
-                    <button class="hidden-print" style="display:inline-block;" type="button" (click)="showHideCharts()">{{showChartBtn_txt}}</button>
-                </div>
-                <div class="row">
-                    <div class="col-xs-11" *ngIf="showCharts_btn">
-                        <div style="border:solid gray 1px;display:inline-block;margin-bottom:5px;">
-                            <button type="button" class="pull-right hidden-print" (click)="removeFreqChart()">x</button><br clear="all" />
-                            <chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>
-                        </div>
-                        <div class="col-xs-5 pull-right">
-                            <br clear="all" />
-                            <div class="pull-right hidden-print"><a (click)="showHideAddFChartSettings()" style="cursor: pointer">More options</a></div>
-                            <br clear="all" />
-                            <div *ngIf="showExtraFREQSettings" [hidden]="!showExtraFREQSettings" class="panel panel-default hidden-print">
-                                <div class="panel-body">
-                                    <form id="myFChartForm" name="myFChartForm" #myFChartForm="ngForm">
-                                        <div style="font-size: small">
-                                            <span>* To zoom in, click and drag a box in the chart</span>
-                                        </div>
-                                        <!-- AXIS -->
-                                        <div>
-                                            <div style="font-size: large">Axes</div>
-                                            <div class="form-group col-xs-6">
-                                                <label class="control-label">Choose Axis to update:</label>
-                                                <div>
-                                                    <span style="padding-right: 10px">
-                                                        <input type="radio"  name="Faxis" [(ngModel)]="frequencyPlotChart.Faxis" value="BottomX" (click)="Faxis='BottomX'" />Bottom X
-                                                    </span>
-                                                    <span>
-                                                        <input type="radio" name="Faxis" [(ngModel)]="frequencyPlotChart.Faxis" value="LeftY" (click)="Faxis='LeftY'" />Left Y
-                                                    </span>
-                                                </div>
-                                            </div> <!-- end (AXIS) form group  -->
-                                            <!-- TYPE -->
-                                            <div class="form-group col-xs-6">
-                                                <label class="control-label" [hidden]="frequencyPlotChart.Faxis != 'BottomX'">Type:</label>
-                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
-                                                    <span>
-                                                        <input type="radio" name="type_BX" [(ngModel)]="frequencyPlotChart.type_BX" (click)="setFreqXaxisType('returnPeriod')" value="returnPeriod" />Return Period
-                                                    </span><br/>
-                                                    <span style="padding-right: 10px">
-                                                        <input type="radio" name="type_BX" [(ngModel)]="frequencyPlotChart.type_BX" (click)="setFreqXaxisType('percent')" value="percent" />Percent
-                                                    </span>
-                                                    <span>
-                                                        <input type="radio" name="type_BX" [(ngModel)]="frequencyPlotChart.type_BX" (click)="setFreqXaxisType('fraction')" value="fraction" />Fraction
-                                                    </span>
+				<!-- No results -->
+				<div *ngIf="sc.regressionRegions.length == 0">
+					<h3>There are no results for your selection. Please try another...</h3>
+					<button type="button" class="button small hidden-print mbottom-xs" (click)="editScenario()">
+						<i class="far fa-pencil-alt"></i>
+						<span>Edit Scenario Explanatory Variables</span>
+					</button>
+				</div>
+			</div> <!-- end ngFor scenarios -->
 
-                                                </div>
-                                            </div> <!-- end (TYPE) form group -->
-                                            <!-- TITLE -->
-                                            <div class="form-group  col-xs-12">
-                                                <label class="control-label">Axis Title:</label>
-                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
-                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="frequencyPlotChart.title_BX" name="title_BX" (keyup)="updateFreqBXtitle()" [(ngModel)]="frequencyPlotChart.title_BX"></textarea>
-                                                </div>
-                                                <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
-                                                    <textarea cols="60" rows="4" class="form-control" [innerHTML]="frequencyPlotChart.title_LY" name="title_LY" (keyup)="updateFreqLYtitle()"  [(ngModel)]="frequencyPlotChart.title_LY"></textarea>
-                                                </div>
-                                            </div> <!-- end (TITLE) form group -->
-                                            <!-- MAJOR UNITS -->
-                                            <div class="form-group col-xs-4">
-                                                <label class="control-label">Major Units:</label>
-                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
-                                                    <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_BX" (change)="setFreqXChartLines('gridLineWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorGrid_BX" /> grid</span>
-                                                    <span><input type="checkbox" name="majorTic_BX" (change)="setFreqXChartLines('tickWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorTic_BX"  /> tics</span>
-                                                </div>
-                                                <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
-                                                    <span style="padding-right: 10px"><input type="checkbox" name="majorGrid_LY" (change)="setFreqYChartLines('gridLineWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorGrid_LY" /> grid</span>
-                                                    <span><input type="checkbox" name="majorTic_LY" (change)="setFreqYChartLines('tickWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.majorTic_LY" /> tics</span>
-                                                </div>
-                                            </div> <!-- end (MAJOR UNITS) form group -->
 
-                                            <!-- MINOR UNITS -->
-                                            <div class="form-group col-xs-4">
-                                                <label class="control-label">Minor Units:</label>
-                                                <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
-                                                    <span style="padding-right: 10px">
-                                                        <input type="checkbox" name="minorGrid_BX" (change)="setFreqXChartLines('minorGridLineWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.minorGrid_BX"/> grid
-                                                    </span>
-                                                    <span style="padding-right:5px">
-                                                        <input type="checkbox" name="minorTic_BX" (change)="setFreqXChartLines('minorTickWidth', $event.target.checked)" [(ngModel)]="frequencyPlotChart.minorTic_BX" /> tics
-                                                    </span>
-                                                </div>
 
-                                                <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
-                                                    <span style="padding-right: 10px">
-                                                        <input [disabled]="'true'" type="checkbox" name="minorGrid_LY" [(ngModel)]="frequencyPlotChart.minorGrid_LY" /> grid
-                                                    </span>
-                                                    <span style="padding-right:5px">
-                                                        <input [disabled]="'true'" type="checkbox" name="minorTic_LY" [(ngModel)]="frequencyPlotChart.minorTic_LY" /> tics
-                                                    </span>
-                                                    <span style="font-size: x-small;font-weight: bold">(Disabled with Log)</span>
-                                                </div>
-                                            </div> <!-- end (MINOR UNITS) form group -->
-                                            <div class="form-group col-xs-4">
-                                                <label class="control-label">
-                                                    <div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
-                                                        <span><input type="checkbox" name="reverse_BX" (change)="setFreqReverseData('bx', $event.target.checked)" [(ngModel)]="frequencyPlotChart.reverse_BX"/> reverse</span>
-                                                    </div>
-                                                    <div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
-                                                        <span><input type="checkbox" name="reverse_LY" (change)="setFreqReverseData('ly', $event.target.checked)" [(ngModel)]="frequencyPlotChart.reverse_LY"/> reverse</span>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </div><!-- end Axes -->
-                                        <br clear="all"/>
-                                        <div>
-                                            <div style="font-size: large">Curves and Legend</div>
-                                            <div>
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">Curve Color:</label>
-                                                    <div><input [colorPicker]="frequencyPlotChart.colorPickerColor" (colorPickerChange)="changeFreqLineColor($event)" [style.background]="frequencyPlotChart.colorPickerColor" [value]="frequencyPlotChart.colorPickerColor"/></div>
-                                                </div>
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">Curve Width:</label>
-                                                    <div><input type="text" name="lineWidth" (keyup)="setFreqLineWidth()" [(ngModel)]="frequencyPlotChart.lineWidth"/></div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">Line Symbol Color:</label>
-                                                    <div><input [colorPicker]="frequencyPlotChart.lineSymbolFillColor" (colorPickerChange)="changeFreqLineSymbolColor($event)" [style.background]="frequencyPlotChart.lineSymbolFillColor" [value]="frequencyPlotChart.lineSymbolFillColor"/></div>
-                                                </div>
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">Point Symbol:</label>
-                                                    <div>
-                                                        <span class="select-wim">
-                                                            <select [(ngModel)]="frequencyPlotChart.lineSymbol" (ngModelChange)="setFreqLineSymbol($event)" name="lineSymbol">
-                                                                <option value="circle">Circle</option>
-                                                                <option value="square">Square</option>
-                                                                <option value="diamond">Diamond</option>
-                                                                <option value="triangle">Triangle</option>
-                                                                <option value="triangle-down">Triangle-down</option>
-                                                            </select>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <br clear="all"/>
-                                            <div>
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">Legend Label:</label>
-                                                    <div><input type="text" class="form-control" name="curveLabel" [(ngModel)]="frequencyPlotChart.curveLabel" (keyup)="updateFreqCurveLabel()" /></div>
-                                                </div>
-                                                <div class="form-group col-xs-6">
-                                                    <label class="control-label">
-                                                        <input type="checkbox" name="dataLabels" (change)="updateFreqDataLabels($event.target.checked)" [(ngModel)]="frequencyPlotChart.dataLabels"/> Show Data Values
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div> <!-- end curves-->
-                                    </form>
-                                </div> <!-- end panel-body -->
-                            </div>
-                            <br clear="all" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br clear="all"/>
+			<!-- Table -->
+			<table *ngIf="scenarios[0].regressionRegions.length > 0" class="custom-table mtop-lg">
+				<thead>
+					<tr>
+						<th class="width-20">Explanatory Variable</th>
+						<th class="width-10 center">Code</th>
+						<th class="width-20 center">Value</th>
+						<th class="width-30 right" *ngIf="multipleRegRegions">Region Code</th>
+						<th class="width-10">Min Limit</th>
+						<th class="width-10">Max Limit</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let p of uniqueParameters;let pInd=index ">
+						<!-- Parameter -->
+						<td>
+							<div class="xs-f-btw">
+								<div>
+									{{p.name}}
+								</div>
 
-        <!-- appendix section for equation -->
-        <a class="hidden-print" (click)="exportAppendix()" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
-        <h2 style="margin:0;padding:0" id="appendix">Appendix</h2>
+								<span class="hint hidden-print">
+									<i class="fas fa-question-circle"></i>
+									<div class="hint-text">
+										{{p.description}}
+									</div>
+								</span>
+							</div>
 
-        <h4>Equations</h4>
-        <div class="row">
-            <div *ngFor="let e of equationResults" class="col-xs-10">
-            <table style="border:solid 1px gray" class="table">
-                    <tr><td colspan="2">{{e.Name}}</td><tr>
-                    <tr *ngFor="let c of e.Formulas">
-                        <td>{{c.Code}} = </td>
-                        <td><span [MathJax]="c.Equation">{{c.Equation}}</span></td>
-                    </tr>
-            </table>
-            </div><!--End equations-->
-        </div>
-        <br clear="all"/>
+							<!-- <button class="icon-button hover-blue" (click)="showDescription(p, pInd)">
+								<i class="far fa-question-circle"></i>
+							</button> -->
+							<!-- description span -->
+							<!-- <br *ngIf="p.seeDescription"/> -->
+							<!-- <span style="font-size:small;" *ngIf="p.seeDescription">{{p.description}}</span> -->
+							<!-- outOfRange span -->
+							<p *ngIf="p.outOfRange" class="error">
+								Warning: Explanatory Variable is outside of suggested range. Estimates will be
+								extrapolations with unknown errors
+							</p>
+						</td>
+						<!-- Code -->
+						<td class="center">{{p.code}}</td>
+						<!-- Value -->
+						<td>
+							<input class="form-control" [ngClass]="{'reqError':p.missingVal}" type="number"
+								class="mtop-xs" (keypress)="_keyPress($event)" (blur)="compareValue(p)"
+								[(ngModel)]="p.value" name="Value-{{pInd}}" required>
+							<label class="small align-right block">(<span
+									[innerHTML]="setSuperScript(p.unitType.abbr)"></span>)</label>
+						</td>
+						<!-- RG_Code -->
+						<td *ngIf="multipleRegRegions">
+							<div class="cell-block align-right" *ngFor="let l of p.limitArray">
+								<span *ngIf="l.rrID != undefined" class="nowrap" [ngClass]="{'tet-red':l.outOfRange}">
+									{{l != undefined ? l.rrID : ''}}
+								</span>
+							</div>
+						</td>
+						<!-- Min Limit -->
+						<td>
+							<div class="cell-block" *ngFor="let l of p.limitArray">
+								<span *ngIf="l.min!=undefined" class="nowrap" [ngClass]="{'text-red':l.outOfRange}">
+									{{l != undefined ? l.min: "--"}}
+									(<span [innerHTML]="setSuperScript(p.unitType.abbr)"></span>)
+								</span>
+							</div>
+						</td>
+						<!-- Max Limit -->
+						<td>
+							<div class="cell-block nowrap" *ngFor="let l of p.limitArray">
+								<span *ngIf="l.max!=undefined" class="nowrap" [ngClass]="{'text-red':l.outOfRange}">
+									{{l != undefined ? l.max : "--"}}
+									(<span [innerHTML]="setSuperScript(p.unitType.abbr)"></span>)
+								</span>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 
-        <h4>Parameter Definitions</h4>
-        <div class="row">
-            <div class="col-xs-8">
-                <table style="border:solid 1px gray" class="table">
-                    <thead>
-                        <tr>
-                            <th class="col-xs-3">Name</th>
-                            <th class="col-xs-1">Abbrev</th>
-                            <th class="col-xs-8">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let p of uniqueParameters">
-                            <td>{{p.Name}}</td>
-                            <td>{{p.Code}}</td>
-                            <td>{{p.Description}}</td>
-                        </tr>
-                    </tbody>
-            </table>
-            </div>
-        </div>
-        <br clear="all"/>
-        <h4>Unit Types</h4>
-        <div class="row">
-            <div class="col-xs-8">
-                <table style="border:solid 1px gray" class="table">
-                    <thead><tr>
-                            <th class="col-xs-1">Abbrev</th>
-                            <th class="col-xs-8">Unit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let u of uniqueUnitTypes">
-                            <td>(<span [innerHTML]="setSuperScript(u.Abbr)"></span>)</td>
-                            <td>{{u.Unit}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <br clear="all"/>
-        <button type="button" class="btn btn-wim-primary hidden-print" (click)="printPage()">Print Report</button>
-        <br/><br/><br/>
-    </div><!-- end results back -->
+			<!-- Citations -->
+			<h3 class="mtop-lg">Citations</h3>
+			<div *ngFor="let sc of scenarios">
+				<div *ngIf="sc.citations" class="mbottom-md">
+					<h5 *ngIf="sc.citations">{{sc.statisticGroupName}} Citations</h5>
+					<div *ngFor="let l of sc.citations">
+						<a *ngIf="l && l != null" [href]="l.citationURL" [target]="_blank" class="citation">
+							<div>{{l.author}}</div>
+							<div>{{l.title}}</div>
+						</a>
+					</div>
+				</div>
+			</div>
+			<!--end foreach scenario (for citations) {{l != undefined ? l.rrID : ''}}-->
+		</form>
+	</div>
+	<!--end if scenarios-->
+
+	<!-- resultsBack-->
+	<div *ngIf="resultsBack && !editRegionScenario" class="app-body-section">
+		<!-- Edit -->
+		<button type="button" class="button small hidden-print mbottom-xs" (click)="editScenario()">
+			<i class="far fa-pencil-alt"></i>
+			<span>Edit Scenario Explanatory Variables</span>
+		</button>
+
+		<div *ngFor="let s of scenarios">
+
+			<h3 class="mtop-sm mbottom-sm">{{s.statisticGroupName}}</h3>
+
+			<div *ngFor="let rr of s.regressionRegions;let r = index">
+				<div *ngIf="rr.id > 0">
+					<!-- Download Button -->
+					<div class="download-divider hidden-print">
+						<div class="controls">
+							<button class="button small grey" (click)="exportInputTable(r)">
+								<span>Download</span>
+								<i class="far fa-download"></i>
+							</button>
+						</div>
+						<div class="divider"></div>
+					</div>
+
+					<!-- Table -->
+					<table #inputsTable class="custom-table table-borderless mtop-xs">
+						<tr>
+							<td>{{rr.name}} Region</td>
+						</tr>
+						<tr *ngIf="rr.percentWeight">
+							<td>{{rr.percentWeight}}% Weighted</td>
+						</tr>
+						<tr *ngFor="let p of rr.parameters">
+							<td>{{p.name}} = {{p.value}} (<span [innerHTML]="setSuperScript(p.unitType.abbr)"></span>)
+							</td>
+						</tr>
+					</table>
+
+					<div *ngIf="rr.results.length > 0">
+						<!--<a class="hidden-print" (click)="exportTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>-->
+						<label class="small mtop-sm">[SEe, Standard Error of Estimate; SEp, Standard Error of
+							Prediction; SE, Standard Error (other -- see report)]</label>
+						<table #resultsTable class="custom-table">
+							<thead>
+								<tr>
+									<th class="width-40">{{rr.name}} Region</th>
+									<th class="width-10">Value</th>
+									<th class="width-20" *ngIf="rr.results[0].intervalBounds" colspan="2">90% Prediction Interval</th>
+									<th class="width-10" *ngIf="rr.errorHeaders" [attr.colspan]="rr.codes.length">Errors (%)</th>
+									<th class="width-10" *ngIf="rr.results[0].equivalentYears>0">Equivalent Yrs.</th>
+								</tr>
+								<tr>
+									<th class="width-40">Description</th>
+									<th class="width-10">(<span [innerHTML]="setSuperScript(rr.results[0].unit.abbr)"></span>)</th>
+									<th class="width-10" *ngIf="rr.results[0].intervalBounds">Low</th>
+									<th class="width-10" *ngIf="rr.results[0].intervalBounds">High</th>
+									<th class="width-10" *ngFor="let e of rr.codes">{{e}}</th>
+									<th class="width-10" *ngIf="rr.results[0].equivalentYears>0"></th>
+									<!--space for if Equivalent Yrs-->
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let result of rr.results">
+									<td>{{result.description}} ({{result.code}})</td>
+									<td>{{result.value}}</td>
+									<td *ngIf="rr.results[0].intervalBounds">
+										{{result.intervalBounds != undefined && result.intervalBounds.lower != "NaN" ? result.intervalBounds.lower : '---'}}
+									</td>
+									<td *ngIf="rr.results[0].intervalBounds">
+										{{result.intervalBounds != undefined && result.intervalBounds.upper != "NaN" ? result.intervalBounds.upper : '---'}}
+									</td>
+									<td *ngFor="let e of result?.errors">{{e.value}}</td>
+									<td *ngIf="rr.results[0].equivalentYears>0">
+										{{result.equivalentYears > 0 && result.equivalentYears !== 999 ? result.equivalentYears : 'N/A'}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<!-- END rr.id > 0
+                <div *ngIf="rr.id == 0">
+					<div class="col-xs-12">
+						<a class="hidden-print" (click)="exportInputTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>
+						<table #inputsTable>
+							<tr><td>{{rr.name}}</td></tr>
+						</table>
+					</div>
+					<div class="col-xs-12">
+						<table #resultsTable style="border:solid 1px gray" class="custom-table">
+							<thead>
+								<tr>
+									<th class="col-xs-6">Description</th>
+									<th>Value</th>
+									<th *ngIf="rr.results[0].equivalentYears>0">Equivalent<br/>Years</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let result of rr.results">
+									<td>{{result.description}} ({{result.code}})</td>
+									<td>{{result.value}}</td>
+									<td *ngIf="rr.results[0].equivalentYears>0">{{result.equivalentYears}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+                </div> -->
+				<!-- end 'Area-averaged'-->
+			</div>
+		</div> <!-- end for each Scenario-->
+
+		<!-- Citations -->
+		<h3 id="citations" class="ptop-xs">Citations</h3>
+		<div *ngFor="let sc of scenarios">
+			<div *ngFor="let c of sc.citations">
+				<!--" | unique">-->
+				<a *ngIf="c && c != null" [href]="c.citationURL" [target]="_blank" class="citation">
+					<div>{{c.author}}</div>
+					<div>{{c.title}}</div>
+				</a>
+			</div>
+
+
+			<!-- ngfor each chart being added show here
+				//if showCharts_btn is true == show the charts and showChartBtn_txt says "Hide"
+				//if showCharts_btn is false == hide the charts and showChartBtn_txt says "Show" -->
+			<!-- charts-->
+			<div id="chart">
+				<div *ngIf="hydroChartsArray.length >0" class="charts-header">
+					<h2>Charts</h2>
+					<div class="header-button">
+						<button class="hidden-print button small grey" type="button" (click)="showHideCharts()">
+							<i class="far fa-eye"></i>
+							<span>{{showChartBtn_txt}}</span>
+						</button>
+					</div>
+				</div>
+
+				<div [hidden]="!showCharts_btn">
+					<div *ngFor="let c of hydroChartsArray;let i = index" style="display:flex;">
+						<!-- For Each hydroChartsArray start -->
+						<div class="chart-wrapper">
+							<button type="button" class="pull-right hidden-print"
+								(click)="removeHydroChart(i)">x</button><br clear="all" />
+							<chart (load)="saveInstance($event.context)" [options]="c"></chart>
+						</div>
+						<div class="hidden-print" *ngIf="selectedPlot=='Hydrograph'" style="flex-grow:4;">
+							<!-- Start of FORM for hydrochart -->
+							<form id="myChartForm" name="myChartForm" #myChartForm="ngForm"
+								(ngSubmit)="refreshHydrograph()">
+								<div class="form-group">
+									<label class="col-xs-5">Recurrence Interval:</label>
+									<div class="col-xs-5">
+										<span class="select-wim">
+											<select [(ngModel)]="hydrographs[i].recurrence"
+												(ngModelChange)="refreshHydrograph(i, myChartForm.form.controls)"
+												name="recurrence">
+												<option [value]="r" *ngFor="let r of hChartXAxisValues">{{r}}</option>
+											</select>
+										</span>
+									</div>
+								</div>
+								<div class="form-group" style="padding-top:5px;">
+									<label class="col-xs-5">Lag Time (hrs):</label>
+									<div class="col-xs-5">
+										<input type="text" class="form-control" name="lagTime"
+											(keypress)="_keyPress($event)" [(ngModel)]="hydrographs[i].lagTime"
+											(keyup)="refreshHydrograph(i, myChartForm.form.controls)">
+									</div>
+								</div>
+
+								<br clear="all" />
+								<div class="hidden-print"><a class="hidden-print button small black"
+										(click)="showHideAdditionalChartSettings(i)"
+										style="cursor: pointer; margin-left: 15px;">More options</a></div>
+								<br clear="all" />
+								<div *ngIf="hydrographs[i]?.showExtraSettings"
+									[hidden]="!hydrographs[i].showExtraSettings"
+									class="panel panel-default hidden-print" style="border: none !important;">
+									<div class="panel-body">
+										<div style="font-size: small">
+											<span>* To zoom in, click and drag a box in the chart</span>
+
+										</div>
+										<!-- AXIS -->
+										<div>
+											<div style="font-size: 16px !important; font-weight: bold !important;">Axes
+											</div>
+											<div class="form-group col-xs-6">
+												<label class="control-label">Choose Axis to update:</label>
+												<div>
+													<div style="padding-right: 10px">
+														<input type="radio" name="axis"
+															[(ngModel)]="hydrographs[i].axis" value="BottomX"
+															(click)="axis='BottomX'" />Bottom X
+													</div>
+													<div>
+														<input type="radio" name="axis"
+															[(ngModel)]="hydrographs[i].axis" value="LeftY"
+															(click)="axis='LeftY'" />Left Y
+													</div>
+												</div>
+											</div> <!-- end (AXIS) form group  -->
+											<!-- TYPE -->
+											<div class="form-group col-xs-6">
+												<label class="control-label">Type:</label>
+												<div [hidden]="hydrographs[i].axis != 'BottomX'">
+													<span style="padding-right:10px">
+														<input type="radio" name="type_BX"
+															[(ngModel)]="hydrographs[i].type_BX"
+															(click)="setXaxisType(i, 'linear')" value="linear" />Linear
+													</span>
+													<span>
+														<input type="radio" name="type_BX"
+															[(ngModel)]="hydrographs[i].type_BX"
+															(click)="setXaxisType(i, 'logarithmic')"
+															value="logarithmic" />Logarithmic
+													</span>
+												</div>
+												<div [hidden]="hydrographs[i].axis != 'LeftY'">
+													<span style="padding-right: 10px">
+														<input type="radio" name="type_LY"
+															[(ngModel)]="hydrographs[i].type_LY"
+															(click)="setYaxisType(i, 'linear')" value="linear" />Linear
+													</span>
+													<span>
+														<input type="radio" name="type_LY"
+															[(ngModel)]="hydrographs[i].type_LY"
+															(click)="setYaxisType(i, 'logarithmic')"
+															value="logarithmic" />Logarithmic
+													</span>
+												</div>
+											</div> <!-- end (TYPE) form group -->
+											<!-- TITLE -->
+											<div class="form-group  col-xs-12">
+												<label class="control-label"
+													style="font-size: 16px !important; font-weight: bold !important;">Axis
+													Title:</label>
+												<div [hidden]="hydrographs[i].axis != 'BottomX'">
+													<textarea cols="60" rows="4" class="form-control"
+														[innerHTML]="hydrographs[i].title_BX" name="title_BX"
+														(keyup)="updateBXtitle(i)"
+														[(ngModel)]="hydrographs[i].title_BX"></textarea>
+												</div>
+												<div [hidden]="hydrographs[i].axis != 'LeftY'">
+													<textarea cols="60" rows="4" class="form-control"
+														[innerHTML]="hydrographs[i].title_LY" name="title_LY"
+														(keyup)="updateLYtitle(i)"
+														[(ngModel)]="hydrographs[i].title_LY"></textarea>
+												</div>
+											</div> <!-- end (TITLE) form group -->
+											<!-- MAJOR UNITS -->
+											<div class="form-group col-xs-4">
+												<label class="control-label">Major Units:</label>
+												<div [hidden]="hydrographs[i].axis != 'BottomX'">
+													<span style="padding-right: 10px"><input type="checkbox"
+															name="majorGrid_BX"
+															(change)="setXChartLines(i, 'gridLineWidth', $event.target.checked)"
+															[(ngModel)]="hydrographs[i].majorGrid_BX" /> grid</span>
+													<span><input type="checkbox" name="majorTic_BX"
+															(change)="setXChartLines(i, 'tickWidth', $event.target.checked)"
+															[(ngModel)]="hydrographs[i].majorTic_BX" /> tics</span>
+												</div>
+												<div [hidden]="hydrographs[i].axis != 'LeftY'">
+													<span style="padding-right: 10px"><input type="checkbox"
+															name="majorGrid_LY"
+															(change)="setYChartLines(i, 'gridLineWidth', $event.target.checked)"
+															[(ngModel)]="hydrographs[i].majorGrid_LY" /> grid</span>
+													<span><input type="checkbox" name="majorTic_LY"
+															(change)="setYChartLines(i, 'tickWidth', $event.target.checked)"
+															[(ngModel)]="hydrographs[i].majorTic_LY" /> tics</span>
+												</div>
+											</div> <!-- end (MAJOR UNITS) form group -->
+
+											<!-- MINOR UNITS -->
+											<div class="form-group col-xs-4">
+												<label class="control-label">Minor Units:</label>
+												<div [hidden]="hydrographs[i].axis != 'BottomX'">
+													<span style="padding-right: 10px"><input
+															[disabled]="hydrographs[i].type_BX == 'logarithmic'"
+															type="checkbox" name="minorGrid_BX"
+															(change)="setXChartLines(i, 'minorGridLineWidth', $event.target.checked)"
+															[(ngModel)]="hydrographs[i].minorGrid_BX" /> grid</span>
+													<span style="padding-right:5px"><input
+															[disabled]="hydrographs[i].type_BX == 'logarithmic'"
+															type="checkbox" name="minorTic_BX"
+															(change)="setXChartLines(i, 'minorTickWidth', $event.target.checked)"
+															[(ngModel)]="hydrographs[i].minorTic_BX" /> tics</span>
+													<span
+														[hidden]="hydrographs[i].type_LY != 'logarithmic' && hydrographs[i].type_BX != 'logarithmic'"
+														style="font-size: small">(Disabled with Log)</span>
+												</div>
+
+												<div [hidden]="hydrographs[i].axis != 'LeftY'">
+													<span style="padding-right: 10px"><input
+															[disabled]="hydrographs[i].type_LY == 'logarithmic'"
+															type="checkbox" name="minorGrid_LY"
+															(change)="setYChartLines(i, 'minorGridLineWidth', $event.target.checked)"
+															[(ngModel)]="hydrographs[i].minorGrid_LY" /> grid</span>
+													<span style="padding-right:5px"><input
+															[disabled]="hydrographs[i].type_LY == 'logarithmic'"
+															type="checkbox" name="minorTic_LY"
+															(change)="setYChartLines(i, 'minorTickWidth', $event.target.checked)"
+															[(ngModel)]="hydrographs[i].minorTic_LY" /> tics</span>
+													<span
+														[hidden]="hydrographs[i].type_LY != 'logarithmic' && hydrographs[i].type_BX != 'logarithmic'"
+														style="font-size: x-small;font-weight: bold">(Disabled with
+														Log)</span>
+												</div>
+											</div> <!-- end (MINOR UNITS) form group -->
+											<div class="form-group col-xs-4">
+												<label class="control-label">
+													<div [hidden]="hydrographs[i].axis != 'BottomX'">
+														<span><input type="checkbox" name="reverse_BX"
+																(change)="setReverseData(i, 'bx', $event.target.checked)"
+																[(ngModel)]="hydrographs[i].reverse_BX" />
+															reverse</span>
+													</div>
+													<div [hidden]="hydrographs[i].axis != 'LeftY'">
+														<span><input type="checkbox" name="reverse_LY"
+																(change)="setReverseData(i, 'ly', $event.target.checked)"
+																[(ngModel)]="hydrographs[i].reverse_LY" />
+															reverse</span>
+													</div>
+												</label>
+											</div>
+										</div><!-- end Axes -->
+										<br clear="all" />
+										<!--Curves and Legend-->
+										<div>
+											<div style="font-size: 16px !important; font-weight: bold !important;">
+												Curves and Legend</div>
+											<div>
+												<!--Curves color/width -->
+												<div class="form-group col-xs-6">
+													<label class="control-label">Curve Color:</label>
+													<div><input [colorPicker]="hydrographs[i].colorPickerColor"
+															(colorPickerChange)="changeLineColor(i,$event)"
+															[style.background]="hydrographs[i].colorPickerColor"
+															[value]="hydrographs[i].colorPickerColor" /></div>
+												</div>
+												<div class="form-group col-xs-6">
+													<label class="control-label">Line Weight:</label>
+													<div><input type="text" name="lineWidth" (keyup)="setLineWidth(i)"
+															[(ngModel)]="hydrographs[i].lineWidth" /></div>
+												</div>
+											</div>
+											<div>
+												<!-- Point symbol color/point symbol -->
+												<div class="form-group col-xs-6">
+													<label class="control-label">Point Symbol Color:</label>
+													<div><input [colorPicker]="hydrographs[i].lineSymbolFillColor"
+															(colorPickerChange)="changeLineSymbolColor(i,$event)"
+															[style.background]="hydrographs[i].lineSymbolFillColor"
+															[value]="hydrographs[i].lineSymbolFillColor" /></div>
+												</div>
+												<div class="form-group col-xs-6">
+													<label class="control-label">Point Symbol:</label>
+													<div>
+														<span class="select-wim">
+															<select [disabled]="!hydrographs[i].pointSymbols"
+																[(ngModel)]="hydrographs[i].lineSymbol"
+																(ngModelChange)="setLineSymbol(i,$event)"
+																name="lineSymbol">
+																<option value="circle">Circle</option>
+																<option value="square">Square</option>
+																<option value="diamond">Diamond</option>
+																<option value="triangle">Triangle</option>
+																<option value="triangle-down">Triangle-down</option>
+															</select>
+														</span>
+													</div>
+												</div>
+											</div>
+											<br clear="all" />
+											<div>
+												<div class="form-group col-xs-6">
+													<label class="control-label">Legend Label:</label>
+													<div><input type="text" class="form-control" name="curveLabel"
+															[(ngModel)]="hydrographs[i].curveLabel"
+															(keyup)="updateCurveLabel(i)" /></div>
+												</div>
+												<div class="form-group col-xs-6">
+													<label class="control-label">
+														<input type="checkbox" name="pointSymbols"
+															(change)="showHideLineSymbol(i, $event.target.checked)"
+															[(ngModel)]="hydrographs[i].pointSymbols" /> Show Point
+														Symbols
+													</label><br>
+													<label class="control-label">
+														<input type="checkbox" name="dataLabels"
+															(change)="updateDataLabels(i, $event.target.checked)"
+															[(ngModel)]="hydrographs[i].dataLabels" /> Show Data Values
+													</label>
+												</div>
+											</div>
+										</div> <!-- end curves-->
+									</div> <!-- end panel-body -->
+								</div>
+								<br clear="all" />
+							</form>
+						</div><!-- end form for inputs-->
+					</div> <!-- end for each hydroChartsArray loop -->
+				</div>
+				<div *ngIf="fChartOptions">
+					<div *ngIf="hydroChartsArray.length == 0" class="charts-header">
+						<!-- show show/hide button only if there are no hydrographs above it (because that has the button also)-->
+						<h2>Charts</h2>
+						<div class="header-button">
+							<button class="hidden-print button small grey" type="button" (click)="showHideCharts()">
+								<i class="far fa-eye"></i>
+								<span>{{showChartBtn_txt}}</span>
+							</button>
+						</div>
+					</div>
+					<div class="col-xs-12" *ngIf="showCharts_btn" style="display: flex;">
+						<div class="chart-wrapper">
+							<button type="button" class="pull-right hidden-print"
+								(click)="removeFreqChart()">x</button><br clear="all" />
+							<div role="img" aria-label="Frequency Plot showing data from above tables">
+								<chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions" aria-hidden="true"></chart>
+							</div>
+						</div>
+						<div style="flex-grow: 4;">
+
+							<button (click)="showHideAddFChartSettings()"
+								class="block mbottom-sm button mleft-sm small black hidden-print">
+								<i class="far fa-sliders-v"></i>
+								<span>More options</span>
+							</button>
+
+							<div *ngIf="showExtraFREQSettings" [hidden]="!showExtraFREQSettings"
+								class="panel panel-default hidden-print" style="border: none !important;">
+								<div class="panel-body">
+									<form id="myFChartForm" name="myFChartForm" #myFChartForm="ngForm">
+										<div style="font-size: small">
+											<span>* To zoom in, click and drag a box in the chart</span>
+										</div>
+										<!-- AXIS -->
+										<div>
+											<div style="font-size: 16px !important; font-weight: bold !important;">Axes
+											</div>
+											<div class="form-group col-xs-6">
+												<label class="control-label">Choose Axis to update:</label>
+												<div>
+													<div style="padding-right: 10px">
+														<input type="radio" name="Faxis"
+															[(ngModel)]="frequencyPlotChart.Faxis" value="BottomX"
+															(click)="Faxis='BottomX'" />Bottom X
+													</div>
+													<div>
+														<input type="radio" name="Faxis"
+															[(ngModel)]="frequencyPlotChart.Faxis" value="LeftY"
+															(click)="Faxis='LeftY'" />Left Y
+													</div>
+												</div>
+											</div> <!-- end (AXIS) form group  -->
+											<!-- TYPE **This was used the labels were x year peak flood
+											<div class="form-group col-xs-6">
+												<label class="control-label"
+													[hidden]="frequencyPlotChart.Faxis != 'BottomX'">Type:</label>
+												<div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+													<span>
+														<input type="radio" name="type_BX"
+															[(ngModel)]="frequencyPlotChart.type_BX"
+															(click)="setFreqXaxisType('returnPeriod')"
+															value="returnPeriod" />Return Period
+													</span><br />
+													<span style="padding-right: 10px">
+														<input type="radio" name="type_BX"
+															[(ngModel)]="frequencyPlotChart.type_BX"
+															(click)="setFreqXaxisType('percent')"
+															value="percent" />Percent
+													</span>
+													<span>
+														<input type="radio" name="type_BX"
+															[(ngModel)]="frequencyPlotChart.type_BX"
+															(click)="setFreqXaxisType('fraction')"
+															value="fraction" />Fraction
+													</span>
+
+												</div>
+											</div> end (TYPE) form group -->
+											<!-- TITLE -->
+											<div class="form-group  col-xs-12">
+												<label class="control-label"
+													style="font-size: 16px !important; font-weight: bold !important;">Axis
+													Title:</label>
+												<div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+													<textarea cols="60" rows="4" class="form-control"
+														[innerHTML]="frequencyPlotChart.title_BX" name="title_BX"
+														(keyup)="updateFreqBXtitle()"
+														[(ngModel)]="frequencyPlotChart.title_BX"></textarea>
+												</div>
+												<div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+													<textarea cols="60" rows="4" class="form-control"
+														[innerHTML]="frequencyPlotChart.title_LY" name="title_LY"
+														(keyup)="updateFreqLYtitle()"
+														[(ngModel)]="frequencyPlotChart.title_LY"></textarea>
+												</div>
+											</div> <!-- end (TITLE) form group -->
+											<!-- MAJOR UNITS -->
+											<div class="form-group col-xs-4">
+												<label class="control-label">Major Units:</label>
+												<div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+													<span style="padding-right: 10px"><input type="checkbox"
+															name="majorGrid_BX"
+															(change)="setFreqXChartLines('gridLineWidth', $event.target.checked)"
+															[(ngModel)]="frequencyPlotChart.majorGrid_BX" /> grid</span>
+													<span><input type="checkbox" name="majorTic_BX"
+															(change)="setFreqXChartLines('tickWidth', $event.target.checked)"
+															[(ngModel)]="frequencyPlotChart.majorTic_BX" /> tics</span>
+												</div>
+												<div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+													<span style="padding-right: 10px"><input type="checkbox"
+															name="majorGrid_LY"
+															(change)="setFreqYChartLines('gridLineWidth', $event.target.checked)"
+															[(ngModel)]="frequencyPlotChart.majorGrid_LY" /> grid</span>
+													<span><input type="checkbox" name="majorTic_LY"
+															(change)="setFreqYChartLines('tickWidth', $event.target.checked)"
+															[(ngModel)]="frequencyPlotChart.majorTic_LY" /> tics</span>
+												</div>
+											</div> <!-- end (MAJOR UNITS) form group -->
+
+											<!-- MINOR UNITS -->
+											<div class="form-group col-xs-4">
+												<label class="control-label">Minor Units:</label>
+												<div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+													<span style="padding-right: 10px">
+														<input type="checkbox" name="minorGrid_BX"
+															(change)="setFreqXChartLines('minorGridLineWidth', $event.target.checked)"
+															[(ngModel)]="frequencyPlotChart.minorGrid_BX" /> grid
+													</span>
+													<span style="padding-right:5px">
+														<input type="checkbox" name="minorTic_BX"
+															(change)="setFreqXChartLines('minorTickWidth', $event.target.checked)"
+															[(ngModel)]="frequencyPlotChart.minorTic_BX" /> tics
+													</span>
+												</div>
+
+												<div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+													<span style="padding-right: 10px">
+														<input [disabled]="'true'" type="checkbox" name="minorGrid_LY"
+															[(ngModel)]="frequencyPlotChart.minorGrid_LY" /> grid
+													</span>
+													<span style="padding-right:5px">
+														<input [disabled]="'true'" type="checkbox" name="minorTic_LY"
+															[(ngModel)]="frequencyPlotChart.minorTic_LY" /> tics
+													</span>
+													<span style="font-size: x-small;font-weight: bold">(Disabled with
+														Log)</span>
+												</div>
+											</div> <!-- end (MINOR UNITS) form group -->
+											<div class="form-group col-xs-4">
+												<label class="control-label">
+													<div [hidden]="frequencyPlotChart.Faxis != 'BottomX'">
+														<span><input type="checkbox" name="reverse_BX"
+																(change)="setFreqReverseData('bx', $event.target.checked)"
+																[(ngModel)]="frequencyPlotChart.reverse_BX" />
+															reverse</span>
+													</div>
+													<div [hidden]="frequencyPlotChart.Faxis != 'LeftY'">
+														<span><input type="checkbox" name="reverse_LY"
+																(change)="setFreqReverseData('ly', $event.target.checked)"
+																[(ngModel)]="frequencyPlotChart.reverse_LY" />
+															reverse</span>
+													</div>
+												</label>
+											</div>
+										</div><!-- end Axes -->
+										<br clear="all" />
+									</form>
+								</div> <!-- end panel-body -->
+							</div>
+							<br clear="all" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- appendix section for equation -->
+		<!-- Download Button -->
+		<div class="download-divider hidden-print">
+			<div class="controls">
+				<button class="button small grey" (click)="exportAppendix()">
+					<span>Download</span>
+					<i class="far fa-download"></i>
+				</button>
+			</div>
+			<div class="divider"></div>
+		</div>
+
+		<h3 id="appendix" class="ptop-xs">Appendix</h3>
+
+		<h5 class="ptop-xs">Equations</h5>
+
+		<div class="equation-wrapper">
+			<div *ngFor="let e of equationResults" class="equation-table">
+				<table class="custom-table">
+					<thead>
+						<tr>
+							<th colspan="2">{{e.name}}</th>
+						<tr>
+					</thead>
+					<tr *ngFor="let c of e.formulas">
+						<td>
+							<span class="nowrap">{{c.Code}} = </span>
+						</td>
+						<td>
+							<span [MathJax] id="mathjax">{{c.Equation}}</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<!--End equations-->
+		</div>
+
+		<h5 class="block ptop-xs">Explanatory Variable Definitions</h5>
+		<table class="custom-table max-600">
+			<thead>
+				<tr>
+					<th class="width-30">Name</th>
+					<th class="width-20">Abbrev</th>
+					<th class="width-50">Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let p of uniqueParameters">
+					<td>{{p.name}}</td>
+					<td>{{p.code}}</td>
+					<td>{{p.description}}</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h5 class="ptop-xs block">Unit Types</h5>
+		<table class="custom-table max-400">
+			<thead>
+				<tr>
+					<th class="width-30">Abbrev</th>
+					<th class="width-70">Unit</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let u of uniqueUnitTypes">
+					<td>(<span [innerHTML]="setSuperScript(u.abbr)"></span>)</td>
+					<td>{{u.unit}}</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<button type="button" class="button blue mbottom-lg hidden-print" (click)="printPage()">
+			<i class="far fa-print"></i>
+			<span>Print Report</span>
+		</button>
+		<!-- end results back -->
+	</div>
+
+	<!-- editRegionScenario -->
+	<div class="hidden-print" *ngIf="editRegionScenario">
+		<form #editScenarioForm="ngForm" class="editScen">
+			<div>
+				<div *ngFor="let s of scenarios; let sgIndex = index;">
+					<h3>{{s.statisticGroupName}}</h3>
+					<!--add option to switch statistic groups as well-->
+					<div *ngFor="let rr of s.regressionRegions; let rrIndex = index;">
+
+						<div class="rr-header">
+							<!-- Edit reg region -->
+							<button *ngIf="!rr.isEditing" title="Edit Regression Region" (click)="editRegRegion(rr.id)"
+								class="icon-button mright-sm" aria-hidden="true">
+								<i class="far fa-pencil"></i>
+							</button>
+							<!-- Delete Reg Region -->
+							<button *ngIf="!rr.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(rr.id)"
+								class="icon-button mright-sm hover-red" aria-hidden="true">
+								<i class="far fa-times"></i>
+							</button>
+
+							<!-- Regression region label -->
+							<b *ngIf="!rr.isEditing">{{rr.name}} (RG_Code: {{rr.code}})</b>
+							<small *ngIf="!rr.isEditing">Status: {{getStatusDescription(rr.statusID)}}{{getMethodName(rr.methodID)}}</small>
+
+						</div>
+
+						<div class="edit-scen-wrapper">
+
+							<table *ngIf="rr.isEditing" class="custom-table">
+								<thead>
+									<tr>
+										<th class="width-5"></th>
+										<th class="width-25">Name</th>
+										<th class="width-40">Description</th>
+										<th class="width-10">Code</th>
+										<th class="width-10">Citation ID</th>
+										<th class="width-10"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+											<div class="table-icon-buttons">
+												<button title="Save Regression Region" (click)="saveRegReg(rr)"
+													class="icon-button" aria-hidden="true">
+													<i class="far fa-floppy-o"></i>
+												</button>
+												<button title="Cancel Edit" (click)="CancelEditRowClicked()"
+													class="icon-button" aria-hidden="true">
+													<i class="far fa-history"></i>
+												</button>
+											</div>
+										</td>
+										<td>
+											<span><input type="text" name="name" [(ngModel)]="rr.name" required></span>
+										</td>
+										<td>
+											<span><input type="text" name="description" [(ngModel)]="rr.description"
+													required></span>
+										</td>
+										<td>
+											<span><input type="text" name="code" [(ngModel)]="rr.code" required></span>
+										</td>
+										<td>
+											<span>
+												<input type="number" name="citationID" [(ngModel)]="rr.citationID" required>
+											</span>
+										</td>
+										<td>
+											<button class="icon-button" aria-label="Add Citation"
+												(click)="editRegRegion(rr.id)">
+												<i class="far fa-plus-circle pull-left"></i>
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+
+							<!--Citation table-->
+							<h5 class="mtop-sm">Citation</h5>
+							<table *ngIf="rr.citationID" class="custom-table">
+								<thead>
+									<tr>
+										<th class="width-5"></th>
+										<th class="width-35">Title</th>
+										<th class="width-25">Author</th>
+										<th class="width-35">Citation URL</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let c of citations | citationfilter:rr.citationID; let cIndex = index;">
+										<td>
+											<div class="table-icon-buttons">
+												<button *ngIf="!c.isEditing" title="Remove Citation"
+													(click)="removeCitation(rr)" class="icon-button" aria-hidden="true">
+													<i class="far fa-minus-circle"></i>
+												</button>
+											</div>
+										</td>
+										<td>
+											<span *ngIf="!c.isEditing">{{ c.title }}</span>
+											<span *ngIf="c.isEditing">
+												<input type="text" name="title" [(ngModel)]="c.title">
+											</span>
+										</td>
+										<td>
+											<span *ngIf="!c.isEditing">{{ c.author }}</span>
+											<span *ngIf="c.isEditing">
+												<input type="text" name="author" [(ngModel)]="c.author">
+											</span>
+										</td>
+										<td>
+											<a *ngIf="!c.isEditing" [href]="c.citationURL" [target]="_blank">
+												<div>{{c.citationURL}}</div>
+											</a>
+											<span *ngIf="c.isEditing">
+												<input type="text" name="citationURL" [(ngModel)]="c.citationURL">
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div *ngIf="!rr.citationID">
+								<button class="icon-button" aria-label="Add Citation" (click)="editRegRegion(rr.id)">
+									<i class="far fa-plus-circle pull-left"></i>
+								</button>
+							</div>
+
+							<!--Parameter table-->
+							<h5 class="mtop-sm">Explanatory Variables</h5>
+							<table class="custom-table">
+								<thead>
+									<tr>
+										<th class="width-5"></th>
+										<th class="width-10">Name</th>
+										<th class="width-10">Code</th>
+										<th class="width-40">Description</th>
+										<th class="width-15">Unit</th>
+										<th class="width-10">Min Limit</th>
+										<th class="width-10">Max Limit</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let p of rr.parameters; let pIndex = index;">
+										<td class="table-icon-buttons">
+											<button *ngIf="!p.isEditing" title="Edit Explanatory Variable"
+												(click)="editRowClicked(p, rrIndex, sgIndex, pIndex)" class="icon-button"
+												aria-hidden="true">
+												<i class="far fa-pencil"></i>
+											</button>
+											<button *ngIf="p.isEditing" title="Save Explanatory Variable"
+												(click)="saveParameter(p, rrIndex, sgIndex)" class="icon-button"
+												aria-hidden="true">
+												<i class="far fa-floppy-o"></i>
+											</button>
+											<button *ngIf="p.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()"
+												class="icon-button" aria-hidden="true">
+												<i class="far fa-history"></i>
+											</button>
+										</td>
+										<td>
+											<span>{{ p.name }}</span>
+										</td>
+										<td>
+											<span>{{ p.code }}</span>
+										</td>
+										<td>
+											<span>{{ p.description }}</span>
+										</td>
+										<td>
+											<span *ngIf="!p.isEditing">{{ p.unitType.unit }}</span>
+											<span *ngIf="p.isEditing">
+												<select [compareWith]="compareObjects" name="unitType"
+													[(ngModel)]="p.unitType">
+													<option *ngFor="let unit of units" [ngValue]="unit">{{unit.unit}}
+													</option>
+												</select>
+											</span>
+										</td>
+										<td>
+											<span *ngIf="!p.isEditing">{{ p.limits.min }}</span>
+											<span *ngIf="p.isEditing"><input type="number" name="min"
+													[(ngModel)]="p.limits.min" required></span>
+										</td>
+										<td>
+											<span *ngIf="!p.isEditing">{{ p.limits.max }}</span>
+											<span *ngIf="p.isEditing"><input type="number" name="max"
+													[(ngModel)]="p.limits.max" required></span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+
+
+							<!--Regression table-->
+							<h5 class="mtop-sm">Regressions</h5>
+							<table class="custom-table">
+								<thead>
+									<tr>
+										<th class="width-5"></th>
+										<th class="width-10">Name (Code)</th>
+										<th class="width-20">Description</th>
+										<th class="width-10">Unit</th>
+										<th class="width-15">Errors</th>
+										<th class="width-10">Equation</th>
+										<th class="width-10">Equivalent Years</th>
+										<th class="width-20">Prediction Interval</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let r of rr.regressions; let rIndex = index;">
+										<td class="table-icon-buttons">
+											<button *ngIf="!r.isEditing" title="Edit Scenario"
+												(click)="editScenarioRowClicked(s.statisticGroupID, r, rr, 'edit')" class="icon-button"
+												aria-hidden="true">
+												<i class="far fa-pencil"></i>
+											</button>
+											<button *ngIf="!r.isEditing" title="Clone Scenario"
+												(click)="editScenarioRowClicked(s.statisticGroupID, r, rr, 'clone')" class="icon-button"
+												aria-hidden="true">
+												<i class="far fa-clone"></i>
+											</button>
+											<button *ngIf="!r.isEditing" title="Delete Regression"
+												(click)="deleteRegression(s.statisticGroupID, rr.id, r.id)"
+												class="icon-button hover-red" aria-hidden="true">
+												<i class="far fa-times"></i>
+											</button>
+											<button *ngIf="r.isEditing" title="Save Regression"
+												(click)="saveRegression(r, rIndex, rrIndex, sgIndex)" class="icon-button"
+												aria-hidden="true">
+												<i class="far fa-floppy-o"></i>
+											</button>
+											<button *ngIf="r.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked()"
+												class="icon-button" aria-hidden="true">
+												<i class="far fa-history"></i>
+											</button>
+											<!--<i *ngIf="s.statisticGroupID === 2" title="Move to Low Flow Statistics" (click)="moveToLowFlow(r, rIndex, rrIndex, sgIndex)"
+												class="far fa-exchange" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>-->
+											<!--removing for now, not working in DB-->
+										</td>
+										<td>
+											<span>{{ r.name }} ({{r.code}})</span>
+										</td>
+										<td>
+											<span>{{ r.description }}</span>
+										</td>
+										<td>
+											<span *ngIf="!r.isEditing">{{ r.unit.unit }}</span>
+											<span *ngIf="r.isEditing">
+												<select [(ngModel)]="r.unit" name="unit" [compareWith]="compareObjects">
+													<option *ngFor="let unit of units" [ngValue]="unit">{{unit.unit}}
+													</option>
+												</select>
+											</span>
+										</td>
+										<td>
+											<span *ngFor="let e of r.errors; let eIndex = index">
+												<label class="block bold small">Error {{eIndex + 1}}: </label>
+												<i *ngIf="r.isEditing" title="Remove Error" class="far fa-times"
+													aria-hidden="true" style="cursor:pointer;padding:5px;"
+													(click)="r.errors.splice(eIndex, 1)"></i>
+												<span *ngIf="!r.isEditing">{{e.name}}, value: {{e.value}}</span>
+												<span *ngIf="r.isEditing">
+													<select [(ngModel)]="r.errors[eIndex]" name="e{{eIndex}}"
+														[compareWith]="compareObjects">
+														<option *ngFor="let err of errors" [ngValue]="err"
+															[selected]="err.name === r.errors[eIndex].name">{{err.name}}
+														</option>
+													</select>
+													<input type="number" name="value{{eIndex}}"
+														[(ngModel)]="r.errors[eIndex].value" required>
+												</span>
+											</span>
+											<span *ngIf="!r.isEditing && r.errors.length === 0">None</span>
+											<br *ngIf="r.errors.length > 0">
+											<button *ngIf="r.isEditing" type="button" class="button small blue mright-xs"
+												(click)="addError(r.errors)">
+												<i class="far fa-plus"></i>
+												<span>Add Error</span>
+											</button>
+										</td>
+										<td class="equation-cell">
+											<span *ngIf="!r.isEditing" MathJax id="mathJax1">{{ r.equationMathJax }}</span>
+											<span>
+												<input *ngIf="r.isEditing" type="text" name="equation"
+													[(ngModel)]="r.equation" required (ngModelChange)="showMathjax(r)">
+												<span class="math-jax" [id]="'mathjaxEq' + r.id"></span>
+											</span>
+										</td>
+										<td>
+											<span *ngIf="!r.isEditing && r.equivalentYears">{{ r.equivalentYears }}</span>
+											<span *ngIf="!r.isEditing && !r.equivalentYears">0</span>
+											<span *ngIf="r.isEditing"><input type="number" name="equivalentYears"
+													[(ngModel)]="r.equivalentYears"></span>
+										</td>
+										<td>
+											<span *ngIf="!r.isEditing && (r.predictionInterval.biasCorrectionFactor || r.predictionInterval.student_T_Statistic || r.predictionInterval.variance 
+											|| r.predictionInterval.xiRowVector || r.predictionInterval.covarianceMatrix)">
+												<div [class.hidden]="loggedInRole != 'Administrator'">
+													<span
+														*ngIf="r.predictionInterval.biasCorrectionFactor && r.predictionInterval.biasCorrectionFactor !=='null' && r.predictionInterval.biasCorrectionFactor !==''">
+														<b>Bias Correction Factor:
+														</b>{{r.predictionInterval.biasCorrectionFactor}}<br>
+													</span>
+												</div>
+												<span
+													*ngIf="r.predictionInterval.student_T_Statistic && r.predictionInterval.student_T_Statistic !=='null' && r.predictionInterval.student_T_Statistic !==''">
+													<b>Student's T
+														Statistics for 90% confidence interval:</b>
+													{{r.predictionInterval.student_T_Statistic}}<br></span>
+												<span
+													*ngIf="r.predictionInterval.variance && r.predictionInterval.variance !=='null' && r.predictionInterval.variance !==''">
+													<b>Model Error Variance or Mean Square Error:</b> {{r.predictionInterval.variance}}<br>
+												</span>
+												<span
+													*ngIf="r.predictionInterval.xiRowVector && r.predictionInterval.xiRowVector !=='null' && r.predictionInterval.xiRowVector !==''">
+													<b>XI Row Vector:</b> {{r.predictionInterval.xiRowVector}}<br>
+												</span>
+												<span
+													*ngIf="r.predictionInterval.covarianceMatrix && r.predictionInterval.covarianceMatrix !=='null' && r.predictionInterval.covarianceMatrix !==''">
+													<b>Covariance Matrix:</b>
+													{{r.predictionInterval.covarianceMatrix}}<br>
+												</span>
+											</span>
+											<span
+												*ngIf="!r.isEditing && !r.predictionInterval.biasCorrectionFactor && !r.predictionInterval.student_T_Statistic && !r.predictionInterval.variance 
+												&& !r.predictionInterval.xiRowVector && !r.predictionInterval.covarianceMatrix">None</span>
+											<span *ngIf="r.isEditing && r.predictionInterval">
+												<div [class.hidden]="loggedInRole != 'Administrator'"><label>Bias Correction
+														Factor:</label>
+													<input type="number" name="biasCorrectionFactor"
+														[(ngModel)]="r.predictionInterval.biasCorrectionFactor"></div>
+												<label>Student's T Statistics for 90% confidence interval:</label>
+												<input type="number" name="student_T_Statistic"
+													[(ngModel)]="r.predictionInterval.student_T_Statistic">
+												<label>Model Error Variance or Mean Square Error:</label>
+												<input type="number" name="variance"
+													[(ngModel)]="r.predictionInterval.variance">
+												<label>XI Row Vector:</label>
+												<label class="example-text form-group">Example:
+													["logN(DRNAREA,10)","logN((1+LAKEAREA),10)"]</label>
+												<input type="text" name="xiRowVector"
+													[(ngModel)]="r.predictionInterval.xiRowVector">
+												<label>Covariance Matrix:</label>
+												<label class="example-text">Example:
+													[["0.0038028","-0.001987","0.00076235"],["-0.001987","0.0032803","-0.0058925"],["0.00076235","-0.0058925","0.023215"]]</label>
+												<input type="text" name="covarianceMatrix"
+													[(ngModel)]="r.predictionInterval.covarianceMatrix">
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<!-- Unused Regression Regions -->
+				<h3 class="section-header">Unused Regression Regions</h3>
+
+				<div *ngFor="let u of unusedRegRegions">
+					<i *ngIf="!u.isEditing" title="Edit Regression Region" (click)="editRegRegion(u.id)"
+						class="far fa-pencil" aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
+					<i *ngIf="!u.isEditing" title="Delete Regression Region" (click)="deleteRegRegion(u.id)"
+						class="far fa-times" aria-hidden="true" style="cursor:pointer; padding:5px;"></i>&nbsp;
+					<label *ngIf="!u.isEditing" class="big">{{u.name}} (RG_Code: {{u.code}})</label>
+					<label *ngIf="!u.isEditing" style="float: right" class="small">Status: {{getStatusDescription(u.statusID)}}{{getMethodName(u.methodID)}}</label>	
+				</div>
+			</div>
+		</form>
+	</div>
 </div>
+<!--expected value inputs for editing scenarios-->
+<ng-template #values let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<div class="title">Expected Values</div>
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>
+	</div>
+	<div class="modal-body">
+		<span>The equation is: <span MathJax
+				id="mathJaxEq">{{editScen.regressionRegions[0].regressions[0].equationMathJax}}</span></span>
+		<p>Inputs are needed to check that the equation yields the expected results.</p>
+		<!-- Expected Value* -->
+		<label class="req" for="value">Expected Value
+			({{editScen.regressionRegions[0].regressions[0].unit.unit}}):</label>
+		<input type="number" name="value" [(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.value"
+			required>
+
+		<!--Parameter Values*-->
+		<div *ngFor="let param of paramsNeeded"
+			[ngClass]="{'form-invalid': editScen.regressionRegions[0].regressions[0].expected.parameters[param.code] && !checkLimits(editScen.regressionRegions[0].regressions[0].expected.parameters[param.code], param.limits.min,param.limits.max)}">
+			<label class="req">{{param.name}} ({{param.unitType.unit}}):</label>
+			<input type="number" [name]="param.code"
+				[(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.parameters[param.code]" required>
+			<div style="color:red;"
+				*ngIf="editScen.regressionRegions[0].regressions[0].expected.parameters[param.code] && !checkLimits(editScen.regressionRegions[0].regressions[0].expected.parameters[param.code], param.limits.min,param.limits.max)">
+				Value is not within the limits.
+			</div>
+			<div>
+				<div class="pull-left">Min Limit: {{param.limits.min}}</div>
+				<div class="pull-right">Max Limit: {{param.limits.max}}</div><br>
+			</div>
+		</div>
+
+		<div *ngIf="getBounds">
+			<!--Interval Bound Lower-->
+			<label class="req">Lower Interval Bound:</label>
+			<input type="number" name="lower"
+				[(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.intervalBounds.lower" required>
+
+			<!--Interval Bound Upper-->
+			<label class="req">Upper Interval Bound:</label>
+			<input type="number" name="upper"
+				[(ngModel)]="editScen.regressionRegions[0].regressions[0].expected.intervalBounds.upper" required>
+		</div>
+	</div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button small">
+			<span>Cancel</span>
+		</button>
+		<!--<button type="button" (click)="!changeStatGroup ? submitScenario() : putLowFlow()" class="btn-blue">Create</button>-->
+		<button type="button" (click)="submitScenario()" class="button small blue">
+			<span>Save</span>
+		</button>
+	</div>
+</ng-template>
+
+<!--Add regression region modal-->
+
+<router-outlet></router-outlet>

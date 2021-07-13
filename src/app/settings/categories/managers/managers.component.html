@@ -1,0 +1,149 @@
+<h3 class="mbottom-md">Managers</h3>
+
+<button type="button" class="button small blue" (click)="showNewUserForm()">
+	<i class="far fa-plus" aria-hidden="true"></i> 
+	<span>Add New Manager</span>
+</button>
+
+<form #User TypeForm="ngForm">
+    <div class="form-group" *ngIf="managers">
+        <table class="custom-table mtop-sm">
+            <thead>
+                <tr>
+                    <th class="width-5"></th>
+                    <th class="width-15">Username</th>
+                    <th class="width-15">Email</th>
+                    <th class="width-15">First name</th>
+                    <th class="width-15">Last Name</th>
+                    <th class="width-15">Role</th>
+                    <th class="width-20">Study Areas</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let m of managers; let i = index">
+                    <td class="table-icon-buttons">
+						<!--<button *ngIf="!m.isEditing" title="Edit Manager" (click)="EditRowClicked(i)" class="icon-button" aria-hidden="true">
+							<i class="far fa-pencil"></i>
+						</button>-->
+						<button *ngIf="!m.isEditing" title="Delete Manager" (click)="deleteManager(m.id)" class="icon-button" aria-hidden="true">
+							<i class="far fa-times"></i>
+						</button>
+						<button *ngIf="m.isEditing" title="Save Manager" (click)="saveManager(m,i)" class="icon-button" aria-hidden="true">
+							<i class="far fa-floppy-o"></i>
+						</button>
+						<button *ngIf="m.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button" aria-hidden="true">
+							<i class="far fa-history"></i>
+						</button>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{ m.username }}</span>
+                        <span *ngIf="m.isEditing"><input type="text" name="username" [(ngModel)]="m.username" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{ m.email }}</span>
+                        <span *ngIf="m.isEditing"><input type="text" name="email" [(ngModel)]="m.email" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{ m.firstName }}</span>
+                        <span *ngIf="m.isEditing"><input type="text" name="firstName" [(ngModel)]="m.firstName" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{ m.lastName }}</span>
+                        <span *ngIf="m.isEditing"><input type="text" name="lastName" [(ngModel)]="m.lastName" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{ m.role }}</span>
+                        <span *ngIf="m.isEditing">
+                            <select [(ngModel)]="m.role" name="role">
+                                <option *ngFor="let role of roles" [value]="role">{{role}}</option>
+                            </select></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!m.isEditing">{{getRegionNames(m)}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<br />
+
+<!-- new user form -->
+<ng-template #add let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<div class="title">New Manager</div>  
+		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="newUserForm">
+            <!-- UserName* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('username').valid && newUserForm.get('username').dirty}">
+                <label class="req" for="username">Username:</label>
+                <input class="form-control" type="text" formControlName="username" required>
+                <div class="input-invalid-warning" *ngIf="!newUserForm.get('username').valid && newUserForm.get('username').dirty">Username 
+                    is required</div>
+            </div>
+
+            <!-- Email* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('email').valid && newUserForm.get('email').dirty}">
+                    <label class="req" for="email">Email:</label>
+                    <input class="form-control" type="text" formControlName="email">
+                    <div class="input-invalid-warning" *ngIf="!newUserForm.get('email').valid && newUserForm.get('email').dirty">Email
+                        is required</div>
+                </div>
+
+            <!-- Password -->
+            <div class="form-group" [ngClass]="{'form-invalid': !newUserForm.get('password').valid && newUserForm.get('password').dirty}">
+                <label class="req" for="password">Password:</label>
+                <input class="form-control" type="password" formControlName="password">
+            </div>
+
+            <!-- First Name* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('firstName').valid && newUserForm.get('firstName').dirty}">
+                <label class="req" for="firstName">First Name:</label>
+                <input class="form-control" type="text" formControlName="firstName" required>
+                <div class="input-invalid-warning" *ngIf="!newUserForm.get('firstName').valid && newUserForm.get('firstName').dirty">First
+                    Name is required</div>
+            </div>
+
+            <!-- Last Name* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('lastName').valid && newUserForm.get('lastName').dirty}">
+                <label class="req" for="lastName">Last Name:</label>
+                <input class="form-control" type="text" formControlName="lastName">
+                <div class="input-invalid-warning" *ngIf="!newUserForm.get('lastName').valid && newUserForm.get('lastName').dirty">Last Name
+                    is required</div>
+            </div>
+
+            <!-- Role* -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newUserForm.get('role').valid && newUserForm.get('role').dirty}">
+                <label class="req" for="role">Role:</label>
+                <select class="form-control" formControlName="role" #role>
+                    <option *ngFor="let role of roles" [value]="role">{{role}}</option>
+                </select>
+                <div class="input-invalid-warning" *ngIf="!newUserForm.get('role').valid && newUserForm.get('role').dirty">Role
+                    is required</div>
+            </div>
+            <!-- Regions* -->
+            <div formArrayName="regionManagers"  *ngIf="role.value == 'Manager'">
+                <div *ngFor="let var of newUserForm.get('regionManagers').controls; let varIndex = index">
+                    <div (click)="removeRegion(varIndex)"><i class="ion-close"></i><span>Study Area {{varIndex + 1}}</span></div>
+                    <div [formGroupName]="varIndex" [id]="'variable' + (varIndex + 1)">
+                        <div class="form-group">
+                            <label class="req" for="regionID">Study Area:</label>
+                            <select class="form-control" formControlName="regionID">
+                                <option *ngFor="let region of regions" [value]="region.id">{{region.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button *ngIf="role.value == 'Manager'"  type="button" class="button small blue mright-sm" (click)="addRegion()"><i class="far fa-plus"></i>Add Study Area</button>
+        </form>
+    </div>
+
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+		<button type="button" (click)="d('closed')" class="button">Cancel</button>
+		<button type="button" (click)="createNewUser()" [disabled]="!newUserForm.valid" class="button blue">Create</button>
+	</div>
+</ng-template>

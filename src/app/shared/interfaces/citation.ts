@@ -1,6 +1,8 @@
 export interface Citation {
-    ID: number;
-    Title: string;
-    Author: string;
-    CitationURL: string;
+    regressionRegions?: any;
+    id: 1;
+    title: string;
+    author: string;
+    citationURL: string;
+    isEditing?: boolean;
 }

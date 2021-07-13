@@ -1,0 +1,60 @@
+<div id="printArea" class = "app-content">
+
+    <!-- toaster directive -->
+    <toaster-container [toasterconfig]="config"></toaster-container>
+    <!-- / toaster directive -->
+
+    <h2 class="bold">{{title}}</h2>
+
+    <h4>{{timestamp | date:"MMMM d, y hh:mma"}}</h4>
+
+    <div *ngIf="loggedInRole" class="hidden-print">
+        <button  type="button" class="button small blue mright-xs"  (click)="showAddStationModal()">Add Station</button>
+        <button  type="button" class="button small mright-xs" (click)="openBatchUpload()">Bulk Upload</button>
+        <button  type="button" class="button small mright-xs" (click)="export()">Export</button>
+        <button  type="button" class="button small" (click)="showManageCitationsModal()"><i class="far fa-asterisk"></i>Manage Citations</button>
+    </div>
+   
+   <div class="hidden-print" >
+        <div class="mtop-sm mbottom-sm">
+            <i title="Click to go to first page" class="icon fas fa-angle-double-left page-nav-icon" (click)="newPage(1)" aria-hidden="true"></i>
+            <i title="Click to go backward" class="icon fas fa-angle-left page-nav-icon" (click)="newPage(currentPageNumber-1)" aria-hidden="true"></i>
+            <input type="number" style="width:60px; padding: 0px 0 0 10px;" class="center"  [value]="currentPageNumber" (change)="newPage($event.target.value)"/>
+            <label>&nbsp;/&nbsp;{{lastPageNumber}}</label>
+            <i title="Click to go forward" (click)="newPage(currentPageNumber+1)" class="icon fas fa-angle-right page-nav-icon" aria-hidden="true"></i>
+            <i title="Click to go to last page" (click)="newPage(lastPageNumber)" class="icon fas fa-angle-double-right page-nav-icon" aria-hidden="true"></i>
+            <select style= "width: 80px" class="mleft-sm" [(ngModel)]="perPage" (change)="changePerPage(perPage)">
+                <option *ngFor="let i of itemPerPage">{{i}}</option>
+            </select>
+            <label>&nbsp;gages per page</label>
+            <label style="float: right">{{totalGages}} gage(s) returned</label>
+		</div>
+		
+        <table style="border:solid 1px gray" class="custom-table sortable"> 
+            <thead>
+                <tr>
+                    <th class="col-xs-1">Code</th>
+                    <th class="col-xs-4">Name</th>
+                    <th class="col-xs-4">Study Area</th>
+                    <th class="col-xs-1">Latitude</th>
+                    <th class="col-xs-1">Longitude</th>
+                    <th class="col-xs-1">Type</th>
+                    <th class="col-xs-2">Agency</th>
+                    <th class="col-xs-1">Regulated</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr (click) = showGagePageModal(s.code) *ngFor = "let s of selectedStations">
+                    <td>{{s.code}}</td>
+                    <td>{{s.name}}</td>
+                    <td>{{getRegionName(s.regionID)}}</td>
+                    <td>{{s.location.coordinates[1]}}</td>
+                    <td>{{s.location.coordinates[0]}}</td>
+                    <td>{{getStationType(s.stationTypeID)}}</td>
+                    <td>{{getAgencyName(s.agencyID)}}</td>
+                    <td><input type="checkbox" [checked]="s.isRegulated" onclick="return false"/></td>
+                </tr>
+            </tbody>
+        </table>
+    </div> 
+</div>

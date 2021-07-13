@@ -1,4 +1,4 @@
 export interface Equationresults {
-    Name: string;
-    Formulas: any[];
+    name: string;
+    formulas: any[];
 }

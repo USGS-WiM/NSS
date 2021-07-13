@@ -1029,96 +1029,96 @@ export class MainviewComponent implements OnInit {
         this.freqChart = freqChartInst;
     }
     // clicked Bottom x & type == update chart FREQUENCY
-    public setFreqXaxisType(newType: string) {
-        let dataArray: number[][] = [];
-        this.freqDataArray = [];
-        // converting 'percent', 'fraction', or 'returnPeriod' (default/onload is returnPeriod)
-        if (newType == 'percent') {
-            this.scenarios.forEach(s => {
-                s.regressionRegions.forEach((rr, index) => {
-                    if (rr.results) {
-                        rr.results.forEach(R => {
-                            let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                            dataArray.push([(1 / x) * 100, R.value]);
-                        });
-                        this.freqDataArray[index] = {
-                            name: rr.name,
-                            fchartvalues: dataArray
-                        }
-                    }
-                });
-            }); // end foreach scenario
-            this.frequencyPlotChart.reverse_BX = true;
-            this.freqChart.xAxis[0].update({
-                reversed: true,
-                labels: {
-                    formatter: function () {
-                        return Highcharts.numberFormat(this.value, 0, ',') + '%';
-                    }
-                }
-            });
-        } else if (newType == 'fraction') {
-            // divide 1 into probability (pk500)
-            this.scenarios.forEach(s => {
-                s.regressionRegions.forEach((rr, index) => {
-                    if (rr.results) {
-                        rr.results.forEach(R => {
-                            let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                            dataArray.push([(1 / x), R.value]);
-                        });
-                        this.freqDataArray[index] = {
-                            name: rr.name,
-                            fchartvalues: dataArray
-                        }
-                    }
-                });
-            }); // end foreach scenario
-            this.frequencyPlotChart.reverse_BX = true;
-            this.freqChart.xAxis[0].update({
-                reversed: true,
-                labels: {
-                    formatter: function () {
-                        return this.value;
-                    }
-                }
-            });
-        } else {
-            // returnPeriod
-            this.scenarios.forEach(s => {
-                s.regressionRegions.forEach((rr, index) => {
-                    if (rr.results) {
-                        rr.results.forEach(R => {
-                            let x: number = +(R.name.match(/D*\d+\.?\d*/));
-                            dataArray.push([x, R.value]);
-                        });
-                        this.freqDataArray[index] = {
-                            name: rr.name,
-                            fchartvalues: dataArray
-                        }
-                    }
-                });
-            }); // end foreach scenario
-            this.frequencyPlotChart.reverse_BX = false;
-            this.freqChart.xAxis[0].update({
-                reversed: false,
-                labels: {
-                    formatter: function () {
-                        return this.value;
-                    }
-                }
-            });
-        }
-        this.freqDataArray.forEach((data, index) => {
-            this.fChartOptions.series[index] = {
-                data:data.fchartvalues,
-                marker: { enabled: true },
-                name: data.name,
-                states: {
-                    hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
-                }
-            };
-        })
-    }
+    // public setFreqXaxisType(newType: string) { // **This was used the labels were x year peak flood
+    //     let dataArray: number[][] = [];
+    //     this.freqDataArray = [];
+    //     // converting 'percent', 'fraction', or 'returnPeriod' (default/onload is returnPeriod)
+    //     if (newType == 'percent') {
+    //         this.scenarios.forEach(s => {
+    //             s.regressionRegions.forEach((rr, index) => {
+    //                 if (rr.results) {
+    //                     rr.results.forEach(R => {
+    //                         let x: number = +(R.name.match(/D*\d+\.?\d*/));
+    //                         dataArray.push([(1 / x) * 100, R.value]);
+    //                     });
+    //                     this.freqDataArray[index] = {
+    //                         name: rr.name,
+    //                         fchartvalues: dataArray
+    //                     }
+    //                 }
+    //             });
+    //         }); // end foreach scenario
+    //         this.frequencyPlotChart.reverse_BX = true;
+    //         this.freqChart.xAxis[0].update({
+    //             reversed: true,
+    //             labels: {
+    //                 formatter: function () {
+    //                     return Highcharts.numberFormat(this.value, 0, ',') + '%';
+    //                 }
+    //             }
+    //         });
+    //     } else if (newType == 'fraction') {
+    //         // divide 1 into probability (pk500)
+    //         this.scenarios.forEach(s => {
+    //             s.regressionRegions.forEach((rr, index) => {
+    //                 if (rr.results) {
+    //                     rr.results.forEach(R => {
+    //                         let x: number = +(R.name.match(/D*\d+\.?\d*/));
+    //                         dataArray.push([(1 / x), R.value]);
+    //                     });
+    //                     this.freqDataArray[index] = {
+    //                         name: rr.name,
+    //                         fchartvalues: dataArray
+    //                     }
+    //                 }
+    //             });
+    //         }); // end foreach scenario
+    //         this.frequencyPlotChart.reverse_BX = true;
+    //         this.freqChart.xAxis[0].update({
+    //             reversed: true,
+    //             labels: {
+    //                 formatter: function () {
+    //                     return this.value;
+    //                 }
+    //             }
+    //         });
+    //     } else {
+    //         // returnPeriod
+    //         this.scenarios.forEach(s => {
+    //             s.regressionRegions.forEach((rr, index) => {
+    //                 if (rr.results) {
+    //                     rr.results.forEach(R => {
+    //                         let x: number = +(R.name.match(/D*\d+\.?\d*/));
+    //                         dataArray.push([x, R.value]);
+    //                     });
+    //                     this.freqDataArray[index] = {
+    //                         name: rr.name,
+    //                         fchartvalues: dataArray
+    //                     }
+    //                 }
+    //             });
+    //         }); // end foreach scenario
+    //         this.frequencyPlotChart.reverse_BX = false;
+    //         this.freqChart.xAxis[0].update({
+    //             reversed: false,
+    //             labels: {
+    //                 formatter: function () {
+    //                     return this.value;
+    //                 }
+    //             }
+    //         });
+    //     }
+    //     this.freqDataArray.forEach((data, index) => {
+    //         this.fChartOptions.series[index] = {
+    //             data:data.fchartvalues,
+    //             marker: { enabled: true },
+    //             name: data.name,
+    //             states: {
+    //                 hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
+    //             }
+    //         };
+    //     })
+    // }
     // update title on x axis as they type FREQUENCY
     public updateFreqBXtitle() {
         this.fChartOptions.xAxis.title.text = this.frequencyPlotChart.title_BX.replace(/\n/g, '<br/>'); //bottom title

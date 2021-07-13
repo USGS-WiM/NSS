@@ -653,7 +653,7 @@
 													</div>
 												</div>
 											</div> <!-- end (AXIS) form group  -->
-											<!-- TYPE -->
+											<!-- TYPE **This was used the labels were x year peak flood
 											<div class="form-group col-xs-6">
 												<label class="control-label"
 													[hidden]="frequencyPlotChart.Faxis != 'BottomX'">Type:</label>
@@ -678,7 +678,7 @@
 													</span>
 
 												</div>
-											</div> <!-- end (TYPE) form group -->
+											</div> end (TYPE) form group -->
 											<!-- TITLE -->
 											<div class="form-group  col-xs-12">
 												<label class="control-label"
@@ -767,74 +767,6 @@
 											</div>
 										</div><!-- end Axes -->
 										<br clear="all" />
-										<div>
-											<div style="font-size: 16px !important; font-weight: bold !important;">
-												Curves and Legend</div>
-											<div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">Curve Color:</label>
-													<div><input [colorPicker]="frequencyPlotChart.colorPickerColor"
-															(colorPickerChange)="changeFreqLineColor($event)"
-															[style.background]="frequencyPlotChart.colorPickerColor"
-															[value]="frequencyPlotChart.colorPickerColor" /></div>
-												</div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">Line Weight:</label>
-													<div><input type="text" name="lineWidth"
-															(keyup)="setFreqLineWidth()"
-															[(ngModel)]="frequencyPlotChart.lineWidth" /></div>
-												</div>
-											</div>
-											<div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">Point Symbol Color:</label>
-													<div><input [colorPicker]="frequencyPlotChart.lineSymbolFillColor"
-															(colorPickerChange)="changeFreqLineSymbolColor($event)"
-															[style.background]="frequencyPlotChart.lineSymbolFillColor"
-															[value]="frequencyPlotChart.lineSymbolFillColor" /></div>
-												</div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">Point Symbol:</label>
-													<div>
-														<span class="select-wim">
-															<select [disabled]="!frequencyPlotChart.pointSymbols"
-																[(ngModel)]="frequencyPlotChart.lineSymbol"
-																(ngModelChange)="setFreqLineSymbol($event)"
-																name="lineSymbol">
-																<option value="circle">Circle</option>
-																<option value="square">Square</option>
-																<option value="diamond">Diamond</option>
-																<option value="triangle">Triangle</option>
-																<option value="triangle-down">Triangle-down</option>
-															</select>
-														</span>
-													</div>
-												</div>
-											</div>
-											<br clear="all" />
-											<div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">Legend Label:</label>
-													<div><input type="text" class="form-control" name="curveLabel"
-															[(ngModel)]="frequencyPlotChart.curveLabel"
-															(keyup)="updateFreqCurveLabel()" /></div>
-												</div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">
-														<input type="checkbox" name="pointSymbols"
-															(change)="showHideFreqSymbol($event.target.checked)"
-															[(ngModel)]="frequencyPlotChart.pointSymbols" /> Show Point
-														Symbols
-													</label><br>
-													<label class="control-label">
-														<input type="checkbox" name="dataLabels"
-															(change)="updateFreqDataLabels($event.target.checked)"
-															[(ngModel)]="frequencyPlotChart.dataLabels" /> Show Data
-														Values
-													</label>
-												</div>
-											</div>
-										</div> <!-- end curves-->
 									</form>
 								</div> <!-- end panel-body -->
 							</div>

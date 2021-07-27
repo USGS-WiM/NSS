@@ -393,7 +393,7 @@ export class NSSService {
                             this.formatStatisticGrpStuff(sg);
 
                             // params for scenarios
-                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams + '&unitsystems=' + '2';
+                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -417,7 +417,7 @@ export class NSSService {
                             this.formatStatisticGrpStuff(sg);
 
                             // params for scenarios
-                            const scenarioParams = '?regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams+ '&unitsystems=' + '2';
+                            const scenarioParams = '?regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -489,7 +489,7 @@ export class NSSService {
                             this.formatRegRegionStuff(rr);
 
                             // params for scenarios
-                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams + '&unitsystems=' + '2';
+                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -516,7 +516,7 @@ export class NSSService {
                             this.formatRegRegionStuff(rr);
 
                             // params for scenarios
-                            const scenarioParams = '?regressiontypes=' + this._regTypeIdParams + '&regressionregions=' + this._regRegionIdParams + '&unitsystems=' + '2';
+                            const scenarioParams = '?regressiontypes=' + this._regTypeIdParams + '&regressionregions=' + this._regRegionIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -584,7 +584,7 @@ export class NSSService {
                             this.formatRegRegionStuff(rr);
 
                             // params for scenarios
-                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams + '&unitsystems=' + '2';
+                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -609,7 +609,7 @@ export class NSSService {
                             this.formatRegRegionStuff(rr);
 
                             // params for scenarios
-                            const scenarioParams = '?statisticgroups=' + this._statGrpIdParams + '&regressionregions=' + this._regRegionIdParams + '&unitsystems=' + '2';
+                            const scenarioParams = '?statisticgroups=' + this._statGrpIdParams + '&regressionregions=' + this._regRegionIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -678,8 +678,7 @@ export class NSSService {
         this.getRegionRegressionTypes(this._selectedRegion.getValue().id).subscribe(rt => {
             this.formatRegTypeStuff(rt);
         }); // get RegressionTypes
-        const scenarioParams = '?unitsystems=' + '2';
-        this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
+        this.getRegionScenario(this._selectedRegion.getValue().id); // get scenarios
     }
     // -+-+-+-+-+-+-+-+-+-+-+-+ http GETs -+-+-+-+-+-+-+-+-+-+-+-+
 

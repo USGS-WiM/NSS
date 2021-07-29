@@ -71,7 +71,8 @@ export class SidebarComponent implements OnInit {
         // subscribe to regions
         this._nssService.getRegions();
         this._nssService.regions.subscribe((regions: Array<Region>) => {
-            this.regions = regions;
+            // skip if regions object exists, fixes issue where selected region appears blank in dropdown if it's selected before regions finish loading
+            if (this.regions == undefined) this.regions = regions;
             if (regions.length === 0) {
                 this._toasterService.clear();
                 this._toasterService.pop('error', 'You have no assigned regions. Contact your administrator to add new regions.');
@@ -79,7 +80,7 @@ export class SidebarComponent implements OnInit {
             this._loaderService.hideFullPageLoad();
         });
         this._nssService.selectedRegion.subscribe((r: Region) => {
-            if (r && r.id && this.regions) { this.selectedRegion = this.regions.find(reg => reg.id == r.id); }
+            if (r && r.id && this.regions) {this.selectedRegion = this.regions.find(reg => reg.id == r.id); }
             // this.clearSelections();
         });
         // subscribe to selected regression regions

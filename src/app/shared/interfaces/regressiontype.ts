@@ -1,5 +1,5 @@
 import { Error } from './error';
-import { Unittype } from './unitType';
+import { Unittype } from './unittype';
 import { Predictioninterval } from './predictioninterval';
 
 export interface Regressiontype {

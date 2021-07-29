@@ -7,7 +7,6 @@ import { MultiselectDropdownModule } from '../../node_modules/angular-2-dropdown
 import { ToasterModule } from 'angular2-toaster/angular2-toaster';
 
 import { MathjaxDirective } from './mainview/mathjax/mathjax.directive';
-import { Ng2PageScrollModule } from 'ng2-page-scroll';
 import { ChartModule } from 'angular2-highcharts';
 import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -110,7 +109,7 @@ export function highchartsFactory() {
   ],
   imports: [
     NgSelectModule, BrowserModule, FormsModule, HttpClientModule, ToasterModule, BrowserAnimationsModule, ReactiveFormsModule, MultiselectDropdownModule,
-    Ng2PageScrollModule.forRoot(), ChartModule, ColorPickerModule, NgbModule,
+    ChartModule, ColorPickerModule, NgbModule,
     RouterModule.forRoot(appRoutes, {onSameUrlNavigation: 'reload'})
   ],
   providers: [

@@ -11,8 +11,8 @@ import { StationType } from 'app/shared/interfaces/stationtypes';
 import { Region } from 'app/shared/interfaces/region';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
-import { Unittype } from 'app/shared/interfaces/unitType';
-import { Variabletype } from 'app/shared/interfaces/variableType'
+import { Unittype } from 'app/shared/interfaces/unittype';
+import { Variabletype } from 'app/shared/interfaces/variabletype'
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
 import { HttpParams } from '@angular/common/http';

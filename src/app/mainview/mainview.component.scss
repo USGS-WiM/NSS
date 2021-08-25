@@ -12,6 +12,10 @@
     // overflow-y: hidden;
 }
 
+.avoid-break{
+	page-break-inside: avoid !important;
+}
+
 .app-body-section{
 	margin-top: 25px;
 	padding-left: 30px;

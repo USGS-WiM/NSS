@@ -98,17 +98,23 @@ export class NSSService {
         this._showHideEditScenarioModal.next(val);
     }
 
-     // -+-+-+-+-+-+-+-+-+ Add Station modal (gagestats) -+-+-+-+-+-+-+-+
-     private _showHideAddStationModal: Subject<boolean> = new Subject<boolean>();
-     public setAddStationModal(val: any) { 
-         this._showHideAddStationModal.next(val);
-     }
+    // -+-+-+-+-+-+-+-+-+ Add Station modal (gagestats) -+-+-+-+-+-+-+-+
+    private _showHideAddStationModal: Subject<boolean> = new Subject<boolean>();
+    public setAddStationModal(val: any) { 
+        this._showHideAddStationModal.next(val);
+    }
     
-     // -+-+-+-+-+-+-+-+-+ Batch Upload modal -+-+-+-+-+-+-+-+
-     private _showHideBatchUploadModal: Subject<boolean> = new Subject<boolean>();
-     public setBatchUploadModal(val: any) { 
-         this._showHideBatchUploadModal.next(val);
-     }
+    // -+-+-+-+-+-+-+-+-+ Batch Upload modal (gagestates) -+-+-+-+-+-+-+-+
+    private _showHideBatchUploadModalGS: Subject<boolean> = new Subject<boolean>();
+    public setBatchUploadModalGS(val: any) { 
+        this._showHideBatchUploadModalGS.next(val);
+    }
+
+    // -+-+-+-+-+-+-+-+-+ Batch Upload modal (NSS) -+-+-+-+-+-+-+-+
+    private _showHideBatchUploadModalNSS: Subject<boolean> = new Subject<boolean>();
+    public setBatchUploadModalNSS(val: any) { 
+        this._showHideBatchUploadModalNSS.next(val);
+    }
 
     private itemSource = new BehaviorSubject<any>(' ');
     currentItem = this.itemSource.asObservable();
@@ -138,8 +144,12 @@ export class NSSService {
         return this._showHideAddStationModal.asObservable();
     }
     // show the add station modal in the gagestats page
-    public get showBatchUploadModal(): any {
-        return this._showHideBatchUploadModal.asObservable();
+    public get showBatchUploadModalGS(): any {
+        return this._showHideBatchUploadModalGS.asObservable();
+    }
+    // show the add station modal in the mainview
+    public get showBatchUploadModalNSS(): any {
+        return this._showHideBatchUploadModalNSS.asObservable();
     }
 
     // -+-+-+-+-+-+-+-+-+ manage citations modal -+-+-+-+-+-+-+-+
@@ -393,7 +403,7 @@ export class NSSService {
                             this.formatStatisticGrpStuff(sg);
 
                             // params for scenarios
-                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams + '&unitsystems=' + '2';
+                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -417,7 +427,7 @@ export class NSSService {
                             this.formatStatisticGrpStuff(sg);
 
                             // params for scenarios
-                            const scenarioParams = '?regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams+ '&unitsystems=' + '2';
+                            const scenarioParams = '?regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -489,7 +499,7 @@ export class NSSService {
                             this.formatRegRegionStuff(rr);
 
                             // params for scenarios
-                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams + '&unitsystems=' + '2';
+                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -516,7 +526,7 @@ export class NSSService {
                             this.formatRegRegionStuff(rr);
 
                             // params for scenarios
-                            const scenarioParams = '?regressiontypes=' + this._regTypeIdParams + '&regressionregions=' + this._regRegionIdParams + '&unitsystems=' + '2';
+                            const scenarioParams = '?regressiontypes=' + this._regTypeIdParams + '&regressionregions=' + this._regRegionIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -584,7 +594,7 @@ export class NSSService {
                             this.formatRegRegionStuff(rr);
 
                             // params for scenarios
-                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams + '&unitsystems=' + '2';
+                            const scenarioParams = '?regressionregions=' + this._regRegionIdParams + '&regressiontypes=' + this._regTypeIdParams + '&statisticgroups=' + this._statGrpIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -609,7 +619,7 @@ export class NSSService {
                             this.formatRegRegionStuff(rr);
 
                             // params for scenarios
-                            const scenarioParams = '?statisticgroups=' + this._statGrpIdParams + '&regressionregions=' + this._regRegionIdParams + '&unitsystems=' + '2';
+                            const scenarioParams = '?statisticgroups=' + this._statGrpIdParams + '&regressionregions=' + this._regRegionIdParams;
                             this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
                         },
                         error => this.handleError
@@ -678,8 +688,7 @@ export class NSSService {
         this.getRegionRegressionTypes(this._selectedRegion.getValue().id).subscribe(rt => {
             this.formatRegTypeStuff(rt);
         }); // get RegressionTypes
-        const scenarioParams = '?unitsystems=' + '2';
-        this.getRegionScenario(this._selectedRegion.getValue().id, scenarioParams); // get scenarios
+        this.getRegionScenario(this._selectedRegion.getValue().id); // get scenarios
     }
     // -+-+-+-+-+-+-+-+-+-+-+-+ http GETs -+-+-+-+-+-+-+-+-+-+-+-+
 

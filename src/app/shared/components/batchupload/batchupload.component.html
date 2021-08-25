@@ -1,0 +1,122 @@
+<ng-template #batchUploadNSS let-c="close" let-d="dismiss">
+    <div>
+        <div class="modal-header">
+            <ng-container><div class="title"> Batch Upload </div></ng-container>
+            <button class="icon-button" (click)="d('closed'); closeTable()"><i class="far fa-times"></i></button>
+        </div>
+        <div class="modal-body batch-scrollbars" id="body">
+            <div class="upload-type" *ngIf='!selectUpload'>    
+                <button type="button" class="button blue" (click)='selectUpload = true;'>Upload Equations</button>
+            </div>
+            
+            <div *ngIf="!selectUpload" class="upload-type">
+                <h6>For an example template download the file <a href="./assets/example_nss_bulk_upload.xlsx">here</a>.</h6>
+            </div>
+			<!-- File selector -->
+			<div class="upload-input">
+                <input *ngIf='selectUpload && !tableDisplay' (change)="selectFile($event)" accept=".xls,.xlsx" type='file'/>
+            </div>
+            <!-- Select worksheet -->
+            <div *ngIf="sheetNamesButtons">
+                <h6 class="title">Select a Worksheet:</h6>
+                <ng-container *ngFor="let sheetName of wb.SheetNames">
+                        <button class="button grey mright-sm mtop-xs" (click)='selectSheet(sheetName)'>{{sheetName}}</button>
+                </ng-container>
+			</div>
+
+            <div *ngIf="tableDisplay">
+                <form class="editScen">
+                    <div class="table-title" *ngFor="let e of equationData, let i = index">
+                        <h4>Equation {{i+1}}
+                        <span class="errorMessage" *ngIf="e.success=='no'">*Equation wasn't uploaded*</span>
+                        </h4>
+                        <div class="edit-scen-wrapper">
+                            <h5 class="mtop-sm">Explanatory Variables</h5>
+							<table class="custom-table">
+								<thead>
+									<tr>
+										<th class="width-10">Code</th>
+										<th class="width-15">Unit</th>
+										<th class="width-10">Min Limit</th>
+										<th class="width-10">Max Limit</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let p of e.regressionRegions[0].parameters">
+										<td>{{ p.code }}</td>
+										<td>{{ getUnitType(p.unitType.id) }}</td>
+										<td>{{ p.limits.min }}</td>
+										<td>{{ p.limits.max }}</td>
+									</tr>
+								</tbody>
+							</table>
+                            <h5 class="mtop-sm">Regressions</h5>
+							<table class="custom-table">
+								<thead>
+									<tr>
+										<th class="width-10">Region</th>
+										<th class="width-15">Statistic Group</th>
+										<th class="width-10">Regression Region</th>
+										<th class="width-10">Regression Variable</th>
+                                        <th class="width-5">Unit Type</th>
+                                        <th class="width-15">Errors</th>
+										<th class="width-10">Equation</th>
+										<th class="width-5">Equiv. Years</th>
+                                        <th class="width-20">Prediction Interval</th>
+									</tr>
+								</thead>
+								<tbody>
+                                    <td>{{ e.region.name }}</td>
+                                    <td>{{ e.statisticGroupName }}</td>
+                                    <td>{{ e.regressionRegions[0].name }}</td>
+                                    <td>{{ e.regressionRegions[0].regressions[0].code }}</td>
+                                    <td>{{ getUnitType(e.regressionRegions[0].regressions[0].unit.id) }}</td>
+                                    <td> 
+                                        <span *ngFor="let err of e.regressionRegions[0].regressions[0].errors; let eIndex = index">
+                                            <label class="block bold small">Error {{eIndex + 1}}: </label>
+                                            <span>{{ getErrorCode(err.id)}}, value: {{err.value}}</span>
+                                        </span>
+                                        <span *ngIf="e.regressionRegions[0].regressions[0].errors.length === 0">None</span> 
+                                    </td>
+                                    <td>{{ e.regressionRegions[0].regressions[0].equation }}</td>
+                                    <td>{{ e.regressionRegions[0].regressions[0].equivalentYears }}</td>
+                                    <td> 
+                                        <span *ngIf="(e.regressionRegions[0].regressions[0].predictionInterval.biasCorrectionFactor || e.regressionRegions[0].regressions[0].predictionInterval.student_T_Statistic || e.regressionRegions[0].regressions[0].predictionInterval.variance 
+										|| e.regressionRegions[0].regressions[0].predictionInterval.xiRowVector || e.regressionRegions[0].regressions[0].predictionInterval.covarianceMatrix); else none">
+                                            <span
+                                                *ngIf="e.regressionRegions[0].regressions[0].predictionInterval.biasCorrectionFactor && e.regressionRegions[0].regressions[0].predictionInterval.biasCorrectionFactor !=='null' && e.regressionRegions[0].regressions[0].predictionInterval.biasCorrectionFactor !==''">
+                                                <b>Bias Correction Factor:</b>{{e.regressionRegions[0].regressions[0].predictionInterval.biasCorrectionFactor}}<br>
+                                            </span>
+                                            <span
+                                                *ngIf="e.regressionRegions[0].regressions[0].predictionInterval.student_T_Statistic && e.regressionRegions[0].regressions[0].predictionInterval.student_T_Statistic !=='null' && e.regressionRegions[0].regressions[0].predictionInterval.student_T_Statistic !==''">
+                                                <b>Student's T Statistics for 90% confidence interval:</b> {{e.regressionRegions[0].regressions[0].predictionInterval.student_T_Statistic}}<br></span>
+                                            <span
+                                                *ngIf="e.regressionRegions[0].regressions[0].predictionInterval.variance && e.regressionRegions[0].regressions[0].predictionInterval.variance !=='null' && e.regressionRegions[0].regressions[0].predictionInterval.variance !==''">
+                                                <b>Model Error Variance or Mean Square Error:</b> {{e.regressionRegions[0].regressions[0].predictionInterval.variance}}<br>
+                                            </span>
+                                            <span
+                                                *ngIf="e.regressionRegions[0].regressions[0].predictionInterval.xiRowVector && e.regressionRegions[0].regressions[0].predictionInterval.xiRowVector !=='null' && e.regressionRegions[0].regressions[0].predictionInterval.xiRowVector !==''">
+                                                <b>XI Row Vector:</b>{{e.regressionRegions[0].regressions[0].predictionInterval.xiRowVector}}<br>
+                                            </span>
+                                            <span
+                                                *ngIf="e.regressionRegions[0].regressions[0].predictionInterval.covarianceMatrix && e.regressionRegions[0].regressions[0].predictionInterval.covarianceMatrix !=='null' && e.regressionRegions[0].regressions[0].predictionInterval.covarianceMatrix !==''">
+                                                <b>Covariance Matrix:</b>{{e.regressionRegions[0].regressions[0].predictionInterval.covarianceMatrix}}<br>
+                                            </span>
+										</span>
+                                        <ng-template #none>
+                                            <span>None</span> 
+                                        </ng-template>
+                                    </td>
+								</tbody>
+							</table>
+                        </div> <br>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body-footer">
+        <button type="button" *ngIf="tableDisplay && !submitted"  (click)="submitRecords(); submitted = true;" class="button blue">Create</button>
+        <button type="button" *ngIf="submitted" (click)="d('closed'); closeTable();" class="button red">Close</button>
+    </div>
+</ng-template>

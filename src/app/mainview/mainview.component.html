@@ -74,7 +74,7 @@
 			<div *ngFor="let sc of scenarios;let sInd = index">
 				<h5>{{sc.statisticGroupName}} Regions:</h5>
 				<div *ngIf="sc.regressionRegions?.length > 0">
-					<table class="custom-table">
+					<table class="custom-table avoid-break">
 						<tr *ngFor="let rr of sc.regressionRegions;let rInd = index">
 							<td>
 								{{rr.name}}
@@ -101,7 +101,7 @@
 
 
 			<!-- Table -->
-			<table *ngIf="scenarios[0].regressionRegions.length > 0" class="custom-table mtop-lg">
+			<table *ngIf="scenarios[0].regressionRegions.length > 0" class="custom-table mtop-lg avoid-break">
 				<thead>
 					<tr>
 						<th class="width-20">Explanatory Variable</th>
@@ -211,7 +211,7 @@
 
 			<h3 class="mtop-sm mbottom-sm">{{s.statisticGroupName}}</h3>
 
-			<div *ngFor="let rr of s.regressionRegions;let r = index">
+			<div *ngFor="let rr of s.regressionRegions;let r = index" class="avoid-break">
 				<div *ngIf="rr.id > 0">
 					<!-- Download Button -->
 					<div class="download-divider hidden-print">
@@ -225,7 +225,7 @@
 					</div>
 
 					<!-- Table -->
-					<table #inputsTable class="custom-table table-borderless mtop-xs">
+					<table #inputsTable class="custom-table table-borderless mtop-xs avoid-break">
 						<tr>
 							<td>{{rr.name}} Region</td>
 						</tr>
@@ -242,7 +242,7 @@
 						<!--<a class="hidden-print" (click)="exportTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>-->
 						<label class="small mtop-sm">[SEe, Standard Error of Estimate; SEp, Standard Error of
 							Prediction; SE, Standard Error (other -- see report)]</label>
-						<table #resultsTable class="custom-table">
+						<table #resultsTable class="custom-table avoid-break">
 							<thead>
 								<tr>
 									<th class="width-40">{{rr.name}} Region</th>
@@ -798,8 +798,8 @@
 		<h5 class="ptop-xs">Equations</h5>
 
 		<div class="equation-wrapper">
-			<div *ngFor="let e of equationResults" class="equation-table">
-				<table class="custom-table">
+			<div *ngFor="let e of equationResults" class="equation-table avoid-break">
+				<table class="custom-table avoid-break">
 					<thead>
 						<tr>
 							<th colspan="2">{{e.name}}</th>
@@ -819,7 +819,7 @@
 		</div>
 
 		<h5 class="block ptop-xs">Explanatory Variable Definitions</h5>
-		<table class="custom-table max-600">
+		<table class="custom-table max-600 avoid-break">
 			<thead>
 				<tr>
 					<th class="width-30">Name</th>
@@ -837,7 +837,7 @@
 		</table>
 
 		<h5 class="ptop-xs block">Unit Types</h5>
-		<table class="custom-table max-400">
+		<table class="custom-table max-400 avoid-break">
 			<thead>
 				<tr>
 					<th class="width-30">Abbrev</th>
@@ -888,7 +888,7 @@
 
 						<div class="edit-scen-wrapper">
 
-							<table *ngIf="rr.isEditing" class="custom-table">
+							<table *ngIf="rr.isEditing" class="custom-table avoid-break">
 								<thead>
 									<tr>
 										<th class="width-5"></th>
@@ -940,7 +940,7 @@
 
 							<!--Citation table-->
 							<h5 class="mtop-sm">Citation</h5>
-							<table *ngIf="rr.citationID" class="custom-table">
+							<table *ngIf="rr.citationID" class="custom-table avoid-break">
 								<thead>
 									<tr>
 										<th class="width-5"></th>
@@ -990,7 +990,7 @@
 
 							<!--Parameter table-->
 							<h5 class="mtop-sm">Explanatory Variables</h5>
-							<table class="custom-table">
+							<table class="custom-table avoid-break">
 								<thead>
 									<tr>
 										<th class="width-5"></th>
@@ -1056,7 +1056,7 @@
 
 							<!--Regression table-->
 							<h5 class="mtop-sm">Regressions</h5>
-							<table class="custom-table">
+							<table class="custom-table avoid-break">
 								<thead>
 									<tr>
 										<th class="width-5"></th>

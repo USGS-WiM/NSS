@@ -395,7 +395,6 @@ export class BatchUploadComponentGS implements OnInit {
                 if (recordObj.SEp != undefined) { recordObj.statisticErrors.push({"SEp": recordObj.SEp}) };
               delete(recordObj.PC), delete(recordObj.SE), delete(recordObj.SEp);
             }
-            console.log(recordObj)
           }
           if (this.uploadChars) {                             // If chars are being uploaded... 
             this.url = "characteristics/batch";
@@ -438,7 +437,6 @@ export class BatchUploadComponentGS implements OnInit {
       this.disableSubmit = true;
       this._toasterService.pop('info', 'Info', 'Error! ' + (this.errorList.length/3) + ' errors were detected.');
     }
-    console.log('errorlist: ', this.errorList);
   }
 
   public checkForRequiredColumns(charList) {
@@ -460,7 +458,6 @@ export class BatchUploadComponentGS implements OnInit {
   }
 
 public submitRecords() {
-  console.log(this.records)
   this._loaderService.showFullPageLoad();
   this._settingsService.postEntity(this.records, this.configSettings.gageStatsBaseURL +  this.url)
       .subscribe((response:any) =>{

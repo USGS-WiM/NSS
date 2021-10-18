@@ -16,6 +16,7 @@ import { Variabletype } from 'app/shared/interfaces/variabletype'
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
 import { HttpParams } from '@angular/common/http';
+import { LoaderService } from 'app/shared/services/loader.service';
 declare let gtag: Function;
 
 @Component({
@@ -91,7 +92,8 @@ export class BatchUploadComponentGS implements OnInit {
   public selectedParams: HttpParams; 
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
-    private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService) {
+    private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
+    private _loaderService: LoaderService) {
 
     this.configSettings = this._configService.getConfiguration();
   }
@@ -361,6 +363,9 @@ export class BatchUploadComponentGS implements OnInit {
             if (recordObj.startDate && recordObj.endDate) {
               recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
             }
+            if (recordObj.yearsofRecord === 'null') {
+              recordObj.yearsofRecord = null;
+            }
             if (recordObj.remarks === 'null') {
               if (!recordObj.startDate && !recordObj.endDate) { }  // If no comments or remarks, do nothing
               else {
@@ -432,7 +437,6 @@ export class BatchUploadComponentGS implements OnInit {
       this.disableSubmit = true;
       this._toasterService.pop('info', 'Info', 'Error! ' + (this.errorList.length/3) + ' errors were detected.');
     }
-    console.log('errorlist: ', this.errorList);
   }
 
   public checkForRequiredColumns(charList) {
@@ -454,11 +458,13 @@ export class BatchUploadComponentGS implements OnInit {
   }
 
 public submitRecords() {
+  this._loaderService.showFullPageLoad();
   this._settingsService.postEntity(this.records, this.configSettings.gageStatsBaseURL +  this.url)
       .subscribe((response:any) =>{
         if(!response.headers){   // If put request is a success...
           this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
           gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Bulk stations were added'});
+          this._loaderService.hideFullPageLoad();
           this.clearTable();
           this.selectUpload = false;
           delete(this.selectedCitation);

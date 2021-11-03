@@ -12,6 +12,10 @@
     // overflow-y: hidden;
 }
 
+.avoid-break{
+	page-break-inside: avoid !important;
+}
+
 .app-body-section{
 	margin-top: 25px;
 	padding-left: 30px;
@@ -208,4 +212,8 @@ hr.statGroup {
 		font-size: 12px;
 		line-height: 12px;
 	}
+}
+
+.date{
+	font-size: 18px;
 }

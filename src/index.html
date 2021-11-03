@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,25 +7,25 @@
   <title>NSS | National Streamflow Statistics</title>
   <base href="/">
 
-  <!-- Meta info -->
-  <meta name="description" content="NSS provides the U.S. Geological Survey developed and published regression equations, such as mean annual and monthly mean flows, flow-duration percentiles, and peak and low flows for or every State, the Commonwealth of Puerto Rico, and several metropolitan areas in the United States." />
-  <meta name="keywords" content="StreamStats, Stream, Stats, USGS, Geological, Survey, Equations, NSS, mean annial flow, mean monthly flow, flow-duration, peak flow, low flow" />
-  <meta name="theme-color" content="#0A1421">
-  <!-- Icons -->
-  <link rel="icon" type="image/x-icon" href="assets/img/favicon-pin.png">
-  <!-- Social Media Meta -->
-  <!-- TODO: Double check this -->
-  <!-- Facebook -->
-  <meta property="og:title" content="NSS | National Streamflow Statistics">
-  <meta property="og:description" content="NSS provides the U.S. Geological Survey developed and published regression equations, such as mean annual and monthly mean flows, flow-duration percentiles, and peak and low flows for or every State, the Commonwealth of Puerto Rico, and several metropolitan areas in the United States.">
-  <meta property="og:image" content="assets/img/meta/meta/facebook.png">
-  <meta property="og:url" content="https://streamstats.usgs.gov/nss/">
-  <!-- Twitter -->
-  <meta name="twitter:title" content="NSS | National Streamflow Statistics">
-  <meta name="twitter:description" content="NSS provides the U.S. Geological Survey developed and published regression equations, such as mean annual and monthly mean flows, flow-duration percentiles, and peak and low flows for or every State, the Commonwealth of Puerto Rico, and several metropolitan areas in the United States.">
-  <meta name="twitter:image" content="assets/img/meta/twitter.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image:alt" content="https://streamstats.usgs.gov/nss/">
+    <!-- Meta info -->
+    <meta name="description" content="NSS provides the U.S. Geological Survey developed and published regression equations, such as mean annual and monthly mean flows, flow-duration percentiles, and peak and low flows for or every State, the Commonwealth of Puerto Rico, and several metropolitan areas in the United States." />
+    <meta name="keywords" content="StreamStats, Stream, Stats, USGS, Geological, Survey, Equations, NSS, mean annial flow, mean monthly flow, flow-duration, peak flow, low flow" />
+    <meta name="theme-color" content="#0A1421">
+    <!-- Icons -->
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon-pin.png">
+    <!-- Social Media Meta -->
+    <!-- TODO: Double check this -->
+    <!-- Facebook -->
+    <meta property="og:title" content="NSS | National Streamflow Statistics">
+    <meta property="og:description" content="NSS provides the U.S. Geological Survey developed and published regression equations, such as mean annual and monthly mean flows, flow-duration percentiles, and peak and low flows for or every State, the Commonwealth of Puerto Rico, and several metropolitan areas in the United States.">
+    <meta property="og:image" content="assets/img/meta/meta/facebook.png">
+    <meta property="og:url" content="https://streamstats.usgs.gov/nss/">
+    <!-- Twitter -->
+    <meta name="twitter:title" content="NSS | National Streamflow Statistics">
+    <meta name="twitter:description" content="NSS provides the U.S. Geological Survey developed and published regression equations, such as mean annual and monthly mean flows, flow-duration percentiles, and peak and low flows for or every State, the Commonwealth of Puerto Rico, and several metropolitan areas in the United States.">
+    <meta name="twitter:image" content="assets/img/meta/twitter.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image:alt" content="https://streamstats.usgs.gov/nss/">
 
 
 
@@ -36,42 +36,57 @@
   <!-- <link rel="stylesheet" href="https://wim.usgs.gov/website-assets/wim.global.min.css"/> -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=AM_HTMLorMML-full"></script>
 <!--  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script> -->
+    
+<!-- Federated Analytics -->
+<!-- We participate in the US government's analytics program. See the data at analytics.usa.gov. -->
+<script async type="text/javascript" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=DOI&subagency=USGS" id="_fed_an_ua_tag"></script>
 
-<style>
-  body,html{
-      margin: 0;
-      padding: 0;
-  }
-  .initial-loader {
-      position: fixed!important;
-      width:100%;
-      height: 100%;
-      opacity: 1;
-      z-index: 5000;
-      background-color: #101010;
-      background-image:url('https://wim.usgs.gov/website-assets/branding/usgsanimated.svg');
-      display: block !important;
-      background-repeat: no-repeat;
-      background-size: 120px auto;
-      background-position: center 50%;
-  }
-  .initial-loader:after{
-      content: 'Loading...';
-      position: fixed;
-      top: 55%;
-      font-size: 22px;
-      color: white;
-      width: 100%;
-      text-align: center;
-      z-index: 5001;
-  }
-</style>
 
-</head>
-<body>
-  <app-root>
-      <div class="initial-loader">
-      </div>
-  </app-root>
-</body>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2C1QXBBXVH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-2C1QXBBXVH');
+    </script>
+
+    <style>
+      body,html{
+          margin: 0;
+          padding: 0;
+      }
+      .initial-loader {
+          position: fixed!important;
+          width:100%;
+          height: 100%;
+          opacity: 1;
+          z-index: 5000;
+          background-color: #101010;
+          background-image:url('https://wim.usgs.gov/website-assets/branding/usgsanimated.svg');
+          display: block !important;
+          background-repeat: no-repeat;
+          background-size: 120px auto;
+          background-position: center 50%;
+      }
+      .initial-loader:after{
+          content: 'Loading...';
+          position: fixed;
+          top: 55%;
+          font-size: 22px;
+          color: white;
+          width: 100%;
+          text-align: center;
+          z-index: 5001;
+      }
+    </style>
+  </head>
+
+  <body>
+    <app-root>
+        <div class="initial-loader">
+        </div>
+    </app-root>
+  </body>
 </html>

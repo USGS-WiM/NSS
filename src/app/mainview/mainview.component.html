@@ -6,10 +6,9 @@
 
 	<h2 class="bold">{{title}}</h2>
 
-	<h6>{{timestamp | date:"MMMM d, y hh:mma"}}</h6>
+	<div class="date">{{timestamp | date:"MMMM d, y hh:mma"}}</div>
 
 	<span MathJax class="hidden" id="mathJaxLoad">`Preloading`</span>
-
 
 	<!-- Region -->
 	<div *ngIf="showRegion" class="app-body-section" id="regionSection">
@@ -54,9 +53,14 @@
 		</button>
 		<button
 			*ngIf="loggedInRole && (showRegion || selectedStatisticGrp?.length>0 || selectedRegressionRegion?.length>0)"
-			type="button" class="button small" (click)="showManageCitationsModal()">
+			type="button" class="button small mright-xs" (click)="showManageCitationsModal()">
 			<i class="far fa-asterisk"></i>
 			<span>Manage Citations</span>
+		</button>
+		<button
+			type="button" class="button small" (click)="openBatchUpload()">
+			<i class="fa fa-upload"></i>
+			<span>Bulk Upload</span>
 		</button>
 	</div>
 
@@ -70,7 +74,7 @@
 			<div *ngFor="let sc of scenarios;let sInd = index">
 				<h5>{{sc.statisticGroupName}} Regions:</h5>
 				<div *ngIf="sc.regressionRegions?.length > 0">
-					<table class="custom-table">
+					<table class="custom-table avoid-break">
 						<tr *ngFor="let rr of sc.regressionRegions;let rInd = index">
 							<td>
 								{{rr.name}}
@@ -97,7 +101,7 @@
 
 
 			<!-- Table -->
-			<table *ngIf="scenarios[0].regressionRegions.length > 0" class="custom-table mtop-lg">
+			<table *ngIf="scenarios[0].regressionRegions.length > 0" class="custom-table mtop-lg avoid-break">
 				<thead>
 					<tr>
 						<th class="width-20">Explanatory Variable</th>
@@ -207,7 +211,7 @@
 
 			<h3 class="mtop-sm mbottom-sm">{{s.statisticGroupName}}</h3>
 
-			<div *ngFor="let rr of s.regressionRegions;let r = index">
+			<div *ngFor="let rr of s.regressionRegions;let r = index" class="avoid-break">
 				<div *ngIf="rr.id > 0">
 					<!-- Download Button -->
 					<div class="download-divider hidden-print">
@@ -221,7 +225,7 @@
 					</div>
 
 					<!-- Table -->
-					<table #inputsTable class="custom-table table-borderless mtop-xs">
+					<table #inputsTable class="custom-table table-borderless mtop-xs avoid-break">
 						<tr>
 							<td>{{rr.name}} Region</td>
 						</tr>
@@ -238,7 +242,7 @@
 						<!--<a class="hidden-print" (click)="exportTable(r)" style="cursor: pointer"><span class="glyphicon glyphicon-download-alt"></span></a>-->
 						<label class="small mtop-sm">[SEe, Standard Error of Estimate; SEp, Standard Error of
 							Prediction; SE, Standard Error (other -- see report)]</label>
-						<table #resultsTable class="custom-table">
+						<table #resultsTable class="custom-table avoid-break">
 							<thead>
 								<tr>
 									<th class="width-40">{{rr.name}} Region</th>
@@ -615,7 +619,9 @@
 						<div class="chart-wrapper">
 							<button type="button" class="pull-right hidden-print"
 								(click)="removeFreqChart()">x</button><br clear="all" />
-							<chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions"></chart>
+							<div role="img" aria-label="Frequency Plot showing data from above tables">
+								<chart (load)="saveFreqInstance($event.context)" [options]="fChartOptions" aria-hidden="true"></chart>
+							</div>
 						</div>
 						<div style="flex-grow: 4;">
 
@@ -651,7 +657,7 @@
 													</div>
 												</div>
 											</div> <!-- end (AXIS) form group  -->
-											<!-- TYPE -->
+											<!-- TYPE **This was used the labels were x year peak flood
 											<div class="form-group col-xs-6">
 												<label class="control-label"
 													[hidden]="frequencyPlotChart.Faxis != 'BottomX'">Type:</label>
@@ -676,7 +682,7 @@
 													</span>
 
 												</div>
-											</div> <!-- end (TYPE) form group -->
+											</div> end (TYPE) form group -->
 											<!-- TITLE -->
 											<div class="form-group  col-xs-12">
 												<label class="control-label"
@@ -765,74 +771,6 @@
 											</div>
 										</div><!-- end Axes -->
 										<br clear="all" />
-										<div>
-											<div style="font-size: 16px !important; font-weight: bold !important;">
-												Curves and Legend</div>
-											<div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">Curve Color:</label>
-													<div><input [colorPicker]="frequencyPlotChart.colorPickerColor"
-															(colorPickerChange)="changeFreqLineColor($event)"
-															[style.background]="frequencyPlotChart.colorPickerColor"
-															[value]="frequencyPlotChart.colorPickerColor" /></div>
-												</div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">Line Weight:</label>
-													<div><input type="text" name="lineWidth"
-															(keyup)="setFreqLineWidth()"
-															[(ngModel)]="frequencyPlotChart.lineWidth" /></div>
-												</div>
-											</div>
-											<div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">Point Symbol Color:</label>
-													<div><input [colorPicker]="frequencyPlotChart.lineSymbolFillColor"
-															(colorPickerChange)="changeFreqLineSymbolColor($event)"
-															[style.background]="frequencyPlotChart.lineSymbolFillColor"
-															[value]="frequencyPlotChart.lineSymbolFillColor" /></div>
-												</div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">Point Symbol:</label>
-													<div>
-														<span class="select-wim">
-															<select [disabled]="!frequencyPlotChart.pointSymbols"
-																[(ngModel)]="frequencyPlotChart.lineSymbol"
-																(ngModelChange)="setFreqLineSymbol($event)"
-																name="lineSymbol">
-																<option value="circle">Circle</option>
-																<option value="square">Square</option>
-																<option value="diamond">Diamond</option>
-																<option value="triangle">Triangle</option>
-																<option value="triangle-down">Triangle-down</option>
-															</select>
-														</span>
-													</div>
-												</div>
-											</div>
-											<br clear="all" />
-											<div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">Legend Label:</label>
-													<div><input type="text" class="form-control" name="curveLabel"
-															[(ngModel)]="frequencyPlotChart.curveLabel"
-															(keyup)="updateFreqCurveLabel()" /></div>
-												</div>
-												<div class="form-group col-xs-6">
-													<label class="control-label">
-														<input type="checkbox" name="pointSymbols"
-															(change)="showHideFreqSymbol($event.target.checked)"
-															[(ngModel)]="frequencyPlotChart.pointSymbols" /> Show Point
-														Symbols
-													</label><br>
-													<label class="control-label">
-														<input type="checkbox" name="dataLabels"
-															(change)="updateFreqDataLabels($event.target.checked)"
-															[(ngModel)]="frequencyPlotChart.dataLabels" /> Show Data
-														Values
-													</label>
-												</div>
-											</div>
-										</div> <!-- end curves-->
 									</form>
 								</div> <!-- end panel-body -->
 							</div>
@@ -860,8 +798,8 @@
 		<h5 class="ptop-xs">Equations</h5>
 
 		<div class="equation-wrapper">
-			<div *ngFor="let e of equationResults" class="equation-table">
-				<table class="custom-table">
+			<div *ngFor="let e of equationResults" class="equation-table avoid-break">
+				<table class="custom-table avoid-break">
 					<thead>
 						<tr>
 							<th colspan="2">{{e.name}}</th>
@@ -881,7 +819,7 @@
 		</div>
 
 		<h5 class="block ptop-xs">Explanatory Variable Definitions</h5>
-		<table class="custom-table max-600">
+		<table class="custom-table max-600 avoid-break">
 			<thead>
 				<tr>
 					<th class="width-30">Name</th>
@@ -899,7 +837,7 @@
 		</table>
 
 		<h5 class="ptop-xs block">Unit Types</h5>
-		<table class="custom-table max-400">
+		<table class="custom-table max-400 avoid-break">
 			<thead>
 				<tr>
 					<th class="width-30">Abbrev</th>
@@ -950,7 +888,7 @@
 
 						<div class="edit-scen-wrapper">
 
-							<table *ngIf="rr.isEditing" class="custom-table">
+							<table *ngIf="rr.isEditing" class="custom-table avoid-break">
 								<thead>
 									<tr>
 										<th class="width-5"></th>
@@ -1002,7 +940,7 @@
 
 							<!--Citation table-->
 							<h5 class="mtop-sm">Citation</h5>
-							<table *ngIf="rr.citationID" class="custom-table">
+							<table *ngIf="rr.citationID" class="custom-table avoid-break">
 								<thead>
 									<tr>
 										<th class="width-5"></th>
@@ -1052,7 +990,7 @@
 
 							<!--Parameter table-->
 							<h5 class="mtop-sm">Explanatory Variables</h5>
-							<table class="custom-table">
+							<table class="custom-table avoid-break">
 								<thead>
 									<tr>
 										<th class="width-5"></th>
@@ -1118,7 +1056,7 @@
 
 							<!--Regression table-->
 							<h5 class="mtop-sm">Regressions</h5>
-							<table class="custom-table">
+							<table class="custom-table avoid-break">
 								<thead>
 									<tr>
 										<th class="width-5"></th>

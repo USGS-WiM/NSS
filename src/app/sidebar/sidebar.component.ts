@@ -11,6 +11,7 @@ import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { AuthService } from 'app/shared/services/auth.service';
 import { AddRegressionRegion } from '../shared/interfaces/addregressionregion';
 import { LoaderService } from 'app/shared/services/loader.service';
+declare let gtag: Function;
 
 @Component({
     selector: 'wim-sidebar',
@@ -70,7 +71,8 @@ export class SidebarComponent implements OnInit {
         // subscribe to regions
         this._nssService.getRegions();
         this._nssService.regions.subscribe((regions: Array<Region>) => {
-            this.regions = regions;
+            // skip if regions object exists, fixes issue where selected region appears blank in dropdown if it's selected before regions finish loading
+            if (this.regions == undefined) this.regions = regions;
             if (regions.length === 0) {
                 this._toasterService.clear();
                 this._toasterService.pop('error', 'You have no assigned regions. Contact your administrator to add new regions.');
@@ -78,7 +80,7 @@ export class SidebarComponent implements OnInit {
             this._loaderService.hideFullPageLoad();
         });
         this._nssService.selectedRegion.subscribe((r: Region) => {
-            if (r && r.id && this.regions) { this.selectedRegion = this.regions.find(reg => reg.id == r.id); }
+            if (r && r.id && this.regions) {this.selectedRegion = this.regions.find(reg => reg.id == r.id); }
             // this.clearSelections();
         });
         // subscribe to selected regression regions
@@ -304,6 +306,23 @@ export class SidebarComponent implements OnInit {
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
             const sParams = '?regressiontypes=' + regTypesIDstring;
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
+            gtag('event', 'click', { 'event_category': 'Compute', 'event_label': 'Region: ' + this.selectedRegion.name + ' Statistic Group: ' + this.getCode(this.selectedStatGrpIDs, this.statisticGroups) + " Stat Label: " + this.getCode(this.selectedRegTypeIDs, this.regressionTypes)});
+        }
+    }
+
+    public getCode(IDs, fullArray) {
+        if (IDs.length == 0) {
+            return("all");
+        } else {
+            var codes = [];
+            IDs.forEach(y => {
+                fullArray.forEach(z => {
+                    if (y === z.id) {
+                        codes.push(z.code);
+                    }
+                });
+            });
+            return(codes.join(', '));
         }
     }
 

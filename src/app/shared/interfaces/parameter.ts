@@ -1,5 +1,5 @@
 import {Limit } from './limit';
-import { Unittype } from './unitType';
+import { Unittype } from './unittype';
 
 export interface Parameter {
     id: number;

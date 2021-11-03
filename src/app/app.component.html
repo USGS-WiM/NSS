@@ -3,7 +3,8 @@
 <addRegressionRegionModal></addRegressionRegionModal>
 <manageCitationsModal></manageCitationsModal>
 <addStationModal></addStationModal>
-<batchUploadModal></batchUploadModal>
+<batchUploadModalGS></batchUploadModalGS>
+<batchUploadModalNSS></batchUploadModalNSS>
 <gagePageModal></gagePageModal>
 <app-loading-screen></app-loading-screen>
 
@@ -11,7 +12,7 @@
 <!-- Top Nav bar -->
 <nav id="main">
 	<!-- Mobile menu toggle -->
-	<button type="button" class="sidebar-toggle" (click)="showMobileMenu = !showMobileMenu">
+	<button aria-label="sidebar toggle" type="button" class="sidebar-toggle" (click)="showMobileMenu = !showMobileMenu">
 	<!-- <button class="sidebar-toggle" (click)="toggleSidebar()"> -->
 		<i class="far fa-bars"></i>
 	</button>
@@ -19,7 +20,7 @@
 	<!-- Logo and name -->
 	<div class="branding">
 		<a href="https://usgs.gov">
-            <img src="assets/img/usgs-logo.png"/>
+            <img alt="USGS Logo" src="assets/img/usgs-logo.png"/>
         </a>
         <span class="app-title">
             {{title}}
@@ -28,7 +29,7 @@
 
 	<!-- Links -->
 	<div class="nav-links">
-		<a routerLink="" [class.active]="router.url == ''">
+		<a routerLink="" [class.active]="router.url == ''" [class.hidden]="!showGageStats && !isloginShow">
 			<span>NSS</span>
 		</a>
 		<a routerLink="gagestats" [class.active]="router.url == ''" [class.hidden]="!showGageStats">

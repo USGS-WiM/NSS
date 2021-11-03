@@ -23,6 +23,7 @@ import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Region } from 'app/shared/interfaces/region';
+declare let gtag: Function;
 
 @Component({
     selector: 'manageCitationsModal',
@@ -220,6 +221,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
                 c.isEditing = false;
                 this._nssService.setSelectedRegion(this.selectedRegion); // update everything
                 this._nssService.outputWimMessages(response);
+                gtag('event', 'click', { 'event_category': 'Put Citation', 'event_label': 'Citation was edited' });
                 this.getCitations();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) {return; }
@@ -242,6 +244,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
             this.showNewCitation = false;
             if (!response.headers) {
                 this._toasterService.pop('info', 'Info', 'Citation was added');
+                gtag('event', 'click', { 'event_category': 'Post Citation', 'event_label': 'Citation was added' });
             } else { 
                 this._settingsService.outputWimMessages(response); 
             }
@@ -340,6 +343,7 @@ export class ManageCitationsModal implements OnInit, OnDestroy {
         if (check) {
             this._settingsService.deleteEntity(id, this.url).subscribe(result => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
+                gtag('event', 'click', { 'event_category': 'Delete Citation', 'event_label': 'Citation was deleted' });
                 if (result.headers) { this._nssService.outputWimMessages(result); };
                 this.getCitations();
             }, error => {

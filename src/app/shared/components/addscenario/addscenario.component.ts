@@ -22,6 +22,7 @@ import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 declare var MathJax: {
     Hub: { Queue, Config }
 };
+declare let gtag: Function;
 
 @Component({
     selector: 'addScenarioModal',
@@ -608,6 +609,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             .subscribe((response) => {
                 this.requeryFilters();
                 // clear form
+                gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was Updated');
                 } else {
@@ -630,6 +632,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 // clear form
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was added');
+                    gtag('event', 'click', { 'event_category': 'Post Scenario', 'event_label': 'Scenario was added' });
                 } else {
                     this._settingsService.outputWimMessages(response); 
                 }

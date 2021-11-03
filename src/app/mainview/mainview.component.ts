@@ -1,6 +1,4 @@
 import { Component, OnInit, Inject, ViewChildren, ViewContainerRef, ViewChild, TemplateRef } from '@angular/core';
-import { DOCUMENT } from "@angular/common";
-
 import { Region } from '../shared/interfaces/region';
 import { Regressionregion } from '../shared/interfaces/regressionregion';
 import { Regressiontype } from '../shared/interfaces/regressiontype';
@@ -15,7 +13,6 @@ import { Chart } from '../shared/interfaces/chart';
 import { NSSService } from '../shared/services/app.service';
 import { ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
-import { PageScrollService, PageScrollInstance } from 'ng2-page-scroll';
 import * as Highcharts from 'highcharts';
 import { AuthService } from 'app/shared/services/auth.service';
 import { Router, NavigationStart } from '@angular/router';
@@ -27,11 +24,16 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { Citation } from 'app/shared/interfaces/citation';
 import { AddRegressionRegion } from 'app/shared/interfaces/addregressionregion';
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
-
+declare let gtag: Function;
 
 declare var MathJax: {
     Hub: { Queue };
 };
+
+export interface freqDataArray { // frequency data
+    name: string;
+    fchartvalues: number[][];
+}
 
 @Component({
     selector: 'wim-mainview',
@@ -76,7 +78,7 @@ export class MainviewComponent implements OnInit {
     public hChartXAxisValues: string[]; // holds Recurrence Interval dropdown values for chart
     // public hChartYAxisText: string;               // chart y axis
     public fChartOptions: any; // frequency chart
-    public fChartValues: Array<number>[]; // frequency data
+    public freqDataArray: freqDataArray[];
     public showCharts_btn: boolean; // toggle button boolean
     public showChartBtn_txt: string; // string "show" / "hide"
     public selectedPlot: string; // which plot are they asking for ("Hydrograph" or "Frequency Plot")
@@ -135,8 +137,6 @@ export class MainviewComponent implements OnInit {
     constructor(
         private _nssService: NSSService,
         private _toasterService: ToasterService,
-        @Inject(DOCUMENT) private _document: any,
-        private _pageScrollService: PageScrollService,
         private _authService: AuthService,
         private _fb: FormBuilder,
         private router: Router,
@@ -338,8 +338,8 @@ export class MainviewComponent implements OnInit {
         this._nssService.getChart().subscribe(c => {
             if (c !== '') {
                 // scroll down to the chart section
-                let pageScrollInstance: PageScrollInstance = PageScrollInstance.simpleInstance(this._document, '#chart');
-                this._pageScrollService.start(pageScrollInstance);
+                let el = document.getElementById("chart");
+                el.scrollIntoView({ behavior: 'smooth' });
             }
             /* if (c == 'Hydrograph') {
                 let H_areaAveraged: boolean = false;
@@ -481,7 +481,7 @@ export class MainviewComponent implements OnInit {
                 this.hydroChartsArray.push(this.hChartOptions);
                 this.hydrographs.push(hydroG); */
             if (c == 'Frequency Plot') {
-                if (this.fChartValues == undefined) {
+                if (this.freqDataArray == undefined) {
                     let F_areaAveraged: boolean = false;
                     this.fChartOptions = {};
                     // only come in here if there isn't already a frequency plot
@@ -489,8 +489,8 @@ export class MainviewComponent implements OnInit {
                         Faxis: 'BottomX',
                         type_BX: 'returnPeriod',
                         type_LY: 'returnPeriod',
-                        title_LY: 'Peak Discharge, In cubic meters per second',
-                        title_BX: 'Recurrence Interval, in years\nFlood Frequency Plot',
+                        title_LY: 'Peak Discharge, in cubic feet per second',
+                        title_BX: 'Annual Exceedance Probability, in percent',
                         lineWidth: 1,
                         lineSymbol: 'circle',
                         majorTic_BX: true,
@@ -510,31 +510,32 @@ export class MainviewComponent implements OnInit {
                         pointSymbols: true
                     };
                     // get array of recurrences from result
-                    let freqDataArray: number[][];
-                    freqDataArray = [];
+                    let dataArray: number[][] = [];
+                    this.freqDataArray = [];
                     this.scenarios.forEach(s => {
-                        if (s.regressionRegions.length > 1) {
-                            s.regressionRegions.forEach(rr => {
+                        if (s.regressionRegions.length > 0) {
+                            s.regressionRegions.forEach((rr, index) => {
+                                dataArray = [];
                                 if (rr.name == 'Area-Averaged') {
                                     F_areaAveraged = true; // area averaged, add title to chart stating
                                     this.frequencyPlotChart.curveLabel = 'Computed Points (Area-weighted average)';
-                                    rr.results.forEach(R => {
-                                        let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                                        freqDataArray.push([x, R.value]);
-                                    });
                                 }
-                            });
-                        } else {
-                            s.regressionRegions.forEach(rr => {
                                 rr.results.forEach(R => {
-                                    let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                                    freqDataArray.push([x, R.value]);
+                                    let x: number = +(R.name.match(/D*\d+\.?\d*/));
+                                    dataArray.push([x, R.value]);
+                                });
+                                this.freqDataArray[index] = {
+                                    name: rr.name,
+                                    fchartvalues: dataArray
+                                }
+                                this.freqDataArray[index].fchartvalues.sort(function(a,b) {
+                                    return a[0]-b[0];
                                 });
                             });
                         }
                     }); // end foreach scenario
-                    console.log('freq (start): ' + freqDataArray);
-                    this.fChartValues = freqDataArray;
+                    
+                    console.log('freq (start): ' + JSON.stringify(this.freqDataArray));
                     this.showChartBtn_txt = 'Hide';
                     this.showCharts_btn = true;
                     this.fChartOptions = {
@@ -556,17 +557,8 @@ export class MainviewComponent implements OnInit {
                             fallbackToExportServer: false
                         },
                         chart: { type: 'line', zoomType: 'xy' },
-                        title: { text: '' },
-                        series: [
-                            {
-                                data: this.fChartValues,
-                                marker: { enabled: true },
-                                name: F_areaAveraged ? 'Computed Points (Area-weighted average)' : 'Computed Points',
-                                states: {
-                                    hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
-                                }
-                            }
-                        ],
+                        title: { text: 'Flood Frequency Plot' },
+                        series: [],
                         tooltip: {
                             formatter: function () {
                                 var s = '<b>(' + this.x + ', ' + this.y + ')</b>';
@@ -574,7 +566,7 @@ export class MainviewComponent implements OnInit {
                             }
                         },
                         xAxis: {
-                            title: { text: 'Recurrence Interval, in years<br/>Flood Frequency Plot' },
+                            title: { text: 'Annual Exceedance Probability, in percent' },
                             type: 'logarithmic',
                             startOnTick: true,
                             endOnTick: true,
@@ -585,10 +577,11 @@ export class MainviewComponent implements OnInit {
                             tickPosition: 'inside',
                             minorTickPosition: 'inside',
                             tickColor: '#000000',
-                            minorTickColor: '#000000'
+                            minorTickColor: '#000000',
+                            reversed: true
                         },
                         yAxis: {
-                            title: { text: 'Peak Discharge, In cubic meters per second' },
+                            title: { text: 'Peak Discharge, in cubic feet per second' },
                             type: 'logarithmic',
                             startOnTick: true,
                             endOnTick: true,
@@ -601,6 +594,16 @@ export class MainviewComponent implements OnInit {
                             minorTickColor: '#000000'
                         }
                     };
+                    this.freqDataArray.forEach((data, index) => {
+                        this.fChartOptions.series[index] = {
+                            data: data.fchartvalues,
+                            marker: { enabled: true },
+                            name: data.name,
+                            states: {
+                                hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
+                            }
+                        };
+                    })
                 } // if this.fchartvalues == undefined (only go in there to make a new one not overwrite one)
             } else {
                 // it's "" something was changed in the filters, clear out the charts
@@ -610,7 +613,7 @@ export class MainviewComponent implements OnInit {
                 this.hChartXAxisValues = [];
                 this.hydroChartsArray = [];
                 this.fChartOptions = undefined;
-                this.fChartValues = undefined;
+                this.freqDataArray = undefined;
                 this.hydrographs = [];
             }
         });
@@ -1027,76 +1030,96 @@ export class MainviewComponent implements OnInit {
         this.freqChart = freqChartInst;
     }
     // clicked Bottom x & type == update chart FREQUENCY
-    public setFreqXaxisType(newType: string) {
-        let freqDataArray: number[][];
-        freqDataArray = [];
-        // converting 'percent', 'fraction', or 'returnPeriod' (default/onload is returnPeriod)
-        if (newType == 'percent') {
-            this.scenarios.forEach(s => {
-                s.regressionRegions.forEach(rr => {
-                    if (rr.results) {
-                        rr.results.forEach(R => {
-                            let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                            freqDataArray.push([(1 / x) * 100, R.value]);
-                        });
-                    }
-                });
-            }); // end foreach scenario
-            this.frequencyPlotChart.reverse_BX = true;
-            this.freqChart.xAxis[0].update({
-                reversed: true,
-                labels: {
-                    formatter: function () {
-                        return Highcharts.numberFormat(this.value, 0, ',') + '%';
-                    }
-                }
-            });
-        } else if (newType == 'fraction') {
-            // divide 1 into probability (pk500)
-            this.scenarios.forEach(s => {
-                s.regressionRegions.forEach(rr => {
-                    if (rr.results) {
-                        rr.results.forEach(R => {
-                            let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                            freqDataArray.push([1 / x, R.value]);
-                        });
-                    }
-                });
-            }); // end foreach scenario
-            this.frequencyPlotChart.reverse_BX = true;
-            this.freqChart.xAxis[0].update({
-                reversed: true,
-                labels: {
-                    formatter: function () {
-                        return this.value;
-                    }
-                }
-            });
-        } else {
-            // returnPeriod
-            this.scenarios.forEach(s => {
-                s.regressionRegions.forEach(rr => {
-                    if (rr.results) {
-                        rr.results.forEach(R => {
-                            let x: number = +R.name.substring(0, R.name.indexOf(' '));
-                            freqDataArray.push([x, R.value]);
-                        });
-                    }
-                });
-            }); // end foreach scenario
-            this.frequencyPlotChart.reverse_BX = false;
-            this.freqChart.xAxis[0].update({
-                reversed: false,
-                labels: {
-                    formatter: function () {
-                        return this.value;
-                    }
-                }
-            });
-            console.log('return period: ' + freqDataArray);
-        }
-        this.freqChart.series[0].setData(freqDataArray);
-    }
+    // public setFreqXaxisType(newType: string) { //This was used the labels were x year peak flood
+    //     let dataArray: number[][] = [];
+    //     this.freqDataArray = [];
+    //     // converting 'percent', 'fraction', or 'returnPeriod' (default/onload is returnPeriod)
+    //     if (newType == 'percent') {
+    //         this.scenarios.forEach(s => {
+    //             s.regressionRegions.forEach((rr, index) => {
+    //                 if (rr.results) {
+    //                     rr.results.forEach(R => {
+    //                         let x: number = +(R.name.match(/D*\d+\.?\d*/));
+    //                         dataArray.push([(1 / x) * 100, R.value]);
+    //                     });
+    //                     this.freqDataArray[index] = {
+    //                         name: rr.name,
+    //                         fchartvalues: dataArray
+    //                     }
+    //                 }
+    //             });
+    //         }); // end foreach scenario
+    //         this.frequencyPlotChart.reverse_BX = true;
+    //         this.freqChart.xAxis[0].update({
+    //             reversed: true,
+    //             labels: {
+    //                 formatter: function () {
+    //                     return Highcharts.numberFormat(this.value, 0, ',') + '%';
+    //                 }
+    //             }
+    //         });
+    //     } else if (newType == 'fraction') {
+    //         // divide 1 into probability (pk500)
+    //         this.scenarios.forEach(s => {
+    //             s.regressionRegions.forEach((rr, index) => {
+    //                 if (rr.results) {
+    //                     rr.results.forEach(R => {
+    //                         let x: number = +(R.name.match(/D*\d+\.?\d*/));
+    //                         dataArray.push([(1 / x), R.value]);
+    //                     });
+    //                     this.freqDataArray[index] = {
+    //                         name: rr.name,
+    //                         fchartvalues: dataArray
+    //                     }
+    //                 }
+    //             });
+    //         }); // end foreach scenario
+    //         this.frequencyPlotChart.reverse_BX = true;
+    //         this.freqChart.xAxis[0].update({
+    //             reversed: true,
+    //             labels: {
+    //                 formatter: function () {
+    //                     return this.value;
+    //                 }
+    //             }
+    //         });
+    //     } else {
+    //         // returnPeriod
+    //         this.scenarios.forEach(s => {
+    //             s.regressionRegions.forEach((rr, index) => {
+    //                 if (rr.results) {
+    //                     rr.results.forEach(R => {
+    //                         let x: number = +(R.name.match(/D*\d+\.?\d*/));
+    //                         dataArray.push([x, R.value]);
+    //                     });
+    //                     this.freqDataArray[index] = {
+    //                         name: rr.name,
+    //                         fchartvalues: dataArray
+    //                     }
+    //                 }
+    //             });
+    //         }); // end foreach scenario
+    //         this.frequencyPlotChart.reverse_BX = false;
+    //         this.freqChart.xAxis[0].update({
+    //             reversed: false,
+    //             labels: {
+    //                 formatter: function () {
+    //                     return this.value;
+    //                 }
+    //             }
+    //         });
+    //     }
+    //     this.freqDataArray.forEach((data, index) => {
+    //         this.fChartOptions.series[index] = {
+    //             data:data.fchartvalues,
+    //             marker: { enabled: true },
+    //             name: data.name,
+    //             states: {
+    //                 hover: { enabled: false } // stops the line from getting thicker when mouse onto the chart
+    //             }
+    //         };
+    //     })
+    // }
     // update title on x axis as they type FREQUENCY
     public updateFreqBXtitle() {
         this.fChartOptions.xAxis.title.text = this.frequencyPlotChart.title_BX.replace(/\n/g, '<br/>'); //bottom title
@@ -1146,9 +1169,9 @@ export class MainviewComponent implements OnInit {
     // reverse the data FREQUENCY
     public setFreqReverseData(which: string, value: boolean) {
         if (which == 'bx') {
-            this.freqChart.xAxis[0].update({ reversed: value });
+            this.freqChart.xAxis[0].update({ reversed: !value });
         } else {
-            this.freqChart.yAxis[0].update({ reversed: value });
+            this.freqChart.yAxis[0].update({ reversed: !value });
         }
     }
     // change line color FREQUENCY
@@ -1196,7 +1219,7 @@ export class MainviewComponent implements OnInit {
         this.frequencyPlotChart = undefined;
         this.freqChart = undefined;
         this.fChartOptions = undefined;
-        this.fChartValues = undefined;
+        this.freqDataArray = undefined;
     }
     //////////////////////////////////////end FREQUENCY STUFF  /////////////////////////////////////////////////////
     // toggle charts
@@ -1330,6 +1353,7 @@ export class MainviewComponent implements OnInit {
             const sParams = '?statisticgroupID=' + sgID + '&regressionregionID=' + rrID + '&regressiontypeID=' + rID;
             this._settingsService.deleteEntity('', this.configSettings.nssBaseURL + this.configSettings.scenariosURL, sParams).subscribe(result => {
                 this.requeryFilters();
+                gtag('event', 'click', { 'event_category': 'Delete Scenario', 'event_label': 'Scenario was deleted' });
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
                 if (error.headers) {
@@ -1345,6 +1369,7 @@ export class MainviewComponent implements OnInit {
             this.saveFilters();
             this._settingsService.deleteEntity(rrID, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(result => {
                 this.requeryFilters();
+                gtag('event', 'click', { 'event_category': 'Delete Regression Region', 'event_label': 'Regression Region was deleted' });
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
                 if (error.headers) {
@@ -1555,6 +1580,7 @@ export class MainviewComponent implements OnInit {
             .subscribe((response) => {
                 this.requeryFilters();
                 this._nssService.outputWimMessages(response);
+                gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
                 this.modalRef.close();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) { return; }
@@ -1700,6 +1726,11 @@ export class MainviewComponent implements OnInit {
                 this._toasterService.pop('error', 'Error creating Citation', error._body.message || error.statusText);
             }
             );
+    }
+
+    // Bulk Upload Button
+    public openBatchUpload(): void {
+        this._nssService.setBatchUploadModalNSS(true);
     }
 
     private getDismissReason(reason: any): string {

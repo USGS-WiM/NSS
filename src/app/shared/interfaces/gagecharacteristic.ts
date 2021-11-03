@@ -1,5 +1,5 @@
 import { Citation } from './citation';
-import { Unittype } from './unitType';
+import { Unittype } from './unittype';
 import { Variabletype } from './variabletype';
 
 export interface GageCharacteristic {

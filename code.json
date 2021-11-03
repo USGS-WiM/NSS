@@ -3,7 +3,7 @@
     "name": "NSS",
     "organization": "U.S. Geological Survey",
     "description": "National Stream Flow Statistics public access to Regions, Statistic Groups, Regression Regions, Charts and Citations",
-    "version": "v1.0.0",
+    "version": "v1.1.0",
     "status": "Production",
 
     "permissions": {
@@ -16,7 +16,7 @@
       ]
     },
 
-    "homepageURL": "https://streamstats.usgs.gov",
+    "homepageURL": "https://streamstats.usgs.gov/nss",
     "downloadURL": "https://github.com/USGS-WiM/NSS/archive/master.zip",
     "disclaimerURL": "https://github.com/USGS-WiM/NSS/blob/master/DISCLAIMER.md",
     "repositoryUrl": "https://github.com/USGS-WiM/NSS",
@@ -27,22 +27,21 @@
     "tags": [
       "streamstats",
       "regression",
-      "nss",
-	  "statistic",
-	  "hydrograph"
+	    "statistic",
+      "nss"
     ],
 
     "languages": [
-      "angular", "markdown"
+      "angular"
     ],
 
     "contact": {
-      "name": "Jeremy K. Newson",
-      "email": "jknewson@usgs.gov"
+      "name": "Katrin E. Jacobsen",
+      "email": "kjacobsen@usgs.gov"
     },
 
     "date": {
-      "metadataLastUpdated": "2019-04-19"
+      "metadataLastUpdated": "2021-07-13"
     }
   }
 ]

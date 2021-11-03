@@ -11,19 +11,21 @@ import { StationType } from 'app/shared/interfaces/stationtypes';
 import { Region } from 'app/shared/interfaces/region';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
-import { Unittype } from 'app/shared/interfaces/unitType';
-import { Variabletype } from 'app/shared/interfaces/variableType'
+import { Unittype } from 'app/shared/interfaces/unittype';
+import { Variabletype } from 'app/shared/interfaces/variabletype'
 import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
 import { HttpParams } from '@angular/common/http';
+import { LoaderService } from 'app/shared/services/loader.service';
+declare let gtag: Function;
 
 @Component({
-  selector: 'batchUploadModal',
+  selector: 'batchUploadModalGS',
   templateUrl: './batch-upload.component.html',
   styleUrls: ['./batch-upload.component.scss']
 })
-export class BatchUploadModal implements OnInit {
-  @ViewChild('batchUpload', {static: true}) public batchUploadModal;
+export class BatchUploadComponentGS implements OnInit {
+  @ViewChild('batchUpload', {static: true}) public batchUploadModalGS;
   private configSettings: Config;
   private modalElement: any;
   public modalSubscription: any;
@@ -90,16 +92,17 @@ export class BatchUploadModal implements OnInit {
   public selectedParams: HttpParams; 
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
-    private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService) {
+    private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
+    private _loaderService: LoaderService) {
 
     this.configSettings = this._configService.getConfiguration();
   }
 
   ngOnInit() {
-    this.modalSubscription = this._nssService.showBatchUploadModal.subscribe((show: boolean) => {
+    this.modalSubscription = this._nssService.showBatchUploadModalGS.subscribe((show: boolean) => {
       if (show) { this.showModal(); }
     });
-    this.modalElement = this.batchUploadModal;
+    this.modalElement = this.batchUploadModalGS;
     // subscribe to all agencies, station types, regions, stat groups, regression types, variable types, units, selected citation...
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL).subscribe((agencies: Array<Agency>) => {
       this.agencies = agencies;
@@ -170,7 +173,6 @@ export class BatchUploadModal implements OnInit {
     this.createTable(this.data);
     this.tableDisplay = true;
     this.sheetNamesButtons = false;
-    
   }
 
   //////////////// Create/Edit Table Section ///////////////////
@@ -361,6 +363,9 @@ export class BatchUploadModal implements OnInit {
             if (recordObj.startDate && recordObj.endDate) {
               recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
             }
+            if (recordObj.yearsofRecord === 'null') {
+              recordObj.yearsofRecord = null;
+            }
             if (recordObj.remarks === 'null') {
               if (!recordObj.startDate && !recordObj.endDate) { }  // If no comments or remarks, do nothing
               else {
@@ -432,7 +437,6 @@ export class BatchUploadModal implements OnInit {
       this.disableSubmit = true;
       this._toasterService.pop('info', 'Info', 'Error! ' + (this.errorList.length/3) + ' errors were detected.');
     }
-    console.log('errorlist: ', this.errorList);
   }
 
   public checkForRequiredColumns(charList) {
@@ -454,10 +458,13 @@ export class BatchUploadModal implements OnInit {
   }
 
 public submitRecords() {
+  this._loaderService.showFullPageLoad();
   this._settingsService.postEntity(this.records, this.configSettings.gageStatsBaseURL +  this.url)
       .subscribe((response:any) =>{
         if(!response.headers){   // If put request is a success...
           this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
+          gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Bulk stations were added'});
+          this._loaderService.hideFullPageLoad();
           this.clearTable();
           this.selectUpload = false;
           delete(this.selectedCitation);

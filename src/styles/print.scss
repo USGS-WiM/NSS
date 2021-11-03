@@ -5,6 +5,8 @@
 	// Hide elements
 	nav#main,
 	button,
+	#MathJax_Message,
+	#toast-container,
 	.app-sidebar{
 		display: none !important;
 	}
@@ -55,6 +57,10 @@
 		td{
 			padding: 2px 0 !important;
 		}
+	}
+
+	.custom-table thead{
+		display: table-row-group !important;
 	}
 
 	// Citation

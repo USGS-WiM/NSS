@@ -1,6 +1,6 @@
-import { Unittype} from './unitType';
+import { Unittype} from './unittype';
 import { Error } from './error';
-import { Intervalbound} from './intervalBound';
+import { Intervalbound} from './intervalbound';
 
 export interface Result {
     description: string;

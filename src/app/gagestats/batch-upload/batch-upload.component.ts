@@ -13,10 +13,10 @@ import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Unittype } from 'app/shared/interfaces/unittype';
 import { Variabletype } from 'app/shared/interfaces/variabletype'
-import { ManageCitation } from 'app/shared/interfaces/managecitations';
 import { Station } from 'app/shared/interfaces/station';
 import { HttpParams } from '@angular/common/http';
 import { LoaderService } from 'app/shared/services/loader.service';
+import { Citation } from 'app/shared/interfaces/citation';
 declare let gtag: Function;
 
 @Component({
@@ -44,6 +44,7 @@ export class BatchUploadComponentGS implements OnInit {
   public regressionTypes: Array<Regressiontype>;
   public unitTypes: Array<Unittype>;
   public variableTypes: Array<Variabletype>;
+  public citations: Array<Citation>;
   public stationChars = [ {'id': 'code', 'name': 'Station Code', 'disabled': false, 'type': null, 'required': true},
                           {'id': 'agencyID', 'name': 'Agency', 'disabled': false, 'type': 'this.agencies', 'required': true},                            
                           {'id': 'name', 'name': 'Name', 'disabled': false, 'type': null, 'required': true}, 
@@ -70,13 +71,15 @@ export class BatchUploadComponentGS implements OnInit {
                         {'id': 'variance', 'name': 'Variance', 'disabled': false, 'type': null, 'required': false},
                         {'id': 'lowerConfidenceInterval', 'name': 'Lower Confidence Interval', 'disabled': false, 'type': null, 'required': false}, 
                         {'id': 'upperConfidenceInterval', 'name': 'Upper Confidence Interval', 'disabled': false, 'type': null, 'required': false},
-                        {'id': 'comments', 'name': 'Comments', 'disabled': false, 'type': null, 'required': false}];
+                        {'id': 'comments', 'name': 'Comments', 'disabled': false, 'type': null, 'required': false},
+                        {'id': 'citationID', 'name': 'Citation', 'disabled': false, 'type': null, 'required': false}];
 
   public charChars = [  {'id': "code", 'name': "Station Code", 'disabled': false, 'type': null, 'required': true},
                         {'id': "variableTypeID", 'name': "Variable Type", 'disabled': false, 'type': 'variableTypes', 'required': true},                        
                         {'id': "value", 'name': "Value", 'disabled': false, 'type': null, 'required': true},
                         {'id': "unitTypeID", 'name': "Unit", 'disabled': false, 'type': 'unitTypes', 'required': true},
-                        {'id': "comments", 'name': "Comments", 'disabled': false, 'type': null, 'required': false} ];
+                        {'id': "comments", 'name': "Comments", 'disabled': false, 'type': null, 'required': false},
+                        {'id': 'citationID', 'name': 'Citation', 'disabled': false, 'type': null, 'required': false} ];
   public headers;
   public fullHeaders = true;
   public tableData;
@@ -84,7 +87,6 @@ export class BatchUploadComponentGS implements OnInit {
   public sheetNamesButtons: boolean;
   public wsname;
   public dropdownOptions;
-  public selectedCitation;
   public records;
   public url;
   public errorList = [];
@@ -122,11 +124,11 @@ export class BatchUploadComponentGS implements OnInit {
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL).subscribe((vartypes: Array<Variabletype>) => {
       this.variableTypes = vartypes;
     });
+    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.citationURL).subscribe((citations: Array<Citation>) => {
+      this.citations = citations;
+    });
     this._nssService.getUnitTypes().subscribe(res => {
       this.unitTypes = res;
-    });
-    this._nssService.selectedCitation.subscribe(c => {
-      this.selectedCitation = c;
     });
     this._nssService.selectedFilterParams.subscribe((selectedParams: HttpParams) => { 
       this.selectedParams = selectedParams;
@@ -168,7 +170,7 @@ export class BatchUploadComponentGS implements OnInit {
 
   public selectSheet(sheetName) {
     const ws: XLSX.WorkSheet = this.wb.Sheets[sheetName];
-    this.data = (XLSX.utils.sheet_to_json(ws, {header : 1}));        // Convert data to json
+    this.data = (XLSX.utils.sheet_to_json(ws, {header : 1, blankrows: false}));        // Convert data to json
     this.setDropdownOptions();
     this.createTable(this.data);
     this.tableDisplay = true;
@@ -219,7 +221,6 @@ export class BatchUploadComponentGS implements OnInit {
     this.uploadStations = false;
     this.uploadStats = false;
     this.tableEdit = false;
-    delete(this.selectedCitation);
     this.errorList = [];
     delete(this.records);
     this.disableSubmit = true;
@@ -264,7 +265,7 @@ export class BatchUploadComponentGS implements OnInit {
     this.changeDropdownOptions();
   }
 
-////////////////// Create and Submit HTTP POST Request ////////////////////////
+  ////////////////// Create and Submit HTTP POST Request ////////////////////////
 
   public verifyData() {
     this.changeDropdownOptions();
@@ -289,7 +290,11 @@ export class BatchUploadComponentGS implements OnInit {
           var cellID = 0;
           var record;
           row.forEach(cell => {  // Loop thru the cells of each row
+            if (cell == null) {
+              var item = '"' + this.tableData[0][cellID] + '": ' + null + ''; // Assign the headers as the keys, the values as values
+            } else {
               var item = '"' + this.tableData[0][cellID] + '": "' + cell + '"'; // Assign the headers as the keys, the values as values
+            }
               if (cellID == 0) {
                   record = item;
                   cellID ++;
@@ -300,9 +305,6 @@ export class BatchUploadComponentGS implements OnInit {
           })
           var recordObj = JSON.parse('{' + record + '}');  // Parse strings into JSON objects
           delete recordObj.null;                           // Delete any columns which were not assigned a header
-          if (this.selectedCitation) {                     // Add the citation ID, if there is a citation
-            recordObj.citationID = this.selectedCitation.id;
-          }
           if (this.uploadStations) {                        // If stations are being uploaded...  
             this.url = "stations/Batch";
             if (recordObj.code) {
@@ -344,6 +346,10 @@ export class BatchUploadComponentGS implements OnInit {
               var cellIndex = Object.keys(recordObj).indexOf('unitTypeID');
               recordObj.unitTypeID = this.getVariableID(this.unitTypes, recordObj.unitTypeID, rowID, cellIndex);
             }
+            if (recordObj.citationID) {
+              var cellIndex = Object.keys(recordObj).indexOf('citationID');
+              recordObj.citationID = this.getVariableID(this.citations, recordObj.citationID, rowID, cellIndex);
+            };
             if (recordObj.isPreferred) {
               var x = this.getTrueFalse(recordObj.isPreferred);
               recordObj.isPreferred = x;
@@ -406,6 +412,10 @@ export class BatchUploadComponentGS implements OnInit {
               var cellIndex = Object.keys(recordObj).indexOf('variableTypeID');
               recordObj.variableTypeID = this.getVariableID(this.variableTypes, recordObj.variableTypeID, rowID, cellIndex);
             }
+            if (recordObj.citationID) {
+              var cellIndex = Object.keys(recordObj).indexOf('citationID');
+              recordObj.citationID = this.getVariableID(this.citations, recordObj.citationID, rowID, cellIndex);
+            };
             if (recordObj.code) {
               var cellIndex = Object.keys(recordObj).indexOf('code');
               this.getStationID(recordObj, rowID, cellIndex);
@@ -457,28 +467,28 @@ export class BatchUploadComponentGS implements OnInit {
     }
   }
 
-public submitRecords() {
-  this._loaderService.showFullPageLoad();
-  this._settingsService.postEntity(this.records, this.configSettings.gageStatsBaseURL +  this.url)
-      .subscribe((response:any) =>{
-        if(!response.headers){   // If put request is a success...
-          this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
-          gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Bulk stations were added'});
-          this._loaderService.hideFullPageLoad();
-          this.clearTable();
-          this.selectUpload = false;
-          delete(this.selectedCitation);
-          this._nssService.searchStations(this.selectedParams);
-          this._nssService.setRequeryGSFilter(true);
-        } error => {     // If put request fails...
-          this._settingsService.outputWimMessages(error);
-        }
-      });
-  this.clearTable();
-  this._nssService.searchStations(this.selectedParams);
-}
+  public submitRecords() {
+    this._loaderService.showFullPageLoad();
+    this._settingsService.postEntity(this.records, this.configSettings.gageStatsBaseURL +  this.url)
+        .subscribe((response:any) => {
+          if(!response.headers){   // If put request is a success...
+            //this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
+            gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Bulk stations were added'});
+            this._loaderService.hideFullPageLoad();
+            this.clearTable();
+            this.selectUpload = false;
+            this._nssService.searchStations(this.selectedParams);
+            this._nssService.setRequeryGSFilter(true);
+          }
+        }, error => {     // If put request fails...
+            this._loaderService.hideFullPageLoad();
+            this._settingsService.outputWimMessages(error);
+        });
+    this.clearTable();
+    this._nssService.searchStations(this.selectedParams);
+  }
 
-//////////////// Get NSS Characteristic IDs //////////////////////
+  //////////////// Get NSS Characteristic IDs //////////////////////
 
   public getVariableID(listName, value, rowID, cellID) {
     if (listName) {
@@ -488,9 +498,12 @@ public submitRecords() {
       if (listName === this.regions) {
         var vt = listName.find( v => v.name === value);
       }
-      if (listName != this.unitTypes && listName != this.regions) {
+      if (listName === this.citations) {
+        var vt = listName.find( v => v.title === value);
+      }
+      if (listName != this.unitTypes && listName != this.regions && listName != this.citations) {
         var vt = listName.find( v => v.code === value);
-       }
+      }
       if (vt) {
         return vt.id;
       } else {
@@ -500,6 +513,7 @@ public submitRecords() {
   }
   
   /////// Check to see if a Station Code exists/////////
+
   public getStationID(obj, rowID, cellID) {
     var station;
     this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code)
@@ -555,71 +569,4 @@ public submitRecords() {
       return true;
     }
   }
-
-  // public getCharType(name) {
-  //   if(name == 'agencyID'){
-  //     return this.agencies;
-  //   }
-  //   if(name == 'regionID'){
-  //     return this.regions;
-  //   }
-  //   if(name == 'stationTypeID'){
-  //     return this.stationTypes;
-  //   }
-  //   if(name == 'statisticGroupTypeID'){
-  //     return this.statisticGroupTypes;
-  //   }
-  //   if(name == 'regressionTypeID'){
-  //     return this.regressionTypes;
-  //   }
-  //   if(name == 'unitTypeID'){
-  //     return this.unitTypes;
-  //   }
-  //   if(name == 'variableTypeID'){
-  //     return this.variableTypes;
-  //   }
-    
-  // }
-
-  // public getCharType2(name) {
-  //   console.log('char2 input: ', name)
-  //   if(name == 'agencyID'){
-  //     return "'abbreviation'";
-  //   }
-  //   if(name == 'regionID'){
-  //     return "'name'";
-  //   }
-  //   if(name == 'stationTypeID'){
-  //     return "'code'";
-  //   }
-  //   if(name == 'statisticGroupTypeID'){
-  //     return 'code';
-  //   }
-  //   if(name == 'regressionTypeID'){
-  //     return 'code';
-  //   }
-  //   if(name == 'unitTypeID'){
-  //     return 'abbreviation';
-  //   }
-  //   if(name == 'variableTypeID'){
-  //     return 'code';
-  //   }
-  // }
-
-
-  ///////////////////////Citation Modal Section/////////////////////
-
-  public showManageCitationsModal() {
-    if (this.selectedCitation) {
-      var id = this.selectedCitation.id;
-    }
-    const addManageCitationForm: ManageCitation = {
-        show: true,
-        addCitation: true,
-        inGagePage: true,
-        selectCitation: id
-      } 
-    this._nssService.setManageCitationsModal(addManageCitationForm);
-  }
-
 }

@@ -35,7 +35,6 @@
 			<div class="edit-buttons">
 				<button *ngIf='tableDisplay && !tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = true && disableSubmit = true'>Edit Table</button>
                 <button *ngIf='tableDisplay && tableEdit' type='button' class="button small grey mright-xs" (click)='tableEdit = false'>Finish Edits</button>
-                <button *ngIf='tableDisplay && !tableEdit && !uploadStations' type='button' class="button small grey mright-xs" (click)='showManageCitationsModal()'>Add Citation</button>
 			</div>
 
 			

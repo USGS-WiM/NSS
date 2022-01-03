@@ -8,7 +8,7 @@ import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { Region } from 'app/shared/interfaces/region';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
-import { Unittype } from 'app/shared/interfaces/unitType';
+import { Unittype } from 'app/shared/interfaces/unittype';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { Error } from 'app/shared/interfaces/error';

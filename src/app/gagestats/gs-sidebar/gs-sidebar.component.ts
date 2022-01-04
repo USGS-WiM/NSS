@@ -9,6 +9,7 @@ import { ConfigService } from 'app/config.service';
 import { Config } from 'protractor';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Variabletype } from 'app/shared/interfaces/variabletype';
+import { Regulationstatus } from 'app/shared/interfaces/regulationstatus';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { HttpParams } from '@angular/common/http';
 
@@ -23,6 +24,7 @@ export class GsSidebarComponent implements OnInit {
   public regressionTypes: Array<Regressiontype>;
   public statisticGroups: Array<Statisticgroup>;
   public variableTypes: Array<Variabletype>;
+  public regulationStatuses: Array<Regulationstatus>;
   public regions: Array<Region>;
   public agencies: Array<Agency>;
   // Dropdown menu default text
@@ -35,6 +37,7 @@ export class GsSidebarComponent implements OnInit {
   public selectedStatisticGroups = [];
   public selectedRegressionTypes = [];
   public selectedVariableTypes = [];
+  public selectedRegulationStatuses = [];
   public keyword = "";
   public timeout: any = null;
   public loadCount = 0;
@@ -85,6 +88,10 @@ export class GsSidebarComponent implements OnInit {
     this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL).subscribe((rt: Array<Regressiontype>) => {
       this.regressionTypes = rt;
     });
+    this.regulationStatuses = [
+      {id: true, name: "Regulated"},
+      {id: false, name: "Not Regulated"}
+    ];
 
     // trigger initial stations search
     this._nssService.searchStations(this.params);
@@ -116,7 +123,7 @@ export class GsSidebarComponent implements OnInit {
   public onSearch() {
     this.loadCount = this.loadCount + 1;
 
-    if (this.loadCount > 5) {  //resolves issue with mupltiple filter calls on load
+    if (this.loadCount > 6) {  //resolves issue with multiple filter calls on load
       //set up params
       this.params = this.params.set('page', '1');
       this.params = this.params.set('regions', this.selectedRegions.toString()); 
@@ -125,6 +132,7 @@ export class GsSidebarComponent implements OnInit {
       this.params = this.params.set('statisticgroups', this.selectedStatisticGroups.toString()); 
       this.params = this.params.set('regressiontypes', this.selectedRegressionTypes.toString()); 
       this.params = this.params.set('variableTypes', this.selectedVariableTypes.toString()); 
+      this.params = this.params.set('isRegulated', this.selectedRegulationStatuses.toString()); 
       this.params = this.params.set('filterText', this.keyword.toString()); 
 
       //regions
@@ -177,6 +185,7 @@ export class GsSidebarComponent implements OnInit {
     this.selectedAgencies = [];
     this.selectedStationTypes = []; 
     this.selectedVariableTypes = [];
+    this.selectedRegulationStatuses = [];
     this.selectedRegressionTypes = [];
     this.selectedStatisticGroups = [];
     this.keyword = "";

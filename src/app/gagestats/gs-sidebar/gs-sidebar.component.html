@@ -46,9 +46,16 @@
         [(ngModel)]="selectedVariableTypes" (ngModelChange)="onSearch()" name="variableTypes">
         </ss-multiselect-dropdown>
     </div>
+    
+    <div class="sidebar-item">
+        <label>Limit by Regulation Status:</label>
+        <ss-multiselect-dropdown [options]="regulationStatuses" [texts]="myMSTexts" [settings]="myRTSettings"
+        [(ngModel)]="selectedRegulationStatuses" (ngModelChange)="onSearch()" name="regulationStatuses">
+        </ss-multiselect-dropdown>
+    </div>
 
     <!-- Fix This -->
-    <div class="sidebar-item center" *ngIf="keyword!='' || selectedAgencies.length > 0 || selectedRegions.length > 0 || selectedStationTypes.length > 0 || selectedStatisticGroups.length > 0 || selectedRegressionTypes.length > 0 || selectedVariableTypes.length > 0" >
+    <div class="sidebar-item center" *ngIf="keyword!='' || selectedAgencies.length > 0 || selectedRegions.length > 0 || selectedStationTypes.length > 0 || selectedStatisticGroups.length > 0 || selectedRegressionTypes.length > 0 || selectedVariableTypes.length > 0 || selectedRegulationStatuses.length > 0" >
         <button type="button" class="button blue small" (click)="clearGagestatsFilters()">
 			<i class="far fa-times"></i>
 			<span>Reset Filters</span>

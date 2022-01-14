@@ -91,6 +91,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                     'unit': new FormControl(null, Validators.required),
                     'equation': new FormControl(null, Validators.required),
                     'equivalentYears': new FormControl(0),
+                    'DA_Exponent': new FormControl(0),
+                    'orderIndex': new FormControl(0),
                     'predictionInterval': this._fb.group({
                         'biasCorrectionFactor': new FormControl(null),
                         'student_T_Statistic': new FormControl(null),
@@ -284,6 +286,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     //fill the modal when cloning and editing 
     public fillModal() {
+        console.log(this.cloneParameters)
         this.newScenForm.get('region').valueChanges.subscribe(item => {
             if(item != null){
                 this._nssService.setSelectedRegion(item)
@@ -298,6 +301,12 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         if(!this.cloneParameters.r.equivalentYears) {
             this.cloneParameters.r.equivalentYears = 0;
         }
+        if(!this.cloneParameters.r.orderIndex) {
+            this.cloneParameters.r.orderIndex = 1;
+        }
+        if(!this.cloneParameters.r.dA_Exponent) {
+            this.cloneParameters.r.dA_Exponent = 1;
+        }
         this.newScenForm.patchValue({
             statisticGroupID: this.cloneParameters.statisticGroupID,
             regressionRegions: {
@@ -306,6 +315,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                     ID: this.cloneParameters.r.id,
                     equation: this.cloneParameters.r.equation.toString(),
                     equivalentYears: this.cloneParameters.r.equivalentYears.toString(),
+                    orderIndex: this.cloneParameters.r.orderIndex.toString(),
+                    DA_Exponent: this.cloneParameters.r.dA_Exponent.toString()
                 } 
             }
         });
@@ -626,6 +637,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public createNewScenario() {
         // post scenario
         this.setUpScenario();
+        console.log(this.scen);
         this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID + '&skipCheck=' + this.skipCheck)
             .subscribe((response: any) => {
                 this.requeryFilters();

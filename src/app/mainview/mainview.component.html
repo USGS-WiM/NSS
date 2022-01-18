@@ -1060,10 +1060,12 @@
 								<thead>
 									<tr>
 										<th class="width-5"></th>
+										<th class="width-5">Order Index</th>
 										<th class="width-10">Name (Code)</th>
-										<th class="width-20">Description</th>
+										<th class="width-15">Description</th>
 										<th class="width-10">Unit</th>
-										<th class="width-15">Errors</th>
+										<th class="width-10">Errors</th>
+										<th class="width-5">DA Index</th>
 										<th class="width-10">Equation</th>
 										<th class="width-10">Equivalent Years</th>
 										<th class="width-20">Prediction Interval</th>
@@ -1099,6 +1101,10 @@
 											<!--<i *ngIf="s.statisticGroupID === 2" title="Move to Low Flow Statistics" (click)="moveToLowFlow(r, rIndex, rrIndex, sgIndex)"
 												class="far fa-exchange" aria-hidden="true" style="cursor:pointer;padding:5px;"></i>-->
 											<!--removing for now, not working in DB-->
+										</td>
+										<td>
+											<span *ngIf="r.orderIndex">{{ r.orderIndex }}</span>
+											<span *ngIf="!r.orderIndex">None</span>
 										</td>
 										<td>
 											<span>{{ r.name }} ({{r.code}})</span>
@@ -1140,6 +1146,10 @@
 												<i class="far fa-plus"></i>
 												<span>Add Error</span>
 											</button>
+										</td>
+										<td>
+											<span *ngIf="r.dA_Exponent">{{ r.dA_Exponent }}</span>
+											<span *ngIf="!r.dA_Exponent">None</span>
 										</td>
 										<td class="equation-cell">
 											<span *ngIf="!r.isEditing" MathJax id="mathJax1">{{ r.equationMathJax }}</span>

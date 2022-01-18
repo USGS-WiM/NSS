@@ -32,6 +32,8 @@ export interface equation {
       unit: { id: number };
       equation: string;
       equivalentYears: number;
+      DA_Exponent: number;
+      orderIndex: number;
       predictionInterval: {
         biasCorrectionFactor: string;
         student_T_Statistic: string;
@@ -198,6 +200,8 @@ public requeryFilters() {
     let regressionVariable;
     let unitType;
     let eYoR;
+    let daExponent;
+    let orderIndex;
     let biasCF;
     let studentT;
     let variance;
@@ -285,6 +289,11 @@ public requeryFilters() {
       } else {
         variance = null;
       }
+      if (data[i][23]) {  // DA_Exponent
+        daExponent = data[i][23];
+      } else {
+        daExponent = null;
+      }
       if (data[i][25]) {  // xiRowVector  
         xiRowVector = data[i][25];
         xiRowVector = "[\"" + xiRowVector + "\"]";
@@ -292,6 +301,11 @@ public requeryFilters() {
         xiRowVector = xiRowVector.replace(/\s/g, "");
       } else {
         xiRowVector = null;
+      }
+      if (data[i][26]) {  // orderIndex
+        orderIndex = data[i][26];
+      } else {
+        orderIndex = null;
       }
       if (data[i][24]) {  
         if (explanatoryVariablesArray = []) { // clear out explanatoryVaraiblesArray
@@ -349,6 +363,8 @@ public requeryFilters() {
               },
               equation: equation,
               equivalentYears: eYoR,
+              DA_Exponent: daExponent,
+              orderIndex: orderIndex,
               predictionInterval: {
                 biasCorrectionFactor: biasCF,
                 student_T_Statistic: studentT,

@@ -77,6 +77,27 @@
 							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.equation').valid && newScenForm.get('regressionRegions.regressions.equation').dirty">Expression
 								is required</div>
 						</div>
+						<!-- Equivalent Years -->
+						<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.equivalentYears').valid && newScenForm.get('regressionRegions.regressions.equivalentYears').dirty}">
+							<label class="req" for="equivalentYears">Equivalent Years:</label><br/>
+							<input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="equivalentYears" required>
+							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.equivalentYears').valid && newScenForm.get('regressionRegions.regressions.equivalentYears').dirty">Equivalent Years
+								is required</div>
+						</div>
+						<!-- DA Exponent -->
+						<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.DA_Exponent').valid && newScenForm.get('regressionRegions.regressions.DA_Exponent').dirty}">
+							<label class="req" for="DA_Exponent">DA Exponent:</label><br/>
+							<input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="DA_Exponent" required>
+							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.DA_Exponent').valid && newScenForm.get('regressionRegions.regressions.DA_Exponent').dirty">DA Exponent
+								is required</div>
+						</div>
+						<!-- Order Index -->
+						<div class="form-group required" [ngClass]="{'form-invalid': !newScenForm.get('regressionRegions.regressions.orderIndex').valid && newScenForm.get('regressionRegions.regressions.orderIndex').dirty}">
+							<label class="req" for="orderIndex">Order Index:</label><br/>
+							<input class="form-control" (keypress)="_keyPress($event)" type="number" formControlName="orderIndex" required>
+							<div class="input-invalid-warning" *ngIf="!newScenForm.get('regressionRegions.regressions.orderIndex').valid && newScenForm.get('regressionRegions.regressions.orderIndex').dirty">Order Index
+								is required</div>
+						</div>
 					</div>
 
 					<!-- Parameters-->

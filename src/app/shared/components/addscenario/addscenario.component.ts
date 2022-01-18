@@ -91,6 +91,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                     'unit': new FormControl(null, Validators.required),
                     'equation': new FormControl(null, Validators.required),
                     'equivalentYears': new FormControl(0),
+                    'DA_Exponent': new FormControl(0),
+                    'orderIndex': new FormControl(0),
                     'predictionInterval': this._fb.group({
                         'biasCorrectionFactor': new FormControl(null),
                         'student_T_Statistic': new FormControl(null),
@@ -298,6 +300,12 @@ export class AddScenarioModal implements OnInit, OnDestroy {
         if(!this.cloneParameters.r.equivalentYears) {
             this.cloneParameters.r.equivalentYears = 0;
         }
+        if(!this.cloneParameters.r.orderIndex) {
+            this.cloneParameters.r.orderIndex = "";
+        }
+        if(!this.cloneParameters.r.dA_Exponent) {
+            this.cloneParameters.r.dA_Exponent = "";
+        }
         this.newScenForm.patchValue({
             statisticGroupID: this.cloneParameters.statisticGroupID,
             regressionRegions: {
@@ -306,6 +314,8 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                     ID: this.cloneParameters.r.id,
                     equation: this.cloneParameters.r.equation.toString(),
                     equivalentYears: this.cloneParameters.r.equivalentYears.toString(),
+                    orderIndex: this.cloneParameters.r.orderIndex.toString(),
+                    DA_Exponent: this.cloneParameters.r.dA_Exponent.toString()
                 } 
             }
         });

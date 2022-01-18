@@ -54,18 +54,21 @@
 							<table class="custom-table">
 								<thead>
 									<tr>
+                                        <th class="width-5">Order Index</th>
 										<th class="width-10">Region</th>
-										<th class="width-15">Statistic Group</th>
+										<th class="width-10">Statistic Group</th>
 										<th class="width-10">Regression Region</th>
 										<th class="width-10">Regression Variable</th>
                                         <th class="width-5">Unit Type</th>
-                                        <th class="width-15">Errors</th>
+                                        <th class="width-10">Errors</th>
+                                        <th class="width-5">DA Exponent</th>
 										<th class="width-10">Equation</th>
 										<th class="width-5">Equiv. Years</th>
                                         <th class="width-20">Prediction Interval</th>
 									</tr>
 								</thead>
 								<tbody>
+                                    <td>{{ e.regressionRegions[0].regressions[0].orderIndex }}</td>
                                     <td>{{ e.region.name }}</td>
                                     <td>{{ e.statisticGroupName }}</td>
                                     <td>{{ e.regressionRegions[0].name }}</td>
@@ -78,6 +81,7 @@
                                         </span>
                                         <span *ngIf="e.regressionRegions[0].regressions[0].errors.length === 0">None</span> 
                                     </td>
+                                    <td>{{ e.regressionRegions[0].regressions[0].DA_Exponent }}</td>
                                     <td>{{ e.regressionRegions[0].regressions[0].equation }}</td>
                                     <td>{{ e.regressionRegions[0].regressions[0].equivalentYears }}</td>
                                     <td> 

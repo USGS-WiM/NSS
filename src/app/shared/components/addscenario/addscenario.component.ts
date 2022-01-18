@@ -286,7 +286,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
 
     //fill the modal when cloning and editing 
     public fillModal() {
-        console.log(this.cloneParameters)
         this.newScenForm.get('region').valueChanges.subscribe(item => {
             if(item != null){
                 this._nssService.setSelectedRegion(item)
@@ -637,7 +636,6 @@ export class AddScenarioModal implements OnInit, OnDestroy {
     public createNewScenario() {
         // post scenario
         this.setUpScenario();
-        console.log(this.scen);
         this._settingsService.postEntity(this.scen, this.configSettings.nssBaseURL + this.configSettings.scenariosURL + '?statisticgroupIDorCode=' + this.scen.statisticGroupID + '&skipCheck=' + this.skipCheck)
             .subscribe((response: any) => {
                 this.requeryFilters();

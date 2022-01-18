@@ -302,10 +302,10 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             this.cloneParameters.r.equivalentYears = 0;
         }
         if(!this.cloneParameters.r.orderIndex) {
-            this.cloneParameters.r.orderIndex = 1;
+            this.cloneParameters.r.orderIndex = "";
         }
         if(!this.cloneParameters.r.dA_Exponent) {
-            this.cloneParameters.r.dA_Exponent = 1;
+            this.cloneParameters.r.dA_Exponent = "";
         }
         this.newScenForm.patchValue({
             statisticGroupID: this.cloneParameters.statisticGroupID,

@@ -2138,7 +2138,7 @@ module.exports = "<div id=\"printArea\" class = \"app-content\">\r\n\r\n    <!--
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"gs-sidebar-content\">\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Search by keyword:</label>\r\n            <input type=\"text\" [(ngModel)]=\"keyword\" (keyup)=\"onKeySearch($event)\" placeholder=\"Search\">\r\n    </div>\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Study Area:</label>\r\n        <ss-multiselect-dropdown [options]=\"regions\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedRegions\" (ngModelChange)=\"onSearch()\" name=\"regions\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Station Type:</label>\r\n        <ss-multiselect-dropdown [options]=\"stationTypes\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedStationTypes\" (ngModelChange)=\"onSearch()\" name=\"stationTypes\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n    \r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Agency:</label>\r\n        <ss-multiselect-dropdown [options]=\"agencies\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedAgencies\" (ngModelChange)=\"onSearch()\" name=\"agencies\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Statistic Groups:</label>\r\n        <ss-multiselect-dropdown [options]=\"statisticGroups\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedStatisticGroups\" (ngModelChange)=\"onSearch()\" name=\"statisticGroups\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Statistic Variables:</label>\r\n        <ss-multiselect-dropdown [options]=\"regressionTypes\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedRegressionTypes\" (ngModelChange)=\"onSearch()\" name=\"regressionTypes\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Characteristic Variables:</label>\r\n        <ss-multiselect-dropdown [options]=\"variableTypes\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedVariableTypes\" (ngModelChange)=\"onSearch()\" name=\"variableTypes\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n\r\n    <!-- Fix This -->\r\n    <div class=\"sidebar-item center\" *ngIf=\"keyword!='' || selectedAgencies.length > 0 || selectedRegions.length > 0 || selectedStationTypes.length > 0 || selectedStatisticGroups.length > 0 || selectedRegressionTypes.length > 0 || selectedVariableTypes.length > 0\" >\r\n        <button type=\"button\" class=\"button blue small\" (click)=\"clearGagestatsFilters()\">\r\n\t\t\t<i class=\"far fa-times\"></i>\r\n\t\t\t<span>Reset Filters</span>\r\n\t\t</button>\r\n    </div>\r\n\r\n    \t<!-- Spacer - fills space to align footer at bottom -->\r\n\t<div class=\"flex-spacer\"></div>\r\n\r\n    <div class=\"sidebar-footer\">\r\n        <div class=\"identification\">Powered by <a href=\"https://wim.usgs.gov/\" target=\"_blank\">WIM <img alt=\"WIM logo\" src=\"assets/img/favicon-pin.png\"/></a></div>\r\n        <div class=\"sidebar-footer-links\">\r\n            <a href=\"https://usgs.gov\" target=\"_blank\">USGS Home</a><a href=\"https://answers.usgs.gov\" target=\"_blank\">Contact\r\n                USGS</a>\r\n            <a href=\"https://search.usgs.gov\" target=\"_blank\">Search USGS</a>\r\n            <a href=\"https://www2.usgs.gov/laws/accessibility.html\" target=\"_blank\">Accessibility</a>\r\n            <a href=\"https://www2.usgs.gov/foia/\" target=\"_blank\">FOIA</a>\r\n            <a href=\"https://www2.usgs.gov/laws/privacy.html\" target=\"_blank\">Privacy</a>\r\n            <a href=\"https://www2.usgs.gov/laws/policies_notices.html\" target=\"_blank\">Policies &amp; Notices</a>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n"
+module.exports = "<div class=\"gs-sidebar-content\">\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Search by keyword:</label>\r\n            <input type=\"text\" [(ngModel)]=\"keyword\" (keyup)=\"onKeySearch($event)\" placeholder=\"Search\">\r\n    </div>\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Study Area:</label>\r\n        <ss-multiselect-dropdown [options]=\"regions\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedRegions\" (ngModelChange)=\"onSearch()\" name=\"regions\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Station Type:</label>\r\n        <ss-multiselect-dropdown [options]=\"stationTypes\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedStationTypes\" (ngModelChange)=\"onSearch()\" name=\"stationTypes\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n    \r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Agency:</label>\r\n        <ss-multiselect-dropdown [options]=\"agencies\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedAgencies\" (ngModelChange)=\"onSearch()\" name=\"agencies\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Statistic Groups:</label>\r\n        <ss-multiselect-dropdown [options]=\"statisticGroups\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedStatisticGroups\" (ngModelChange)=\"onSearch()\" name=\"statisticGroups\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Statistic Variables:</label>\r\n        <ss-multiselect-dropdown [options]=\"regressionTypes\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedRegressionTypes\" (ngModelChange)=\"onSearch()\" name=\"regressionTypes\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n\r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Characteristic Variables:</label>\r\n        <ss-multiselect-dropdown [options]=\"variableTypes\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedVariableTypes\" (ngModelChange)=\"onSearch()\" name=\"variableTypes\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n    \r\n    <div class=\"sidebar-item\">\r\n        <label>Limit by Regulation Status:</label>\r\n        <ss-multiselect-dropdown [options]=\"regulationStatuses\" [texts]=\"myMSTexts\" [settings]=\"myRTSettings\"\r\n        [(ngModel)]=\"selectedRegulationStatuses\" (ngModelChange)=\"onSearch()\" name=\"regulationStatuses\">\r\n        </ss-multiselect-dropdown>\r\n    </div>\r\n\r\n    <!-- Fix This -->\r\n    <div class=\"sidebar-item center\" *ngIf=\"keyword!='' || selectedAgencies.length > 0 || selectedRegions.length > 0 || selectedStationTypes.length > 0 || selectedStatisticGroups.length > 0 || selectedRegressionTypes.length > 0 || selectedVariableTypes.length > 0 || selectedRegulationStatuses.length > 0\" >\r\n        <button type=\"button\" class=\"button blue small\" (click)=\"clearGagestatsFilters()\">\r\n\t\t\t<i class=\"far fa-times\"></i>\r\n\t\t\t<span>Reset Filters</span>\r\n\t\t</button>\r\n    </div>\r\n\r\n    \t<!-- Spacer - fills space to align footer at bottom -->\r\n\t<div class=\"flex-spacer\"></div>\r\n\r\n    <div class=\"sidebar-footer\">\r\n        <div class=\"identification\">Powered by <a href=\"https://wim.usgs.gov/\" target=\"_blank\">WIM <img alt=\"WIM logo\" src=\"assets/img/favicon-pin.png\"/></a></div>\r\n        <div class=\"sidebar-footer-links\">\r\n            <a href=\"https://usgs.gov\" target=\"_blank\">USGS Home</a><a href=\"https://answers.usgs.gov\" target=\"_blank\">Contact\r\n                USGS</a>\r\n            <a href=\"https://search.usgs.gov\" target=\"_blank\">Search USGS</a>\r\n            <a href=\"https://www2.usgs.gov/laws/accessibility.html\" target=\"_blank\">Accessibility</a>\r\n            <a href=\"https://www2.usgs.gov/foia/\" target=\"_blank\">FOIA</a>\r\n            <a href=\"https://www2.usgs.gov/laws/privacy.html\" target=\"_blank\">Privacy</a>\r\n            <a href=\"https://www2.usgs.gov/laws/policies_notices.html\" target=\"_blank\">Policies &amp; Notices</a>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n"
 
 /***/ }),
 
@@ -2380,7 +2380,7 @@ module.exports = "<!-- Sidebar -->\r\n<!-- Hidden on mobile, toggled with button
 /*! exports provided: name, version, license, scripts, private, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"nss\",\"version\":\"1.1.0\",\"license\":\"MIT\",\"scripts\":{\"ng\":\"ng\",\"start\":\"ng serve\",\"build\":\"npm install && ng build --base-href\",\"build-prod\":\"npm install && ng build --prod --base-href\",\"test\":\"ng test\",\"lint\":\"ng lint\",\"e2e\":\"ng e2e\"},\"private\":true,\"dependencies\":{\"@angular/animations\":\"8.2.14\",\"@angular/cdk\":\"^8.2.3\",\"@angular/cli\":\"^8.3.25\",\"@angular/common\":\"8.2.14\",\"@angular/compiler\":\"8.2.14\",\"@angular/core\":\"8.2.14\",\"@angular/forms\":\"8.2.14\",\"@angular/material\":\"^8.2.3\",\"@angular/platform-browser\":\"8.2.14\",\"@angular/platform-browser-dynamic\":\"8.2.14\",\"@angular/platform-server\":\"8.2.14\",\"@angular/router\":\"8.2.14\",\"@ng-bootstrap/ng-bootstrap\":\"~4.0.0\",\"@ng-select/ng-select\":\"^3.7.3\",\"angular-2-dropdown-multiselect\":\"^1.0.8\",\"angular-jwt\":\"^0.1.11\",\"angular2-highcharts\":\"^0.5.5\",\"angular2-toaster\":\"^8.0.0\",\"bootstrap\":\"4.0.0-alpha.6\",\"core-js\":\"^2.4.1\",\"esri-leaflet\":\"^2.1.2\",\"font-awesome\":\"^4.7.0\",\"leaflet\":\"^1.3.1\",\"mathjax\":\"^2.7.0\",\"ngx-color-picker\":\"^4.0.0\",\"rxjs\":\"^6.2.2\",\"rxjs-compat\":\"^6.2.2\",\"shpjs\":\"^3.4.3\",\"tslib\":\"^1.9.0\",\"v8\":\"^0.1.0\",\"xlsx\":\"^0.17.0\",\"zone.js\":\"~0.9.1\"},\"devDependencies\":{\"@angular-devkit/build-angular\":\"~0.802.2\",\"@angular/compiler-cli\":\"8.2.14\",\"@types/jasmine\":\"2.5.38\",\"@types/mathjax\":\"0.0.31\",\"@types/node\":\"~6.0.60\",\"angular-2-dropdown-multiselect\":\"^1.3.2\",\"codelyzer\":\"^5.0.1\",\"jasmine-core\":\"~2.5.2\",\"jasmine-spec-reporter\":\"~3.2.0\",\"karma\":\"~1.4.1\",\"karma-chrome-launcher\":\"~2.0.0\",\"karma-cli\":\"~1.0.1\",\"karma-coverage-istanbul-reporter\":\"^0.2.0\",\"karma-jasmine\":\"~1.1.0\",\"karma-jasmine-html-reporter\":\"^0.2.2\",\"protractor\":\"~5.1.0\",\"ts-node\":\"~2.0.0\",\"tslint\":\"~4.5.0\",\"typescript\":\"3.5.3\"}}");
+module.exports = JSON.parse("{\"name\":\"nss\",\"version\":\"1.1.0\",\"license\":\"MIT\",\"scripts\":{\"ng\":\"ng\",\"start\":\"ng serve\",\"build\":\"npm install && ng build --base-href\",\"build-prod\":\"npm install && ng build --prod --base-href\",\"test\":\"ng test\",\"lint\":\"ng lint\",\"e2e\":\"ng e2e\"},\"private\":true,\"dependencies\":{\"@angular/animations\":\"8.2.14\",\"@angular/cdk\":\"^8.2.3\",\"@angular/cli\":\"^8.3.25\",\"@angular/common\":\"8.2.14\",\"@angular/compiler\":\"8.2.14\",\"@angular/core\":\"8.2.14\",\"@angular/forms\":\"8.2.14\",\"@angular/material\":\"^8.2.3\",\"@angular/platform-browser\":\"8.2.14\",\"@angular/platform-browser-dynamic\":\"8.2.14\",\"@angular/platform-server\":\"8.2.14\",\"@angular/router\":\"8.2.14\",\"@ng-bootstrap/ng-bootstrap\":\"~4.0.0\",\"@ng-select/ng-select\":\"^3.7.3\",\"angular-2-dropdown-multiselect\":\"^1.0.8\",\"angular-jwt\":\"^0.1.11\",\"angular2-highcharts\":\"^0.5.5\",\"angular2-toaster\":\"^8.0.0\",\"bootstrap\":\"4.0.0-alpha.6\",\"core-js\":\"^2.4.1\",\"esri-leaflet\":\"^2.1.2\",\"font-awesome\":\"^4.7.0\",\"leaflet\":\"^1.3.1\",\"mathjax\":\"^2.7.0\",\"ngx-color-picker\":\"^4.0.0\",\"rxjs\":\"^6.2.2\",\"rxjs-compat\":\"^6.2.2\",\"shpjs\":\"^3.4.3\",\"tslib\":\"^1.9.0\",\"v8\":\"^0.1.0\",\"xlsx\":\"^0.17.0\",\"zone.js\":\"~0.9.1\"},\"devDependencies\":{\"@angular-devkit/build-angular\":\"~0.802.2\",\"@angular/compiler-cli\":\"8.2.14\",\"@types/jasmine\":\"2.5.38\",\"@types/mathjax\":\"0.0.31\",\"@types/node\":\"~6.0.60\",\"angular-2-dropdown-multiselect\":\"^1.3.2\",\"codelyzer\":\"^5.0.1\",\"jasmine-core\":\"~2.5.2\",\"jasmine-spec-reporter\":\"~3.2.0\",\"karma\":\"~6.3.16\",\"karma-chrome-launcher\":\"~2.0.0\",\"karma-cli\":\"~1.0.1\",\"karma-coverage-istanbul-reporter\":\"^0.2.0\",\"karma-jasmine\":\"~1.1.0\",\"karma-jasmine-html-reporter\":\"^0.2.2\",\"protractor\":\"~5.1.0\",\"ts-node\":\"~2.0.0\",\"tslint\":\"~4.5.0\",\"typescript\":\"3.5.3\"}}");
 
 /***/ }),
 
@@ -3281,203 +3281,288 @@ var BatchUploadComponentGS = /** @class */ (function () {
     };
     ////////////////// Create and Submit HTTP POST Request ////////////////////////
     BatchUploadComponentGS.prototype.verifyData = function () {
-        var _this = this;
-        this.changeDropdownOptions();
-        delete (this.records);
-        this.errorList = [];
-        var rowID = 0;
-        this.tableData.forEach(function (row) {
-            if (row == _this.tableData[0]) { // If this is the header row
-                var cellID = 0;
-                row.forEach(function (cell) {
-                    if (cell == undefined) { // If the cell value is null
-                        _this.errorList.push({ 'name': _this.tableData[0][cellID] }, { rowID: rowID, cellID: cellID }, { 'type': null }); // Add this to the errorlist
-                        _this.fullHeaders = false;
-                        cellID++;
-                    }
-                    else {
-                        cellID++;
-                    }
-                });
-                rowID += 1;
-            }
-            else {
-                var cellID = 0;
-                var record;
-                row.forEach(function (cell) {
-                    if (cell == null) {
-                        var item = '"' + _this.tableData[0][cellID] + '": ' + null + ''; // Assign the headers as the keys, the values as values
-                    }
-                    else {
-                        var item = '"' + _this.tableData[0][cellID] + '": "' + cell + '"'; // Assign the headers as the keys, the values as values
-                    }
-                    if (cellID == 0) {
-                        record = item;
-                        cellID++;
-                    }
-                    else {
-                        record = record + ', ' + item;
-                        cellID++;
-                    }
-                });
-                var recordObj = JSON.parse('{' + record + '}'); // Parse strings into JSON objects
-                delete recordObj.null; // Delete any columns which were not assigned a header
-                if (_this.uploadStations) { // If stations are being uploaded...  
-                    _this.url = "stations/Batch";
-                    if (recordObj.code) {
-                        var cellIndex = Object.keys(recordObj).indexOf('code');
-                        _this.checkStation(recordObj, rowID, cellIndex);
-                    }
-                    if (recordObj.agencyID) {
-                        var cellIndex = Object.keys(recordObj).indexOf('agencyID');
-                        recordObj.agencyID = _this.getVariableID(_this.agencies, recordObj.agencyID, rowID, cellIndex);
-                    }
-                    if (recordObj.stationTypeID) {
-                        var cellIndex = Object.keys(recordObj).indexOf('stationTypeID');
-                        recordObj.stationTypeID = _this.getVariableID(_this.stationTypes, recordObj.stationTypeID, rowID, cellIndex);
-                    }
-                    if (recordObj.regionID) {
-                        var cellIndex = Object.keys(recordObj).indexOf('regionID');
-                        recordObj.regionID = _this.getVariableID(_this.regions, recordObj.regionID, rowID, cellIndex);
-                    }
-                    if (recordObj.isRegulated) {
-                        var x = _this.getTrueFalse(recordObj.isRegulated);
-                        recordObj.isRegulated = x;
-                    }
-                    var location_1 = { type: 'Point', coordinates: [parseFloat(recordObj.longitude), parseFloat(recordObj.latitude)] }; // Add location item
-                    delete recordObj.latitude; // Delete old location items
-                    delete recordObj.longitude;
-                    recordObj = tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"]({}, recordObj, { 'location': location_1 });
-                }
-                if (_this.uploadStats) { // If stats are being uploaded...
-                    _this.url = "statistics/batch";
-                    if (recordObj.statisticGroupTypeID) {
-                        var cellIndex = Object.keys(recordObj).indexOf('statisticGroupTypeID');
-                        recordObj.statisticGroupTypeID = _this.getVariableID(_this.statisticGroupTypes, recordObj.statisticGroupTypeID, rowID, cellIndex);
-                    }
-                    ;
-                    if (recordObj.regressionTypeID) {
-                        var cellIndex = Object.keys(recordObj).indexOf('regressionTypeID');
-                        recordObj.regressionTypeID = _this.getVariableID(_this.regressionTypes, recordObj.regressionTypeID, rowID, cellIndex);
-                    }
-                    ;
-                    if (recordObj.unitTypeID) {
-                        var cellIndex = Object.keys(recordObj).indexOf('unitTypeID');
-                        recordObj.unitTypeID = _this.getVariableID(_this.unitTypes, recordObj.unitTypeID, rowID, cellIndex);
-                    }
-                    if (recordObj.citationID) {
-                        var cellIndex = Object.keys(recordObj).indexOf('citationID');
-                        recordObj.citationID = _this.getVariableID(_this.citations, recordObj.citationID, rowID, cellIndex);
-                    }
-                    ;
-                    if (recordObj.isPreferred) {
-                        var x = _this.getTrueFalse(recordObj.isPreferred);
-                        recordObj.isPreferred = x;
-                    }
-                    if (recordObj.code) {
-                        var cellIndex = Object.keys(recordObj).indexOf('code');
-                        _this.getStationID(recordObj, rowID, cellIndex);
-                    }
-                    if (!recordObj.startDate || !recordObj.endDate) {
-                        if (recordObj.startDate) {
-                            recordObj.comments = 'Statistic Start Date: ' + recordObj.startDate + '.';
+        return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
+            var rowID, stationList, _a, _b, row, cellID, cellID, record, recordObj, cellIndex, cellIndex, cellIndex, cellIndex, x, location_1, cellIndex, cellIndex, cellIndex, cellIndex, x, cellIndex, _c, cellIndex, cellIndex, cellIndex, cellIndex, _d, e_1_1;
+            var e_1, _e;
+            var _this = this;
+            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_f) {
+                switch (_f.label) {
+                    case 0:
+                        this._loaderService.showFullPageLoad();
+                        this.changeDropdownOptions();
+                        delete (this.records);
+                        this.errorList = [];
+                        rowID = 0;
+                        stationList = {};
+                        _f.label = 1;
+                    case 1:
+                        _f.trys.push([1, 13, 14, 15]);
+                        _a = tslib__WEBPACK_IMPORTED_MODULE_0__["__values"](this.tableData), _b = _a.next();
+                        _f.label = 2;
+                    case 2:
+                        if (!!_b.done) return [3 /*break*/, 12];
+                        row = _b.value;
+                        if (!(row == this.tableData[0])) return [3 /*break*/, 3];
+                        cellID = 0;
+                        row.forEach(function (cell) {
+                            if (cell == undefined) { // If the cell value is null
+                                _this.errorList.push({ 'name': _this.tableData[0][cellID] }, { rowID: rowID, cellID: cellID }, { 'type': null }); // Add this to the errorlist
+                                _this.fullHeaders = false;
+                                cellID++;
+                            }
+                            else {
+                                cellID++;
+                            }
+                        });
+                        rowID += 1;
+                        return [3 /*break*/, 11];
+                    case 3:
+                        cellID = 0;
+                        row.forEach(function (cell) {
+                            if (cell == null) {
+                                var item = '"' + _this.tableData[0][cellID] + '": ' + null + ''; // Assign the headers as the keys, the values as values
+                            }
+                            else {
+                                var item = '"' + _this.tableData[0][cellID] + '": "' + cell + '"'; // Assign the headers as the keys, the values as values
+                            }
+                            if (cellID == 0) {
+                                record = item;
+                                cellID++;
+                            }
+                            else {
+                                record = record + ', ' + item;
+                                cellID++;
+                            }
+                        });
+                        recordObj = JSON.parse('{' + record + '}');
+                        delete recordObj.null; // Delete any columns which were not assigned a header
+                        if (this.uploadStations) { // If stations are being uploaded...  
+                            this.url = "stations/Batch";
+                            if (recordObj.code) {
+                                cellIndex = Object.keys(recordObj).indexOf('code');
+                                this.checkStation(recordObj, rowID, cellIndex);
+                            }
+                            if (recordObj.agencyID) {
+                                cellIndex = Object.keys(recordObj).indexOf('agencyID');
+                                recordObj.agencyID = this.getVariableID(this.agencies, recordObj.agencyID, rowID, cellIndex);
+                            }
+                            if (recordObj.stationTypeID) {
+                                cellIndex = Object.keys(recordObj).indexOf('stationTypeID');
+                                recordObj.stationTypeID = this.getVariableID(this.stationTypes, recordObj.stationTypeID, rowID, cellIndex);
+                            }
+                            if (recordObj.regionID) {
+                                cellIndex = Object.keys(recordObj).indexOf('regionID');
+                                recordObj.regionID = this.getVariableID(this.regions, recordObj.regionID, rowID, cellIndex);
+                            }
+                            if (recordObj.isRegulated) {
+                                x = this.getTrueFalse(recordObj.isRegulated);
+                                recordObj.isRegulated = x;
+                            }
+                            location_1 = { type: 'Point', coordinates: [parseFloat(recordObj.longitude), parseFloat(recordObj.latitude)] };
+                            delete recordObj.latitude; // Delete old location items
+                            delete recordObj.longitude;
+                            recordObj = tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"]({}, recordObj, { 'location': location_1 });
                         }
-                        if (recordObj.endDate) {
-                            recordObj.comments = 'Statistic End Date: ' + recordObj.endDate + '.';
+                        if (!this.uploadStats) return [3 /*break*/, 7];
+                        this.url = "statistics/batch";
+                        if (recordObj.statisticGroupTypeID) {
+                            cellIndex = Object.keys(recordObj).indexOf('statisticGroupTypeID');
+                            recordObj.statisticGroupTypeID = this.getVariableID(this.statisticGroupTypes, recordObj.statisticGroupTypeID, rowID, cellIndex);
                         }
-                    }
-                    if (recordObj.startDate && recordObj.endDate) {
-                        recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
-                    }
-                    if (recordObj.yearsofRecord === 'null') {
-                        recordObj.yearsofRecord = null;
-                    }
-                    if (recordObj.remarks === 'null') {
-                        if (!recordObj.startDate && !recordObj.endDate) { } // If no comments or remarks, do nothing
+                        ;
+                        if (recordObj.regressionTypeID) {
+                            cellIndex = Object.keys(recordObj).indexOf('regressionTypeID');
+                            recordObj.regressionTypeID = this.getVariableID(this.regressionTypes, recordObj.regressionTypeID, rowID, cellIndex);
+                        }
+                        ;
+                        if (recordObj.unitTypeID) {
+                            cellIndex = Object.keys(recordObj).indexOf('unitTypeID');
+                            recordObj.unitTypeID = this.getVariableID(this.unitTypes, recordObj.unitTypeID, rowID, cellIndex);
+                        }
+                        if (recordObj.citationID) {
+                            cellIndex = Object.keys(recordObj).indexOf('citationID');
+                            recordObj.citationID = this.getVariableID(this.citations, recordObj.citationID, rowID, cellIndex);
+                        }
+                        ;
+                        if (recordObj.isPreferred) {
+                            x = this.getTrueFalse(recordObj.isPreferred);
+                            recordObj.isPreferred = x;
+                        }
+                        if (!recordObj.code) return [3 /*break*/, 6];
+                        cellIndex = Object.keys(recordObj).indexOf('code');
+                        if (!(recordObj.code in stationList)) return [3 /*break*/, 4];
+                        recordObj.stationID = stationList[recordObj.code];
+                        return [3 /*break*/, 6];
+                    case 4:
+                        /////// Check to see if a Station Code exists/////////
+                        _c = this;
+                        return [4 /*yield*/, this._settingsService
+                                .getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + recordObj.code)
+                                .toPromise()
+                                .catch(function (err) {
+                                _this.errorList.push({ 'name': _this.tableData[rowID][cellIndex] }, { rowID: rowID, cellIndex: cellIndex }, { 'type': null });
+                                if (err.headers) {
+                                    _this._nssService.outputWimMessages(err);
+                                }
+                                else {
+                                    _this._nssService.handleError(err);
+                                }
+                            })];
+                    case 5:
+                        /////// Check to see if a Station Code exists/////////
+                        _c.station = _f.sent();
+                        if (typeof this.station !== "undefined") {
+                            recordObj.stationID = this.station.id;
+                            stationList[recordObj.code] = recordObj.stationID;
+                        }
+                        _f.label = 6;
+                    case 6:
+                        if (!recordObj.startDate || !recordObj.endDate) {
+                            if (recordObj.startDate) {
+                                recordObj.comments = 'Statistic Start Date: ' + recordObj.startDate + '.';
+                            }
+                            if (recordObj.endDate) {
+                                recordObj.comments = 'Statistic End Date: ' + recordObj.endDate + '.';
+                            }
+                        }
+                        if (recordObj.startDate && recordObj.endDate) {
+                            recordObj.comments = 'Statistic Date Range: ' + recordObj.startDate + ' - ' + recordObj.endDate + '.';
+                        }
+                        if (recordObj.yearsofRecord === 'null') {
+                            recordObj.yearsofRecord = null;
+                        }
+                        if (recordObj.remarks === 'null') {
+                            if (!recordObj.startDate && !recordObj.endDate) { } // If no comments or remarks, do nothing
+                            else {
+                                recordObj.comments = recordObj.comments;
+                            }
+                        }
+                        if (recordObj.remarks !== 'null') {
+                            if (!recordObj.startDate && !recordObj.endDate) {
+                                recordObj.comments = recordObj.remarks;
+                            }
+                            else {
+                                recordObj.comments = recordObj.comments + ' ' + recordObj.remarks;
+                            }
+                        }
+                        delete (recordObj.remarks), delete (recordObj.startDate), delete (recordObj.endDate);
+                        if (recordObj.variance || recordObj.lowerConfidenceInterval || recordObj.upperConfidenceInterval) {
+                            recordObj.predictionInterval = {
+                                "variance": recordObj.variance,
+                                "lowerConfidenceInterval": recordObj.lowerConfidenceInterval,
+                                "upperConfidenceInterval": recordObj.upperConfidenceInterval
+                            };
+                            delete (recordObj.variance), delete (recordObj.lowerConfidenceInterval), delete (recordObj.upperConfidenceInterval);
+                        }
+                        if (recordObj.PC || recordObj.SE || recordObj.SEp) {
+                            recordObj.statisticErrors = [];
+                            if (recordObj.PC != undefined) {
+                                recordObj.statisticErrors.push({ "PC": recordObj.PC });
+                            }
+                            ;
+                            if (recordObj.SE != undefined) {
+                                recordObj.statisticErrors.push({ "SE": recordObj.SE });
+                            }
+                            ;
+                            if (recordObj.SEp != undefined) {
+                                recordObj.statisticErrors.push({ "SEp": recordObj.SEp });
+                            }
+                            ;
+                            delete (recordObj.PC), delete (recordObj.SE), delete (recordObj.SEp);
+                        }
+                        _f.label = 7;
+                    case 7:
+                        if (!this.uploadChars) return [3 /*break*/, 10];
+                        this.url = "characteristics/batch";
+                        if (recordObj.unitTypeID) {
+                            cellIndex = Object.keys(recordObj).indexOf('unitTypeID');
+                            recordObj.unitTypeID = this.getVariableID(this.unitTypes, recordObj.unitTypeID, rowID, cellIndex);
+                        }
+                        if (recordObj.variableTypeID) {
+                            cellIndex = Object.keys(recordObj).indexOf('variableTypeID');
+                            recordObj.variableTypeID = this.getVariableID(this.variableTypes, recordObj.variableTypeID, rowID, cellIndex);
+                        }
+                        if (recordObj.citationID) {
+                            cellIndex = Object.keys(recordObj).indexOf('citationID');
+                            recordObj.citationID = this.getVariableID(this.citations, recordObj.citationID, rowID, cellIndex);
+                        }
+                        ;
+                        if (!recordObj.code) return [3 /*break*/, 10];
+                        cellIndex = Object.keys(recordObj).indexOf('code');
+                        if (!(recordObj.code in stationList)) return [3 /*break*/, 8];
+                        recordObj.stationID = stationList[recordObj.code];
+                        return [3 /*break*/, 10];
+                    case 8:
+                        /////// Check to see if a Station Code exists/////////
+                        _d = this;
+                        return [4 /*yield*/, this._settingsService
+                                .getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + recordObj.code)
+                                .toPromise()
+                                .catch(function (err) {
+                                _this.errorList.push({ 'name': _this.tableData[rowID][cellIndex] }, { rowID: rowID, cellIndex: cellIndex }, { 'type': null });
+                                if (err.headers) {
+                                    _this._nssService.outputWimMessages(err);
+                                }
+                                else {
+                                    _this._nssService.handleError(err);
+                                }
+                            })];
+                    case 9:
+                        /////// Check to see if a Station Code exists/////////
+                        _d.station = _f.sent();
+                        if (typeof this.station !== "undefined") {
+                            recordObj.stationID = this.station.id;
+                            stationList[recordObj.code] = recordObj.stationID;
+                        }
+                        _f.label = 10;
+                    case 10:
+                        rowID += 1;
+                        if (this.records == null) { // Group record objects into an array of records
+                            this.records = [recordObj];
+                        }
                         else {
-                            recordObj.comments = recordObj.comments;
+                            this.records = tslib__WEBPACK_IMPORTED_MODULE_0__["__spread"](this.records, [recordObj]);
                         }
-                    }
-                    if (recordObj.remarks !== 'null') {
-                        if (!recordObj.startDate && !recordObj.endDate) {
-                            recordObj.comments = recordObj.remarks;
+                        _f.label = 11;
+                    case 11:
+                        _b = _a.next();
+                        return [3 /*break*/, 2];
+                    case 12: return [3 /*break*/, 15];
+                    case 13:
+                        e_1_1 = _f.sent();
+                        e_1 = { error: e_1_1 };
+                        return [3 /*break*/, 15];
+                    case 14:
+                        try {
+                            if (_b && !_b.done && (_e = _a.return)) _e.call(_a);
                         }
-                        else {
-                            recordObj.comments = recordObj.comments + ' ' + recordObj.remarks;
-                        }
-                    }
-                    delete (recordObj.remarks), delete (recordObj.startDate), delete (recordObj.endDate);
-                    if (recordObj.variance || recordObj.lowerConfidenceInterval || recordObj.upperConfidenceInterval) {
-                        recordObj.predictionInterval = {
-                            "variance": recordObj.variance,
-                            "lowerConfidenceInterval": recordObj.lowerConfidenceInterval,
-                            "upperConfidenceInterval": recordObj.upperConfidenceInterval
-                        };
-                        delete (recordObj.variance), delete (recordObj.lowerConfidenceInterval), delete (recordObj.upperConfidenceInterval);
-                    }
-                    if (recordObj.PC || recordObj.SE || recordObj.SEp) {
-                        recordObj.statisticErrors = [];
-                        if (recordObj.PC != undefined) {
-                            recordObj.statisticErrors.push({ "PC": recordObj.PC });
-                        }
+                        finally { if (e_1) throw e_1.error; }
+                        return [7 /*endfinally*/];
+                    case 15:
                         ;
-                        if (recordObj.SE != undefined) {
-                            recordObj.statisticErrors.push({ "SE": recordObj.SE });
+                        if (this.uploadStations) {
+                            this.checkForRequiredColumns(this.stationChars);
                         }
-                        ;
-                        if (recordObj.SEp != undefined) {
-                            recordObj.statisticErrors.push({ "SEp": recordObj.SEp });
+                        if (this.uploadStats) {
+                            this.checkForRequiredColumns(this.statChars);
                         }
-                        ;
-                        delete (recordObj.PC), delete (recordObj.SE), delete (recordObj.SEp);
-                    }
+                        if (this.uploadChars) {
+                            this.checkForRequiredColumns(this.charChars);
+                        }
+                        if (this.errorList.length == 0) {
+                            this.disableSubmit = false;
+                            this._toasterService.pop('info', 'Info', 'Excellent! No errors were detected. Data is ready for submission.');
+                        }
+                        if (this.errorList.length > 0) {
+                            this.disableSubmit = true;
+                            this._toasterService.pop('info', 'Info', 'Error! ' + (this.errorList.length / 3) + ' errors were detected.');
+                            console.log(this.errorList);
+                        }
+                        this._loaderService.hideFullPageLoad();
+                        return [2 /*return*/];
                 }
-                if (_this.uploadChars) { // If chars are being uploaded... 
-                    _this.url = "characteristics/batch";
-                    if (recordObj.unitTypeID) {
-                        var cellIndex = Object.keys(recordObj).indexOf('unitTypeID');
-                        recordObj.unitTypeID = _this.getVariableID(_this.unitTypes, recordObj.unitTypeID, rowID, cellIndex);
-                    }
-                    if (recordObj.variableTypeID) {
-                        var cellIndex = Object.keys(recordObj).indexOf('variableTypeID');
-                        recordObj.variableTypeID = _this.getVariableID(_this.variableTypes, recordObj.variableTypeID, rowID, cellIndex);
-                    }
-                    if (recordObj.citationID) {
-                        var cellIndex = Object.keys(recordObj).indexOf('citationID');
-                        recordObj.citationID = _this.getVariableID(_this.citations, recordObj.citationID, rowID, cellIndex);
-                    }
-                    ;
-                    if (recordObj.code) {
-                        var cellIndex = Object.keys(recordObj).indexOf('code');
-                        _this.getStationID(recordObj, rowID, cellIndex);
-                    }
-                }
-                rowID += 1;
-                if (_this.records == null) { // Group record objects into an array of records
-                    _this.records = [recordObj];
-                }
-                else {
-                    _this.records = tslib__WEBPACK_IMPORTED_MODULE_0__["__spread"](_this.records, [recordObj]);
-                }
-            }
+            });
         });
-        if (this.uploadStations) {
-            this.checkForRequiredColumns(this.stationChars);
-        }
-        if (this.uploadStats) {
-            this.checkForRequiredColumns(this.statChars);
-        }
-        if (this.uploadChars) {
-            this.checkForRequiredColumns(this.charChars);
-        }
-        if (this.errorList.length == 0) {
-            this.disableSubmit = false;
-            this._toasterService.pop('info', 'Info', 'Excellent! No errors were detected. Data is ready for submission.');
-        }
-        if (this.errorList.length > 0) {
-            this.disableSubmit = true;
-            this._toasterService.pop('info', 'Info', 'Error! ' + (this.errorList.length / 3) + ' errors were detected.');
-        }
     };
     BatchUploadComponentGS.prototype.checkForRequiredColumns = function (charList) {
         var requiredChars = [];
@@ -3512,7 +3597,7 @@ var BatchUploadComponentGS = /** @class */ (function () {
             }
         }, function (error) {
             _this._loaderService.hideFullPageLoad();
-            _this._settingsService.outputWimMessages(error);
+            _this._toasterService.pop('error', 'Error', 'An error occured');
         });
         this.clearTable();
         this._nssService.searchStations(this.selectedParams);
@@ -3539,24 +3624,6 @@ var BatchUploadComponentGS = /** @class */ (function () {
                 this.errorList.push({ 'name': this.tableData[rowID][cellID] }, { rowID: rowID, cellID: cellID }, { 'type': listName });
             }
         }
-    };
-    /////// Check to see if a Station Code exists/////////
-    BatchUploadComponentGS.prototype.getStationID = function (obj, rowID, cellID) {
-        var _this = this;
-        var station;
-        this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code)
-            .subscribe(function (s) {
-            station = s;
-            return obj.stationID = station.id;
-        }, function (error) {
-            _this.errorList.push({ 'name': _this.tableData[rowID][cellID] }, { rowID: rowID, cellID: cellID }, { 'type': null });
-            if (error.headers) {
-                _this._nssService.outputWimMessages(error);
-            }
-            else {
-                _this._nssService.handleError(error);
-            }
-        });
     };
     BatchUploadComponentGS.prototype.checkStation = function (obj, rowID, cellID) {
         var _this = this;
@@ -4442,6 +4509,7 @@ var GsSidebarComponent = /** @class */ (function () {
         this.selectedStatisticGroups = [];
         this.selectedRegressionTypes = [];
         this.selectedVariableTypes = [];
+        this.selectedRegulationStatuses = [];
         this.keyword = "";
         this.timeout = null;
         this.loadCount = 0;
@@ -4489,6 +4557,10 @@ var GsSidebarComponent = /** @class */ (function () {
         this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL).subscribe(function (rt) {
             _this.regressionTypes = rt;
         });
+        this.regulationStatuses = [
+            { id: true, name: "Regulated" },
+            { id: false, name: "Not Regulated" }
+        ];
         // trigger initial stations search
         this._nssService.searchStations(this.params);
         this.myRTSettings = {
@@ -4515,7 +4587,7 @@ var GsSidebarComponent = /** @class */ (function () {
     GsSidebarComponent.prototype.onSearch = function () {
         var _this = this;
         this.loadCount = this.loadCount + 1;
-        if (this.loadCount > 5) { //resolves issue with mupltiple filter calls on load
+        if (this.loadCount > 6) { //resolves issue with multiple filter calls on load
             //set up params
             this.params = this.params.set('page', '1');
             this.params = this.params.set('regions', this.selectedRegions.toString());
@@ -4524,6 +4596,7 @@ var GsSidebarComponent = /** @class */ (function () {
             this.params = this.params.set('statisticgroups', this.selectedStatisticGroups.toString());
             this.params = this.params.set('regressiontypes', this.selectedRegressionTypes.toString());
             this.params = this.params.set('variableTypes', this.selectedVariableTypes.toString());
+            this.params = this.params.set('isRegulated', this.selectedRegulationStatuses.toString());
             this.params = this.params.set('filterText', this.keyword.toString());
             //regions
             this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regionURL + "?" + this.params.toString()).subscribe(function (reg) {
@@ -4572,6 +4645,7 @@ var GsSidebarComponent = /** @class */ (function () {
         this.selectedAgencies = [];
         this.selectedStationTypes = [];
         this.selectedVariableTypes = [];
+        this.selectedRegulationStatuses = [];
         this.selectedRegressionTypes = [];
         this.selectedStatisticGroups = [];
         this.keyword = "";

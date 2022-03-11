@@ -92,6 +92,7 @@ export class BatchUploadComponentGS implements OnInit {
   public errorList = [];
   public disableSubmit: boolean = true;
   public selectedParams: HttpParams; 
+  public station;
 
   constructor(private _nssService: NSSService, private _modalService: NgbModal, //private _fb: FormBuilder,
     private _settingsService: SettingsService, private _configService: ConfigService, private _toasterService: ToasterService,
@@ -267,12 +268,14 @@ export class BatchUploadComponentGS implements OnInit {
 
   ////////////////// Create and Submit HTTP POST Request ////////////////////////
 
-  public verifyData() {
+  async verifyData() {
+    this._loaderService.showFullPageLoad();
     this.changeDropdownOptions();
     delete(this.records);
     this.errorList = [];
     var rowID = 0;
-    this.tableData.forEach(row => { // Loop through the rows of the table
+    var stationList = {};
+    for (const row of this.tableData) {
       if (row == this.tableData[0]) {  // If this is the header row
         var cellID = 0;
         row.forEach(cell => {     // Loop thru the cells in the header row
@@ -356,7 +359,23 @@ export class BatchUploadComponentGS implements OnInit {
             }
             if (recordObj.code) {
               var cellIndex = Object.keys(recordObj).indexOf('code');
-              this.getStationID(recordObj, rowID, cellIndex);
+              if (recordObj.code in stationList) {
+                recordObj.stationID = stationList[recordObj.code];
+              } else {
+                /////// Check to see if a Station Code exists/////////
+                this.station = await this._settingsService
+                .getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + recordObj.code)
+                .toPromise()
+                .catch((err) => {
+                  this.errorList.push({'name':this.tableData[rowID][cellIndex]}, {rowID, cellIndex}, {'type': null});
+                  if (err.headers) {this._nssService.outputWimMessages(err);
+                  } else { this._nssService.handleError(err); }
+                });
+                if (typeof this.station !== "undefined") {
+                  recordObj.stationID = this.station.id;
+                  stationList[recordObj.code] = recordObj.stationID;
+                }
+              }
             }
             if (!recordObj.startDate || !recordObj.endDate) {
               if (recordObj.startDate) {
@@ -418,7 +437,23 @@ export class BatchUploadComponentGS implements OnInit {
             };
             if (recordObj.code) {
               var cellIndex = Object.keys(recordObj).indexOf('code');
-              this.getStationID(recordObj, rowID, cellIndex);
+              if (recordObj.code in stationList) {
+                recordObj.stationID = stationList[recordObj.code];
+              } else {
+                /////// Check to see if a Station Code exists/////////
+                this.station = await this._settingsService
+                .getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + recordObj.code)
+                .toPromise()
+                .catch((err) => {
+                  this.errorList.push({'name':this.tableData[rowID][cellIndex]}, {rowID, cellIndex}, {'type': null});
+                  if (err.headers) {this._nssService.outputWimMessages(err);
+                  } else { this._nssService.handleError(err); }
+                });
+                if (typeof this.station !== "undefined") {
+                  recordObj.stationID = this.station.id;
+                  stationList[recordObj.code] = recordObj.stationID;
+                }
+              }
             }
           }
           rowID += 1;
@@ -429,7 +464,7 @@ export class BatchUploadComponentGS implements OnInit {
               this.records = [...this.records, recordObj ];
           }            
         }
-    });    
+    };    
 
     if (this.uploadStations) { 
       this.checkForRequiredColumns(this.stationChars);
@@ -446,7 +481,9 @@ export class BatchUploadComponentGS implements OnInit {
     if (this.errorList.length > 0) {
       this.disableSubmit = true;
       this._toasterService.pop('info', 'Info', 'Error! ' + (this.errorList.length/3) + ' errors were detected.');
+      console.log(this.errorList)
     }
+    this._loaderService.hideFullPageLoad();
   }
 
   public checkForRequiredColumns(charList) {
@@ -482,7 +519,7 @@ export class BatchUploadComponentGS implements OnInit {
           }
         }, error => {     // If put request fails...
             this._loaderService.hideFullPageLoad();
-            this._settingsService.outputWimMessages(error);
+            this._toasterService.pop('error', 'Error', 'An error occured');
         });
     this.clearTable();
     this._nssService.searchStations(this.selectedParams);
@@ -510,21 +547,6 @@ export class BatchUploadComponentGS implements OnInit {
         this.errorList.push({'name':this.tableData[rowID][cellID]}, {rowID, cellID}, {'type': listName});
       }
     }
-  }
-  
-  /////// Check to see if a Station Code exists/////////
-
-  public getStationID(obj, rowID, cellID) {
-    var station;
-    this._settingsService.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL + '/' + obj.code)
-    .subscribe((s: Array<Station>) => {
-      station = s;
-      return obj.stationID = station.id;
-    }, error => {
-      this.errorList.push({'name':this.tableData[rowID][cellID]}, {rowID, cellID}, {'type': null});
-      if (error.headers) {this._nssService.outputWimMessages(error);
-      } else { this._nssService.handleError(error); }
-    });
   }
 
   public checkStation(obj, rowID, cellID) {

@@ -55,7 +55,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        if (localStorage.getItem('auth') === undefined) {
+        if (localStorage.getItem('NSSAuth') === undefined) {
             this.router.navigate(['/']);
         } 
         // subscribe to getToast

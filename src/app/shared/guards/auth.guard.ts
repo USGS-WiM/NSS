@@ -22,7 +22,7 @@ export class AuthGuard implements CanActivate {
     }
 
     private checkLogin(): boolean {
-        if (localStorage.getItem('auth') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime()) {
+        if (localStorage.getItem('NSSAuth') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime()) {
             return true;
         }
         // if it gets here..they are not logged in

@@ -36,9 +36,13 @@ import { Method } from 'app/shared/interfaces/method';
 
 @Injectable()
 export class SettingsService {
-    public authHeader: HttpHeaders = new HttpHeaders({
+    public NSSauthHeader: HttpHeaders = new HttpHeaders({
         'Content-Type': 'application/json',
-        Authorization: localStorage.getItem('auth') || ''
+        Authorization: localStorage.getItem('NSSAuth') || ''
+    });
+    public GageStatsauthHeader: HttpHeaders = new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('GageStatsAuth') || ''
     });
     private configSettings: Config;
     // SUBJECTS //////////////////////////////////////
@@ -115,18 +119,28 @@ export class SettingsService {
     }
     // HTTP REQUESTS ////////////////////////////////////
 
+    public getHeader(url){
+        if (url.includes('nssservices')) {
+            return this.NSSauthHeader
+        }else{
+            return this.GageStatsauthHeader
+        }
+    }
+
     // ------------ GETS ---------------------------
     public getEntities(url: string) {
+        var header = this.getHeader(url)
         return this._http
-            .get(url, { headers: this.authHeader })
+            .get(url, { headers: header })
             .map(res => { if (res) {return <Array<any>>res }})
             .catch(this.errorHandler);
     }
 
     // ------------ POSTS ------------------------------
     public postEntity(entity: object, url: string) {
+        var header = this.getHeader(url)
         return this._http
-            .post(url, entity, { headers: this.authHeader, observe: 'response' })
+            .post(url, entity, { headers: header, observe: 'response' })
             .map(res => {
                 if (!res.headers) {this._toasterService.pop('info', 'Info', 'Regression region was added');
                 } else {this.outputWimMessages(res); }
@@ -137,18 +151,20 @@ export class SettingsService {
 
     // ------------ PUTS --------------------------------
     public putEntity(id, entity, url: string) {
+        var header = this.getHeader(url)
         if (id !== '') {url += '/' + id; }
         return this._http
-            .put(url, entity, { headers: this.authHeader, observe: 'response' })
+            .put(url, entity, { headers: header, observe: 'response' })
             .map(res => res)
             .catch(this.errorHandler);
     }
 
     // ------------ DELETES ------------------------------
     public deleteEntity(id, url: string, params?: string) {
+        var header = this.getHeader(url)
         if (id !== '') {url += '/' + id; }
         if (params) {url += params; }
-        return this._http.delete( url, { headers: this.authHeader, observe: 'response'})
+        return this._http.delete( url, { headers: header, observe: 'response'})
             .catch(this.errorHandler);
     }
 

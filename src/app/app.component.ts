@@ -12,6 +12,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { SettingsService } from './settings/settings.service';
 import { Location } from '@angular/common';
+import { LoaderService } from 'app/shared/services/loader.service';
 
 @Component({
     selector: 'app-root',
@@ -31,12 +32,13 @@ export class AppComponent implements OnInit, OnDestroy {
     public modalRef;
     public title;
     public loginBoolean;
-    loading = false;
     isLoggedIn: boolean;
     isloginShow: boolean;
     showGageStats: boolean;
     public loginError = false;
     public showMobileMenu = false;
+    public NSSLogin = false;
+    public GageStatsLogin = false;
     constructor(
         private _nssService: NSSService,
         public router: Router,
@@ -46,7 +48,8 @@ export class AppComponent implements OnInit, OnDestroy {
         private _fb: FormBuilder,
         public location: Location,
         private _toasterService: ToasterService,
-        private _modalService: NgbModal
+        private _modalService: NgbModal,
+        private _loaderService: LoaderService
     ) {
         this._nssService.setVersion(environment.version);
         this.LoginForm = _fb.group({
@@ -135,20 +138,40 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // log user in, navigate to home
     public loginRun() {
-        this.loading = true; // not using this yet
-        this._loginService.login(this.LoginForm.value).subscribe(
+        this._loaderService.showFullPageLoad();
+
+        this._loginService.NSSLogin(this.LoginForm.value).subscribe(
             () => {
-                this.loading = false; // not using this yet
-                this._nssService.setLoginModal(false);
-                this.loginError = false;
-                this.modalRef.close();
-                window.location.reload();  
+                this.NSSLogin = true;
+                this.checkLogin();
             },
             error => {
-                this._toasterService.pop('error', 'Error logging in',  error.statusText|| error._body.message);
-                this.loading = false;
+                this._loaderService.hideFullPageLoad();
+                this._toasterService.pop('error', 'Error logging in', error.statusText || error._body.message);
+                this.loginError = true;
             }
         );
+        this._loginService.GagestatsLogin(this.LoginForm.value).subscribe(
+            () => {
+                this.GageStatsLogin = true;
+                this.checkLogin();
+            },
+            error => {
+                this._loaderService.hideFullPageLoad();
+                this._toasterService.pop('error', 'Error logging in', error.statusText || error._body.message);
+                this.loginError = true;
+            }
+        );
+    }
+
+    public checkLogin(){
+        if (this.NSSLogin && this.GageStatsLogin) {
+            this._nssService.setLoginModal(false);
+            this.loginError = false;
+            this._loaderService.hideFullPageLoad();
+            this.modalRef.close();
+            window.location.reload(); 
+        }
     }
 
     public logout(click?: boolean) {

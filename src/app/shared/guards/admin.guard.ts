@@ -19,7 +19,7 @@ export class AdminGuard implements CanActivate {
     }
 
     private checkLogin(): boolean {
-        if (localStorage.getItem('auth') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime() &&
+        if (localStorage.getItem('NSSAuth') && localStorage.getItem('setupTime') !== null && !this.checkSetupTime() &&
             localStorage.getItem('loggedInRole') === 'Administrator') {
             return true;
         }

@@ -37,10 +37,15 @@ export class NSSService {
     private _statGrpIdParams: string;
     private configSettings: Config;
     private citationIDList = [];
-    private jsonHeader: HttpHeaders = new HttpHeaders({
+    private NSSjsonHeader: HttpHeaders = new HttpHeaders({
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: localStorage.getItem('auth') || ''
+        Authorization: localStorage.getItem('NSSAuth') || ''
+    });
+    private GageStatsjsonHeader: HttpHeaders = new HttpHeaders({
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('GageStatsAuth') || ''
     });
 
     constructor(private _http: HttpClient, private _configService: ConfigService, private _toasterService: ToasterService, private _loaderService: LoaderService) {
@@ -277,7 +282,7 @@ export class NSSService {
     // get all regions
     public getRegions(): void {
         this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL, { headers: this.NSSjsonHeader })
             .map(res => <Array<Region>>res)
             .catch(this.handleError)
             .subscribe(r => {
@@ -337,7 +342,7 @@ export class NSSService {
     // get all station types
     public getStationTypes(): void {
         this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL, { headers: this.jsonHeader })
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationTypeURL, { headers: this.GageStatsjsonHeader })
             .map(res => <Array<Stationtype>>res)
             .catch(this.handleError)
             .subscribe(r => {
@@ -358,7 +363,7 @@ export class NSSService {
     // get all agencies types
     public getAgencies(): void {
         this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL, { headers: this.jsonHeader })
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.agenciesURL, { headers: this.GageStatsjsonHeader })
             .map(res => <Array<Agency>>res)
             .catch(this.handleError)
             .subscribe(r => {
@@ -699,7 +704,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-        .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
+        .get(this.configSettings.nssBaseURL + url, { headers: this.NSSjsonHeader })
         .map(res => <Array<Unittype>>res);
     }
 
@@ -710,14 +715,14 @@ export class NSSService {
         url += params; 
     }
     return this._http
-        .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
+        .get(this.configSettings.nssBaseURL + url, { headers: this.NSSjsonHeader })
         .map(res => <Array<Variabletype>>res);
     }
 
     // get stations by text search, station type and other param
     public searchStations(filter: HttpParams) {
         return this._http
-            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL ,{ headers: this.jsonHeader, observe: 'response' as 'response', params:filter })
+            .get(this.configSettings.gageStatsBaseURL + this.configSettings.stationsURL ,{ headers: this.GageStatsjsonHeader, observe: 'response' as 'response', params:filter })
             .subscribe(res => {
                 this._stationsSubject.next(res.body);
                 this._pagesSubject.next(res.headers.get('x-usgswim-messages'));
@@ -738,7 +743,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.NSSjsonHeader })
             .map(res => <Array<Regressionregion>>res);
     }
 
@@ -749,7 +754,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.NSSjsonHeader })
             .map(res => <Regressiontype[]>res);
     }
 
@@ -760,7 +765,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.NSSjsonHeader })
             .map(res => <Statisticgroup[]>res);
     }
 
@@ -771,7 +776,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/' + url, { headers: this.NSSjsonHeader })
             .map(res => <Scenario[]>res)
             .subscribe(
                 s => {
@@ -813,7 +818,7 @@ export class NSSService {
 
     // calculate Scenarios (POST)
     postScenarios(id: number, s: Scenario[], searchArgs?: string) {
-        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };      
+        const options = { headers: this.NSSjsonHeader, observe: 'response' as 'response' };      
         return this._http
             .post(this.configSettings.nssBaseURL + this.configSettings.regionURL + '/' + id + '/scenarios/estimate/' + searchArgs, s, options)
             // .map(sResult => sResult.json())
@@ -855,7 +860,7 @@ export class NSSService {
             url += params; 
         }
         return this._http
-            .get(this.configSettings.nssBaseURL + url, { headers: this.jsonHeader })
+            .get(this.configSettings.nssBaseURL + url, { headers: this.NSSjsonHeader })
             .map(cit => <Citation[]>cit)
             .catch(this.handleError);
     }

@@ -23,7 +23,7 @@
 						<button *ngIf="!u.isEditing" title="Delete Unit Type" (click)="deleteUnit(u.id)" class="icon-button hover-red">
 							<i class="far fa-times"></i>
 						</button>
-						<button *ngIf="u.isEditing" title="Save Unit Type" (click)="saveUnit(u,i)" class="icon-button">
+						<button *ngIf="u.isEditing" title="Save Unit Type" (click)="saveUnitSystem(u,i)" class="icon-button">
 							<i class="far fa-floppy-o"></i>
 						</button>
 						<button *ngIf="u.isEditing" title="Cancel Edit" (click)="CancelEditRowClicked(i)" class="icon-button">

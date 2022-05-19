@@ -26,8 +26,6 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
     @ViewChild('VariableTypeForm', {static: true}) varForm;
-    public selectedRegion;
-    public regions;
     public newVarForm: FormGroup;
     public showNewVarForm: boolean;
     public variableTypes: Array<Variabletype>;
@@ -42,6 +40,10 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public englishUnitTypes;
     public metricUnitTypes;
     public statisticGroups;
+    public selectedStatistic;
+    public nssVariableTypes: Array<Variabletype>;
+    public gsVariableTypes: Array<Variabletype>;
+
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _toasterService: ToasterService,
         private _configService: ConfigService) {
@@ -65,6 +67,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
         this._settingsservice.variables().subscribe(res => {
             this.variableTypes = res;
         });
+        this.selectedStatistic = 'none';
         this.getEntites();
     }
 
@@ -85,6 +88,44 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
             this.englishUnitTypes = res.filter(unitType => unitType.unitSystemTypeID !== 1);
             this.metricUnitTypes = res.filter(unitType => unitType.unitSystemTypeID !== 2);
         });
+    }
+
+    public getAllVariableTypes() {
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(res => {
+            if (this.selectedStatistic === 'none') {this.variableTypes = res; }
+        });
+    }
+
+    public onStatSelect(s) {
+        this.selectedStatistic = s;
+        if (s === 'none') {this.getAllVariableTypes();
+        } else { this.getVariableTypes(s); }
+    }
+
+    private getVariableTypes(s) {
+        var nssReturn = false;
+        var gsReturn = false;
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.variablesURL + '?statisticGroups=' + s.id)
+            .subscribe(res => {
+                this.nssVariableTypes = res;
+                nssReturn = true;
+                if (nssReturn == true && gsReturn == true) {
+                    this.combineVaraibleTypes();
+                }
+        });
+        this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.variablesURL + '?statisticGroups=' + s.id)
+            .subscribe(res => {
+                this.gsVariableTypes = res;
+                gsReturn = true;
+                if (nssReturn == true && gsReturn == true) {
+                    this.combineVaraibleTypes();
+                }
+        });
+    }
+
+    public combineVaraibleTypes(){
+        this.variableTypes = this.nssVariableTypes.concat(this.gsVariableTypes); //concatenate regressionType arrays
+        this.variableTypes = Array.from(this.variableTypes.reduce((m, t) => m.set(t.name, t), new Map()).values()); //remove duplicates
     }
 
     showNewVariableForm() {

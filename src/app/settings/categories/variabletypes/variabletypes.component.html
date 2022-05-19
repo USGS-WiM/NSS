@@ -1,5 +1,13 @@
 <h3 class="mbottom-md">Variable Types</h3>
 
+<div class="statSelect pbottom-md">
+    <label for="statistic" class="block">Filter By Statistic Group:</label>
+    <select [ngModel]="selectedStatistic" (ngModelChange)="onStatSelect($event)" name="statistic" class="input-small">
+        <option value="none">None</option>
+        <option [ngValue]="i" *ngFor="let i of statisticGroups">{{ i.name }}</option>
+    </select>
+</div>
+
 <button type="button" class="button blue small mbottom-sm" (click)="showNewVariableForm()">
 	<i class="far fa-plus" aria-hidden="true"></i> 
 	<span>Add New Variable Type</span>

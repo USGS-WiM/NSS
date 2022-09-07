@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Changed MathJax reference from Cloudflare to jsDelivr
 - Updated Gagestats bulk upload template
+- Changed how statistic filter in the settings works. Filters client side instead of service side. 
 
 ### Removed
 

@@ -90,70 +90,39 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this._loaderService.showFullPageLoad();
         this.selectedRegion = r;
         this.selectedRegionID = r.id;
-        var nssReturn = false;
-        var gsReturn = false;
         if (r === 'none') {
             this.selectedRegionID = "";
         } 
         if(this.selectedStatistic === 'none'){
-            this.selectedStatisticID = "";
+            this.selectedStatisticID = null;
         }
         this._settingsservice
-            .getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
+            .getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL + "?regions=" + this.selectedRegionID)
             .subscribe(res => {
-                this.nssRegressionTypes = res;
-                nssReturn = true;
-                if (nssReturn == true && gsReturn == true) {
-                    this.combineRegressionTypes();
+                this.regressionTypes = [];
+                if (this.selectedStatisticID) {
+                    console.log('hi')
+                    for (var i in res) {
+                        console.log(res[i])
+                        if (res[i].statisticGroupTypeID && res[i].statisticGroupTypeID == this.selectedStatisticID){
+                            this.regressionTypes.push(res[i])
+                        }
+                    }
+                    console.log(this.regressionTypes)
+                } else {
+                    this.regressionTypes = res;
+                    console.log(this.regressionTypes)
                 }
-            });
-        this._settingsservice
-            .getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
-            .subscribe(res => {
-                this.gsRegressionTypes = res;
-                gsReturn = true;
-                if (nssReturn == true && gsReturn == true) {
-                    this.combineRegressionTypes();
-                }
-            });
-    }
-
-    public onStatGroupSelect(e){
-        this._loaderService.showFullPageLoad();
-        this.selectedStatistic = e;
-        this.selectedStatisticID = e.id;
-        var nssReturn = false;
-        var gsReturn = false;
-        if (e === 'none') {
-            this.selectedStatisticID = "";
-        } 
-        if(this.selectedRegion === 'none'){
-            this.selectedRegionID = "";
-        }
-        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
-            .subscribe(res => {
-            res.sort((a, b) => a.name.localeCompare(b.name));
-            this.nssRegressionTypes = res;
-            nssReturn = true;
-                if (nssReturn == true && gsReturn == true) {
-                    this.combineRegressionTypes();
-                }
-        });
-        this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL+"?regions="+ this.selectedRegionID +"&statisticgroups="+ this.selectedStatisticID)
-            .subscribe(res => {
-            res.sort((a, b) => a.name.localeCompare(b.name));
-            this.gsRegressionTypes = res;
-            gsReturn = true;
-            if (nssReturn == true && gsReturn == true) {
-                this.combineRegressionTypes();
+                this._loaderService.hideFullPageLoad();
             }
-        });
+        );
+
     }
 
-    public combineRegressionTypes(){
-        this.regressionTypes = this.nssRegressionTypes.concat(this.gsRegressionTypes); //concatenate regressionType arrays
-        this.regressionTypes = Array.from(this.regressionTypes.reduce((m, t) => m.set(t.name, t), new Map()).values()); //remove duplicates
-        this._loaderService.hideFullPageLoad();
+    public onStatGroupSelect(s){
+        this.selectedStatistic = s;
+        this.selectedStatisticID = s.id;
+        this.onRegSelect(this.selectedRegion);
     }
 
     public getAllRegTypes() {

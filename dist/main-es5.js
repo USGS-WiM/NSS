@@ -2380,7 +2380,7 @@ module.exports = "<!-- Sidebar -->\r\n<!-- Hidden on mobile, toggled with button
 /*! exports provided: name, version, license, scripts, private, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"nss\",\"version\":\"1.1.0\",\"license\":\"MIT\",\"scripts\":{\"ng\":\"ng\",\"start\":\"ng serve\",\"build\":\"npm install && ng build --base-href\",\"build-prod\":\"npm install && ng build --prod --base-href\",\"test\":\"ng test\",\"lint\":\"ng lint\",\"e2e\":\"ng e2e\"},\"private\":true,\"dependencies\":{\"@angular/animations\":\"8.2.14\",\"@angular/cdk\":\"^8.2.3\",\"@angular/cli\":\"^8.3.25\",\"@angular/common\":\"8.2.14\",\"@angular/compiler\":\"8.2.14\",\"@angular/core\":\"8.2.14\",\"@angular/forms\":\"8.2.14\",\"@angular/material\":\"^8.2.3\",\"@angular/platform-browser\":\"8.2.14\",\"@angular/platform-browser-dynamic\":\"8.2.14\",\"@angular/platform-server\":\"8.2.14\",\"@angular/router\":\"8.2.14\",\"@ng-bootstrap/ng-bootstrap\":\"~4.0.0\",\"@ng-select/ng-select\":\"^3.7.3\",\"angular-2-dropdown-multiselect\":\"^1.0.8\",\"angular-jwt\":\"^0.1.11\",\"angular2-highcharts\":\"^0.5.5\",\"angular2-toaster\":\"^8.0.0\",\"bootstrap\":\"4.0.0-alpha.6\",\"core-js\":\"^2.4.1\",\"esri-leaflet\":\"^2.1.2\",\"font-awesome\":\"^4.7.0\",\"leaflet\":\"^1.3.1\",\"mathjax\":\"^2.7.0\",\"ngx-color-picker\":\"^4.0.0\",\"rxjs\":\"^6.2.2\",\"rxjs-compat\":\"^6.2.2\",\"shpjs\":\"^3.4.3\",\"tslib\":\"^1.9.0\",\"v8\":\"^0.1.0\",\"xlsx\":\"^0.17.0\",\"zone.js\":\"~0.9.1\"},\"devDependencies\":{\"@angular-devkit/build-angular\":\"~0.802.2\",\"@angular/compiler-cli\":\"8.2.14\",\"@types/jasmine\":\"2.5.38\",\"@types/mathjax\":\"0.0.31\",\"@types/node\":\"~6.0.60\",\"angular-2-dropdown-multiselect\":\"^1.3.2\",\"codelyzer\":\"^5.0.1\",\"jasmine-core\":\"~2.5.2\",\"jasmine-spec-reporter\":\"~3.2.0\",\"karma\":\"~6.3.16\",\"karma-chrome-launcher\":\"~2.0.0\",\"karma-cli\":\"~1.0.1\",\"karma-coverage-istanbul-reporter\":\"^0.2.0\",\"karma-jasmine\":\"~1.1.0\",\"karma-jasmine-html-reporter\":\"^0.2.2\",\"protractor\":\"~5.1.0\",\"ts-node\":\"~2.0.0\",\"tslint\":\"~4.5.0\",\"typescript\":\"3.5.3\"}}");
+module.exports = JSON.parse("{\"name\":\"nss\",\"version\":\"1.1.0\",\"license\":\"MIT\",\"scripts\":{\"ng\":\"ng\",\"start\":\"ng serve\",\"build\":\"npm install && ng build --base-href\",\"build-prod\":\"npm install && ng build --prod --base-href\",\"test\":\"ng test\",\"lint\":\"ng lint\",\"e2e\":\"ng e2e\"},\"private\":true,\"dependencies\":{\"@angular/animations\":\"8.2.14\",\"@angular/cdk\":\"^8.2.3\",\"@angular/cli\":\"^8.3.25\",\"@angular/common\":\"8.2.14\",\"@angular/compiler\":\"8.2.14\",\"@angular/core\":\"11.0.5\",\"@angular/forms\":\"8.2.14\",\"@angular/material\":\"^8.2.3\",\"@angular/platform-browser\":\"8.2.14\",\"@angular/platform-browser-dynamic\":\"8.2.14\",\"@angular/platform-server\":\"8.2.14\",\"@angular/router\":\"8.2.14\",\"@ng-bootstrap/ng-bootstrap\":\"~4.0.0\",\"@ng-select/ng-select\":\"^3.7.3\",\"angular-2-dropdown-multiselect\":\"^1.0.8\",\"angular-jwt\":\"^0.1.11\",\"angular2-highcharts\":\"^0.5.5\",\"angular2-toaster\":\"^8.0.0\",\"bootstrap\":\"4.0.0-alpha.6\",\"core-js\":\"^2.4.1\",\"esri-leaflet\":\"^2.1.2\",\"font-awesome\":\"^4.7.0\",\"leaflet\":\"^1.3.1\",\"mathjax\":\"^2.7.0\",\"ngx-color-picker\":\"^4.0.0\",\"rxjs\":\"^6.2.2\",\"rxjs-compat\":\"^6.2.2\",\"shpjs\":\"^3.4.3\",\"tslib\":\"^1.9.0\",\"v8\":\"^0.1.0\",\"xlsx\":\"^0.17.0\",\"zone.js\":\"~0.9.1\"},\"devDependencies\":{\"@angular-devkit/build-angular\":\"~0.802.2\",\"@angular/compiler-cli\":\"8.2.14\",\"@types/jasmine\":\"2.5.38\",\"@types/mathjax\":\"0.0.31\",\"@types/node\":\"~6.0.60\",\"angular-2-dropdown-multiselect\":\"^1.3.2\",\"codelyzer\":\"^5.0.1\",\"jasmine-core\":\"~2.5.2\",\"jasmine-spec-reporter\":\"~3.2.0\",\"karma\":\"~6.3.16\",\"karma-chrome-launcher\":\"~2.0.0\",\"karma-cli\":\"~1.0.1\",\"karma-coverage-istanbul-reporter\":\"^0.2.0\",\"karma-jasmine\":\"~1.1.0\",\"karma-jasmine-html-reporter\":\"^0.2.2\",\"protractor\":\"~5.1.0\",\"ts-node\":\"~2.0.0\",\"tslint\":\"~4.5.0\",\"typescript\":\"3.5.3\"}}");
 
 /***/ }),
 
@@ -7924,69 +7924,37 @@ var RegressionTypesComponent = /** @class */ (function () {
         this._loaderService.showFullPageLoad();
         this.selectedRegion = r;
         this.selectedRegionID = r.id;
-        var nssReturn = false;
-        var gsReturn = false;
         if (r === 'none') {
             this.selectedRegionID = "";
         }
         if (this.selectedStatistic === 'none') {
-            this.selectedStatisticID = "";
+            this.selectedStatisticID = null;
         }
         this._settingsservice
-            .getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL + "?regions=" + this.selectedRegionID + "&statisticgroups=" + this.selectedStatisticID)
+            .getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL + "?regions=" + this.selectedRegionID)
             .subscribe(function (res) {
-            _this.nssRegressionTypes = res;
-            nssReturn = true;
-            if (nssReturn == true && gsReturn == true) {
-                _this.combineRegressionTypes();
+            _this.regressionTypes = [];
+            if (_this.selectedStatisticID) {
+                console.log('hi');
+                for (var i in res) {
+                    console.log(res[i]);
+                    if (res[i].statisticGroupTypeID && res[i].statisticGroupTypeID == _this.selectedStatisticID) {
+                        _this.regressionTypes.push(res[i]);
+                    }
+                }
+                console.log(_this.regressionTypes);
             }
-        });
-        this._settingsservice
-            .getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL + "?regions=" + this.selectedRegionID + "&statisticgroups=" + this.selectedStatisticID)
-            .subscribe(function (res) {
-            _this.gsRegressionTypes = res;
-            gsReturn = true;
-            if (nssReturn == true && gsReturn == true) {
-                _this.combineRegressionTypes();
+            else {
+                _this.regressionTypes = res;
+                console.log(_this.regressionTypes);
             }
-        });
-    };
-    RegressionTypesComponent.prototype.onStatGroupSelect = function (e) {
-        var _this = this;
-        this._loaderService.showFullPageLoad();
-        this.selectedStatistic = e;
-        this.selectedStatisticID = e.id;
-        var nssReturn = false;
-        var gsReturn = false;
-        if (e === 'none') {
-            this.selectedStatisticID = "";
-        }
-        if (this.selectedRegion === 'none') {
-            this.selectedRegionID = "";
-        }
-        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL + "?regions=" + this.selectedRegionID + "&statisticgroups=" + this.selectedStatisticID)
-            .subscribe(function (res) {
-            res.sort(function (a, b) { return a.name.localeCompare(b.name); });
-            _this.nssRegressionTypes = res;
-            nssReturn = true;
-            if (nssReturn == true && gsReturn == true) {
-                _this.combineRegressionTypes();
-            }
-        });
-        this._settingsservice.getEntities(this.configSettings.gageStatsBaseURL + this.configSettings.regTypeURL + "?regions=" + this.selectedRegionID + "&statisticgroups=" + this.selectedStatisticID)
-            .subscribe(function (res) {
-            res.sort(function (a, b) { return a.name.localeCompare(b.name); });
-            _this.gsRegressionTypes = res;
-            gsReturn = true;
-            if (nssReturn == true && gsReturn == true) {
-                _this.combineRegressionTypes();
-            }
+            _this._loaderService.hideFullPageLoad();
         });
     };
-    RegressionTypesComponent.prototype.combineRegressionTypes = function () {
-        this.regressionTypes = this.nssRegressionTypes.concat(this.gsRegressionTypes); //concatenate regressionType arrays
-        this.regressionTypes = Array.from(this.regressionTypes.reduce(function (m, t) { return m.set(t.name, t); }, new Map()).values()); //remove duplicates
-        this._loaderService.hideFullPageLoad();
+    RegressionTypesComponent.prototype.onStatGroupSelect = function (s) {
+        this.selectedStatistic = s;
+        this.selectedStatisticID = s.id;
+        this.onRegSelect(this.selectedRegion);
     };
     RegressionTypesComponent.prototype.getAllRegTypes = function () {
         var _this = this;

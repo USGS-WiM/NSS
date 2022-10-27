@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 - Removed unitsystem indicator in the NSS scenario calls
+- Legacy NWIS link for gage pages
 
 ### Fixed
 

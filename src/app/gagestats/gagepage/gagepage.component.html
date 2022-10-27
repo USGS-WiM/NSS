@@ -45,7 +45,7 @@
 						<tr>
 							<td>USGS Station Number</td>
 							<td>
-								<span *ngIf="!editGageInfo"><a href="https://waterdata.usgs.gov/monitoring-location/{{gage.code}}" target="_blank">{{gage.code}}&nbsp;&nbsp;</a><a href="https://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.code}}"  target="_blank">(Legacy NWIS link)</a></span>
+								<span *ngIf="!editGageInfo"><a href="https://waterdata.usgs.gov/monitoring-location/{{gage.code}}" target="_blank">{{gage.code}}</a></span>
 								<span *ngIf="editGageInfo"><input type="text" [(ngModel)]="gage.code"></span>
 							</td>
 						</tr>

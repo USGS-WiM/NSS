@@ -333,7 +333,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             this.addPredInt = true;
             this.newScenForm.patchValue({ regressionRegions: { regressions:{ predictionInterval: { variance: this.cloneParameters.r.predictionInterval.variance.toString()}}}});
         }
-        if (this.cloneParameters.r.predictionInterval.xiRowVector != null) {
+        if (this.cloneParameters.r.predictionInterval.xiRowVector != null && this.cloneParameters.r.predictionInterval.xiRowVector != "") {
             this.addPredInt = true;
             this.rows = ((this.cloneParameters.r.predictionInterval.xiRowVector).match(/["]/g).length) / 2;
             this.addRowVector();

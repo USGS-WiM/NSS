@@ -43,6 +43,8 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
     public tempData;
     public isEditing = false;
     public modalRef;
+    public englishUnitTypes;
+    public metricUnitTypes;
     public statisticGroups: Array<Statisticgroup>;
     public selectedStatistic;
     public selectedRegionID;
@@ -61,7 +63,10 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this.newRegForm = _fb.group({
             name: new FormControl(null, Validators.required),
             description: new FormControl(null),
-            code: new FormControl(null, Validators.required)
+            code: new FormControl(null, Validators.required),
+            metricUnitTypeID: new FormControl(null, Validators.required),
+            englishUnitTypeID: new FormControl(null, Validators.required),
+            statisticGroupTypeID: new FormControl(null, Validators.required)
         });
         this.navigationSubscription = this.router.events.subscribe((e: any) => {
             if (e instanceof NavigationEnd) {
@@ -83,6 +88,15 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
         this.selectedRegion = 'none';
         this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.regTypeURL).subscribe(res => {
             this.regressionTypes = res;
+        });
+        this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.unitsURL).subscribe(res => {
+            res.sort((a, b) => a.name.localeCompare(b.name));
+            for (const unit of res) {
+                unit['unit'] = unit['name'];
+                unit['abbr'] = unit['abbreviation'];
+            }
+            this.englishUnitTypes = res.filter(unitType => unitType.unitSystemTypeID !== 1);
+            this.metricUnitTypes = res.filter(unitType => unitType.unitSystemTypeID !== 2);
         });
     }
 

@@ -29,9 +29,12 @@
             <thead>
                 <tr>
                     <th class="width-5"></th>
-                    <th class="width-40">Name</th>
-                    <th class="width-40">Description</th>
+                    <th class="width-25">Name</th>
+                    <th class="width-25">Description</th>
                     <th class="width-15">Code</th>
+                    <th class="width-10">Metric Unit</th>
+                    <th class="width-10">English Unit</th>
+                    <th class="width-10">Statstic Group</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,6 +64,30 @@
                     <td>
                         <span *ngIf="!r.isEditing">{{ r.code }}</span>
                         <span *ngIf="r.isEditing"><input type="text" name="code" [(ngModel)]="r.code" required></span>
+                    </td>
+                    <td>
+                        <span *ngIf="!r.isEditing && r.metricUnitType">{{ r.metricUnitType.abbreviation }}</span>
+                        <span *ngIf="r.isEditing">
+                            <ng-select  bindLabel="name" [items]="metricUnitTypes" [(ngModel)]="r.metricUnitType" name="metricUnit" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                                <ng-option *ngFor="let ut of metricUnitTypes" [value]="ut">{{ut.name}} ({{ut.abbr}})</ng-option>
+                            </ng-select>
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngIf="!r.isEditing && r.englishUnitType">{{ r.englishUnitType.abbreviation }}</span>
+                        <span *ngIf="r.isEditing">
+                            <ng-select  bindLabel="name" [items]="englishUnitTypes" [(ngModel)]="r.englishUnitType" name="englishUnit" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                                <ng-option *ngFor="let ut of englishUnitTypes" [value]="ut">{{ut.name}} ({{ut.abbr}})</ng-option>
+                            </ng-select>
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngIf="!r.isEditing && r.statisticGroupType">{{ r.statisticGroupType.code }}</span>
+                        <span *ngIf="r.isEditing">
+                            <ng-select  bindLabel="name" [items]="statisticGroups" [(ngModel)]="r.statisticGroupType" name="statisticGroup" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                                <ng-option *ngFor="let sg of statisticGroups" [value]="sg">{{sg.name}} ({{sg.code}})</ng-option>
+                            </ng-select>
+                        </span>
                     </td>
                 </tr>
             </tbody>
@@ -97,6 +124,36 @@
                 <label class="req" for="code">Code:</label>
                 <input class="form-control" type="text" formControlName="code">
                 <div class="input-invalid-warning" *ngIf="!newRegForm.get('code').valid && newRegForm.get('code').dirty">Code
+                    is required</div>
+            </div>
+
+            <!-- Metric Unit Type -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newRegForm.get('metricUnitTypeID').valid && newRegForm.get('metricUnitTypeID').dirty}">
+                <label class="req" for="metricUnitTypeID">Metric Unit:</label>
+                <ng-select formControlName="metricUnitTypeID"  bindLabel="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                    <ng-option *ngFor="let ut of metricUnitTypes" [value]="ut.id">{{ut.name}} ({{ut.abbr}})</ng-option>
+                </ng-select>
+                <div class="input-invalid-warning" *ngIf="!newRegForm.get('metricUnitTypeID').valid && newRegForm.get('metricUnitTypeID').dirty">Metric Unit Type
+                    is required</div>
+            </div>
+
+            <!-- English Unit Type -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newRegForm.get('englishUnitTypeID').valid && newRegForm.get('englishUnitTypeID').dirty}">
+                <label class="req" for="englishUnitTypeID">English Unit:</label>
+                <ng-select formControlName="englishUnitTypeID"  bindLabel="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                    <ng-option *ngFor="let ut of englishUnitTypes" [value]="ut.id">{{ut.name}} ({{ut.abbr}})</ng-option>
+                </ng-select>
+                <div class="input-invalid-warning" *ngIf="!newRegForm.get('englishUnitTypeID').valid && newRegForm.get('englishUnitTypeID').dirty">English Unit Type
+                    is required</div>
+            </div>
+
+            <!-- Statistic Group Type -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newRegForm.get('statisticGroupTypeID').valid && newRegForm.get('statisticGroupTypeID').dirty}">
+                <label class="req" for="statisticGroupTypeID">Statistic Group:</label>
+                <ng-select formControlName="statisticGroupTypeID"  bindLabel="id" [selectOnTab]="true" [closeOnSelect]="true" [clearable]="false" >
+                    <ng-option *ngFor="let sg of statisticGroups" [value]="sg.id">{{sg.name}} ({{sg.code}})</ng-option>
+                </ng-select>
+                <div class="input-invalid-warning" *ngIf="!newRegForm.get('statisticGroupTypeID').valid && newRegForm.get('statisticGroupTypeID').dirty">Statistic Group Type
                     is required</div>
             </div>
 

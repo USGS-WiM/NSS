@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added "Limit by regulation status" filter in sidebar
 - Added equivalent years of record, drainage area export, and order index to equations table 
 - Allow user to sort Variable Types by Statistic Group in Settings
-- Allow user to add unit types and statstic groups to regression types
+- Allow user to add unit types and statistic groups to regression types
 
 ### Changed
 

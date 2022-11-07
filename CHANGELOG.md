@@ -13,12 +13,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added "Limit by regulation status" filter in sidebar
 - Added equivalent years of record, drainage area export, and order index to equations table 
 - Allow user to sort Variable Types by Statistic Group in Settings
+- Allow user to add unit types and statistic groups to regression types
 
 ### Changed
 
 - Changed MathJax reference from Cloudflare to jsDelivr
 - Updated Gagestats bulk upload template
 - Changed how statistic filter in the settings works. Filters client side instead of service side. 
+- README build instructions
 
 ### Removed
 
@@ -33,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed Gagestats bearer token authentication issues 
 - Fixed bug where you cannot edit a unit system
 - Fixed bug where loginError variable was not being used correctly
+- Fixed bug when editing an equation with no row vector. 
 
 ## [v1.1.0](https://github.com/USGS-WiM/NSS/releases/tag/v1.1.0) - 2021-07-13
 ## [v1.0.0](https://github.com/USGS-WiM/NSS/releases/tag/v1.0.0) - 2017-07-07

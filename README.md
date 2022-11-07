@@ -41,15 +41,15 @@ Note: the secrets file is in the .gitignore and should _never_ be uploaded to Gi
 
 To compile the project for a production environment run:
 ```
-ng build --prod --base-href
+npm run-script build
 ```
 
 To compile the project for a non-production environment run:
 ```
-ng build --base-href
+npm run-script build-prod
 ```
 
-The `--prod` tag will use the production configuration and point to the production services.
+The `-prod` tag will use the production configuration and point to the production services.
 
 ## Deployment
 

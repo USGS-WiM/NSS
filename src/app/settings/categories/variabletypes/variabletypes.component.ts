@@ -16,6 +16,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+import * as XLSX from 'xlsx';
 
 @Component({
     moduleId: module.id,
@@ -25,6 +26,8 @@ import { ConfigService } from 'app/config.service';
 export class VariableTypesComponent implements OnInit, OnDestroy {
     @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
+    @ViewChild('batch', {static: true})
+    public batchRef: TemplateRef<any>;
     @ViewChild('VariableTypeForm', {static: true}) varForm;
     public newVarForm: FormGroup;
     public showNewVarForm: boolean;
@@ -43,6 +46,11 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public selectedStatistic;
     public nssVariableTypes: Array<Variabletype>;
     public gsVariableTypes: Array<Variabletype>;
+    // Bulk Upload
+    public wb: XLSX.WorkBook
+    public sheetNamesButtons: boolean;
+    public tableDisplay: boolean = false;
+    public bulkData;
 
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _toasterService: ToasterService,
@@ -242,6 +250,68 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
             }
             );
         }
+    }
+
+
+    // Bulk Upload
+
+    showBatchVariableForm() {
+        this.modalRef = this._modalService.open(this.batchRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then((result) => {
+            // this is the solution for the first modal losing scrollability
+            if (document.querySelector('body > .modal')) {
+                document.body.classList.add('modal-open');
+            }
+            this.CloseResult = `Closed with: ${result}`;
+            if (this.CloseResult) {this.cancelCreateVariableType(); }
+        }, (reason) => {
+            this.CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
+            if (this.CloseResult) {this.cancelCreateVariableType(); }
+        });
+    }
+
+    public clearTable() {
+        this.sheetNamesButtons = false;
+        this.tableDisplay = false; 
+        delete(this.bulkData);
+    }
+
+    public selectFile(event: any) {
+        const target: DataTransfer = <DataTransfer>(event.target);
+        if (target.files.length !== 1) { //Check for multiple files
+          this.clearTable();
+          this._toasterService.pop('error', 'Error', 'Cannot select multiple files');
+          return;
+        } 
+        let ext = event.target.files[0].name.match(/\.([^\.]+)$/)[1];
+        switch (ext) {  //check for incompatible file type
+          case 'xlsx':
+          case 'xls':
+            break;
+          default:
+            this.clearTable();
+            this._toasterService.pop('error', 'Error', 'File type must be .xlsx');
+            return;
+        }
+        const reader: FileReader = new FileReader();
+        reader.onload = (e:any) => {
+            const bstr: string = e.target.result;                          
+            this.wb = XLSX.read(bstr, { type: 'binary'});          // Read WorkBook
+            this.sheetNamesButtons = true;                         // Show buttons to select worksheet from workbook
+            };
+        reader.readAsBinaryString(target.files[0]); 
+    }
+
+    public selectSheet(sheetName) {
+        const ws: XLSX.WorkSheet = this.wb.Sheets[sheetName];
+        this.bulkData = (XLSX.utils.sheet_to_json(ws, {header : 1}));        // Convert data to json
+        this.createTable(this.bulkData);
+        this.tableDisplay = true;
+        this.sheetNamesButtons = false;
+    }
+
+    public createTable(data) {
+       console.log(data) 
     }
 
     private getLoggedInRole() {

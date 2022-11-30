@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~15.0.2",
-    "@angular/compiler-cli": "8.2.14",
+    "@angular/compiler-cli": "15.0.1",
     "@types/jasmine": "2.5.38",
     "@types/mathjax": "0.0.31",
     "@types/node": "~6.0.60",

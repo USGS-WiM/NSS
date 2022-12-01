@@ -12,7 +12,7 @@
 	<i class="far fa-plus" aria-hidden="true"></i> 
 	<span>Add Variable Type</span>
 </button>
-
+<br>
 <button type="button" class="button blue small mbottom-sm" (click)="showBatchVariableForm()">
 	<i class="far fa-plus" aria-hidden="true"></i> 
 	<span>Batch Upload Variable Type</span>
@@ -159,9 +159,9 @@
 <ng-template #batch let-c="close" let-d="dismiss">
 	<div class="modal-header">
 		<div class="title">Batch Upload Variable Type</div>  
-		<button class="icon-button" (click)="d('closed')"><i class="far fa-times"></i></button>                
+		<button class="icon-button" (click)="d('closed'); closeTable();"><i class="far fa-times"></i></button>                
 	</div>
-    <div class="modal-body">
+    <div class="modal-body" id="body">
         <div class="upload-type" *ngIf='!selectUpload'>    
             <button type="button" class="button blue" (click)='selectUpload = true;'>Upload Variables</button>
         </div>
@@ -197,13 +197,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let v of variables, let i = index">
+                                <tr *ngFor="let v of bulkData, let i = index">
                                     <td>{{ v.name }}</td>
                                     <td>{{ v.description }}</td>
                                     <td>{{ v.code }}</td>
-                                    <td>{{ v.englishUnitType.name }}</td>
-                                    <td>{{ v.metricUnitType.name }}</td>
-                                    <td>{{ v.statisticGroupType.name }}</td>
+                                    <td>{{ v.englishUnitType }}</td>
+                                    <td>{{ v.metricUnitType }}</td>
+                                    <td>{{ v.statisticGroup }}</td>
+                                    <span style="color:red; font-size:12px;" *ngIf="v.success=='no'">*Variable wasn't uploaded*</span>
                                 </tr>
                             </tbody>
                         </table>
@@ -211,14 +212,12 @@
                 </div>
             </form>
         </div>
-
 	</div>
 	
-
-
 	<!-- Footer / Buttons -->
 	<div class="modal-body-footer">
-		<button type="button" (click)="d('closed')" class="button">Cancel</button>
-		<button type="button" (click)="batchUploadVariableType()" class="button blue">Create</button>
+        <button type="button" *ngIf="tableDisplay && !submitted" (click)="batchUploadVariableType(); submitted = true;" class="button blue">Create</button>
+        <button type="button" *ngIf="submitted" (click)="d('closed'); closeTable();" class="button red">Close</button>
 	</div>
+
 </ng-template>

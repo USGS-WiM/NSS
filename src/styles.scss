@@ -134,3 +134,22 @@ select {
 	left: unset !important;
 	transform: unset !important;
 }
+
+// Upload buttons
+.upload-type{
+	display: flex;
+	justify-content: center;
+	padding-top: 15px;
+
+	.button{
+		margin: 6px 12px;
+	}
+}
+
+// Upload input
+.upload-input{
+	display: flex;
+	justify-content: center;
+	box-sizing: border-box;
+	padding: 15px 0;
+}

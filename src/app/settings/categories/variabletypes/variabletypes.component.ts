@@ -16,6 +16,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+import * as XLSX from 'xlsx';
 
 @Component({
     moduleId: module.id,
@@ -25,6 +26,8 @@ import { ConfigService } from 'app/config.service';
 export class VariableTypesComponent implements OnInit, OnDestroy {
     @ViewChild('add', {static: true})
     public addRef: TemplateRef<any>;
+    @ViewChild('batch', {static: true})
+    public batchRef: TemplateRef<any>;
     @ViewChild('VariableTypeForm', {static: true}) varForm;
     public newVarForm: FormGroup;
     public showNewVarForm: boolean;
@@ -43,6 +46,13 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public selectedStatistic;
     public nssVariableTypes: Array<Variabletype>;
     public gsVariableTypes: Array<Variabletype>;
+    // Bulk Upload
+    public wb: XLSX.WorkBook;
+    public sheetNamesButtons: boolean;
+    public tableDisplay: boolean = false;
+    public bulkData = [];
+    public submitted:boolean = false;
+    public selectUpload: boolean = false;
 
     constructor(public _nssService: NSSService, public _settingsservice: SettingsService, public _route: ActivatedRoute,
         private _fb: FormBuilder, private _modalService: NgbModal, private router: Router, private _toasterService: ToasterService,
@@ -241,6 +251,180 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
                     this._toasterService.pop('error', 'Error deleting Variable', error._body.message || error.statusText);
             }
             );
+        }
+    }
+
+
+    // Bulk Upload
+
+    showBatchVariableForm() {
+        this.modalRef = this._modalService.open(this.batchRef, { backdrop: 'static', keyboard: false, size: 'lg' });
+        this.modalRef.result.then((result) => {
+            // this is the solution for the first modal losing scrollability
+            if (document.querySelector('body > .modal')) {
+                document.body.classList.add('modal-open');
+            }
+            this.CloseResult = `Closed with: ${result}`;
+            if (this.CloseResult) {this.cancelCreateVariableType(); }
+        }, (reason) => {
+            this.CloseResult = `Dismissed ${this.getDismissReason(reason)}`;
+            if (this.CloseResult) {this.cancelCreateVariableType(); }
+        });
+    }
+
+    public clearTable() {
+        this.sheetNamesButtons = false;
+        this.tableDisplay = false; 
+        this.bulkData = [];
+    }
+
+    public selectFile(event: any) {
+        const target: DataTransfer = <DataTransfer>(event.target);
+        if (target.files.length !== 1) { //Check for multiple files
+          this.clearTable();
+          this._toasterService.pop('error', 'Error', 'Cannot select multiple files');
+          return;
+        } 
+        let ext = event.target.files[0].name.match(/\.([^\.]+)$/)[1];
+        switch (ext) {  //check for incompatible file type
+          case 'xlsx':
+          case 'xls':
+            break;
+          default:
+            this.clearTable();
+            this._toasterService.pop('error', 'Error', 'File type must be .xlsx');
+            return;
+        }
+        const reader: FileReader = new FileReader();
+        reader.onload = (e:any) => {
+            const bstr: string = e.target.result;                          
+            this.wb = XLSX.read(bstr, { type: 'binary'});          // Read WorkBook
+            this.sheetNamesButtons = true;                         // Show buttons to select worksheet from workbook
+            };
+        reader.readAsBinaryString(target.files[0]); 
+    }
+
+    public selectSheet(sheetName) {
+        const ws: XLSX.WorkSheet = this.wb.Sheets[sheetName];
+        var data = (XLSX.utils.sheet_to_json(ws, {header : 1}));        // Convert data to json
+        this.createTable(data);
+        this.tableDisplay = true;
+        this.sheetNamesButtons = false;
+    }
+
+    public createTable(data) {
+        let counter = 0;
+        var valid = true;
+        var message;
+        var name;
+        var description;
+        var code;
+        var englishUnitType;
+        var metricUnitType;
+        var statisticGroup;
+
+        for (let i = 1; i < data.length; i++) { // skip first header row
+            valid = true;
+            if (data[i][0]) { // Name
+                name = (data[i][0]);            
+            } 
+            if (data[i][1]) { // Description
+                description = (data[i][1]);
+            } 
+            if (data[i][2]) { // code
+                code = (data[i][2]);
+            }
+            if (data[i][3]) { // english unit type
+                englishUnitType = (data[i][3]);
+            }
+            if (data[i][4]) { // metric unit type
+                metricUnitType = (data[i][4]);
+            }
+            if (data[i][5]) { // statistic group
+                statisticGroup = (data[i][5]);
+            }
+
+            if (!this.englishUnitTypes.find(ut => ut.name == englishUnitType)){
+                message = "Variable " + i + " will not be uploaded. " + englishUnitType + " is not a valid english unit type.";
+                this._toasterService.pop('warning', 'Warning', message);
+                valid = false;
+            }
+            if (!this.metricUnitTypes.find(ut => ut.name == metricUnitType)){
+                message = "Variable "+ i+ " will not be uploaded. "+ metricUnitType + " is not a valid metric unit type.";
+                this._toasterService.pop('warning', 'Warning', message);
+                valid = false;
+            }
+            if (!this.statisticGroups.find(sg => sg.name == statisticGroup)){
+                message = "Variable "+ i+ " will not be uploaded. "+ statisticGroup + " is not a valid statistic group.";
+                this._toasterService.pop('warning', 'Warning', message);
+                valid = false;
+            }
+
+            if (valid) {
+                // Fill array will data from spreadsheet
+                this.bulkData[counter] = {  
+                    name: name,
+                    description: description,
+                    code: code,
+                    englishUnitTypeID: this.englishUnitTypes.find(ut => ut.name == englishUnitType).id,
+                    metricUnitTypeID: this.metricUnitTypes.find(ut => ut.name == metricUnitType).id,
+                    statisticGroupTypeID: this.statisticGroups.find(sg => sg.name == statisticGroup).id,
+                    success: null
+                }
+                counter++;
+            }
+        }
+    }
+
+    public batchUploadVariableType() {
+
+        // Can be removed if we allow for editing
+        var div = document.getElementById('body');    
+        div.setAttribute("style", "opacity: 0.6; filter: alpha(opacity = 60);");    
+        
+        this.bulkData.forEach((variable, index) => {
+            delete variable.success;
+            delete variable.englishUnitType;       
+            delete variable.metricUnitType;
+            delete variable.statisticGroup;
+
+            this._settingsservice.postEntity(variable, this.configSettings.nssBaseURL + this.configSettings.variablesURL)
+                .subscribe((response: any) => {
+                    this.bulkData[index].success = "yes"
+                    if (!response.headers) {
+                        this._toasterService.pop('info', 'Info', 'Variable was added');
+                    } else {
+                        this._settingsservice.outputWimMessages(response);
+                    }
+                }, error => {
+                this.bulkData[index].success = "no"
+                    if (!this._settingsservice.outputWimMessages(error)) {                                       
+                        this._toasterService.pop('error', 'Error creating Variable', error.message || error.statusText);
+                    }
+                }
+            );
+        });          
+    }
+
+    public closeTable(){
+        if (this.submitted == true) {     // reload variables
+            this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(res => {
+                this.variableTypes = res;
+            });
+        }
+        this.bulkData = [];
+        this.submitted = false;
+        this.selectUpload = false;
+        this.clearTable();
+    }
+
+    public getName(id, type){
+        if (type == 'english'){
+           return(this.englishUnitTypes.find(ut => ut.id == id).name)
+        } else if (type == 'metric'){
+            return(this.metricUnitTypes.find(ut => ut.id == id).name)
+        }else if (type == 'stat'){
+            return(this.statisticGroups.find(ut => ut.id == id).name)
         }
     }
 

@@ -10,7 +10,12 @@
 
 <button type="button" class="button blue small mbottom-sm" (click)="showNewVariableForm()">
 	<i class="far fa-plus" aria-hidden="true"></i> 
-	<span>Add New Variable Type</span>
+	<span>Add Variable Type</span>
+</button>
+<br>
+<button type="button" class="button blue small mbottom-sm" (click)="showBatchVariableForm()">
+	<i class="far fa-plus" aria-hidden="true"></i> 
+	<span>Batch Upload Variable Type</span>
 </button>
 
 <form #VariableTypeForm="ngForm">
@@ -108,6 +113,14 @@
                 <textarea class="form-control" rows="3" placeholder="" formControlName="description"></textarea>
             </div>
 
+            <!-- Short Name -->
+            <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('code').valid && newVarForm.get('code').dirty}">
+                <label class="req" for="code">Code:</label>
+                <input class="form-control" type="text" formControlName="code">
+                <div class="input-invalid-warning" *ngIf="!newVarForm.get('code').valid && newVarForm.get('code').dirty">Code
+                    is required</div>
+            </div>
+
             <!-- Enlgish Unit Type -->
             <div class="form-group">
                 <label for="description">English Unit Type:</label>
@@ -132,14 +145,6 @@
                 </ng-select>
             </div>
 
-            <!-- Short Name -->
-            <div class="form-group required" [ngClass]="{'form-invalid': !newVarForm.get('code').valid && newVarForm.get('code').dirty}">
-                <label class="req" for="code">Code:</label>
-                <input class="form-control" type="text" formControlName="code">
-                <div class="input-invalid-warning" *ngIf="!newVarForm.get('code').valid && newVarForm.get('code').dirty">Code
-                    is required</div>
-            </div>
-
         </form>
 	</div>
 	
@@ -148,4 +153,71 @@
 		<button type="button" (click)="d('closed')" class="button">Cancel</button>
 		<button type="button" (click)="createNewVariableType()" [disabled]="!newVarForm.valid" class="button blue">Create</button>
 	</div>
+</ng-template>
+
+<!-- batch variable type form -->
+<ng-template #batch let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<div class="title">Batch Upload Variable Type</div>  
+		<button class="icon-button" (click)="d('closed'); closeTable();"><i class="far fa-times"></i></button>                
+	</div>
+    <div class="modal-body" id="body">
+        <div class="upload-type" *ngIf='!selectUpload'>    
+            <button type="button" class="button blue" (click)='selectUpload = true;'>Upload Variables</button>
+        </div>
+
+        <div *ngIf="!selectUpload" class="upload-type">
+            <h6>For an example template download the file <a href="./assets/example_variable_bulk_upload.xlsx">here</a>.</h6>
+        </div>
+        <!-- File selector -->
+        <div class="upload-input">
+            <input *ngIf='selectUpload && !tableDisplay' (change)="selectFile($event)" accept=".xls,.xlsx" type='file'/>
+        </div>
+        <!-- Select worksheet -->
+        <div *ngIf="sheetNamesButtons">
+            <h6 class="title">Select a Worksheet:</h6>
+            <ng-container *ngFor="let sheetName of wb.SheetNames">
+                    <button class="button grey mright-sm mtop-xs" (click)='selectSheet(sheetName)'>{{sheetName}}</button>
+            </ng-container>
+        </div>
+
+        <div *ngIf="tableDisplay">
+            <form class="editScen">
+                <div class="table-title" >
+                    <div class="edit-scen-wrapper">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-10">Name</th>
+                                    <th class="width-15">Description</th>
+                                    <th class="width-10">Code</th>
+                                    <th class="width-10">English Unit Type</th>
+                                    <th class="width-10">Metric Unit Type</th>
+                                    <th class="width-10">Statistic Group Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let v of bulkData, let i = index">
+                                    <td>{{ v.name }}</td>
+                                    <td>{{ v.description }}</td>
+                                    <td>{{ v.code }}</td>
+                                    <td>{{ getName(v.englishUnitTypeID, 'english') }}</td>
+                                    <td>{{ getName(v.metricUnitTypeID, 'metric') }}</td>
+                                    <td>{{ getName(v.statisticGroupTypeID, 'stat') }}</td>
+                                    <span style="color:red; font-size:12px;" *ngIf="v.success=='no'">*Variable wasn't uploaded*</span>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> <br>
+                </div>
+            </form>
+        </div>
+	</div>
+	
+	<!-- Footer / Buttons -->
+	<div class="modal-body-footer">
+        <button type="button" *ngIf="tableDisplay && !submitted" (click)="batchUploadVariableType(); submitted = true;" class="button blue">Create</button>
+        <button type="button" *ngIf="submitted" (click)="d('closed'); closeTable();" class="button red">Close</button>
+	</div>
+
 </ng-template>

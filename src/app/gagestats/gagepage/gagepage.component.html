@@ -251,6 +251,11 @@
 		<!--Streamflow Statistics Table-->
 		<div *ngIf="gage.statistics.length > 0  || editGage">
 			<div class="table-title">Streamflow Statistics
+				<div *ngIf="URLsToDisplay.length > 0">Links to Additional Statistics: 
+					<div *ngFor="let item of URLsToDisplay">
+						<a href="{{item.url}}">{{item.text}}</a><br>
+					</div>
+				</div>
 				<div class="stat-filters">
 					<div><label>Filter by Statistic Group: </label></div>
 					<div>

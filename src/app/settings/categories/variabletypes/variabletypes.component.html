@@ -201,9 +201,9 @@
                                     <td>{{ v.name }}</td>
                                     <td>{{ v.description }}</td>
                                     <td>{{ v.code }}</td>
-                                    <td>{{ v.englishUnitType }}</td>
-                                    <td>{{ v.metricUnitType }}</td>
-                                    <td>{{ v.statisticGroup }}</td>
+                                    <td>{{ getName(v.englishUnitTypeID, 'english') }}</td>
+                                    <td>{{ getName(v.metricUnitTypeID, 'metric') }}</td>
+                                    <td>{{ getName(v.statisticGroupTypeID, 'stat') }}</td>
                                     <span style="color:red; font-size:12px;" *ngIf="v.success=='no'">*Variable wasn't uploaded*</span>
                                 </tr>
                             </tbody>

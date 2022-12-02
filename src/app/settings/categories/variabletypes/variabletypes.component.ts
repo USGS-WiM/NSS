@@ -47,7 +47,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public nssVariableTypes: Array<Variabletype>;
     public gsVariableTypes: Array<Variabletype>;
     // Bulk Upload
-    public wb: XLSX.WorkBook
+    public wb: XLSX.WorkBook;
     public sheetNamesButtons: boolean;
     public tableDisplay: boolean = false;
     public bulkData = [];
@@ -84,7 +84,6 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
     public getEntites(){
         this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.variablesURL).subscribe(res => {
             this.variableTypes = res;
-
         });
         this._settingsservice.getEntities(this.configSettings.nssBaseURL + this.configSettings.statisticGrpURL).subscribe(res => {
             res.sort((a, b) => a.name.localeCompare(b.name));
@@ -367,18 +366,14 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
                     name: name,
                     description: description,
                     code: code,
-                    englishUnitType: englishUnitType,
                     englishUnitTypeID: this.englishUnitTypes.find(ut => ut.name == englishUnitType).id,
-                    metricUnitType: metricUnitType,
                     metricUnitTypeID: this.metricUnitTypes.find(ut => ut.name == metricUnitType).id,
-                    statisticGroup: statisticGroup,
                     statisticGroupTypeID: this.statisticGroups.find(sg => sg.name == statisticGroup).id,
                     success: null
                 }
                 counter++;
             }
         }
-        console.log(this.bulkData)
     }
 
     public batchUploadVariableType() {
@@ -421,7 +416,17 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
         this.submitted = false;
         this.selectUpload = false;
         this.clearTable();
-      }
+    }
+
+    public getName(id, type){
+        if (type == 'english'){
+           return(this.englishUnitTypes.find(ut => ut.id == id).name)
+        } else if (type == 'metric'){
+            return(this.metricUnitTypes.find(ut => ut.id == id).name)
+        }else if (type == 'stat'){
+            return(this.statisticGroups.find(ut => ut.id == id).name)
+        }
+    }
 
     private getLoggedInRole() {
         this.loggedInRole = localStorage.getItem('loggedInRole');

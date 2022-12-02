@@ -69,6 +69,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public selectedParams: HttpParams;
   public regions: Region[];
   public NWISLatLong = "N/A";
+  public URLsToDisplay = [];
 
   constructor(
     private _nssService: NSSService, 
@@ -101,6 +102,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this.selectedStatGroup = [];
             this.selectedStatGroupChar = [];
             this.getTableHeaders();
+            this.additionalLinkCheck(this.gage.code);
           });
         }
     });
@@ -215,6 +217,36 @@ export class GagepageComponent implements OnInit, OnDestroy {
   public showGagePageForm(){
     this.modalRef = this._modalService.open(this.modalElement, { backdrop: 'static', keyboard: false, size: 'lg', windowClass: 'modal-xl' });
   }
+
+  public additionalLinkCheck(siteNo)  {
+    this.URLsToDisplay = [];
+    var additionalURLs = 
+    [
+        { 
+            url: 'https://streamstats.usgs.gov/gagePages/NC/Sta_' + siteNo + '_daily_discharge_percentiles_table_by-wateryears.txt', 
+            text: "Flow-Duration Statistics by Water Year",
+            available: false 
+        },
+        { 
+            url: 'https://streamstats.usgs.gov/gagePages/NC/Sta_' + siteNo + '_daily_discharge_percentiles_table_by-day-month-seasonal.txt', 
+            text: "Flow-Duration Statistics by Period of Record, Calendar Day & Month, & Seasonal Periods",
+            available: false 
+        },
+        { 
+            url: 'https://streamstats.usgs.gov/gagePages/IA/' + siteNo + '_stats.pdf', 
+            text: "Stream Flow Statistics",
+            available: false 
+        }
+    ]
+
+    for (let index = 0; index < additionalURLs.length; index++) {
+      this._http.get(additionalURLs[index].url, { responseType: 'text'}).subscribe(res => {
+        additionalURLs[index].available = true; 
+        this.URLsToDisplay.push(additionalURLs[index]);
+      },(error) => {
+      });  
+    }
+}
 
   public getDisplayStatGroupID(g) {
     var statGroup1;

@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Allow user to sort Variable Types by Statistic Group in Settings
 - Allow user to add unit types and statistic groups to regression types
 - Batch upload option for variables
-
+- NC And IA additional gage pages links to gage page 
 ### Changed
 
 - Changed MathJax reference from Cloudflare to jsDelivr

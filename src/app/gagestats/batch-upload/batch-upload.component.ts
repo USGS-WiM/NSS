@@ -510,7 +510,13 @@ export class BatchUploadComponentGS implements OnInit {
         .subscribe((response:any) => {
           if(!response.headers){   // If put request is a success...
             //this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
-            gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Bulk stations were added'});
+            if (this.url == "characteristics/batch") {
+              gtag('event', 'Add', { 'Type': 'Characteristic' });
+            } else if (this.url == "stations/Batch") {
+              gtag('event', 'Add', { 'Type': 'Station' });
+            } else if (this.url == "statistics/batch") {
+              gtag('event', 'Add', { 'Type': 'Statistic' });
+            }
             this._loaderService.hideFullPageLoad();
             this.clearTable();
             this.selectUpload = false;

@@ -16,6 +16,7 @@ import { Error } from 'app/shared/interfaces/error';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+declare let gtag: Function;
 
 @Component({
     moduleId: module.id,
@@ -102,6 +103,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
                 this._settingsservice.setErrors(this.errors);
                 this._toasterService.pop('info', 'Info', 'Error was created');
                 this.cancelCreateError();
+                gtag('event', 'Add', { 'Type': 'Error' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error creating Error', error._body.message || error.statusText);
@@ -147,6 +149,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.errorForm.form.dirty) { this.errorForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
+                    gtag('event', 'Edit', { 'Type': 'Error' });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating Error', error._body.message || error.statusText);
@@ -166,6 +169,7 @@ export class ErrorsComponent implements OnInit, OnDestroy {
                     this.errors.splice(index, 1);
                     this._settingsservice.setErrors(this.errors); // update service
                     this._settingsservice.outputWimMessages(result);
+                    gtag('event', 'Delete', { 'Type': 'Error' });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Error', error._body.message || error.statusText);

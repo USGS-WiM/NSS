@@ -12,6 +12,7 @@ import { Unittype } from 'app/shared/interfaces/unittype';
 import { Regressiontype } from 'app/shared/interfaces/regressiontype';
 import { Regressionregion } from 'app/shared/interfaces/regressionregion';
 import { Error } from 'app/shared/interfaces/error';
+declare let gtag: Function;
 
 export interface equation {
   region: {
@@ -411,6 +412,7 @@ public requeryFilters() {
         this.equationData[index].success = "yes"
           if (!response.headers) {
             this._toasterService.pop('info', 'Info', 'Scenario was added');
+            gtag('event', 'Add', { 'Type': 'Scenario' });
           } else {
             this._settingsservice.outputWimMessages(response);
           }

@@ -16,6 +16,7 @@ import { SettingsService } from '../../settings.service';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+declare let gtag: Function;
 
 @Component({
     moduleId: module.id,
@@ -103,6 +104,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
                 this._settingsservice.setRegions(this.regions);
                 this._toasterService.pop('info', 'Info', 'Region was created');
                 this.cancelCreateRegion();
+                gtag('event', 'Add', { 'Type': 'Region' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error creating Region', error._body.message || error.statusText);
@@ -148,6 +150,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.regForm.form.dirty) { this.regForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
+                    gtag('event', 'Edit', { 'Type': 'Region' });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating Region', error._body.message || error.statusText);
@@ -167,6 +170,7 @@ export class RegionsComponent implements OnInit, OnDestroy {
                     this.regions.splice(index, 1);
                     this._settingsservice.setRegions(this.regions); // update service
                     this._settingsservice.outputWimMessages(result);
+                    gtag('event', 'Delete', { 'Type': 'Region' });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Region', error._body.message || error.statusText);

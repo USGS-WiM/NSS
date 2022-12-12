@@ -17,6 +17,7 @@ import { Manager } from 'app/shared/interfaces/manager';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { Role } from 'app/shared/interfaces/role';
+declare let gtag: Function;
 
 @Component({
     moduleId: module.id,
@@ -160,6 +161,7 @@ export class ManagersComponent implements OnInit {
                 this._settingsservice.setManagers(this.managers);
                 this._toasterService.pop('info', 'Info', 'Manager was created');
                 this.cancelCreateUser();
+                gtag('event', 'Add', { 'Type': 'Manager' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return;}
                 this._toasterService.pop('error', 'Error creating Manager', error._body.message || error.statusText);
@@ -200,6 +202,7 @@ export class ManagersComponent implements OnInit {
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.userForm.nativeElement.dirty) { this.userForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
+                    gtag('event', 'Edit', { 'Type': 'Manager' });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating Manager', error._body.message || error.statusText);
@@ -219,6 +222,7 @@ export class ManagersComponent implements OnInit {
                     this.managers.splice(index, 1);
                     this._settingsservice.setManagers(this.managers); // update service
                     this._settingsservice.outputWimMessages(result);
+                    gtag('event', 'Delete', { 'Type': 'Manager' });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Manager', error._body.message || error.statusText);

@@ -7,6 +7,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { Method } from 'app/shared/interfaces/method';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
+declare let gtag: Function;
 
 @Component({
   selector: 'app-methods',
@@ -89,6 +90,7 @@ export class MethodsComponent implements OnInit, OnDestroy  {
         this._settingsservice.setMethods(this.methods);
         this._toasterService.pop('info', 'Info', 'Method was created');
         this.cancelCreateMethod();
+        gtag('event', 'Add', { 'Type': 'Method' });
       }, error => {
         if (this._settingsservice.outputWimMessages(error)) {return; }
         this._toasterService.pop('error', 'Error creating Method', error._body.message || error.statusText);
@@ -134,6 +136,7 @@ export class MethodsComponent implements OnInit, OnDestroy  {
           this.isEditing = false; // set to true so create new is disabled
           if (this.methodForm.form.dirty) { this.methodForm.reset(); }
           this._settingsservice.outputWimMessages(resp);
+          gtag('event', 'Edit', { 'Type': 'Method' });
         }, error => {
           if (this._settingsservice.outputWimMessages(error)) {return; }
           this._toasterService.pop('error', 'Error updating Method', error._body.message || error.statusText);
@@ -153,6 +156,7 @@ export class MethodsComponent implements OnInit, OnDestroy  {
           this.methods.splice(index, 1);
           this._settingsservice.setMethods(this.methods); // update service
           this._settingsservice.outputWimMessages(result);
+          gtag('event', 'Delete', { 'Type': 'Method' });
         }, error => {
           if (this._settingsservice.outputWimMessages(error)) {return; }
           this._toasterService.pop('error', 'Error deleting Method', error._body.message || error.statusText);

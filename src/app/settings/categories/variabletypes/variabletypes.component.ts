@@ -17,6 +17,7 @@ import { Variabletype } from 'app/shared/interfaces/variabletype';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import * as XLSX from 'xlsx';
+declare let gtag: Function;
 
 @Component({
     moduleId: module.id,
@@ -181,6 +182,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
                 this.variableTypes.push(response);
                 this.getEntites();
                 this._toasterService.pop('info', 'Info', 'Variable was created');
+                gtag('event', 'Add', { 'Type': "Variable" });
                 this.cancelCreateVariableType();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
@@ -225,6 +227,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
                     this._settingsservice.setVariables(this.variableTypes);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
+                    gtag('event', 'Edit', { 'Type': "Variable" });
                     if (this.varForm.form.dirty) { this.varForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
                 }, error => {
@@ -245,6 +248,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
                 .subscribe(result => {
                     this.variableTypes.splice(index, 1);
                     this._settingsservice.setVariables(this.variableTypes); // update service
+                    gtag('event', 'Delete', { 'Type': "Variable" });
                     this._settingsservice.outputWimMessages(result);
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
@@ -393,6 +397,7 @@ export class VariableTypesComponent implements OnInit, OnDestroy {
                     this.bulkData[index].success = "yes"
                     if (!response.headers) {
                         this._toasterService.pop('info', 'Info', 'Variable was added');
+                        gtag('event', 'Add', { 'Type': 'Variable' });
                     } else {
                         this._settingsservice.outputWimMessages(response);
                     }

@@ -307,7 +307,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
             this.modalRef.close();    
             this._nssService.searchStations(this.selectedParams);
             this._nssService.setRequeryGSFilter(true);
-            gtag('event', 'click', { 'event_category': 'Delete Station', 'event_label': 'Station was deleted' });
+            gtag('event', 'Delete', { 'Type': 'Station' });
           }
       }, error => {
           if (error.headers) {this._nssService.outputWimMessages(error);
@@ -326,7 +326,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           this._settingsservice.outputWimMessages(res);
           this.refreshgagepage();
           this._nssService.searchStations(this.selectedParams);
-          gtag('event', 'click', { 'event_category': 'Put Station', 'event_label': 'Station was edited' });
+          gtag('event', 'Edit', { 'Type': 'Station' });
         }
       )
   }
@@ -406,7 +406,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
               delete(this.itemBeingEdited);
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
-              gtag('event', 'click', { 'event_category': 'Delete Characteristic', 'event_label': 'Characteristic was deleted' });
+              gtag('event', 'Delete', { 'Type': 'Characteristic' });
             }
           )
         } else { delete(this.newChar) }  // If the char does not have an ID (if it has not been saved to the service)
@@ -421,7 +421,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
         (res) => { 
           item.isEditing = false;
           delete(this.itemBeingEdited);
-          gtag('event', 'click', { 'event_category': 'Put Characteristic', 'event_label': 'Characteristic was edited'});
+          gtag('event', 'Edit', { 'Type': 'Characteristic' });
           this.refreshgagepage();
           this._settingsservice.outputWimMessages(res);
           this._loaderService.hideFullPageLoad();
@@ -435,7 +435,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           delete(this.newChar);
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Characteristic was created');
-          gtag('event', 'click', { 'event_category': 'Post Characteristic', 'event_label': 'Characteristic was added'});
+          gtag('event', 'Add', { 'Type': 'Characteristic' });
           this._loaderService.hideFullPageLoad();
       }, error => {
         if (this._settingsservice.outputWimMessages(error)) {return; }
@@ -496,7 +496,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           item.isEditing = false;
           delete(this.itemBeingEdited);
           this._settingsservice.outputWimMessages(res);
-          gtag('event', 'click', { 'event_category': 'Put Statistic', 'event_label': 'Statistic was edited'});
+          gtag('event', 'Edit', {  'Type': 'Statistic' });
           this.refreshgagepage();
           this._loaderService.hideFullPageLoad();
         }
@@ -512,7 +512,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
           delete(this.itemBeingEdited);
           this.refreshgagepage();
           this._toasterService.pop('info', 'Info', 'Statistic was created');
-          gtag('event', 'click', { 'event_category': 'Post Statistic', 'event_label': 'Statistic was added'});
+          gtag('event', 'Add', { 'Type': 'Statistic' });
           this._loaderService.hideFullPageLoad();
         } 
       ) 
@@ -529,8 +529,7 @@ export class GagepageComponent implements OnInit, OnDestroy {
               delete(this.itemBeingEdited);
               this.refreshgagepage();
               this._settingsservice.outputWimMessages(res);
-              gtag('event', 'click', { 'event_category': 'Delete Statistic', 'event_label': 'Statistic was deleted' });
-
+              gtag('event', 'Delete', { 'Type': 'Statistic' });
             }
           )
         } else { delete(this.newStat) }  // If the stat does not have an ID (if it has not been saved to the service)

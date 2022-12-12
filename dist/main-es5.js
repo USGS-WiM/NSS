@@ -3003,7 +3003,7 @@ var AddStationModal = /** @class */ (function () {
             .subscribe(function (response) {
             if (!response.headers) {
                 _this._toasterService.pop('info', 'Info', 'Station Added');
-                gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Station was added' });
+                gtag('event', 'Add', { 'Type': 'Station' });
             }
             else {
                 _this._settingsService.outputWimMessages(response);
@@ -3608,7 +3608,15 @@ var BatchUploadComponentGS = /** @class */ (function () {
             .subscribe(function (response) {
             if (!response.headers) { // If put request is a success...
                 //this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
-                gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Bulk stations were added' });
+                if (_this.url == "characteristics/batch") {
+                    gtag('event', 'Add', { 'Type': 'Characteristic' });
+                }
+                else if (_this.url == "stations/Batch") {
+                    gtag('event', 'Add', { 'Type': 'Station' });
+                }
+                else if (_this.url == "statistics/batch") {
+                    gtag('event', 'Add', { 'Type': 'Statistic' });
+                }
                 _this._loaderService.hideFullPageLoad();
                 _this.clearTable();
                 _this.selectUpload = false;
@@ -4000,7 +4008,7 @@ var GagepageComponent = /** @class */ (function () {
                     _this.modalRef.close();
                     _this._nssService.searchStations(_this.selectedParams);
                     _this._nssService.setRequeryGSFilter(true);
-                    gtag('event', 'click', { 'event_category': 'Delete Station', 'event_label': 'Station was deleted' });
+                    gtag('event', 'Delete', { 'Type': 'Station' });
                 }
             }, function (error) {
                 if (error.headers) {
@@ -4022,7 +4030,7 @@ var GagepageComponent = /** @class */ (function () {
             _this._settingsservice.outputWimMessages(res);
             _this.refreshgagepage();
             _this._nssService.searchStations(_this.selectedParams);
-            gtag('event', 'click', { 'event_category': 'Put Station', 'event_label': 'Station was edited' });
+            gtag('event', 'Edit', { 'Type': 'Station' });
         });
     };
     GagepageComponent.prototype.editGageInformation = function (item) {
@@ -4093,7 +4101,7 @@ var GagepageComponent = /** @class */ (function () {
                     delete (_this.itemBeingEdited);
                     _this.refreshgagepage();
                     _this._settingsservice.outputWimMessages(res);
-                    gtag('event', 'click', { 'event_category': 'Delete Characteristic', 'event_label': 'Characteristic was deleted' });
+                    gtag('event', 'Delete', { 'Type': 'Characteristic' });
                 });
             }
             else {
@@ -4110,7 +4118,7 @@ var GagepageComponent = /** @class */ (function () {
             this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.characteristicsURL).subscribe(function (res) {
                 item.isEditing = false;
                 delete (_this.itemBeingEdited);
-                gtag('event', 'click', { 'event_category': 'Put Characteristic', 'event_label': 'Characteristic was edited' });
+                gtag('event', 'Edit', { 'Type': 'Characteristic' });
                 _this.refreshgagepage();
                 _this._settingsservice.outputWimMessages(res);
                 _this._loaderService.hideFullPageLoad();
@@ -4124,7 +4132,7 @@ var GagepageComponent = /** @class */ (function () {
                 delete (_this.newChar);
                 _this.refreshgagepage();
                 _this._toasterService.pop('info', 'Info', 'Characteristic was created');
-                gtag('event', 'click', { 'event_category': 'Post Characteristic', 'event_label': 'Characteristic was added' });
+                gtag('event', 'Add', { 'Type': 'Characteristic' });
                 _this._loaderService.hideFullPageLoad();
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
@@ -4182,7 +4190,7 @@ var GagepageComponent = /** @class */ (function () {
                 item.isEditing = false;
                 delete (_this.itemBeingEdited);
                 _this._settingsservice.outputWimMessages(res);
-                gtag('event', 'click', { 'event_category': 'Put Statistic', 'event_label': 'Statistic was edited' });
+                gtag('event', 'Edit', { 'Type': 'Statistic' });
                 _this.refreshgagepage();
                 _this._loaderService.hideFullPageLoad();
             });
@@ -4197,7 +4205,7 @@ var GagepageComponent = /** @class */ (function () {
                 delete (_this.itemBeingEdited);
                 _this.refreshgagepage();
                 _this._toasterService.pop('info', 'Info', 'Statistic was created');
-                gtag('event', 'click', { 'event_category': 'Post Statistic', 'event_label': 'Statistic was added' });
+                gtag('event', 'Add', { 'Type': 'Statistic' });
                 _this._loaderService.hideFullPageLoad();
             });
         }
@@ -4212,7 +4220,7 @@ var GagepageComponent = /** @class */ (function () {
                     delete (_this.itemBeingEdited);
                     _this.refreshgagepage();
                     _this._settingsservice.outputWimMessages(res);
-                    gtag('event', 'click', { 'event_category': 'Delete Statistic', 'event_label': 'Statistic was deleted' });
+                    gtag('event', 'Delete', { 'Type': 'Statistic' });
                 });
             }
             else {
@@ -6134,7 +6142,7 @@ var MainviewComponent = /** @class */ (function () {
             var sParams = '?statisticgroupID=' + sgID + '&regressionregionID=' + rrID + '&regressiontypeID=' + rID;
             this._settingsService.deleteEntity('', this.configSettings.nssBaseURL + this.configSettings.scenariosURL, sParams).subscribe(function (result) {
                 _this.requeryFilters();
-                gtag('event', 'click', { 'event_category': 'Delete Scenario', 'event_label': 'Scenario was deleted' });
+                gtag('event', 'Delete', { 'Type': 'Scenario' });
                 if (result.headers) {
                     _this._nssService.outputWimMessages(result);
                 }
@@ -6155,7 +6163,7 @@ var MainviewComponent = /** @class */ (function () {
             this.saveFilters();
             this._settingsService.deleteEntity(rrID, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(function (result) {
                 _this.requeryFilters();
-                gtag('event', 'click', { 'event_category': 'Delete Regression Region', 'event_label': 'Regression Region was deleted' });
+                gtag('event', 'Delete', { 'Type': 'RegressionRegion' });
                 if (result.headers) {
                     _this._nssService.outputWimMessages(result);
                 }
@@ -6189,6 +6197,7 @@ var MainviewComponent = /** @class */ (function () {
             regReg.citationID = null;
             this._settingsService.putEntity(rr.id, regReg, this.configSettings.nssBaseURL + this.configSettings.regRegionURL)
                 .subscribe(function (response) {
+                gtag('event', 'Edit', { 'Type': 'RegressionRegion' });
                 _this.requeryFilters();
                 _this._nssService.outputWimMessages(response);
             }, function (error) {
@@ -6397,7 +6406,7 @@ var MainviewComponent = /** @class */ (function () {
             .subscribe(function (response) {
             _this.requeryFilters();
             _this._nssService.outputWimMessages(response);
-            gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
+            gtag('event', 'Edit', { 'Type': 'Scenario' });
             _this.modalRef.close();
         }, function (error) {
             if (_this._settingsService.outputWimMessages(error)) {
@@ -6530,6 +6539,7 @@ var MainviewComponent = /** @class */ (function () {
             _this.requeryFilters();
             if (!res.headers) {
                 _this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+                gtag('event', 'Edit', { 'Type': 'RegressionRegion' });
             }
             else {
                 _this._settingsService.outputWimMessages(res);
@@ -6561,6 +6571,7 @@ var MainviewComponent = /** @class */ (function () {
             rr.citationID = res.id;
             if (!res.headers) {
                 _this._toasterService.pop('info', 'Info', 'Citation was added');
+                gtag('event', 'Add', { 'Type': 'Citation' });
             }
             else {
                 _this._settingsService.outputWimMessages(res);
@@ -6838,6 +6849,7 @@ var AgenciesComponent = /** @class */ (function () {
             _this._settingsservice.setAgencies(_this.agencies);
             _this._toasterService.pop('info', 'Info', 'Agency was created');
             _this.cancelCreateAgency();
+            gtag('event', 'Add', { 'Type': "Agency" });
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -6884,6 +6896,7 @@ var AgenciesComponent = /** @class */ (function () {
                     _this.agencyForm.reset();
                 }
                 _this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': "Agency" });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -6904,6 +6917,7 @@ var AgenciesComponent = /** @class */ (function () {
                 _this.agencies.splice(index_1, 1);
                 _this._settingsservice.setAgencies(_this.agencies); // update service
                 _this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': "Agency" });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7068,6 +7082,7 @@ var ErrorsComponent = /** @class */ (function () {
             _this._settingsservice.setErrors(_this.errors);
             _this._toasterService.pop('info', 'Info', 'Error was created');
             _this.cancelCreateError();
+            gtag('event', 'Add', { 'Type': 'Error' });
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -7114,6 +7129,7 @@ var ErrorsComponent = /** @class */ (function () {
                     _this.errorForm.reset();
                 }
                 _this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'Error' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7134,6 +7150,7 @@ var ErrorsComponent = /** @class */ (function () {
                 _this.errors.splice(index_1, 1);
                 _this._settingsservice.setErrors(_this.errors); // update service
                 _this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'Error' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7330,6 +7347,7 @@ var ManagersComponent = /** @class */ (function () {
             _this._settingsservice.setManagers(_this.managers);
             _this._toasterService.pop('info', 'Info', 'Manager was created');
             _this.cancelCreateUser();
+            gtag('event', 'Add', { 'Type': 'Manager' });
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -7371,6 +7389,7 @@ var ManagersComponent = /** @class */ (function () {
                     _this.userForm.reset();
                 }
                 _this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'Manager' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7391,6 +7410,7 @@ var ManagersComponent = /** @class */ (function () {
                 _this.managers.splice(index_1, 1);
                 _this._settingsservice.setManagers(_this.managers); // update service
                 _this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'Manager' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7536,6 +7556,7 @@ var MethodsComponent = /** @class */ (function () {
             _this._settingsservice.setMethods(_this.methods);
             _this._toasterService.pop('info', 'Info', 'Method was created');
             _this.cancelCreateMethod();
+            gtag('event', 'Add', { 'Type': 'Method' });
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -7582,6 +7603,7 @@ var MethodsComponent = /** @class */ (function () {
                     _this.methodForm.reset();
                 }
                 _this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'Method' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7602,6 +7624,7 @@ var MethodsComponent = /** @class */ (function () {
                 _this.methods.splice(index_1, 1);
                 _this._settingsservice.setMethods(_this.methods); // update service
                 _this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'Method' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7760,6 +7783,7 @@ var RegionsComponent = /** @class */ (function () {
             _this._settingsservice.setRegions(_this.regions);
             _this._toasterService.pop('info', 'Info', 'Region was created');
             _this.cancelCreateRegion();
+            gtag('event', 'Add', { 'Type': 'Region' });
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -7806,6 +7830,7 @@ var RegionsComponent = /** @class */ (function () {
                     _this.regForm.reset();
                 }
                 _this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'Region' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7826,6 +7851,7 @@ var RegionsComponent = /** @class */ (function () {
                 _this.regions.splice(index_1, 1);
                 _this._settingsservice.setRegions(_this.regions); // update service
                 _this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'Region' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8069,6 +8095,7 @@ var RegressionTypesComponent = /** @class */ (function () {
                 _this.onRegSelect(_this.selectedRegion);
             }
             _this.cancelCreateRegression();
+            gtag('event', 'Add', { 'Type': 'Regression' });
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -8115,6 +8142,7 @@ var RegressionTypesComponent = /** @class */ (function () {
                     _this.regressionForm.reset();
                 }
                 _this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'Regression' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8135,6 +8163,7 @@ var RegressionTypesComponent = /** @class */ (function () {
                 _this.regressionTypes.splice(index_1, 1);
                 _this._settingsservice.setRegTypes(_this.regressionTypes); // update service
                 _this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'Regression' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8304,6 +8333,7 @@ var StationTypesComponent = /** @class */ (function () {
             _this._settingsservice.setStationTypes(_this.stationTypes);
             _this._toasterService.pop('info', 'Info', 'Station Type was created');
             _this.cancelCreateStationType();
+            gtag('event', 'Add', { 'Type': 'StationType' });
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -8350,6 +8380,7 @@ var StationTypesComponent = /** @class */ (function () {
                     _this.stationTypeForm.reset();
                 }
                 _this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'StationType' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8370,6 +8401,7 @@ var StationTypesComponent = /** @class */ (function () {
                 _this.stationTypes.splice(index_1, 1);
                 _this._settingsservice.setStationTypes(_this.stationTypes); // update service
                 _this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'StationType' });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8579,6 +8611,7 @@ var StatisticGroupsComponent = /** @class */ (function () {
             _this._toasterService.pop('info', 'Info', 'Statistic Group was created');
             _this.getAllStatGroups();
             _this.cancelCreateStatGroup();
+            gtag('event', 'Add', { 'Type': "StatisticGroup" });
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -8625,6 +8658,7 @@ var StatisticGroupsComponent = /** @class */ (function () {
                     _this.statGroupForm.reset();
                 }
                 _this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': "StatisticGroup" });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8645,6 +8679,7 @@ var StatisticGroupsComponent = /** @class */ (function () {
                 _this.statisticGroups.splice(index_1, 1);
                 _this._settingsservice.setStatGroups(_this.statisticGroups); // update service
                 _this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': "StatisticGroup" });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8803,6 +8838,7 @@ var UnitSystemsComponent = /** @class */ (function () {
             _this.unitSystems.push(response);
             _this._settingsservice.setUnitSystems(_this.unitSystems);
             _this._toasterService.pop('info', 'Info', 'Unit System was created');
+            gtag('event', 'Add', { 'type': 'UnitSystem' });
             _this.cancelCreateUnit();
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
@@ -8850,6 +8886,7 @@ var UnitSystemsComponent = /** @class */ (function () {
                     _this.usForm.reset();
                 }
                 _this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': "UnitSystem" });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8870,6 +8907,7 @@ var UnitSystemsComponent = /** @class */ (function () {
                 _this.unitSystems.splice(index_1, 1);
                 _this._settingsservice.setUnitSystems(_this.unitSystems); // update service
                 _this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': "UnitSystem" });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -9046,6 +9084,7 @@ var UnitTypesComponent = /** @class */ (function () {
             _this.unitTypes.push(response);
             _this._settingsservice.setUnits(_this.unitTypes);
             _this._toasterService.pop('info', 'Info', 'Unit was created');
+            gtag('event', 'Add', { 'Type': "Unit" });
             _this.cancelCreateUnit();
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
@@ -9089,6 +9128,7 @@ var UnitTypesComponent = /** @class */ (function () {
                 _this._settingsservice.setUnits(_this.unitTypes);
                 _this.rowBeingEdited = -1;
                 _this.isEditing = false; // set to true so create new is disabled
+                gtag('event', 'Edit', { 'Type': "Unit" });
                 if (_this.unitForm.form.dirty) {
                     _this.unitForm.reset();
                 }
@@ -9113,6 +9153,7 @@ var UnitTypesComponent = /** @class */ (function () {
                 _this.unitTypes.splice(index_1, 1);
                 _this._settingsservice.setUnits(_this.unitTypes); // update service
                 _this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': "Unit" });
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -9362,6 +9403,7 @@ var VariableTypesComponent = /** @class */ (function () {
             _this.variableTypes.push(response);
             _this.getEntites();
             _this._toasterService.pop('info', 'Info', 'Variable was created');
+            gtag('event', 'Add', { 'Type': "Variable" });
             _this.cancelCreateVariableType();
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
@@ -9405,6 +9447,7 @@ var VariableTypesComponent = /** @class */ (function () {
                 _this._settingsservice.setVariables(_this.variableTypes);
                 _this.rowBeingEdited = -1;
                 _this.isEditing = false; // set to true so create new is disabled
+                gtag('event', 'Edit', { 'Type': "Variable" });
                 if (_this.varForm.form.dirty) {
                     _this.varForm.reset();
                 }
@@ -9428,6 +9471,7 @@ var VariableTypesComponent = /** @class */ (function () {
                 .subscribe(function (result) {
                 _this.variableTypes.splice(index_1, 1);
                 _this._settingsservice.setVariables(_this.variableTypes); // update service
+                gtag('event', 'Delete', { 'Type': "Variable" });
                 _this._settingsservice.outputWimMessages(result);
             }, function (error) {
                 if (_this._settingsservice.outputWimMessages(error)) {
@@ -9570,6 +9614,7 @@ var VariableTypesComponent = /** @class */ (function () {
                 _this.bulkData[index].success = "yes";
                 if (!response.headers) {
                     _this._toasterService.pop('info', 'Info', 'Variable was added');
+                    gtag('event', 'Add', { 'Type': 'Variable' });
                 }
                 else {
                     _this._settingsservice.outputWimMessages(response);
@@ -10582,7 +10627,7 @@ var AddRegressionRegionModal = /** @class */ (function () {
             response.isEditing = false;
             if (!response.headers) {
                 _this._toasterService.pop('info', 'Info', 'Regression region was added');
-                gtag('event', 'click', { 'event_category': 'Post Regression Region', 'event_label': 'Regression Region was added' });
+                gtag('event', 'Add', { 'Type': 'RegressionRegion' });
             }
             else {
                 _this._settingsService.outputWimMessages(response);
@@ -10612,7 +10657,7 @@ var AddRegressionRegionModal = /** @class */ (function () {
         this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(function (res) {
             if (!res.headers) {
                 _this._toasterService.pop('info', 'Info', 'Regression Region was updated');
-                gtag('event', 'click', { 'event_category': 'Put Regression Region', 'event_label': 'Regression Region was edited' });
+                gtag('event', 'Edit', { 'Type': 'RegressionRegion' });
                 _this.modalRef.close();
             }
             else {
@@ -10623,7 +10668,7 @@ var AddRegressionRegionModal = /** @class */ (function () {
                     .subscribe(function (response) {
                     if (!response.headers) { // Citation successfully updated
                         _this._toasterService.pop('info', 'Info', 'Citation was updated');
-                        gtag('event', 'click', { 'event_category': 'Put Citation', 'event_label': 'Citation was added' });
+                        gtag('event', 'Edit', { 'Type': 'Citation' });
                     }
                     else {
                         _this._settingsService.outputWimMessages(response);
@@ -10674,7 +10719,7 @@ var AddRegressionRegionModal = /** @class */ (function () {
             rr.citationID = response.id;
             if (!response.headers) {
                 _this._toasterService.pop('info', 'Info', 'Citation was added');
-                gtag('event', 'click', { 'event_category': 'Post Citation', 'event_label': 'Citation was created' });
+                gtag('event', 'Add', { 'Type': 'Citation' });
             }
             else {
                 _this._settingsService.outputWimMessages(response);
@@ -11435,7 +11480,7 @@ var AddScenarioModal = /** @class */ (function () {
                                 .subscribe(function (response) {
                                 _this.requeryFilters();
                                 // clear form
-                                gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
+                                gtag('event', 'Edit', { 'Type': "Scenario" });
                                 if (!response.headers) {
                                     _this._toasterService.pop('info', 'Info', 'Scenario was Updated');
                                 }
@@ -11466,7 +11511,7 @@ var AddScenarioModal = /** @class */ (function () {
             // clear form
             if (!response.headers) {
                 _this._toasterService.pop('info', 'Info', 'Scenario was added');
-                gtag('event', 'click', { 'event_category': 'Post Scenario', 'event_label': 'Scenario was added' });
+                gtag('event', 'Add', { 'Type': "Scenario" });
             }
             else {
                 _this._settingsService.outputWimMessages(response);
@@ -11996,6 +12041,7 @@ var BatchuploadComponentNSS = /** @class */ (function () {
                 _this.equationData[index].success = "yes";
                 if (!response.headers) {
                     _this._toasterService.pop('info', 'Info', 'Scenario was added');
+                    gtag('event', 'Add', { 'Type': 'Scenario' });
                 }
                 else {
                     _this._settingsservice.outputWimMessages(response);
@@ -12333,7 +12379,7 @@ var ManageCitationsModal = /** @class */ (function () {
             c.isEditing = false;
             _this._nssService.setSelectedRegion(_this.selectedRegion); // update everything
             _this._nssService.outputWimMessages(response);
-            gtag('event', 'click', { 'event_category': 'Put Citation', 'event_label': 'Citation was edited' });
+            gtag('event', 'Edit', { 'Type': 'Citation' });
             _this.getCitations();
         }, function (error) {
             if (_this._settingsService.outputWimMessages(error)) {
@@ -12356,7 +12402,7 @@ var ManageCitationsModal = /** @class */ (function () {
             _this.showNewCitation = false;
             if (!response.headers) {
                 _this._toasterService.pop('info', 'Info', 'Citation was added');
-                gtag('event', 'click', { 'event_category': 'Post Citation', 'event_label': 'Citation was added' });
+                gtag('event', 'Add', { 'Type': 'Citation' });
             }
             else {
                 _this._settingsService.outputWimMessages(response);
@@ -12476,7 +12522,7 @@ var ManageCitationsModal = /** @class */ (function () {
         if (check) {
             this._settingsService.deleteEntity(id, this.url).subscribe(function (result) {
                 _this._nssService.setSelectedRegion(_this.selectedRegion);
-                gtag('event', 'click', { 'event_category': 'Delete Citation', 'event_label': 'Citation was deleted' });
+                gtag('event', 'Delete', { 'Type': 'Citation' });
                 if (result.headers) {
                     _this._nssService.outputWimMessages(result);
                 }
@@ -14342,7 +14388,8 @@ var SidebarComponent = /** @class */ (function () {
             var regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
             var sParams = '?regressiontypes=' + regTypesIDstring;
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
-            gtag('event', 'click', { 'event_category': 'Compute', 'event_label': 'Region: ' + this.selectedRegion.name + ' Statistic Group: ' + this.getCode(this.selectedStatGrpIDs, this.statisticGroups) + " Stat Label: " + this.getCode(this.selectedRegTypeIDs, this.regressionTypes) });
+            console.log('calc scenaio');
+            gtag('event', 'Compute', { 'Region': this.selectedRegion.name, 'StatisticGroup': this.getCode(this.selectedStatGrpIDs, this.statisticGroups), "StatisticLabel": this.getCode(this.selectedRegTypeIDs, this.regressionTypes) });
         }
     };
     SidebarComponent.prototype.getCode = function (IDs, fullArray) {

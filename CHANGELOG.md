@@ -16,12 +16,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Allow user to add unit types and statistic groups to regression types
 - Batch upload option for variables
 - NC And IA additional gage pages links to gage page 
+
 ### Changed
 
 - Changed MathJax reference from Cloudflare to jsDelivr
 - Updated Gagestats bulk upload template
 - Changed how statistic filter in the settings works. Filters client side instead of service side. 
 - README build instructions
+- Updated Google analytics tags
 
 ### Removed
 

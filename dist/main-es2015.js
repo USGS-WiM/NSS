@@ -2992,7 +2992,7 @@ let AddStationModal = class AddStationModal {
             .subscribe((response) => {
             if (!response.headers) {
                 this._toasterService.pop('info', 'Info', 'Station Added');
-                gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Station was added' });
+                gtag('event', 'Add', { 'Type': 'Station' });
             }
             else {
                 this._settingsService.outputWimMessages(response);
@@ -3554,7 +3554,15 @@ let BatchUploadComponentGS = class BatchUploadComponentGS {
             .subscribe((response) => {
             if (!response.headers) { // If put request is a success...
                 //this._toasterService.pop('info', 'Info', 'Success! ' + Object.keys(response).length + ' items were added.');
-                gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Bulk stations were added' });
+                if (this.url == "characteristics/batch") {
+                    gtag('event', 'Add', { 'Type': 'Characteristic' });
+                }
+                else if (this.url == "stations/Batch") {
+                    gtag('event', 'Add', { 'Type': 'Station' });
+                }
+                else if (this.url == "statistics/batch") {
+                    gtag('event', 'Add', { 'Type': 'Statistic' });
+                }
                 this._loaderService.hideFullPageLoad();
                 this.clearTable();
                 this.selectUpload = false;
@@ -3935,7 +3943,7 @@ let GagepageComponent = class GagepageComponent {
                     this.modalRef.close();
                     this._nssService.searchStations(this.selectedParams);
                     this._nssService.setRequeryGSFilter(true);
-                    gtag('event', 'click', { 'event_category': 'Delete Station', 'event_label': 'Station was deleted' });
+                    gtag('event', 'Delete', { 'Type': 'Station' });
                 }
             }, error => {
                 if (error.headers) {
@@ -3956,7 +3964,7 @@ let GagepageComponent = class GagepageComponent {
             this._settingsservice.outputWimMessages(res);
             this.refreshgagepage();
             this._nssService.searchStations(this.selectedParams);
-            gtag('event', 'click', { 'event_category': 'Put Station', 'event_label': 'Station was edited' });
+            gtag('event', 'Edit', { 'Type': 'Station' });
         });
     }
     editGageInformation(item) {
@@ -4026,7 +4034,7 @@ let GagepageComponent = class GagepageComponent {
                     delete (this.itemBeingEdited);
                     this.refreshgagepage();
                     this._settingsservice.outputWimMessages(res);
-                    gtag('event', 'click', { 'event_category': 'Delete Characteristic', 'event_label': 'Characteristic was deleted' });
+                    gtag('event', 'Delete', { 'Type': 'Characteristic' });
                 });
             }
             else {
@@ -4042,7 +4050,7 @@ let GagepageComponent = class GagepageComponent {
             this._settingsservice.putEntity(newItem.id, newItem, this.configSettings.gageStatsBaseURL + this.configSettings.characteristicsURL).subscribe((res) => {
                 item.isEditing = false;
                 delete (this.itemBeingEdited);
-                gtag('event', 'click', { 'event_category': 'Put Characteristic', 'event_label': 'Characteristic was edited' });
+                gtag('event', 'Edit', { 'Type': 'Characteristic' });
                 this.refreshgagepage();
                 this._settingsservice.outputWimMessages(res);
                 this._loaderService.hideFullPageLoad();
@@ -4056,7 +4064,7 @@ let GagepageComponent = class GagepageComponent {
                 delete (this.newChar);
                 this.refreshgagepage();
                 this._toasterService.pop('info', 'Info', 'Characteristic was created');
-                gtag('event', 'click', { 'event_category': 'Post Characteristic', 'event_label': 'Characteristic was added' });
+                gtag('event', 'Add', { 'Type': 'Characteristic' });
                 this._loaderService.hideFullPageLoad();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
@@ -4113,7 +4121,7 @@ let GagepageComponent = class GagepageComponent {
                 item.isEditing = false;
                 delete (this.itemBeingEdited);
                 this._settingsservice.outputWimMessages(res);
-                gtag('event', 'click', { 'event_category': 'Put Statistic', 'event_label': 'Statistic was edited' });
+                gtag('event', 'Edit', { 'Type': 'Statistic' });
                 this.refreshgagepage();
                 this._loaderService.hideFullPageLoad();
             });
@@ -4128,7 +4136,7 @@ let GagepageComponent = class GagepageComponent {
                 delete (this.itemBeingEdited);
                 this.refreshgagepage();
                 this._toasterService.pop('info', 'Info', 'Statistic was created');
-                gtag('event', 'click', { 'event_category': 'Post Statistic', 'event_label': 'Statistic was added' });
+                gtag('event', 'Add', { 'Type': 'Statistic' });
                 this._loaderService.hideFullPageLoad();
             });
         }
@@ -4142,7 +4150,7 @@ let GagepageComponent = class GagepageComponent {
                     delete (this.itemBeingEdited);
                     this.refreshgagepage();
                     this._settingsservice.outputWimMessages(res);
-                    gtag('event', 'click', { 'event_category': 'Delete Statistic', 'event_label': 'Statistic was deleted' });
+                    gtag('event', 'Delete', { 'Type': 'Statistic' });
                 });
             }
             else {
@@ -6015,7 +6023,7 @@ let MainviewComponent = class MainviewComponent {
             const sParams = '?statisticgroupID=' + sgID + '&regressionregionID=' + rrID + '&regressiontypeID=' + rID;
             this._settingsService.deleteEntity('', this.configSettings.nssBaseURL + this.configSettings.scenariosURL, sParams).subscribe(result => {
                 this.requeryFilters();
-                gtag('event', 'click', { 'event_category': 'Delete Scenario', 'event_label': 'Scenario was deleted' });
+                gtag('event', 'Delete', { 'Type': 'Scenario' });
                 if (result.headers) {
                     this._nssService.outputWimMessages(result);
                 }
@@ -6035,7 +6043,7 @@ let MainviewComponent = class MainviewComponent {
             this.saveFilters();
             this._settingsService.deleteEntity(rrID, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(result => {
                 this.requeryFilters();
-                gtag('event', 'click', { 'event_category': 'Delete Regression Region', 'event_label': 'Regression Region was deleted' });
+                gtag('event', 'Delete', { 'Type': 'RegressionRegion' });
                 if (result.headers) {
                     this._nssService.outputWimMessages(result);
                 }
@@ -6068,6 +6076,7 @@ let MainviewComponent = class MainviewComponent {
             regReg.citationID = null;
             this._settingsService.putEntity(rr.id, regReg, this.configSettings.nssBaseURL + this.configSettings.regRegionURL)
                 .subscribe((response) => {
+                gtag('event', 'Edit', { 'Type': 'RegressionRegion' });
                 this.requeryFilters();
                 this._nssService.outputWimMessages(response);
             }, error => {
@@ -6239,7 +6248,7 @@ let MainviewComponent = class MainviewComponent {
             .subscribe((response) => {
             this.requeryFilters();
             this._nssService.outputWimMessages(response);
-            gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
+            gtag('event', 'Edit', { 'Type': 'Scenario' });
             this.modalRef.close();
         }, error => {
             if (this._settingsService.outputWimMessages(error)) {
@@ -6350,6 +6359,7 @@ let MainviewComponent = class MainviewComponent {
             this.requeryFilters();
             if (!res.headers) {
                 this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+                gtag('event', 'Edit', { 'Type': 'RegressionRegion' });
             }
             else {
                 this._settingsService.outputWimMessages(res);
@@ -6380,6 +6390,7 @@ let MainviewComponent = class MainviewComponent {
             rr.citationID = res.id;
             if (!res.headers) {
                 this._toasterService.pop('info', 'Info', 'Citation was added');
+                gtag('event', 'Add', { 'Type': 'Citation' });
             }
             else {
                 this._settingsService.outputWimMessages(res);
@@ -6648,6 +6659,7 @@ let AgenciesComponent = class AgenciesComponent {
             this._settingsservice.setAgencies(this.agencies);
             this._toasterService.pop('info', 'Info', 'Agency was created');
             this.cancelCreateAgency();
+            gtag('event', 'Add', { 'Type': "Agency" });
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -6693,6 +6705,7 @@ let AgenciesComponent = class AgenciesComponent {
                     this.agencyForm.reset();
                 }
                 this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': "Agency" });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -6712,6 +6725,7 @@ let AgenciesComponent = class AgenciesComponent {
                 this.agencies.splice(index, 1);
                 this._settingsservice.setAgencies(this.agencies); // update service
                 this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': "Agency" });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -6871,6 +6885,7 @@ let ErrorsComponent = class ErrorsComponent {
             this._settingsservice.setErrors(this.errors);
             this._toasterService.pop('info', 'Info', 'Error was created');
             this.cancelCreateError();
+            gtag('event', 'Add', { 'Type': 'Error' });
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -6916,6 +6931,7 @@ let ErrorsComponent = class ErrorsComponent {
                     this.errorForm.reset();
                 }
                 this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'Error' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -6935,6 +6951,7 @@ let ErrorsComponent = class ErrorsComponent {
                 this.errors.splice(index, 1);
                 this._settingsservice.setErrors(this.errors); // update service
                 this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'Error' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7126,6 +7143,7 @@ let ManagersComponent = class ManagersComponent {
             this._settingsservice.setManagers(this.managers);
             this._toasterService.pop('info', 'Info', 'Manager was created');
             this.cancelCreateUser();
+            gtag('event', 'Add', { 'Type': 'Manager' });
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -7166,6 +7184,7 @@ let ManagersComponent = class ManagersComponent {
                     this.userForm.reset();
                 }
                 this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'Manager' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7185,6 +7204,7 @@ let ManagersComponent = class ManagersComponent {
                 this.managers.splice(index, 1);
                 this._settingsservice.setManagers(this.managers); // update service
                 this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'Manager' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7325,6 +7345,7 @@ let MethodsComponent = class MethodsComponent {
             this._settingsservice.setMethods(this.methods);
             this._toasterService.pop('info', 'Info', 'Method was created');
             this.cancelCreateMethod();
+            gtag('event', 'Add', { 'Type': 'Method' });
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -7370,6 +7391,7 @@ let MethodsComponent = class MethodsComponent {
                     this.methodForm.reset();
                 }
                 this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'Method' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7389,6 +7411,7 @@ let MethodsComponent = class MethodsComponent {
                 this.methods.splice(index, 1);
                 this._settingsservice.setMethods(this.methods); // update service
                 this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'Method' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7542,6 +7565,7 @@ let RegionsComponent = class RegionsComponent {
             this._settingsservice.setRegions(this.regions);
             this._toasterService.pop('info', 'Info', 'Region was created');
             this.cancelCreateRegion();
+            gtag('event', 'Add', { 'Type': 'Region' });
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -7587,6 +7611,7 @@ let RegionsComponent = class RegionsComponent {
                     this.regForm.reset();
                 }
                 this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'Region' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7606,6 +7631,7 @@ let RegionsComponent = class RegionsComponent {
                 this.regions.splice(index, 1);
                 this._settingsservice.setRegions(this.regions); // update service
                 this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'Region' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7831,6 +7857,7 @@ let RegressionTypesComponent = class RegressionTypesComponent {
                 this.onRegSelect(this.selectedRegion);
             }
             this.cancelCreateRegression();
+            gtag('event', 'Add', { 'Type': 'Regression' });
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -7876,6 +7903,7 @@ let RegressionTypesComponent = class RegressionTypesComponent {
                     this.regressionForm.reset();
                 }
                 this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'Regression' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -7895,6 +7923,7 @@ let RegressionTypesComponent = class RegressionTypesComponent {
                 this.regressionTypes.splice(index, 1);
                 this._settingsservice.setRegTypes(this.regressionTypes); // update service
                 this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'Regression' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8059,6 +8088,7 @@ let StationTypesComponent = class StationTypesComponent {
             this._settingsservice.setStationTypes(this.stationTypes);
             this._toasterService.pop('info', 'Info', 'Station Type was created');
             this.cancelCreateStationType();
+            gtag('event', 'Add', { 'Type': 'StationType' });
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -8104,6 +8134,7 @@ let StationTypesComponent = class StationTypesComponent {
                     this.stationTypeForm.reset();
                 }
                 this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': 'StationType' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8123,6 +8154,7 @@ let StationTypesComponent = class StationTypesComponent {
                 this.stationTypes.splice(index, 1);
                 this._settingsservice.setStationTypes(this.stationTypes); // update service
                 this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': 'StationType' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8325,6 +8357,7 @@ let StatisticGroupsComponent = class StatisticGroupsComponent {
             this._toasterService.pop('info', 'Info', 'Statistic Group was created');
             this.getAllStatGroups();
             this.cancelCreateStatGroup();
+            gtag('event', 'Add', { 'Type': "StatisticGroup" });
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
                 return;
@@ -8370,6 +8403,7 @@ let StatisticGroupsComponent = class StatisticGroupsComponent {
                     this.statGroupForm.reset();
                 }
                 this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': "StatisticGroup" });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8389,6 +8423,7 @@ let StatisticGroupsComponent = class StatisticGroupsComponent {
                 this.statisticGroups.splice(index, 1);
                 this._settingsservice.setStatGroups(this.statisticGroups); // update service
                 this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': "StatisticGroup" });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8542,6 +8577,7 @@ let UnitSystemsComponent = class UnitSystemsComponent {
             this.unitSystems.push(response);
             this._settingsservice.setUnitSystems(this.unitSystems);
             this._toasterService.pop('info', 'Info', 'Unit System was created');
+            gtag('event', 'Add', { 'type': 'UnitSystem' });
             this.cancelCreateUnit();
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
@@ -8588,6 +8624,7 @@ let UnitSystemsComponent = class UnitSystemsComponent {
                     this.usForm.reset();
                 }
                 this._settingsservice.outputWimMessages(resp);
+                gtag('event', 'Edit', { 'Type': "UnitSystem" });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8607,6 +8644,7 @@ let UnitSystemsComponent = class UnitSystemsComponent {
                 this.unitSystems.splice(index, 1);
                 this._settingsservice.setUnitSystems(this.unitSystems); // update service
                 this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': "UnitSystem" });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -8778,6 +8816,7 @@ let UnitTypesComponent = class UnitTypesComponent {
             this.unitTypes.push(response);
             this._settingsservice.setUnits(this.unitTypes);
             this._toasterService.pop('info', 'Info', 'Unit was created');
+            gtag('event', 'Add', { 'Type': "Unit" });
             this.cancelCreateUnit();
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
@@ -8820,6 +8859,7 @@ let UnitTypesComponent = class UnitTypesComponent {
                 this._settingsservice.setUnits(this.unitTypes);
                 this.rowBeingEdited = -1;
                 this.isEditing = false; // set to true so create new is disabled
+                gtag('event', 'Edit', { 'Type': "Unit" });
                 if (this.unitForm.form.dirty) {
                     this.unitForm.reset();
                 }
@@ -8843,6 +8883,7 @@ let UnitTypesComponent = class UnitTypesComponent {
                 this.unitTypes.splice(index, 1);
                 this._settingsservice.setUnits(this.unitTypes); // update service
                 this._settingsservice.outputWimMessages(result);
+                gtag('event', 'Delete', { 'Type': "Unit" });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
                     return;
@@ -9073,6 +9114,7 @@ let VariableTypesComponent = class VariableTypesComponent {
             this.variableTypes.push(response);
             this.getEntites();
             this._toasterService.pop('info', 'Info', 'Variable was created');
+            gtag('event', 'Add', { 'Type': "Variable" });
             this.cancelCreateVariableType();
         }, error => {
             if (this._settingsservice.outputWimMessages(error)) {
@@ -9115,6 +9157,7 @@ let VariableTypesComponent = class VariableTypesComponent {
                 this._settingsservice.setVariables(this.variableTypes);
                 this.rowBeingEdited = -1;
                 this.isEditing = false; // set to true so create new is disabled
+                gtag('event', 'Edit', { 'Type': "Variable" });
                 if (this.varForm.form.dirty) {
                     this.varForm.reset();
                 }
@@ -9137,6 +9180,7 @@ let VariableTypesComponent = class VariableTypesComponent {
                 .subscribe(result => {
                 this.variableTypes.splice(index, 1);
                 this._settingsservice.setVariables(this.variableTypes); // update service
+                gtag('event', 'Delete', { 'Type': "Variable" });
                 this._settingsservice.outputWimMessages(result);
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {
@@ -9276,6 +9320,7 @@ let VariableTypesComponent = class VariableTypesComponent {
                 this.bulkData[index].success = "yes";
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Variable was added');
+                    gtag('event', 'Add', { 'Type': 'Variable' });
                 }
                 else {
                     this._settingsservice.outputWimMessages(response);
@@ -10214,7 +10259,7 @@ let AddRegressionRegionModal = class AddRegressionRegionModal {
             response.isEditing = false;
             if (!response.headers) {
                 this._toasterService.pop('info', 'Info', 'Regression region was added');
-                gtag('event', 'click', { 'event_category': 'Post Regression Region', 'event_label': 'Regression Region was added' });
+                gtag('event', 'Add', { 'Type': 'RegressionRegion' });
             }
             else {
                 this._settingsService.outputWimMessages(response);
@@ -10243,7 +10288,7 @@ let AddRegressionRegionModal = class AddRegressionRegionModal {
         this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(res => {
             if (!res.headers) {
                 this._toasterService.pop('info', 'Info', 'Regression Region was updated');
-                gtag('event', 'click', { 'event_category': 'Put Regression Region', 'event_label': 'Regression Region was edited' });
+                gtag('event', 'Edit', { 'Type': 'RegressionRegion' });
                 this.modalRef.close();
             }
             else {
@@ -10254,7 +10299,7 @@ let AddRegressionRegionModal = class AddRegressionRegionModal {
                     .subscribe((response) => {
                     if (!response.headers) { // Citation successfully updated
                         this._toasterService.pop('info', 'Info', 'Citation was updated');
-                        gtag('event', 'click', { 'event_category': 'Put Citation', 'event_label': 'Citation was added' });
+                        gtag('event', 'Edit', { 'Type': 'Citation' });
                     }
                     else {
                         this._settingsService.outputWimMessages(response);
@@ -10304,7 +10349,7 @@ let AddRegressionRegionModal = class AddRegressionRegionModal {
             rr.citationID = response.id;
             if (!response.headers) {
                 this._toasterService.pop('info', 'Info', 'Citation was added');
-                gtag('event', 'click', { 'event_category': 'Post Citation', 'event_label': 'Citation was created' });
+                gtag('event', 'Add', { 'Type': 'Citation' });
             }
             else {
                 this._settingsService.outputWimMessages(response);
@@ -11005,7 +11050,7 @@ let AddScenarioModal = class AddScenarioModal {
                 .subscribe((response) => {
                 this.requeryFilters();
                 // clear form
-                gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
+                gtag('event', 'Edit', { 'Type': "Scenario" });
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was Updated');
                 }
@@ -11030,7 +11075,7 @@ let AddScenarioModal = class AddScenarioModal {
             // clear form
             if (!response.headers) {
                 this._toasterService.pop('info', 'Info', 'Scenario was added');
-                gtag('event', 'click', { 'event_category': 'Post Scenario', 'event_label': 'Scenario was added' });
+                gtag('event', 'Add', { 'Type': "Scenario" });
             }
             else {
                 this._settingsService.outputWimMessages(response);
@@ -11508,6 +11553,7 @@ let BatchuploadComponentNSS = class BatchuploadComponentNSS {
                 this.equationData[index].success = "yes";
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was added');
+                    gtag('event', 'Add', { 'Type': 'Scenario' });
                 }
                 else {
                     this._settingsservice.outputWimMessages(response);
@@ -11827,7 +11873,7 @@ let ManageCitationsModal = class ManageCitationsModal {
             c.isEditing = false;
             this._nssService.setSelectedRegion(this.selectedRegion); // update everything
             this._nssService.outputWimMessages(response);
-            gtag('event', 'click', { 'event_category': 'Put Citation', 'event_label': 'Citation was edited' });
+            gtag('event', 'Edit', { 'Type': 'Citation' });
             this.getCitations();
         }, error => {
             if (this._settingsService.outputWimMessages(error)) {
@@ -11849,7 +11895,7 @@ let ManageCitationsModal = class ManageCitationsModal {
             this.showNewCitation = false;
             if (!response.headers) {
                 this._toasterService.pop('info', 'Info', 'Citation was added');
-                gtag('event', 'click', { 'event_category': 'Post Citation', 'event_label': 'Citation was added' });
+                gtag('event', 'Add', { 'Type': 'Citation' });
             }
             else {
                 this._settingsService.outputWimMessages(response);
@@ -11944,7 +11990,7 @@ let ManageCitationsModal = class ManageCitationsModal {
         if (check) {
             this._settingsService.deleteEntity(id, this.url).subscribe(result => {
                 this._nssService.setSelectedRegion(this.selectedRegion);
-                gtag('event', 'click', { 'event_category': 'Delete Citation', 'event_label': 'Citation was deleted' });
+                gtag('event', 'Delete', { 'Type': 'Citation' });
                 if (result.headers) {
                     this._nssService.outputWimMessages(result);
                 }
@@ -13657,7 +13703,8 @@ let SidebarComponent = class SidebarComponent {
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
             const sParams = '?regressiontypes=' + regTypesIDstring;
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
-            gtag('event', 'click', { 'event_category': 'Compute', 'event_label': 'Region: ' + this.selectedRegion.name + ' Statistic Group: ' + this.getCode(this.selectedStatGrpIDs, this.statisticGroups) + " Stat Label: " + this.getCode(this.selectedRegTypeIDs, this.regressionTypes) });
+            console.log('calc scenaio');
+            gtag('event', 'Compute', { 'Region': this.selectedRegion.name, 'StatisticGroup': this.getCode(this.selectedStatGrpIDs, this.statisticGroups), "StatisticLabel": this.getCode(this.selectedRegTypeIDs, this.regressionTypes) });
         }
     }
     getCode(IDs, fullArray) {

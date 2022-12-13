@@ -116,7 +116,6 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
             .subscribe(res => {
                 this.regressionTypes = [];
                 if (this.selectedStatisticID) {
-                    console.log('hi')
                     for (var i in res) {
                         console.log(res[i])
                         if (res[i].statisticGroupTypeID && res[i].statisticGroupTypeID == this.selectedStatisticID){

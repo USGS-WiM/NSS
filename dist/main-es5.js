@@ -8017,7 +8017,6 @@ var RegressionTypesComponent = /** @class */ (function () {
             .subscribe(function (res) {
             _this.regressionTypes = [];
             if (_this.selectedStatisticID) {
-                console.log('hi');
                 for (var i in res) {
                     console.log(res[i]);
                     if (res[i].statisticGroupTypeID && res[i].statisticGroupTypeID == _this.selectedStatisticID) {
@@ -14388,7 +14387,6 @@ var SidebarComponent = /** @class */ (function () {
             var regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
             var sParams = '?regressiontypes=' + regTypesIDstring;
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
-            console.log('calc scenaio');
             gtag('event', 'Compute', { 'Region': this.selectedRegion.name, 'StatisticGroup': this.getCode(this.selectedStatGrpIDs, this.statisticGroups), "StatisticLabel": this.getCode(this.selectedRegTypeIDs, this.regressionTypes) });
         }
     };

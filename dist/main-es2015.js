@@ -7782,7 +7782,6 @@ let RegressionTypesComponent = class RegressionTypesComponent {
             .subscribe(res => {
             this.regressionTypes = [];
             if (this.selectedStatisticID) {
-                console.log('hi');
                 for (var i in res) {
                     console.log(res[i]);
                     if (res[i].statisticGroupTypeID && res[i].statisticGroupTypeID == this.selectedStatisticID) {
@@ -13703,7 +13702,6 @@ let SidebarComponent = class SidebarComponent {
             const regTypesIDstring = this.selectedRegTypeIDs !== undefined ? this.selectedRegTypeIDs.join(',') : '';
             const sParams = '?regressiontypes=' + regTypesIDstring;
             this._nssService.postScenarios(this.selectedRegion.id, this.scenarios, sParams);
-            console.log('calc scenaio');
             gtag('event', 'Compute', { 'Region': this.selectedRegion.name, 'StatisticGroup': this.getCode(this.selectedStatGrpIDs, this.statisticGroups), "StatisticLabel": this.getCode(this.selectedRegTypeIDs, this.regressionTypes) });
         }
     }

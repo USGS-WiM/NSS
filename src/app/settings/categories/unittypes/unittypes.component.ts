@@ -18,6 +18,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { UnitSystem } from 'app/shared/interfaces/unitsystems';
+declare let gtag: Function;
 
 @Component({
     moduleId: module.id,
@@ -136,6 +137,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
                 this.unitTypes.push(response);
                 this._settingsservice.setUnits(this.unitTypes);
                 this._toasterService.pop('info', 'Info', 'Unit was created');
+                gtag('event', 'Add', { 'Type': "Unit" });
                 this.cancelCreateUnit();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
@@ -180,6 +182,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
                     this._settingsservice.setUnits(this.unitTypes);
                     this.rowBeingEdited = -1;
                     this.isEditing = false; // set to true so create new is disabled
+                    gtag('event', 'Edit', { 'Type': "Unit" });
                     if (this.unitForm.form.dirty) { this.unitForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
                 }, error => {
@@ -201,6 +204,7 @@ export class UnitTypesComponent implements OnInit, OnDestroy {
                     this.unitTypes.splice(index, 1);
                     this._settingsservice.setUnits(this.unitTypes); // update service
                     this._settingsservice.outputWimMessages(result);
+                    gtag('event', 'Delete', { 'Type': "Unit" });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Unit', error._body.message || error.statusText);

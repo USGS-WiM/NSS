@@ -16,6 +16,7 @@ import { SettingsService } from '../../settings.service';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+declare let gtag: Function;
 
 @Component({
     moduleId: module.id,
@@ -147,6 +148,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
                 this._toasterService.pop('info', 'Info', 'Statistic Group was created');
                 this.getAllStatGroups();
                 this.cancelCreateStatGroup();
+                gtag('event', 'Add', { 'Type': "StatisticGroup" });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error creating Statistic Group', error._body.message || error.statusText);
@@ -192,6 +194,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.statGroupForm.form.dirty) { this.statGroupForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
+                    gtag('event', 'Edit', { 'Type': "StatisticGroup" });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating Statistic Group', error._body.message || error.statusText);
@@ -211,6 +214,7 @@ export class StatisticGroupsComponent implements OnInit, OnDestroy {
                     this.statisticGroups.splice(index, 1);
                     this._settingsservice.setStatGroups(this.statisticGroups); // update service
                     this._settingsservice.outputWimMessages(result);
+                    gtag('event', 'Delete', { 'Type': "StatisticGroup" });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Statistic Group', error._body.message || error.statusText);

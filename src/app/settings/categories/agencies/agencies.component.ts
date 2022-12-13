@@ -16,6 +16,7 @@ import { Agency } from 'app/shared/interfaces/agencies';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+declare let gtag: Function;
 
 @Component({
     moduleId: module.id,
@@ -122,6 +123,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
                 this._settingsservice.setAgencies(this.agencies);
                 this._toasterService.pop('info', 'Info', 'Agency was created');
                 this.cancelCreateAgency();
+                gtag('event', 'Add', { 'Type': "Agency" });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) { return; }
                 this._toasterService.pop('error', 'Error creating Agency', error._body.message || error.statusText);
@@ -167,6 +169,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.agencyForm.form.dirty) { this.agencyForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
+                    gtag('event', 'Edit', { 'Type': "Agency" });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) { return; }
                     this._toasterService.pop('error', 'Error updating Agency', error._body.message || error.statusText);
@@ -186,6 +189,7 @@ export class AgenciesComponent implements OnInit, OnDestroy {
                     this.agencies.splice(index, 1);
                     this._settingsservice.setAgencies(this.agencies); // update service
                     this._settingsservice.outputWimMessages(result);
+                    gtag('event', 'Delete', { 'Type': "Agency" });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) { return; }
                     this._toasterService.pop('error', 'Error deleting Agency', error._body.message || error.statusText);

@@ -17,6 +17,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { UnitSystem } from 'app/shared/interfaces/unitsystems';
+declare let gtag: Function;
 
 @Component({
     moduleId: module.id,
@@ -120,6 +121,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
                 this.unitSystems.push(response);
                 this._settingsservice.setUnitSystems(this.unitSystems);
                 this._toasterService.pop('info', 'Info', 'Unit System was created');
+                gtag('event', 'Add', { 'Type': 'UnitSystem' });
                 this.cancelCreateUnit();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
@@ -166,6 +168,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.usForm.form.dirty) { this.usForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
+                    gtag('event', 'Edit', { 'Type': "UnitSystem" });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating Unit System', error._body.message || error.statusText);
@@ -185,6 +188,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
                     this.unitSystems.splice(index, 1);
                     this._settingsservice.setUnitSystems(this.unitSystems); // update service
                     this._settingsservice.outputWimMessages(result);
+                    gtag('event', 'Delete', { 'Type': "UnitSystem" });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Unit System', error._body.message || error.statusText);

@@ -1353,7 +1353,7 @@ export class MainviewComponent implements OnInit {
             const sParams = '?statisticgroupID=' + sgID + '&regressionregionID=' + rrID + '&regressiontypeID=' + rID;
             this._settingsService.deleteEntity('', this.configSettings.nssBaseURL + this.configSettings.scenariosURL, sParams).subscribe(result => {
                 this.requeryFilters();
-                gtag('event', 'click', { 'event_category': 'Delete Scenario', 'event_label': 'Scenario was deleted' });
+                gtag('event', 'Delete', { 'Type': 'Scenario' });
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
                 if (error.headers) {
@@ -1369,7 +1369,7 @@ export class MainviewComponent implements OnInit {
             this.saveFilters();
             this._settingsService.deleteEntity(rrID, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(result => {
                 this.requeryFilters();
-                gtag('event', 'click', { 'event_category': 'Delete Regression Region', 'event_label': 'Regression Region was deleted' });
+                gtag('event', 'Delete', { 'Type':'RegressionRegion' });
                 if (result.headers) { this._nssService.outputWimMessages(result); }
             }, error => {
                 if (error.headers) {
@@ -1399,6 +1399,7 @@ export class MainviewComponent implements OnInit {
             regReg.citationID = null;
             this._settingsService.putEntity(rr.id, regReg, this.configSettings.nssBaseURL + this.configSettings.regRegionURL)
                 .subscribe((response) => {
+                    gtag('event', 'Edit', { 'Type':'RegressionRegion' });
                     this.requeryFilters();
                     this._nssService.outputWimMessages(response);
                 }, error => {
@@ -1580,7 +1581,7 @@ export class MainviewComponent implements OnInit {
             .subscribe((response) => {
                 this.requeryFilters();
                 this._nssService.outputWimMessages(response);
-                gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
+                gtag('event', 'Edit', { 'Type': 'Scenario' });
                 this.modalRef.close();
             }, error => {
                 if (this._settingsService.outputWimMessages(error)) { return; }
@@ -1691,6 +1692,7 @@ export class MainviewComponent implements OnInit {
             this.requeryFilters();
             if (!res.headers) {
                 this._toasterService.pop('info', 'Info', 'Regression Region was updated');
+                gtag('event', 'Edit', { 'Type': 'RegressionRegion' });
             } else { this._settingsService.outputWimMessages(res); }
         }, error => {
             if (this._settingsService.outputWimMessages(error)) { return; }
@@ -1717,6 +1719,7 @@ export class MainviewComponent implements OnInit {
                 rr.citationID = res.id;
                 if (!res.headers) {
                     this._toasterService.pop('info', 'Info', 'Citation was added');
+                    gtag('event', 'Add', { 'Type': 'Citation' });
                 } else {
                     this._settingsService.outputWimMessages(res);
                 }

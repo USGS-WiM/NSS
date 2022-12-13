@@ -16,6 +16,7 @@ import { StationType } from 'app/shared/interfaces/stationtypes';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
+declare let gtag: Function;
 
 @Component({
     moduleId: module.id,
@@ -120,6 +121,7 @@ export class StationTypesComponent implements OnInit, OnDestroy {
                 this._settingsservice.setStationTypes(this.stationTypes);
                 this._toasterService.pop('info', 'Info', 'Station Type was created');
                 this.cancelCreateStationType();
+                gtag('event', 'Add', { 'Type': 'StationType' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error creating Station Type', error._body.message || error.statusText);
@@ -165,6 +167,7 @@ export class StationTypesComponent implements OnInit, OnDestroy {
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.stationTypeForm.form.dirty) { this.stationTypeForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
+                    gtag('event', 'Edit', { 'Type': 'StationType' });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating Station Type', error._body.message || error.statusText);
@@ -184,6 +187,7 @@ export class StationTypesComponent implements OnInit, OnDestroy {
                     this.stationTypes.splice(index, 1);
                     this._settingsservice.setStationTypes(this.stationTypes); // update service
                     this._settingsservice.outputWimMessages(result);
+                    gtag('event', 'Delete', { 'Type': 'StationType' });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Station Type', error._body.message || error.statusText);

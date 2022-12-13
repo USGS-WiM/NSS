@@ -619,7 +619,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
             .subscribe((response) => {
                 this.requeryFilters();
                 // clear form
-                gtag('event', 'click', { 'event_category': 'Put Scenario', 'event_label': 'Scenario was edited' });
+                gtag('event', 'Edit', { 'Type': "Scenario" });
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was Updated');
                 } else {
@@ -642,7 +642,7 @@ export class AddScenarioModal implements OnInit, OnDestroy {
                 // clear form
                 if (!response.headers) {
                     this._toasterService.pop('info', 'Info', 'Scenario was added');
-                    gtag('event', 'click', { 'event_category': 'Post Scenario', 'event_label': 'Scenario was added' });
+                    gtag('event', 'Add', { 'Type': "Scenario" });
                 } else {
                     this._settingsService.outputWimMessages(response); 
                 }

@@ -18,6 +18,7 @@ import { Config } from 'app/shared/interfaces/config';
 import { ConfigService } from 'app/config.service';
 import { Statisticgroup } from 'app/shared/interfaces/statisticgroup';
 import { LoaderService } from 'app/shared/services/loader.service';
+declare let gtag: Function;
 
 @Component({
     moduleId: module.id,
@@ -115,7 +116,6 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
             .subscribe(res => {
                 this.regressionTypes = [];
                 if (this.selectedStatisticID) {
-                    console.log('hi')
                     for (var i in res) {
                         console.log(res[i])
                         if (res[i].statisticGroupTypeID && res[i].statisticGroupTypeID == this.selectedStatisticID){
@@ -198,6 +198,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
                     this.onRegSelect(this.selectedRegion);
                 }
                 this.cancelCreateRegression();
+                gtag('event', 'Add', { 'Type': 'Regression' });
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }
                 this._toasterService.pop('error', 'Error creating Regression Type', error._body.message || error.statusText);
@@ -243,6 +244,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
                     this.isEditing = false; // set to true so create new is disabled
                     if (this.regressionForm.form.dirty) { this.regressionForm.reset(); }
                     this._settingsservice.outputWimMessages(resp);
+                    gtag('event', 'Edit', { 'Type': 'Regression' });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error updating Regression Type', error._body.message || error.statusText);
@@ -262,6 +264,7 @@ export class RegressionTypesComponent implements OnInit, OnDestroy {
                     this.regressionTypes.splice(index, 1);
                     this._settingsservice.setRegTypes(this.regressionTypes); // update service
                     this._settingsservice.outputWimMessages(result);
+                    gtag('event', 'Delete', { 'Type': 'Regression' });
                 }, error => {
                     if (this._settingsservice.outputWimMessages(error)) {return; }
                     this._toasterService.pop('error', 'Error deleting Regression Type', error._body.message || error.statusText);

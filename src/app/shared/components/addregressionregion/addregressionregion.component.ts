@@ -340,7 +340,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         response.isEditing = false;
         if (!response.headers) {
           this._toasterService.pop('info', 'Info', 'Regression region was added');
-          gtag('event', 'click', { 'event_category': 'Post Regression Region', 'event_label': 'Regression Region was added' });
+          gtag('event', 'Add', { 'Type': 'RegressionRegion' });
         } else { this._settingsService.outputWimMessages(response); }
         if (this.addCitation && this.newCitation == true){ // if user elected to add a citation, send that through
           this.createNewCitation(response);
@@ -365,7 +365,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
     this._settingsService.putEntity(this.selectedRegRegion.id, this.newRegRegForm.value, this.configSettings.nssBaseURL + this.configSettings.regRegionURL).subscribe(res => {
       if (!res.headers) {
         this._toasterService.pop('info', 'Info', 'Regression Region was updated');
-        gtag('event', 'click', { 'event_category': 'Put Regression Region', 'event_label': 'Regression Region was edited' });
+        gtag('event', 'Edit', { 'Type': 'RegressionRegion' });
         this.modalRef.close();
       } else {
         this._settingsService.outputWimMessages(res); 
@@ -375,7 +375,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
           .subscribe((response: any) => {
             if (!response.headers) { // Citation successfully updated
               this._toasterService.pop('info', 'Info', 'Citation was updated');
-              gtag('event', 'click', { 'event_category': 'Put Citation', 'event_label': 'Citation was added' });
+              gtag('event', 'Edit', { 'Type': 'Citation' });
             } else {
               this._settingsService.outputWimMessages(response);
               this.cancelCreateRegression();
@@ -421,7 +421,7 @@ export class AddRegressionRegionModal implements OnInit, OnDestroy {
         rr.citationID = response.id;
         if (!response.headers) {
           this._toasterService.pop('info', 'Info', 'Citation was added');
-          gtag('event', 'click', { 'event_category': 'Post Citation', 'event_label': 'Citation was created' });
+          gtag('event', 'Add', { 'Type': 'Citation' });
         } else { this._settingsService.outputWimMessages(response); }
         this.cancelCreateRegression();
         this.requeryFilters();

@@ -101,7 +101,7 @@ export class AddStationModal implements OnInit {
       .subscribe((response:any) =>{
         if(!response.headers){
           this._toasterService.pop('info', 'Info', 'Station Added');
-          gtag('event', 'click', { 'event_category': 'Post Station', 'event_label': 'Station was added'});
+          gtag('event', 'Add', { 'Type': 'Station' });
         } else {
           this._settingsService.outputWimMessages(response);
         }

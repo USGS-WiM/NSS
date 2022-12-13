@@ -12,7 +12,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { throwError as observableThrowError, } from 'rxjs';
 import { ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
 import { Toast } from 'angular2-toaster/src/toast';
-
 import { NSSService } from 'app/shared/services/app.service';
 import { Config } from '../../interfaces/config';
 import { ConfigService } from 'app/config.service';

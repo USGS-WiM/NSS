@@ -121,7 +121,7 @@ export class UnitSystemsComponent implements OnInit, OnDestroy {
                 this.unitSystems.push(response);
                 this._settingsservice.setUnitSystems(this.unitSystems);
                 this._toasterService.pop('info', 'Info', 'Unit System was created');
-                gtag('event', 'Add', { 'type': 'UnitSystem' });
+                gtag('event', 'Add', { 'Type': 'UnitSystem' });
                 this.cancelCreateUnit();
             }, error => {
                 if (this._settingsservice.outputWimMessages(error)) {return; }

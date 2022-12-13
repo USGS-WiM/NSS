@@ -8838,7 +8838,7 @@ var UnitSystemsComponent = /** @class */ (function () {
             _this.unitSystems.push(response);
             _this._settingsservice.setUnitSystems(_this.unitSystems);
             _this._toasterService.pop('info', 'Info', 'Unit System was created');
-            gtag('event', 'Add', { 'type': 'UnitSystem' });
+            gtag('event', 'Add', { 'Type': 'UnitSystem' });
             _this.cancelCreateUnit();
         }, function (error) {
             if (_this._settingsservice.outputWimMessages(error)) {
